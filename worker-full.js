@@ -738,10 +738,12 @@ async function handleScheduled() {
 
 export default {
   async fetch(request, env, ctx) {
+    if (env.WECHAT_WEBHOOK) CONFIG.WECHAT_WEBHOOK = env.WECHAT_WEBHOOK;
     return handleRequest(request);
   },
 
   async scheduled(event, env, ctx) {
+    if (env.WECHAT_WEBHOOK) CONFIG.WECHAT_WEBHOOK = env.WECHAT_WEBHOOK;
     ctx.waitUntil(handleScheduled());
   },
 };
