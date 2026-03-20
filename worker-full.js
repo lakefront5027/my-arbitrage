@@ -179,7 +179,9 @@ async function fetchTencent() {
     const resp = await fetch(url, {
       headers: {
         'Referer': 'https://gu.qq.com',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        'Accept': '*/*',
+        'Accept-Language': 'zh-CN,zh;q=0.9',
       }
     });
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
@@ -192,7 +194,7 @@ async function fetchTencent() {
     const lines = text.split('\n');
     const lineMap = {};
     for (const line of lines) {
-      const m = line.match(/^var\s+v_(\w+)="([^"]*)"/);
+      const m = line.match(/^(?:var\s+)?v_(\w+)="([^"]*)"/);
       if (m) lineMap[m[1]] = m[2];
     }
 
@@ -592,8 +594,9 @@ function toBeijingDate(ts) {
 function corsHeaders() {
   return {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Cache-Control',
+    'Access-Control-Max-Age': '86400',
   };
 }
 
