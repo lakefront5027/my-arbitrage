@@ -1,0 +1,6 @@
+.DS_Store
+Archive/
+Backup/
+node_modules/
+*.xlsx
+*.docx
