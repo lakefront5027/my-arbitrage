@@ -1,0 +1,225 @@
+[
+  {
+    "code": "164824",
+    "name": "德邦大数据量化基金LOF",
+    "category": "美股",
+    "sources": []
+  },
+  {
+    "code": "501300",
+    "name": "华宝美国医疗LOF",
+    "category": "美股",
+    "sources": [
+      {
+        "type": "债券持仓(zqcc)",
+        "report_date": "2025-12-31",
+        "holdings": [
+          {
+            "name": "T 4 11/15/35",
+            "code": "US91282CPJ44",
+            "ratio": ""
+          },
+          {
+            "name": "T 4 5/8 02/15/35",
+            "code": "US91282CMM00",
+            "ratio": ""
+          },
+          {
+            "name": "T 4 1/4 05/15/35",
+            "code": "US91282CNC19",
+            "ratio": ""
+          },
+          {
+            "name": "T 3 5/8 09/30/30",
+            "code": "US91282CPA35",
+            "ratio": ""
+          },
+          {
+            "name": "T 4 1/4 08/15/35",
+            "code": "US91282CNT44",
+            "ratio": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "160216",
+    "name": "国泰商品LOF",
+    "category": "商品",
+    "sources": []
+  },
+  {
+    "code": "164701",
+    "name": "德邦黄金LOF",
+    "category": "商品",
+    "sources": [
+      {
+        "type": "债券持仓(zqcc)",
+        "report_date": "2025-06-30",
+        "holdings": [
+          {
+            "name": "24国债15",
+            "code": "019749",
+            "ratio": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "160719",
+    "name": "嘉实黄金LOF",
+    "category": "商品",
+    "sources": [
+      {
+        "type": "债券持仓(zqcc)",
+        "report_date": "2025-12-31",
+        "holdings": [
+          {
+            "name": "25国债13",
+            "code": "019785",
+            "ratio": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "161815",
+    "name": "银华抗通胀LOF",
+    "category": "商品",
+    "sources": []
+  },
+  {
+    "code": "501018",
+    "name": "国泰大宗商品LOF",
+    "category": "商品",
+    "sources": [
+      {
+        "type": "债券持仓(zqcc)",
+        "report_date": "2022-06-30",
+        "holdings": [
+          {
+            "name": "21国债10",
+            "code": "019658",
+            "ratio": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "161129",
+    "name": "招商标普石油LOF",
+    "category": "商品",
+    "sources": [
+      {
+        "type": "债券持仓(zqcc)",
+        "report_date": "2025-12-31",
+        "holdings": [
+          {
+            "name": "25农发01",
+            "code": "250401",
+            "ratio": ""
+          },
+          {
+            "name": "25农发31",
+            "code": "250431",
+            "ratio": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "160723",
+    "name": "嘉实原油LOF",
+    "category": "商品",
+    "sources": [
+      {
+        "type": "债券持仓(zqcc)",
+        "report_date": "2024-12-31",
+        "holdings": [
+          {
+            "name": "24国债02",
+            "code": "019733",
+            "ratio": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "161226",
+    "name": "国投瑞银白银LOF",
+    "category": "商品",
+    "sources": [
+      {
+        "type": "债券持仓(zqcc)",
+        "report_date": "2025-12-31",
+        "holdings": [
+          {
+            "name": "25农发31",
+            "code": "250431",
+            "ratio": ""
+          },
+          {
+            "name": "25国开11",
+            "code": "250211",
+            "ratio": ""
+          },
+          {
+            "name": "21国开08",
+            "code": "210208",
+            "ratio": ""
+          },
+          {
+            "name": "25国开06",
+            "code": "250206",
+            "ratio": ""
+          },
+          {
+            "name": "25农发21",
+            "code": "250421",
+            "ratio": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "165513",
+    "name": "信诚黄金LOF",
+    "category": "商品",
+    "sources": []
+  },
+  {
+    "code": "161116",
+    "name": "国泰黄金LOF",
+    "category": "商品",
+    "sources": [
+      {
+        "type": "债券持仓(zqcc)",
+        "report_date": "2025-12-31",
+        "holdings": [
+          {
+            "name": "B 01/02/26",
+            "code": "US912797RA77",
+            "ratio": ""
+          },
+          {
+            "name": "25农发01",
+            "code": "250401",
+            "ratio": ""
+          },
+          {
+            "name": "25农发31",
+            "code": "250431",
+            "ratio": ""
+          }
+        ]
+      }
+    ]
+  }
+]

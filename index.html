@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LOF 套利雷达</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        surface: '#111111',
+        'surface-2': '#161616',
+        border: '#222222',
+        'border-2': '#2a2a2a',
+        ink: '#0a0a0a',
+        premium: '#f59e0b',
+        discount: '#10b981',
+        alert: '#ef4444',
+        muted: '#666666',
+        primary: '#e5e5e5',
+      },
+      fontFamily: {
+        mono: ['IBM Plex Mono', 'Menlo', 'monospace'],
+      },
+    }
+  }
+};
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  body { background: #0a0a0a; color: #e5e5e5; font-family: 'Noto Sans SC', sans-serif; }
+  .font-mono { font-family: 'IBM Plex Mono', monospace; }
+  @keyframes pulse-alert { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .pulse-alert { animation: pulse-alert 1.2s ease-in-out infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spin { animation: spin 1s linear infinite; }
+  .table-row-hover:hover { background: #1a1a1a; cursor: pointer; }
+  .progress-bar { transition: width 0.25s linear; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #111; }
+  ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #444; }
+  .sort-arrow { opacity: 0.3; }
+  .sort-active { opacity: 1; color: #f59e0b; }
+  .modal-backdrop { backdrop-filter: blur(4px); }
+  th { user-select: none; }
+  .tag-us { background: #1a3a6b22; color: #60a5fa; border: 1px solid #1a3a6b; }
+  .tag-hk { background: #6b1a1a22; color: #f87171; border: 1px solid #6b1a1a; }
+  .tag-cm { background: #6b4c1a22; color: #fbbf24; border: 1px solid #6b4c1a; }
+  .tag-cn { background: #1a6b3c22; color: #34d399; border: 1px solid #1a6b3c; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- ══════════════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════════════ -->
+<header class="sticky top-0 z-50 border-b border-border" style="background:#0d0d0d">
+  <div class="flex items-stretch justify-between px-4 md:px-6">
+    <!-- Logo -->
+    <div class="flex items-center gap-3 py-3">
+      <div>
+        <div class="font-mono text-xl font-semibold tracking-wider text-primary">LOF 套利雷达</div>
+        <div class="font-mono text-[9px] text-muted tracking-widest mt-0.5">LIVE ARBITRAGE MONITOR</div>
+      </div>
+    </div>
+
+    <!-- Tickers -->
+    <div id="tickers" class="hidden md:flex items-center gap-5 px-4 overflow-hidden">
+      <!-- injected by JS -->
+    </div>
+
+    <!-- Controls -->
+    <div class="flex items-center gap-2 py-2 pl-3 border-l border-border flex-shrink-0">
+      <div id="clock" class="font-mono text-xs text-muted hidden md:block"></div>
+      <select id="rfsel" class="font-mono text-xs bg-surface border border-border rounded px-2 py-1.5 text-muted focus:outline-none cursor-pointer">
+        <option value="5000">5s</option>
+        <option value="10000">10s</option>
+        <option value="15000" selected>15s</option>
+        <option value="30000">30s</option>
+      </select>
+      <button id="refreshBtn" onclick="manualRefresh()" class="font-mono text-xs px-3 py-1.5 border border-border rounded text-muted hover:text-primary hover:border-border-2 transition-colors">
+        ↺ 刷新
+      </button>
+    </div>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="h-0.5 bg-border">
+    <div id="progressBar" class="progress-bar h-full bg-premium" style="width:0%"></div>
+  </div>
+
+  <!-- Status bar -->
+  <div id="statusBar" class="px-4 md:px-6 py-1.5 font-mono text-[10px] text-green-400/70 border-t border-border flex items-center gap-2" style="background:#0a120a">
+    <span id="statusDot" class="inline-block w-1.5 h-1.5 rounded-full bg-muted flex-shrink-0"></span>
+    <span id="statusText">就绪 — 点击刷新或等待自动刷新</span>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════
+     MOBILE TICKERS (below header on small screens)
+══════════════════════════════════════════════════ -->
+<div id="mobileTickers" class="md:hidden flex items-center gap-4 px-4 py-2 overflow-x-auto border-b border-border" style="background:#0d0d0d">
+  <!-- injected by JS -->
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     MAIN
+══════════════════════════════════════════════════ -->
+<main class="max-w-screen-2xl mx-auto px-3 md:px-6 py-4">
+
+  <!-- Stats bar -->
+  <div class="grid grid-cols-4 gap-2 mb-4">
+    <div class="bg-surface border border-border rounded p-3">
+      <div class="font-mono text-[9px] text-muted tracking-widest mb-1">基金总数</div>
+      <div id="s0" class="font-mono text-2xl font-semibold text-primary">47</div>
+    </div>
+    <div class="bg-surface border border-border rounded p-3">
+      <div class="font-mono text-[9px] text-muted tracking-widest mb-1">预警数</div>
+      <div id="s1" class="font-mono text-2xl font-semibold text-alert">—</div>
+    </div>
+    <div class="bg-surface border border-border rounded p-3">
+      <div class="font-mono text-[9px] text-muted tracking-widest mb-1">最大溢价</div>
+      <div id="s2" class="font-mono text-2xl font-semibold text-premium">—</div>
+    </div>
+    <div class="bg-surface border border-border rounded p-3">
+      <div class="font-mono text-[9px] text-muted tracking-widest mb-1">最大折价</div>
+      <div id="s3" class="font-mono text-2xl font-semibold text-discount">—</div>
+    </div>
+  </div>
+
+  <!-- Controls row -->
+  <div class="flex flex-wrap items-center gap-2 md:gap-4 mb-4">
+    <!-- Threshold -->
+    <div class="flex items-center gap-2">
+      <span class="font-mono text-[10px] text-muted">预警阈值</span>
+      <input id="thrInput" type="number" value="1.5" min="0.1" max="10" step="0.1"
+        class="font-mono text-sm w-16 text-center bg-surface border border-border rounded px-2 py-1 text-premium focus:outline-none focus:border-premium"
+        oninput="renderAll()">
+      <span class="font-mono text-[10px] text-muted">%</span>
+    </div>
+
+    <!-- Tab filters -->
+    <div class="flex bg-surface border border-border rounded overflow-hidden">
+      <button onclick="setTab('all')" id="tab-all" class="tab-btn active font-mono text-[11px] px-3 py-1.5 text-primary border-r border-border">全部</button>
+      <button onclick="setTab('al')" id="tab-al" class="tab-btn font-mono text-[11px] px-3 py-1.5 text-muted border-r border-border">套利机会</button>
+      <button onclick="setTab('p')" id="tab-p" class="tab-btn font-mono text-[11px] px-3 py-1.5 text-muted border-r border-border">溢价</button>
+      <button onclick="setTab('d')" id="tab-d" class="tab-btn font-mono text-[11px] px-3 py-1.5 text-muted">折价</button>
+    </div>
+
+    <!-- Category filters -->
+    <div class="flex bg-surface border border-border rounded overflow-hidden">
+      <button onclick="setCat('all')" id="cat-all" class="cat-btn active font-mono text-[11px] px-3 py-1.5 text-primary border-r border-border">全部</button>
+      <button onclick="setCat('us')" id="cat-us" class="cat-btn font-mono text-[11px] px-3 py-1.5 text-muted border-r border-border">美股</button>
+      <button onclick="setCat('hk')" id="cat-hk" class="cat-btn font-mono text-[11px] px-3 py-1.5 text-muted border-r border-border">港股</button>
+      <button onclick="setCat('cm')" id="cat-cm" class="cat-btn font-mono text-[11px] px-3 py-1.5 text-muted border-r border-border">商品</button>
+      <button onclick="setCat('cn')" id="cat-cn" class="cat-btn font-mono text-[11px] px-3 py-1.5 text-muted">A股</button>
+    </div>
+  </div>
+
+  <!-- Desktop Table -->
+  <div class="hidden md:block overflow-x-auto">
+    <table class="w-full border-collapse text-sm">
+      <thead>
+        <tr class="border-b border-border text-left" style="background:#0d0d0d">
+          <th class="font-mono text-[10px] text-muted py-2 px-3 tracking-wider cursor-pointer" onclick="setSort('name')">
+            名称 <span id="sort-name" class="sort-arrow">↕</span>
+          </th>
+          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider cursor-pointer" onclick="setSort('code')">
+            代码 <span id="sort-code" class="sort-arrow">↕</span>
+          </th>
+          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider cursor-pointer" onclick="setSort('cat')">
+            类别 <span id="sort-cat" class="sort-arrow">↕</span>
+          </th>
+          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider cursor-pointer text-right" onclick="setSort('nav')">
+            盘中估值 <span id="sort-nav" class="sort-arrow">↕</span>
+          </th>
+          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider cursor-pointer text-right" onclick="setSort('officialNav')">
+            T-1净值 <span id="sort-officialNav" class="sort-arrow">↕</span>
+          </th>
+          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider cursor-pointer text-right" onclick="setSort('price')">
+            场内价格 <span id="sort-price" class="sort-arrow">↕</span>
+          </th>
+          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider cursor-pointer text-right" onclick="setSort('premium')">
+            溢折价率 <span id="sort-premium" class="sort-arrow sort-active">↓</span>
+          </th>
+          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider cursor-pointer text-right" onclick="setSort('chg')">
+            今日涨跌 <span id="sort-chg" class="sort-arrow">↕</span>
+          </th>
+          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider cursor-pointer text-right" onclick="setSort('benchChg')">
+            指数涨幅 <span id="sort-benchChg" class="sort-arrow">↕</span>
+          </th>
+          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider">套利信号</th>
+          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider">操作方向</th>
+          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider">申购限额</th>
+          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider text-right">费率</th>
+          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider text-right" onclick="setSort('vol')">
+            成交额(万) <span id="sort-vol" class="sort-arrow">↕</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <tr>
+          <td colspan="14" class="py-16 text-center text-muted font-mono text-xs">
+            暂无数据 — 请等待自动刷新或点击「↺ 刷新」
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Mobile Cards -->
+  <div id="mobileCards" class="md:hidden space-y-2">
+    <div class="py-12 text-center text-muted font-mono text-xs">暂无数据</div>
+  </div>
+
+</main>
+
+<!-- ══════════════════════════════════════════════════
+     DETAIL MODAL
+══════════════════════════════════════════════════ -->
+<div id="modal" class="fixed inset-0 z-50 hidden">
+  <div class="modal-backdrop absolute inset-0 bg-black/70" onclick="closeModal()"></div>
+  <div class="absolute inset-0 flex items-center justify-center p-4">
+    <div class="relative bg-surface border border-border rounded-lg w-full max-w-md p-6 shadow-2xl">
+      <button onclick="closeModal()" class="absolute top-4 right-4 text-muted hover:text-primary font-mono text-lg leading-none">✕</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════ -->
+<script>
+// ── 配置 ────────────────────────────────────────────
+const WORKER_URL = 'https://patient-pond-824c.3031315027ghb.workers.dev';
+
+// ── 状态 ────────────────────────────────────────────
+let funds = [];          // 完整基金数据
+let indices = {};        // 指数涨跌幅
+let lastTs = null;
+
+let curTab = 'all';
+let curCat = 'all';
+let sCol = 'premium';
+let sAsc = false;
+
+let rfTimer = null;
+let pgTimer = null;
+let pgStart = 0;
+let rfInterval = 15000;
+let refreshing = false;
+let prevAlerts = new Set();
+
+// ── Ticker 配置 ──────────────────────────────────────
+const TICKER_IDX = [
+  {tq:'usIXIC', label:'纳斯达克'},
+  {tq:'usINX',  label:'标普500'},
+  {tq:'hkHSI',  label:'恒生'},
+  {tq:'usGLD',  label:'黄金GLD'},
+  {tq:'usXOP',  label:'油气XOP'},
+  {tq:'usUSO',  label:'原油USO'},
+];
+
+// ── 初始化 ──────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  renderTickers({});
+  initClock();
+  document.getElementById('rfsel').addEventListener('change', e => {
+    rfInterval = parseInt(e.target.value);
+    resetTimer();
+  });
+  startAutoRefresh();
+});
+
+function initClock() {
+  const update = () => {
+    document.getElementById('clock').textContent =
+      new Date().toLocaleTimeString('zh-CN', {hour12: false});
+  };
+  update();
+  setInterval(update, 1000);
+}
+
+// ── 自动刷新 ────────────────────────────────────────
+function startAutoRefresh() {
+  doRefresh();
+  resetTimer();
+}
+
+function resetTimer() {
+  if (rfTimer) clearInterval(rfTimer);
+  rfTimer = setInterval(doRefresh, rfInterval);
+  // 进度条
+  if (pgTimer) clearInterval(pgTimer);
+  startProgress();
+}
+
+function startProgress() {
+  pgStart = Date.now();
+  const bar = document.getElementById('progressBar');
+  bar.style.width = '0%';
+  if (pgTimer) clearInterval(pgTimer);
+  pgTimer = setInterval(() => {
+    const pct = Math.min(100, (Date.now() - pgStart) / rfInterval * 100);
+    bar.style.width = pct + '%';
+    if (pct >= 100) clearInterval(pgTimer);
+  }, 200);
+}
+
+function manualRefresh() {
+  if (rfTimer) clearInterval(rfTimer);
+  if (pgTimer) clearInterval(pgTimer);
+  doRefresh();
+  resetTimer();
+}
+
+// ── 核心刷新 ────────────────────────────────────────
+async function doRefresh() {
+  if (refreshing) return;
+  refreshing = true;
+  setSt('获取行情中...', true);
+  try {
+    const resp = await fetch(`${WORKER_URL}/api/quote`, { cache: 'no-store' });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    funds = data.funds || [];
+    indices = data.indices || {};
+    lastTs = data.ts;
+    renderAll();
+    renderTickers(indices);
+    checkAlerts();
+    const time = new Date(lastTs).toLocaleTimeString('zh-CN', {hour12:false});
+    setSt(`✓ ${time} — ${funds.length}只基金已更新`, false);
+  } catch (e) {
+    setSt(`✗ 获取失败: ${e.message}`, false);
+    console.error(e);
+  }
+  refreshing = false;
+}
+
+// ── 渲染状态栏 ──────────────────────────────────────
+function setSt(msg, active) {
+  document.getElementById('statusText').textContent = msg;
+  const dot = document.getElementById('statusDot');
+  dot.className = 'inline-block w-1.5 h-1.5 rounded-full flex-shrink-0 ' +
+    (active ? 'bg-green-400 pulse-alert' : 'bg-muted');
+}
+
+// ── 渲染 Tickers ────────────────────────────────────
+function renderTickers(idxData) {
+  const makeHtml = (isMobile) => TICKER_IDX.map(i => {
+    const chg = idxData[i.tq];
+    const chgStr = chg != null ? (chg >= 0 ? '+' : '') + chg.toFixed(2) + '%' : '—';
+    const chgCls = chg == null ? 'text-muted' : chg >= 0 ? 'text-green-400' : 'text-red-400';
+    return `
+      <div class="flex-shrink-0 ${isMobile ? 'min-w-[60px]' : 'min-w-[72px]'}">
+        <div class="font-mono text-[8px] text-muted/70 tracking-widest">${i.label}</div>
+        <div class="font-mono ${isMobile ? 'text-[11px]' : 'text-[13px]'} font-medium text-primary mt-0.5">—</div>
+        <div class="font-mono text-[10px] mt-0.5 ${chgCls}">${chgStr}</div>
+      </div>`;
+  }).join('');
+  document.getElementById('tickers').innerHTML = makeHtml(false);
+  document.getElementById('mobileTickers').innerHTML = makeHtml(true);
+}
+
+// ── 统计栏 ──────────────────────────────────────────
+function renderStats() {
+  const thr = parseFloat(document.getElementById('thrInput').value) || 1.5;
+  const ok = funds.filter(f => f.premium != null);
+  const premVals = ok.filter(f => f.premium > 0).map(f => f.premium);
+  const discVals = ok.filter(f => f.premium < 0).map(f => f.premium);
+  const alerts = ok.filter(f => Math.abs(f.premium) >= thr);
+
+  document.getElementById('s0').textContent = funds.length;
+  document.getElementById('s1').textContent = alerts.length;
+  document.getElementById('s2').textContent = premVals.length
+    ? '+' + Math.max(...premVals).toFixed(2) + '%' : '—';
+  document.getElementById('s3').textContent = discVals.length
+    ? Math.min(...discVals).toFixed(2) + '%' : '—';
+}
+
+// ── 过滤+排序 ────────────────────────────────────────
+function getFiltered() {
+  const thr = parseFloat(document.getElementById('thrInput').value) || 1.5;
+  let data = [...funds];
+  if (curCat !== 'all') data = data.filter(f => f.cat === curCat);
+  if (curTab === 'al') data = data.filter(f => f.premium != null && Math.abs(f.premium) >= thr);
+  else if (curTab === 'p') data = data.filter(f => f.premium != null && f.premium > 0);
+  else if (curTab === 'd') data = data.filter(f => f.premium != null && f.premium < 0);
+  data.sort((a, b) => {
+    let va = a[sCol], vb = b[sCol];
+    if (va == null && vb == null) return 0;
+    if (va == null) return 1;
+    if (vb == null) return -1;
+    if (typeof va === 'string') return sAsc ? va.localeCompare(vb, 'zh') : vb.localeCompare(va, 'zh');
+    return sAsc ? va - vb : vb - va;
+  });
+  return data;
+}
+
+// ── 渲染全部 ────────────────────────────────────────
+function renderAll() {
+  renderStats();
+  renderTable();
+  renderCards();
+}
+
+// ── 渲染桌面表格 ─────────────────────────────────────
+function renderTable() {
+  const thr = parseFloat(document.getElementById('thrInput').value) || 1.5;
+  const data = getFiltered();
+  const tbody = document.getElementById('tbody');
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="14" class="py-16 text-center text-muted font-mono text-xs">暂无符合条件的数据</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = data.map(f => {
+    const p = f.premium;
+    const isAlert = p != null && Math.abs(p) >= thr;
+    const isPrem = p != null && p > 0;
+    const premCls = p == null ? 'text-muted'
+      : isAlert ? (isPrem ? 'text-premium font-semibold pulse-alert' : 'text-discount font-semibold pulse-alert')
+      : isPrem ? 'text-premium' : 'text-discount';
+    const premStr = p != null ? (p >= 0 ? '+' : '') + p.toFixed(2) + '%' : '—';
+    const navStr = f.nav != null ? f.nav.toFixed(4) : '—';
+    const officialNavStr = f.officialNav != null ? f.officialNav.toFixed(4) : '—';
+    const priceStr = f.price != null ? f.price.toFixed(4) : '—';
+    const chgStr = f.chg != null ? (f.chg >= 0 ? '+' : '') + f.chg.toFixed(2) + '%' : '—';
+    const chgCls = f.chg > 0 ? 'text-green-400' : f.chg < 0 ? 'text-red-400' : 'text-muted';
+    const benchStr = f.benchChg != null ? (f.benchChg >= 0 ? '+' : '') + f.benchChg.toFixed(2) + '%' : '—';
+    const benchCls = f.benchChg > 0 ? 'text-green-400' : f.benchChg < 0 ? 'text-red-400' : 'text-muted';
+    const catTag = {us:'tag-us',hk:'tag-hk',cm:'tag-cm',cn:'tag-cn'}[f.cat] || '';
+    const catLabel = {us:'美股',hk:'港股',cm:'商品',cn:'A股'}[f.cat] || f.cat;
+    let signal = '<span class="text-muted">—</span>';
+    let action = '<span class="text-muted text-xs">—</span>';
+    if (isAlert && isPrem) {
+      signal = '<span class="text-premium text-xs font-mono">▼ 卖出套利</span>';
+      action = '<span class="text-premium text-xs">卖场内/申场外</span>';
+    } else if (isAlert && !isPrem) {
+      signal = '<span class="text-discount text-xs font-mono">▲ 买入套利</span>';
+      action = '<span class="text-discount text-xs">买场内/赎场外</span>';
+    } else if (p != null && Math.abs(p) >= thr * 0.65) {
+      signal = '<span class="text-muted text-xs font-mono">⊙ 观察</span>';
+      action = '<span class="text-muted text-xs">接近阈值</span>';
+    }
+    const quotaCls = f.quota === '暂停' ? 'text-red-400' : f.quota === '开放' ? 'text-green-400' : 'text-yellow-400';
+    const volStr = f.vol ? (f.vol / 10000).toFixed(0) + '' : '—';
+    const rowBg = isAlert ? (isPrem ? 'bg-premium/5' : 'bg-discount/5') : '';
+    return `<tr class="border-b border-border/50 table-row-hover ${rowBg}" onclick="openModal('${f.code}')">
+      <td class="py-2 px-3 font-mono text-xs text-primary whitespace-nowrap">${f.name}</td>
+      <td class="py-2 px-2 font-mono text-xs text-muted">${f.code}</td>
+      <td class="py-2 px-2">
+        <span class="font-mono text-[9px] px-1.5 py-0.5 rounded ${catTag}">${catLabel}</span>
+      </td>
+      <td class="py-2 px-2 font-mono text-xs text-right text-primary">${navStr}</td>
+      <td class="py-2 px-2 font-mono text-xs text-right text-muted">${officialNavStr}</td>
+      <td class="py-2 px-2 font-mono text-xs text-right text-primary">${priceStr}</td>
+      <td class="py-2 px-2 font-mono text-sm text-right font-medium ${premCls}">${premStr}</td>
+      <td class="py-2 px-2 font-mono text-xs text-right ${chgCls}">${chgStr}</td>
+      <td class="py-2 px-2 font-mono text-xs text-right ${benchCls}">${benchStr}</td>
+      <td class="py-2 px-2">${signal}</td>
+      <td class="py-2 px-2">${action}</td>
+      <td class="py-2 px-2 font-mono text-[10px] ${quotaCls}">${f.quota}</td>
+      <td class="py-2 px-2 font-mono text-[10px] text-muted text-right">${f.fee}</td>
+      <td class="py-2 px-2 font-mono text-xs text-right text-muted">${volStr}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── 渲染移动端卡片 ───────────────────────────────────
+function renderCards() {
+  const thr = parseFloat(document.getElementById('thrInput').value) || 1.5;
+  const data = getFiltered();
+  const container = document.getElementById('mobileCards');
+  if (!data.length) {
+    container.innerHTML = '<div class="py-12 text-center text-muted font-mono text-xs">暂无符合条件的数据</div>';
+    return;
+  }
+  container.innerHTML = data.map(f => {
+    const p = f.premium;
+    const isAlert = p != null && Math.abs(p) >= thr;
+    const isPrem = p != null && p > 0;
+    const premStr = p != null ? (p >= 0 ? '+' : '') + p.toFixed(2) + '%' : '—';
+    const premBg = p == null ? 'bg-surface border-border'
+      : isAlert ? (isPrem ? 'bg-premium/10 border-premium/40' : 'bg-discount/10 border-discount/40')
+      : isPrem ? 'bg-surface border-border' : 'bg-surface border-border';
+    const premCls = p == null ? 'text-muted'
+      : isAlert ? (isPrem ? 'text-premium pulse-alert' : 'text-discount pulse-alert')
+      : isPrem ? 'text-premium' : 'text-discount';
+    const catLabel = {us:'美股',hk:'港股',cm:'商品',cn:'A股'}[f.cat] || f.cat;
+    const catTag = {us:'tag-us',hk:'tag-hk',cm:'tag-cm',cn:'tag-cn'}[f.cat] || '';
+    const navStr = f.nav != null ? f.nav.toFixed(4) : '—';
+    const priceStr = f.price != null ? f.price.toFixed(4) : '—';
+    const benchStr = f.benchChg != null ? (f.benchChg >= 0 ? '+' : '') + f.benchChg.toFixed(2) + '%' : '—';
+    const benchCls = f.benchChg > 0 ? 'text-green-400' : f.benchChg < 0 ? 'text-red-400' : 'text-muted';
+    let signalHtml = '';
+    if (isAlert) {
+      signalHtml = isPrem
+        ? '<span class="text-premium text-xs font-mono">▼ 卖出套利</span>'
+        : '<span class="text-discount text-xs font-mono">▲ 买入套利</span>';
+    }
+    return `
+      <div class="border rounded-lg p-3 cursor-pointer ${premBg} active:opacity-80"
+           onclick="openModal('${f.code}')">
+        <div class="flex items-start justify-between mb-2">
+          <div class="flex-1 min-w-0">
+            <div class="font-mono text-sm text-primary truncate">${f.name}</div>
+            <div class="flex items-center gap-2 mt-0.5">
+              <span class="font-mono text-[10px] text-muted">${f.code}</span>
+              <span class="font-mono text-[9px] px-1.5 py-0.5 rounded ${catTag}">${catLabel}</span>
+            </div>
+          </div>
+          <div class="text-right flex-shrink-0 ml-3">
+            <div class="font-mono text-xl font-semibold ${premCls}">${premStr}</div>
+            <div class="font-mono text-[9px] text-muted mt-0.5">溢折价率</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-2 text-center border-t border-border/40 pt-2">
+          <div>
+            <div class="font-mono text-xs text-primary">${priceStr}</div>
+            <div class="font-mono text-[9px] text-muted">场内价格</div>
+          </div>
+          <div>
+            <div class="font-mono text-xs text-primary">${navStr}</div>
+            <div class="font-mono text-[9px] text-muted">盘中估值</div>
+          </div>
+          <div>
+            <div class="font-mono text-xs ${benchCls}">${benchStr}</div>
+            <div class="font-mono text-[9px] text-muted">指数涨幅</div>
+          </div>
+        </div>
+        ${(signalHtml || f.quota !== '开放') ? `
+        <div class="flex items-center justify-between mt-2 pt-2 border-t border-border/40">
+          <div>${signalHtml}</div>
+          <div class="font-mono text-[10px] ${f.quota === '暂停' ? 'text-red-400' : f.quota === '开放' ? 'text-green-400' : 'text-yellow-400'}">${f.quota}</div>
+        </div>` : ''}
+      </div>`;
+  }).join('');
+}
+
+// ── 排序 ────────────────────────────────────────────
+function setSort(col) {
+  if (sCol === col) {
+    sAsc = !sAsc;
+  } else {
+    sCol = col;
+    sAsc = col === 'name' || col === 'code'; // string cols default asc
+  }
+  // Update sort arrows
+  document.querySelectorAll('[id^="sort-"]').forEach(el => {
+    el.className = 'sort-arrow';
+    el.textContent = '↕';
+  });
+  const el = document.getElementById('sort-' + col);
+  if (el) {
+    el.className = 'sort-active';
+    el.textContent = sAsc ? '↑' : '↓';
+  }
+  renderAll();
+}
+
+// ── 标签/类别切换 ────────────────────────────────────
+function setTab(tab) {
+  curTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.className = b.className.replace('text-primary', 'text-muted');
+  });
+  const btn = document.getElementById('tab-' + tab);
+  if (btn) btn.className = btn.className.replace('text-muted', 'text-primary');
+  renderAll();
+}
+
+function setCat(cat) {
+  curCat = cat;
+  document.querySelectorAll('.cat-btn').forEach(b => {
+    b.className = b.className.replace('text-primary', 'text-muted');
+  });
+  const btn = document.getElementById('cat-' + cat);
+  if (btn) btn.className = btn.className.replace('text-muted', 'text-primary');
+  renderAll();
+}
+
+// ── 预警检测 ────────────────────────────────────────
+function checkAlerts() {
+  const thr = parseFloat(document.getElementById('thrInput').value) || 1.5;
+  const alerts = funds.filter(f => f.premium != null && Math.abs(f.premium) >= thr);
+  alerts.forEach(f => {
+    if (!prevAlerts.has(f.code)) {
+      prevAlerts.add(f.code);
+      // Could play a sound or show browser notification here
+    }
+  });
+  // Remove funds no longer alerting
+  prevAlerts.forEach(code => {
+    if (!alerts.find(f => f.code === code)) prevAlerts.delete(code);
+  });
+}
+
+// ── 详情弹窗 ────────────────────────────────────────
+function openModal(code) {
+  const f = funds.find(f => f.code === code);
+  if (!f) return;
+  const thr = parseFloat(document.getElementById('thrInput').value) || 1.5;
+  const p = f.premium;
+  const isAlert = p != null && Math.abs(p) >= thr;
+  const isPrem = p != null && p > 0;
+  const premStr = p != null ? (p >= 0 ? '+' : '') + p.toFixed(2) + '%' : '—';
+  const premCls = p == null ? 'text-muted' : isPrem ? 'text-premium' : 'text-discount';
+  const catLabel = {us:'美股',hk:'港股',cm:'商品',cn:'A股'}[f.cat] || f.cat;
+  const catTag = {us:'tag-us',hk:'tag-hk',cm:'tag-cm',cn:'tag-cn'}[f.cat] || '';
+  let signalHtml = '<span class="text-muted">无明显套利机会</span>';
+  if (isAlert && isPrem) {
+    signalHtml = '<span class="text-premium font-semibold">▼ 卖出套利 — 场内溢价，建议卖出场内份额并在场外申购</span>';
+  } else if (isAlert && !isPrem) {
+    signalHtml = '<span class="text-discount font-semibold">▲ 买入套利 — 场内折价，建议买入场内份额并在场外赎回</span>';
+  } else if (p != null && Math.abs(p) >= thr * 0.65) {
+    signalHtml = '<span class="text-muted">⊙ 观察 — 接近阈值，持续关注</span>';
+  }
+
+  document.getElementById('modalContent').innerHTML = `
+    <div class="mb-4">
+      <div class="flex items-start gap-2 mb-1">
+        <span class="font-mono text-[9px] px-1.5 py-0.5 rounded ${catTag} flex-shrink-0 mt-0.5">${catLabel}</span>
+        <div>
+          <div class="font-mono text-base font-semibold text-primary">${f.name}</div>
+          <div class="font-mono text-xs text-muted">${f.code}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center py-4 border border-border rounded-lg mb-4" style="background:#0d0d0d">
+      <div class="font-mono text-4xl font-semibold ${premCls} ${isAlert ? 'pulse-alert' : ''}">${premStr}</div>
+      <div class="font-mono text-[10px] text-muted mt-1">溢折价率</div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-2 mb-4">
+      ${[
+        ['场内价格', f.price != null ? f.price.toFixed(4) : '—', 'text-primary'],
+        ['盘中估值', f.nav != null ? f.nav.toFixed(4) : '—', 'text-primary'],
+        ['T-1净值', f.officialNav != null ? f.officialNav.toFixed(4) : '—', 'text-muted'],
+        ['净值日期', f.navDate || '—', 'text-muted'],
+        ['今日涨跌', f.chg != null ? (f.chg >= 0 ? '+' : '') + f.chg.toFixed(2) + '%' : '—', f.chg > 0 ? 'text-green-400' : f.chg < 0 ? 'text-red-400' : 'text-muted'],
+        ['指数涨幅', f.benchChg != null ? (f.benchChg >= 0 ? '+' : '') + f.benchChg.toFixed(2) + '%' : '—', f.benchChg > 0 ? 'text-green-400' : f.benchChg < 0 ? 'text-red-400' : 'text-muted'],
+      ].map(([label, val, cls]) => `
+        <div class="bg-surface border border-border rounded p-2">
+          <div class="font-mono text-[9px] text-muted tracking-wider">${label}</div>
+          <div class="font-mono text-sm ${cls} mt-0.5">${val}</div>
+        </div>`).join('')}
+    </div>
+
+    <div class="border border-border rounded p-3 mb-4" style="background:#0d0d0d">
+      <div class="font-mono text-[10px] text-muted tracking-wider mb-1">套利信号</div>
+      <div class="font-mono text-xs">${signalHtml}</div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-2 text-center">
+      <div class="bg-surface border border-border rounded p-2">
+        <div class="font-mono text-[9px] text-muted">申购限额</div>
+        <div class="font-mono text-xs text-primary mt-0.5">${f.quota}</div>
+      </div>
+      <div class="bg-surface border border-border rounded p-2">
+        <div class="font-mono text-[9px] text-muted">申购费率</div>
+        <div class="font-mono text-xs text-primary mt-0.5">${f.fee}</div>
+      </div>
+      <div class="bg-surface border border-border rounded p-2">
+        <div class="font-mono text-[9px] text-muted">赎回费率</div>
+        <div class="font-mono text-xs text-primary mt-0.5">${f.rfee}</div>
+      </div>
+    </div>
+  `;
+  document.getElementById('modal').classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.add('hidden');
+}
+
+// Keyboard close
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+</script>
+</body>
+</html>

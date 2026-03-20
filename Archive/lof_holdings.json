@@ -1,0 +1,3180 @@
+[
+  {
+    "code": "161127",
+    "name": "招商标普生物科技LOF",
+    "category": "美股",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "FOLD",
+        "stock_name": "爱美医疗",
+        "ratio": "1.39",
+        "shares": "7.51",
+        "value": "751.80"
+      },
+      {
+        "stock_code": "PRAX",
+        "stock_name": "Praxis Precision Medicines Inc",
+        "ratio": "1.30",
+        "shares": "0.34",
+        "value": "701.67"
+      },
+      {
+        "stock_code": "TVTX",
+        "stock_name": "Travere Therapeutics Inc",
+        "ratio": "1.28",
+        "shares": "2.58",
+        "value": "692.24"
+      },
+      {
+        "stock_code": "BMRN",
+        "stock_name": "拜玛林制药",
+        "ratio": "1.28",
+        "shares": "1.65",
+        "value": "689.32"
+      },
+      {
+        "stock_code": "HALO",
+        "stock_name": "奥洛兹美医疗",
+        "ratio": "1.24",
+        "shares": "1.41",
+        "value": "669.07"
+      },
+      {
+        "stock_code": "ROIV",
+        "stock_name": "Roivant Sciences Ltd",
+        "ratio": "1.24",
+        "shares": "4.38",
+        "value": "667.78"
+      },
+      {
+        "stock_code": "EXEL",
+        "stock_name": "伊克力西斯",
+        "ratio": "1.23",
+        "shares": "2.16",
+        "value": "664.70"
+      },
+      {
+        "stock_code": "REGN",
+        "stock_name": "再生元制药",
+        "ratio": "1.22",
+        "shares": "0.12",
+        "value": "661.89"
+      },
+      {
+        "stock_code": "PCVX",
+        "stock_name": "Vaxcyte Inc",
+        "ratio": "1.22",
+        "shares": "2.04",
+        "value": "660.81"
+      },
+      {
+        "stock_code": "MDGL",
+        "stock_name": "Madrigal Pharmaceuticals Inc",
+        "ratio": "1.21",
+        "shares": "0.16",
+        "value": "656.54"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "164906",
+    "name": "交银中证海外中国互联LOF",
+    "category": "美股",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "00700",
+        "stock_name": "腾讯控股",
+        "ratio": "9.51",
+        "shares": "127.85",
+        "value": "69,158.29"
+      },
+      {
+        "stock_code": "09988",
+        "stock_name": "阿里巴巴-W",
+        "ratio": "8.16",
+        "shares": "459.97",
+        "value": "59,315.78"
+      },
+      {
+        "stock_code": "PDD",
+        "stock_name": "拼多多",
+        "ratio": "7.65",
+        "shares": "69.77",
+        "value": "55,605.51"
+      },
+      {
+        "stock_code": "03690",
+        "stock_name": "美团-W",
+        "ratio": "6.87",
+        "shares": "535.46",
+        "value": "49,950.89"
+      },
+      {
+        "stock_code": "09999",
+        "stock_name": "网易-S",
+        "ratio": "5.66",
+        "shares": "212.43",
+        "value": "41,167.56"
+      },
+      {
+        "stock_code": "09888",
+        "stock_name": "百度集团-SW",
+        "ratio": "4.01",
+        "shares": "245.41",
+        "value": "29,143.27"
+      },
+      {
+        "stock_code": "09961",
+        "stock_name": "携程集团-S",
+        "ratio": "3.91",
+        "shares": "56.85",
+        "value": "28,440.94"
+      },
+      {
+        "stock_code": "TME",
+        "stock_name": "腾讯音乐",
+        "ratio": "3.74",
+        "shares": "220.91",
+        "value": "27,218.92"
+      },
+      {
+        "stock_code": "09618",
+        "stock_name": "京东集团-SW",
+        "ratio": "3.69",
+        "shares": "266.46",
+        "value": "26,853.86"
+      },
+      {
+        "stock_code": "01024",
+        "stock_name": "快手-W",
+        "ratio": "3.61",
+        "shares": "454.01",
+        "value": "26,219.40"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "501312",
+    "name": "易方达中证海外互联网LOF",
+    "category": "美股",
+    "report_date": "2023-09-30",
+    "holdings": [
+      {
+        "stock_code": "NVDA",
+        "stock_name": "英伟达",
+        "ratio": "0.08",
+        "shares": "0.01",
+        "value": "34.04"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "164824",
+    "name": "德邦大数据量化基金LOF",
+    "category": "美股",
+    "report_date": "",
+    "holdings": [],
+    "error": null
+  },
+  {
+    "code": "160644",
+    "name": "鹏华中证海外互联LOF",
+    "category": "美股",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "GOOGL",
+        "stock_name": "谷歌-A",
+        "ratio": "9.21",
+        "shares": "0.81",
+        "value": "1,785.31"
+      },
+      {
+        "stock_code": "NVDA",
+        "stock_name": "英伟达",
+        "ratio": "9.16",
+        "shares": "1.36",
+        "value": "1,776.23"
+      },
+      {
+        "stock_code": "TSM",
+        "stock_name": "台积电",
+        "ratio": "9.12",
+        "shares": "0.83",
+        "value": "1,767.74"
+      },
+      {
+        "stock_code": "00700",
+        "stock_name": "腾讯控股",
+        "ratio": "8.84",
+        "shares": "3.17",
+        "value": "1,715.06"
+      },
+      {
+        "stock_code": "09988",
+        "stock_name": "阿里巴巴-W",
+        "ratio": "7.90",
+        "shares": "11.87",
+        "value": "1,530.99"
+      },
+      {
+        "stock_code": "AVGO",
+        "stock_name": "博通",
+        "ratio": "6.62",
+        "shares": "0.53",
+        "value": "1,283.23"
+      },
+      {
+        "stock_code": "MU",
+        "stock_name": "美光科技",
+        "ratio": "6.32",
+        "shares": "0.61",
+        "value": "1,225.72"
+      },
+      {
+        "stock_code": "09992",
+        "stock_name": "泡泡玛特",
+        "ratio": "5.47",
+        "shares": "6.26",
+        "value": "1,061.29"
+      },
+      {
+        "stock_code": "SNDK",
+        "stock_name": "闪迪",
+        "ratio": "3.75",
+        "shares": "0.44",
+        "value": "727.46"
+      },
+      {
+        "stock_code": "02899",
+        "stock_name": "紫金矿业",
+        "ratio": "3.36",
+        "shares": "20.20",
+        "value": "650.62"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "162415",
+    "name": "富国中证主要消费LOF",
+    "category": "美股",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "AMZN",
+        "stock_name": "亚马逊",
+        "ratio": "21.78",
+        "shares": "11.72",
+        "value": "19,010.98"
+      },
+      {
+        "stock_code": "TSLA",
+        "stock_name": "特斯拉",
+        "ratio": "19.70",
+        "shares": "5.44",
+        "value": "17,196.11"
+      },
+      {
+        "stock_code": "HD",
+        "stock_name": "家得宝",
+        "ratio": "5.34",
+        "shares": "1.93",
+        "value": "4,660.90"
+      },
+      {
+        "stock_code": "MCD",
+        "stock_name": "麦当劳",
+        "ratio": "4.21",
+        "shares": "1.71",
+        "value": "3,676.02"
+      },
+      {
+        "stock_code": "BKNG",
+        "stock_name": "Booking Holdings",
+        "ratio": "3.77",
+        "shares": "0.09",
+        "value": "3,286.11"
+      },
+      {
+        "stock_code": "TJX",
+        "stock_name": "The TJX Companies Inc",
+        "ratio": "3.73",
+        "shares": "3.01",
+        "value": "3,252.69"
+      },
+      {
+        "stock_code": "LOW",
+        "stock_name": "劳氏",
+        "ratio": "2.95",
+        "shares": "1.52",
+        "value": "2,573.28"
+      },
+      {
+        "stock_code": "SBUX",
+        "stock_name": "星巴克",
+        "ratio": "2.09",
+        "shares": "3.08",
+        "value": "1,821.56"
+      },
+      {
+        "stock_code": "DASH",
+        "stock_name": "DoorDash Inc-A",
+        "ratio": "1.85",
+        "shares": "1.01",
+        "value": "1,610.83"
+      },
+      {
+        "stock_code": "ORLY",
+        "stock_name": "奥莱利",
+        "ratio": "1.68",
+        "shares": "2.28",
+        "value": "1,464.84"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "161126",
+    "name": "招商中证生物科技LOF",
+    "category": "美股",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "LLY",
+        "stock_name": "礼来",
+        "ratio": "1.70",
+        "shares": "0.04",
+        "value": "271.18"
+      },
+      {
+        "stock_code": "MOH",
+        "stock_name": "Molina Healthcare Inc",
+        "ratio": "1.69",
+        "shares": "0.22",
+        "value": "270.67"
+      },
+      {
+        "stock_code": "MRK",
+        "stock_name": "默沙东",
+        "ratio": "1.69",
+        "shares": "0.36",
+        "value": "269.97"
+      },
+      {
+        "stock_code": "VTRS",
+        "stock_name": "Viatris Inc",
+        "ratio": "1.68",
+        "shares": "3.07",
+        "value": "268.75"
+      },
+      {
+        "stock_code": "ZTS",
+        "stock_name": "硕腾",
+        "ratio": "1.67",
+        "shares": "0.30",
+        "value": "266.81"
+      },
+      {
+        "stock_code": "CNC",
+        "stock_name": "康西哥",
+        "ratio": "1.67",
+        "shares": "0.92",
+        "value": "266.47"
+      },
+      {
+        "stock_code": "REGN",
+        "stock_name": "再生元制药",
+        "ratio": "1.67",
+        "shares": "0.05",
+        "value": "266.38"
+      },
+      {
+        "stock_code": "BMY",
+        "stock_name": "百时美施贵宝",
+        "ratio": "1.65",
+        "shares": "0.70",
+        "value": "263.76"
+      },
+      {
+        "stock_code": "CI",
+        "stock_name": "信诺",
+        "ratio": "1.64",
+        "shares": "0.14",
+        "value": "262.52"
+      },
+      {
+        "stock_code": "BAX",
+        "stock_name": "百特国际",
+        "ratio": "1.64",
+        "shares": "1.95",
+        "value": "262.06"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "161128",
+    "name": "招商中证信息技术LOF",
+    "category": "美股",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "NVDA",
+        "stock_name": "英伟达",
+        "ratio": "19.61",
+        "shares": "57.72",
+        "value": "75,658.50"
+      },
+      {
+        "stock_code": "AAPL",
+        "stock_name": "苹果",
+        "ratio": "17.38",
+        "shares": "35.10",
+        "value": "67,063.37"
+      },
+      {
+        "stock_code": "MSFT",
+        "stock_name": "微软",
+        "ratio": "15.55",
+        "shares": "17.65",
+        "value": "60,007.28"
+      },
+      {
+        "stock_code": "AVGO",
+        "stock_name": "博通",
+        "ratio": "7.07",
+        "shares": "11.22",
+        "value": "27,285.53"
+      },
+      {
+        "stock_code": "PLTR",
+        "stock_name": "Palantir Technologies Inc-A",
+        "ratio": "1.76",
+        "shares": "5.43",
+        "value": "6,778.58"
+      },
+      {
+        "stock_code": "AMD",
+        "stock_name": "超威半导体",
+        "ratio": "1.51",
+        "shares": "3.87",
+        "value": "5,820.65"
+      },
+      {
+        "stock_code": "ORCL",
+        "stock_name": "甲骨文",
+        "ratio": "1.42",
+        "shares": "3.99",
+        "value": "5,472.95"
+      },
+      {
+        "stock_code": "MU",
+        "stock_name": "美光科技",
+        "ratio": "1.39",
+        "shares": "2.67",
+        "value": "5,348.24"
+      },
+      {
+        "stock_code": "CSCO",
+        "stock_name": "思科",
+        "ratio": "1.31",
+        "shares": "9.36",
+        "value": "5,067.72"
+      },
+      {
+        "stock_code": "IBM",
+        "stock_name": "IBM国际商业机器",
+        "ratio": "1.20",
+        "shares": "2.22",
+        "value": "4,622.25"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "161125",
+    "name": "招商中证道琼斯工业LOF",
+    "category": "美股",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "NVDA",
+        "stock_name": "英伟达",
+        "ratio": "6.55",
+        "shares": "8.16",
+        "value": "10,691.60"
+      },
+      {
+        "stock_code": "AAPL",
+        "stock_name": "苹果",
+        "ratio": "5.81",
+        "shares": "4.96",
+        "value": "9,477.05"
+      },
+      {
+        "stock_code": "MSFT",
+        "stock_name": "微软",
+        "ratio": "5.20",
+        "shares": "2.49",
+        "value": "8,479.81"
+      },
+      {
+        "stock_code": "AMZN",
+        "stock_name": "亚马逊",
+        "ratio": "3.25",
+        "shares": "3.27",
+        "value": "5,297.42"
+      },
+      {
+        "stock_code": "GOOGL",
+        "stock_name": "谷歌-A",
+        "ratio": "2.63",
+        "shares": "1.95",
+        "value": "4,296.19"
+      },
+      {
+        "stock_code": "AVGO",
+        "stock_name": "博通",
+        "ratio": "2.36",
+        "shares": "1.59",
+        "value": "3,855.78"
+      },
+      {
+        "stock_code": "GOOG",
+        "stock_name": "谷歌-C",
+        "ratio": "2.11",
+        "shares": "1.56",
+        "value": "3,442.34"
+      },
+      {
+        "stock_code": "META",
+        "stock_name": "Meta Platforms Inc-A",
+        "ratio": "2.08",
+        "shares": "0.73",
+        "value": "3,391.58"
+      },
+      {
+        "stock_code": "TSLA",
+        "stock_name": "特斯拉",
+        "ratio": "1.83",
+        "shares": "0.94",
+        "value": "2,981.13"
+      },
+      {
+        "stock_code": "BRK_B",
+        "stock_name": "伯克希尔哈撒韦-B",
+        "ratio": "1.33",
+        "shares": "0.61",
+        "value": "2,171.75"
+      },
+      {
+        "stock_code": "JPM",
+        "stock_name": "摩根大通",
+        "ratio": "1.27",
+        "shares": "0.91",
+        "value": "2,066.65"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "161130",
+    "name": "招商标普500LOF",
+    "category": "美股",
+    "report_date": "2023-09-30",
+    "holdings": [
+      {
+        "stock_code": "AAPL",
+        "stock_name": "苹果",
+        "ratio": "9.99",
+        "shares": "6.30",
+        "value": "7,749.58"
+      },
+      {
+        "stock_code": "MSFT",
+        "stock_name": "微软",
+        "ratio": "8.76",
+        "shares": "3.00",
+        "value": "6,792.00"
+      },
+      {
+        "stock_code": "AMZN",
+        "stock_name": "亚马逊",
+        "ratio": "4.90",
+        "shares": "4.16",
+        "value": "3,797.27"
+      },
+      {
+        "stock_code": "NVDA",
+        "stock_name": "英伟达",
+        "ratio": "4.01",
+        "shares": "1.00",
+        "value": "3,110.65"
+      },
+      {
+        "stock_code": "META",
+        "stock_name": "Meta Platforms Inc-A",
+        "ratio": "3.49",
+        "shares": "1.26",
+        "value": "2,707.89"
+      },
+      {
+        "stock_code": "TSLA",
+        "stock_name": "特斯拉",
+        "ratio": "2.96",
+        "shares": "1.28",
+        "value": "2,299.38"
+      },
+      {
+        "stock_code": "GOOGL",
+        "stock_name": "谷歌-A",
+        "ratio": "2.90",
+        "shares": "2.39",
+        "value": "2,247.87"
+      },
+      {
+        "stock_code": "GOOG",
+        "stock_name": "谷歌-C",
+        "ratio": "2.85",
+        "shares": "2.34",
+        "value": "2,214.42"
+      },
+      {
+        "stock_code": "AVGO",
+        "stock_name": "博通",
+        "ratio": "2.74",
+        "shares": "0.36",
+        "value": "2,128.34"
+      },
+      {
+        "stock_code": "COST",
+        "stock_name": "开市客",
+        "ratio": "2.01",
+        "shares": "0.38",
+        "value": "1,556.00"
+      },
+      {
+        "stock_code": "PEP",
+        "stock_name": "百事",
+        "ratio": "1.87",
+        "shares": "1.19",
+        "value": "1,448.30"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "501300",
+    "name": "华宝美国医疗LOF",
+    "category": "美股",
+    "report_date": "",
+    "holdings": [],
+    "error": null
+  },
+  {
+    "code": "160140",
+    "name": "南方房地产LOF",
+    "category": "美股",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "WELL",
+        "stock_name": "Welltower Inc",
+        "ratio": "10.81",
+        "shares": "3.52",
+        "value": "4,587.16"
+      },
+      {
+        "stock_code": "PLD",
+        "stock_name": "安博",
+        "ratio": "10.06",
+        "shares": "4.76",
+        "value": "4,269.97"
+      },
+      {
+        "stock_code": "EQIX",
+        "stock_name": "易昆尼克斯",
+        "ratio": "6.38",
+        "shares": "0.50",
+        "value": "2,708.75"
+      },
+      {
+        "stock_code": "SPG",
+        "stock_name": "西蒙地产",
+        "ratio": "5.13",
+        "shares": "1.67",
+        "value": "2,176.09"
+      },
+      {
+        "stock_code": "O",
+        "stock_name": "Realty Income Corp",
+        "ratio": "4.40",
+        "shares": "4.71",
+        "value": "1,867.83"
+      },
+      {
+        "stock_code": "DLR",
+        "stock_name": "数字房地产信托",
+        "ratio": "4.24",
+        "shares": "1.65",
+        "value": "1,798.82"
+      },
+      {
+        "stock_code": "PSA",
+        "stock_name": "大众仓储",
+        "ratio": "3.48",
+        "shares": "0.81",
+        "value": "1,475.59"
+      },
+      {
+        "stock_code": "VTR",
+        "stock_name": "芬塔公司",
+        "ratio": "3.09",
+        "shares": "2.41",
+        "value": "1,309.30"
+      },
+      {
+        "stock_code": "EXR",
+        "stock_name": "Extra Space Storage Inc",
+        "ratio": "2.35",
+        "shares": "1.09",
+        "value": "995.29"
+      },
+      {
+        "stock_code": "AVB",
+        "stock_name": "艾芙隆海湾社区",
+        "ratio": "2.18",
+        "shares": "0.72",
+        "value": "923.81"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "501225",
+    "name": "国泰纳斯达克100LOF",
+    "category": "美股",
+    "report_date": "2023-12-31",
+    "holdings": [
+      {
+        "stock_code": "002371",
+        "stock_name": "北方华创",
+        "ratio": "0.01",
+        "shares": "0.01",
+        "value": "2.46"
+      },
+      {
+        "stock_code": "002049",
+        "stock_name": "紫光国微",
+        "ratio": "0.01",
+        "shares": "0.03",
+        "value": "2.02"
+      },
+      {
+        "stock_code": "300782",
+        "stock_name": "卓胜微",
+        "ratio": "0.01",
+        "shares": "0.01",
+        "value": "1.41"
+      },
+      {
+        "stock_code": "301269",
+        "stock_name": "华大九天",
+        "ratio": "0.00",
+        "shares": "0.01",
+        "value": "1.06"
+      },
+      {
+        "stock_code": "002156",
+        "stock_name": "通富微电",
+        "ratio": "0.00",
+        "shares": "0.04",
+        "value": "0.92"
+      },
+      {
+        "stock_code": "300661",
+        "stock_name": "圣邦股份",
+        "ratio": "0.00",
+        "shares": "0.01",
+        "value": "0.89"
+      },
+      {
+        "stock_code": "002185",
+        "stock_name": "华天科技",
+        "ratio": "0.00",
+        "shares": "0.09",
+        "value": "0.77"
+      },
+      {
+        "stock_code": "300604",
+        "stock_name": "长川科技",
+        "ratio": "0.00",
+        "shares": "0.02",
+        "value": "0.76"
+      },
+      {
+        "stock_code": "300474",
+        "stock_name": "景嘉微",
+        "ratio": "0.00",
+        "shares": "0.01",
+        "value": "0.71"
+      },
+      {
+        "stock_code": "300223",
+        "stock_name": "北京君正",
+        "ratio": "0.00",
+        "shares": "0.01",
+        "value": "0.65"
+      },
+      {
+        "stock_code": "300672",
+        "stock_name": "国科微",
+        "ratio": "0.00",
+        "shares": "0.01",
+        "value": "0.59"
+      },
+      {
+        "stock_code": "300666",
+        "stock_name": "江丰电子",
+        "ratio": "0.00",
+        "shares": "0.01",
+        "value": "0.59"
+      },
+      {
+        "stock_code": "300346",
+        "stock_name": "南大光电",
+        "ratio": "0.00",
+        "shares": "0.02",
+        "value": "0.55"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "160216",
+    "name": "国泰商品LOF",
+    "category": "商品",
+    "report_date": "",
+    "holdings": [],
+    "error": null
+  },
+  {
+    "code": "161116",
+    "name": "国泰黄金LOF",
+    "category": "商品",
+    "report_date": "2020-09-30",
+    "holdings": [
+      {
+        "stock_code": "GOLD",
+        "stock_name": "巴里克黄金",
+        "ratio": "5.26",
+        "shares": "6.41",
+        "value": "1,227.42"
+      },
+      {
+        "stock_code": "NEM",
+        "stock_name": "纽蒙特",
+        "ratio": "2.69",
+        "shares": "1.45",
+        "value": "627.41"
+      },
+      {
+        "stock_code": "02899",
+        "stock_name": "紫金矿业",
+        "ratio": "1.40",
+        "shares": "76.00",
+        "value": "327.24"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "164701",
+    "name": "德邦黄金LOF",
+    "category": "商品",
+    "report_date": "",
+    "holdings": [],
+    "error": null
+  },
+  {
+    "code": "165513",
+    "name": "信诚黄金LOF",
+    "category": "商品",
+    "report_date": "2018-06-30",
+    "holdings": [
+      {
+        "stock_code": "GOLD",
+        "stock_name": "巴里克黄金",
+        "ratio": "1.05",
+        "shares": "0.36",
+        "value": "31.28"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "160719",
+    "name": "嘉实黄金LOF",
+    "category": "商品",
+    "report_date": "",
+    "holdings": [],
+    "error": null
+  },
+  {
+    "code": "161815",
+    "name": "银华抗通胀LOF",
+    "category": "商品",
+    "report_date": "",
+    "holdings": [],
+    "error": null
+  },
+  {
+    "code": "163208",
+    "name": "诺安油气LOF",
+    "category": "商品",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "00916",
+        "stock_name": "龙源电力",
+        "ratio": "3.21",
+        "shares": "167.10",
+        "value": "1,002.16"
+      },
+      {
+        "stock_code": "00836",
+        "stock_name": "华润电力",
+        "ratio": "2.46",
+        "shares": "49.20",
+        "value": "769.23"
+      },
+      {
+        "stock_code": "00135",
+        "stock_name": "昆仑能源",
+        "ratio": "1.97",
+        "shares": "91.80",
+        "value": "616.06"
+      },
+      {
+        "stock_code": "01798",
+        "stock_name": "大唐新能源",
+        "ratio": "1.87",
+        "shares": "314.70",
+        "value": "585.54"
+      },
+      {
+        "stock_code": "06865",
+        "stock_name": "福莱特玻璃",
+        "ratio": "1.43",
+        "shares": "52.50",
+        "value": "447.16"
+      },
+      {
+        "stock_code": "00968",
+        "stock_name": "信义光能",
+        "ratio": "1.16",
+        "shares": "135.00",
+        "value": "362.15"
+      },
+      {
+        "stock_code": "01811",
+        "stock_name": "中广核新能源",
+        "ratio": "1.14",
+        "shares": "157.80",
+        "value": "354.90"
+      },
+      {
+        "stock_code": "01171",
+        "stock_name": "兖矿能源",
+        "ratio": "1.13",
+        "shares": "40.80",
+        "value": "354.51"
+      },
+      {
+        "stock_code": "00857",
+        "stock_name": "中国石油股份",
+        "ratio": "0.90",
+        "shares": "37.00",
+        "value": "280.05"
+      },
+      {
+        "stock_code": "00386",
+        "stock_name": "中国石油化工股份",
+        "ratio": "0.72",
+        "shares": "53.40",
+        "value": "225.24"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "501018",
+    "name": "国泰大宗商品LOF",
+    "category": "商品",
+    "report_date": "",
+    "holdings": [],
+    "error": null
+  },
+  {
+    "code": "161129",
+    "name": "招商标普石油LOF",
+    "category": "商品",
+    "report_date": "",
+    "holdings": [],
+    "error": null
+  },
+  {
+    "code": "160723",
+    "name": "嘉实原油LOF",
+    "category": "商品",
+    "report_date": "",
+    "holdings": [],
+    "error": null
+  },
+  {
+    "code": "162719",
+    "name": "招商中证煤炭LOF",
+    "category": "商品",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "COP",
+        "stock_name": "康菲石油",
+        "ratio": "17.42",
+        "shares": "29.44",
+        "value": "19,372.76"
+      },
+      {
+        "stock_code": "EOG",
+        "stock_name": "EOG能源",
+        "ratio": "8.53",
+        "shares": "12.85",
+        "value": "9,484.88"
+      },
+      {
+        "stock_code": "PSX",
+        "stock_name": "Phillips 66",
+        "ratio": "7.77",
+        "shares": "9.52",
+        "value": "8,636.15"
+      },
+      {
+        "stock_code": "MPC",
+        "stock_name": "马拉松原油",
+        "ratio": "5.86",
+        "shares": "5.70",
+        "value": "6,521.01"
+      },
+      {
+        "stock_code": "DVN",
+        "stock_name": "戴文能源",
+        "ratio": "4.09",
+        "shares": "17.68",
+        "value": "4,551.83"
+      },
+      {
+        "stock_code": "FANG",
+        "stock_name": "Diamondback Energy Inc",
+        "ratio": "4.03",
+        "shares": "4.24",
+        "value": "4,478.25"
+      },
+      {
+        "stock_code": "EXE",
+        "stock_name": "Expand Energy Corp",
+        "ratio": "4.00",
+        "shares": "5.73",
+        "value": "4,445.14"
+      },
+      {
+        "stock_code": "EQT",
+        "stock_name": "EQT能源",
+        "ratio": "3.95",
+        "shares": "11.67",
+        "value": "4,398.29"
+      },
+      {
+        "stock_code": "VLO",
+        "stock_name": "瓦莱罗能源",
+        "ratio": "3.88",
+        "shares": "3.77",
+        "value": "4,317.14"
+      },
+      {
+        "stock_code": "CTRA",
+        "stock_name": "Coterra Energy Inc",
+        "ratio": "3.74",
+        "shares": "22.47",
+        "value": "4,157.22"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "162411",
+    "name": "华宝油气LOF",
+    "category": "商品",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "VG",
+        "stock_name": "Venture Global Inc-A",
+        "ratio": "2.91",
+        "shares": "130.18",
+        "value": "6,240.25"
+      },
+      {
+        "stock_code": "XOM",
+        "stock_name": "埃克森美孚",
+        "ratio": "2.61",
+        "shares": "6.61",
+        "value": "5,591.21"
+      },
+      {
+        "stock_code": "CVX",
+        "stock_name": "雪佛龙",
+        "ratio": "2.61",
+        "shares": "5.22",
+        "value": "5,590.69"
+      },
+      {
+        "stock_code": "GPOR",
+        "stock_name": "格尔夫波特能源",
+        "ratio": "2.60",
+        "shares": "3.82",
+        "value": "5,580.88"
+      },
+      {
+        "stock_code": "OXY",
+        "stock_name": "西方石油",
+        "ratio": "2.55",
+        "shares": "18.93",
+        "value": "5,470.19"
+      },
+      {
+        "stock_code": "CTRA",
+        "stock_name": "Coterra Energy Inc",
+        "ratio": "2.52",
+        "shares": "29.24",
+        "value": "5,410.12"
+      },
+      {
+        "stock_code": "COP",
+        "stock_name": "康菲石油",
+        "ratio": "2.51",
+        "shares": "8.16",
+        "value": "5,370.98"
+      },
+      {
+        "stock_code": "TPL",
+        "stock_name": "Texas Pacific Land Corp",
+        "ratio": "2.50",
+        "shares": "2.66",
+        "value": "5,362.17"
+      },
+      {
+        "stock_code": "DVN",
+        "stock_name": "戴文能源",
+        "ratio": "2.47",
+        "shares": "20.57",
+        "value": "5,296.62"
+      },
+      {
+        "stock_code": "MGY",
+        "stock_name": "Magnolia Oil & Gas Corp-A",
+        "ratio": "2.47",
+        "shares": "34.37",
+        "value": "5,288.26"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "160416",
+    "name": "华安标普全球石油LOF",
+    "category": "商品",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "XOM",
+        "stock_name": "埃克森美孚",
+        "ratio": "9.33",
+        "shares": "5.10",
+        "value": "4,316.35"
+      },
+      {
+        "stock_code": "CVX",
+        "stock_name": "雪佛龙",
+        "ratio": "7.87",
+        "shares": "3.40",
+        "value": "3,642.17"
+      },
+      {
+        "stock_code": "RIGD",
+        "stock_name": "印度瑞来斯实业",
+        "ratio": "5.94",
+        "shares": "5.58",
+        "value": "2,746.63"
+      },
+      {
+        "stock_code": "SHEL",
+        "stock_name": "壳牌",
+        "ratio": "5.56",
+        "shares": "9.96",
+        "value": "2,573.99"
+      },
+      {
+        "stock_code": "TTEFP",
+        "stock_name": "道达尔集团",
+        "ratio": "3.71",
+        "shares": "3.75",
+        "value": "1,715.01"
+      },
+      {
+        "stock_code": "COP",
+        "stock_name": "康菲石油",
+        "ratio": "2.96",
+        "shares": "2.08",
+        "value": "1,369.36"
+      },
+      {
+        "stock_code": "ENBCN",
+        "stock_name": "Enbridge股份有限公司",
+        "ratio": "2.61",
+        "shares": "3.59",
+        "value": "1,206.12"
+      },
+      {
+        "stock_code": "BP.",
+        "stock_name": "英国石油",
+        "ratio": "2.36",
+        "shares": "26.69",
+        "value": "1,089.73"
+      },
+      {
+        "stock_code": "WMB",
+        "stock_name": "威廉姆斯",
+        "ratio": "1.84",
+        "shares": "2.01",
+        "value": "850.92"
+      },
+      {
+        "stock_code": "CNQCN",
+        "stock_name": "加拿大自然资源有限公司",
+        "ratio": "1.78",
+        "shares": "3.45",
+        "value": "821.22"
+      },
+      {
+        "stock_code": "ROSNRM",
+        "stock_name": "俄罗斯石油公司",
+        "ratio": "1.35",
+        "shares": "17.34",
+        "value": "624.51"
+      },
+      {
+        "stock_code": "NVTKRM",
+        "stock_name": "诺瓦泰克公司",
+        "ratio": "1.12",
+        "shares": "4.97",
+        "value": "519.69"
+      },
+      {
+        "stock_code": "TATNRM",
+        "stock_name": "鞑靼石油公司",
+        "ratio": "0.39",
+        "shares": "3.56",
+        "value": "182.27"
+      },
+      {
+        "stock_code": "OGZD",
+        "stock_name": "PJSC GAZPROM LEVEL 1 ADS (REPR 2 ORD)",
+        "ratio": "0.17",
+        "shares": "19.37",
+        "value": "79.09"
+      },
+      {
+        "stock_code": "LKOD",
+        "stock_name": "卢克石油GDR",
+        "ratio": "0.01",
+        "shares": "1.13",
+        "value": "5.74"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "161226",
+    "name": "国投瑞银白银LOF",
+    "category": "商品",
+    "report_date": "",
+    "holdings": [],
+    "error": null
+  },
+  {
+    "code": "501303",
+    "name": "恒生中型股LOF",
+    "category": "港股",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "09926",
+        "stock_name": "康方生物",
+        "ratio": "2.20",
+        "shares": "1.40",
+        "value": "142.89"
+      },
+      {
+        "stock_code": "03993",
+        "stock_name": "洛阳钼业",
+        "ratio": "1.85",
+        "shares": "6.90",
+        "value": "119.91"
+      },
+      {
+        "stock_code": "00020",
+        "stock_name": "商汤-W",
+        "ratio": "1.85",
+        "shares": "60.30",
+        "value": "119.82"
+      },
+      {
+        "stock_code": "00728",
+        "stock_name": "中国电信",
+        "ratio": "1.81",
+        "shares": "24.20",
+        "value": "117.81"
+      },
+      {
+        "stock_code": "01339",
+        "stock_name": "中国人民保险集团",
+        "ratio": "1.50",
+        "shares": "16.00",
+        "value": "97.55"
+      },
+      {
+        "stock_code": "01336",
+        "stock_name": "新华保险",
+        "ratio": "1.36",
+        "shares": "1.80",
+        "value": "88.36"
+      },
+      {
+        "stock_code": "01818",
+        "stock_name": "招金矿业",
+        "ratio": "1.35",
+        "shares": "3.15",
+        "value": "87.46"
+      },
+      {
+        "stock_code": "01347",
+        "stock_name": "华虹半导体",
+        "ratio": "1.34",
+        "shares": "1.30",
+        "value": "87.24"
+      },
+      {
+        "stock_code": "00300",
+        "stock_name": "美的集团",
+        "ratio": "1.34",
+        "shares": "1.13",
+        "value": "86.70"
+      },
+      {
+        "stock_code": "00788",
+        "stock_name": "中国铁塔",
+        "ratio": "1.31",
+        "shares": "8.15",
+        "value": "85.10"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "161124",
+    "name": "易方达香港恒生综合小型股LOF",
+    "category": "港股",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "01787",
+        "stock_name": "山东黄金",
+        "ratio": "3.02",
+        "shares": "5.15",
+        "value": "160.94"
+      },
+      {
+        "stock_code": "01772",
+        "stock_name": "赣锋锂业",
+        "ratio": "2.02",
+        "shares": "2.30",
+        "value": "107.92"
+      },
+      {
+        "stock_code": "00489",
+        "stock_name": "东风集团股份",
+        "ratio": "1.73",
+        "shares": "11.60",
+        "value": "92.41"
+      },
+      {
+        "stock_code": "02400",
+        "stock_name": "心动公司",
+        "ratio": "1.69",
+        "shares": "1.54",
+        "value": "90.20"
+      },
+      {
+        "stock_code": "06855",
+        "stock_name": "亚盛医药-B",
+        "ratio": "1.37",
+        "shares": "1.55",
+        "value": "73.15"
+      },
+      {
+        "stock_code": "09969",
+        "stock_name": "诺诚健华",
+        "ratio": "1.29",
+        "shares": "6.20",
+        "value": "68.88"
+      },
+      {
+        "stock_code": "03618",
+        "stock_name": "重庆农村商业银行",
+        "ratio": "1.22",
+        "shares": "11.70",
+        "value": "64.99"
+      },
+      {
+        "stock_code": "06682",
+        "stock_name": "范式智能",
+        "ratio": "1.18",
+        "shares": "1.58",
+        "value": "62.82"
+      },
+      {
+        "stock_code": "03931",
+        "stock_name": "中创新航",
+        "ratio": "1.17",
+        "shares": "2.76",
+        "value": "62.62"
+      },
+      {
+        "stock_code": "01070",
+        "stock_name": "TCL电子",
+        "ratio": "1.14",
+        "shares": "6.50",
+        "value": "60.94"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "160322",
+    "name": "华夏港股通精选LOF",
+    "category": "港股",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "00005",
+        "stock_name": "汇丰控股",
+        "ratio": "9.99",
+        "shares": "12.96",
+        "value": "1,432.78"
+      },
+      {
+        "stock_code": "00700",
+        "stock_name": "腾讯控股",
+        "ratio": "9.79",
+        "shares": "2.60",
+        "value": "1,405.43"
+      },
+      {
+        "stock_code": "09988",
+        "stock_name": "阿里巴巴-W",
+        "ratio": "9.03",
+        "shares": "10.05",
+        "value": "1,295.76"
+      },
+      {
+        "stock_code": "02899",
+        "stock_name": "紫金矿业",
+        "ratio": "4.89",
+        "shares": "21.80",
+        "value": "702.15"
+      },
+      {
+        "stock_code": "01299",
+        "stock_name": "友邦保险",
+        "ratio": "4.55",
+        "shares": "9.05",
+        "value": "652.97"
+      },
+      {
+        "stock_code": "01398",
+        "stock_name": "工商银行",
+        "ratio": "4.50",
+        "shares": "113.71",
+        "value": "646.03"
+      },
+      {
+        "stock_code": "01810",
+        "stock_name": "小米集团-W",
+        "ratio": "4.00",
+        "shares": "16.17",
+        "value": "573.98"
+      },
+      {
+        "stock_code": "00981",
+        "stock_name": "中芯国际",
+        "ratio": "3.85",
+        "shares": "8.55",
+        "value": "551.77"
+      },
+      {
+        "stock_code": "03690",
+        "stock_name": "美团-W",
+        "ratio": "3.18",
+        "shares": "4.89",
+        "value": "455.95"
+      },
+      {
+        "stock_code": "03988",
+        "stock_name": "中国银行",
+        "ratio": "2.94",
+        "shares": "104.70",
+        "value": "421.77"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "501021",
+    "name": "国泰恒生综合LOF",
+    "category": "港股",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "09987",
+        "stock_name": "百胜中国",
+        "ratio": "3.02",
+        "shares": "3.22",
+        "value": "1,070.36"
+      },
+      {
+        "stock_code": "09868",
+        "stock_name": "小鹏汽车-W",
+        "ratio": "2.64",
+        "shares": "13.05",
+        "value": "935.30"
+      },
+      {
+        "stock_code": "02269",
+        "stock_name": "药明生物",
+        "ratio": "2.54",
+        "shares": "31.70",
+        "value": "900.19"
+      },
+      {
+        "stock_code": "01801",
+        "stock_name": "信达生物",
+        "ratio": "2.46",
+        "shares": "12.65",
+        "value": "871.21"
+      },
+      {
+        "stock_code": "01378",
+        "stock_name": "中国宏桥",
+        "ratio": "2.42",
+        "shares": "29.10",
+        "value": "857.37"
+      },
+      {
+        "stock_code": "09660",
+        "stock_name": "地平线机器人-W",
+        "ratio": "2.11",
+        "shares": "95.76",
+        "value": "749.02"
+      },
+      {
+        "stock_code": "00175",
+        "stock_name": "吉利汽车",
+        "ratio": "2.09",
+        "shares": "45.90",
+        "value": "742.09"
+      },
+      {
+        "stock_code": "02423",
+        "stock_name": "贝壳-W",
+        "ratio": "1.83",
+        "shares": "17.36",
+        "value": "650.72"
+      },
+      {
+        "stock_code": "01109",
+        "stock_name": "华润置地",
+        "ratio": "1.76",
+        "shares": "25.35",
+        "value": "622.79"
+      },
+      {
+        "stock_code": "09926",
+        "stock_name": "康方生物",
+        "ratio": "1.76",
+        "shares": "6.10",
+        "value": "622.59"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "501310",
+    "name": "价值基金LOF",
+    "category": "港股",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "02318",
+        "stock_name": "中国平安",
+        "ratio": "5.77",
+        "shares": "7.90",
+        "value": "464.87"
+      },
+      {
+        "stock_code": "00857",
+        "stock_name": "中国石油股份",
+        "ratio": "5.23",
+        "shares": "55.60",
+        "value": "420.84"
+      },
+      {
+        "stock_code": "01398",
+        "stock_name": "工商银行",
+        "ratio": "4.42",
+        "shares": "62.70",
+        "value": "356.21"
+      },
+      {
+        "stock_code": "03988",
+        "stock_name": "中国银行",
+        "ratio": "4.30",
+        "shares": "85.90",
+        "value": "346.04"
+      },
+      {
+        "stock_code": "00939",
+        "stock_name": "建设银行",
+        "ratio": "4.21",
+        "shares": "48.80",
+        "value": "338.95"
+      },
+      {
+        "stock_code": "601668",
+        "stock_name": "中国建筑",
+        "ratio": "3.73",
+        "shares": "58.59",
+        "value": "300.57"
+      },
+      {
+        "stock_code": "02628",
+        "stock_name": "中国人寿",
+        "ratio": "3.62",
+        "shares": "11.80",
+        "value": "291.82"
+      },
+      {
+        "stock_code": "00267",
+        "stock_name": "中信股份",
+        "ratio": "3.44",
+        "shares": "25.40",
+        "value": "276.68"
+      },
+      {
+        "stock_code": "00386",
+        "stock_name": "中国石油化工股份",
+        "ratio": "3.43",
+        "shares": "65.40",
+        "value": "275.86"
+      },
+      {
+        "stock_code": "03328",
+        "stock_name": "交通银行",
+        "ratio": "2.34",
+        "shares": "32.30",
+        "value": "188.17"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "501302",
+    "name": "恒生指数基金LOF",
+    "category": "港股",
+    "report_date": "2019-09-30",
+    "holdings": [
+      {
+        "stock_code": "00005",
+        "stock_name": "汇丰控股",
+        "ratio": "0.30",
+        "shares": "0.36",
+        "value": "19.61"
+      },
+      {
+        "stock_code": "00700",
+        "stock_name": "腾讯控股",
+        "ratio": "0.27",
+        "shares": "0.06",
+        "value": "17.87"
+      },
+      {
+        "stock_code": "01299",
+        "stock_name": "友邦保险",
+        "ratio": "0.26",
+        "shares": "0.26",
+        "value": "17.37"
+      },
+      {
+        "stock_code": "00939",
+        "stock_name": "建设银行",
+        "ratio": "0.20",
+        "shares": "2.50",
+        "value": "13.49"
+      },
+      {
+        "stock_code": "02318",
+        "stock_name": "中国平安",
+        "ratio": "0.18",
+        "shares": "0.15",
+        "value": "12.18"
+      },
+      {
+        "stock_code": "00941",
+        "stock_name": "中国移动",
+        "ratio": "0.13",
+        "shares": "0.15",
+        "value": "8.77"
+      },
+      {
+        "stock_code": "01398",
+        "stock_name": "工商银行",
+        "ratio": "0.12",
+        "shares": "1.70",
+        "value": "8.05"
+      },
+      {
+        "stock_code": "00388",
+        "stock_name": "香港交易所",
+        "ratio": "0.09",
+        "shares": "0.03",
+        "value": "6.22"
+      },
+      {
+        "stock_code": "03988",
+        "stock_name": "中国银行",
+        "ratio": "0.08",
+        "shares": "1.90",
+        "value": "5.28"
+      },
+      {
+        "stock_code": "00016",
+        "stock_name": "新鸿基地产",
+        "ratio": "0.08",
+        "shares": "0.05",
+        "value": "5.09"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "501307",
+    "name": "银河高股息LOF",
+    "category": "港股",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "01919",
+        "stock_name": "中远海控",
+        "ratio": "3.02",
+        "shares": "15.75",
+        "value": "195.60"
+      },
+      {
+        "stock_code": "03668",
+        "stock_name": "兖煤澳大利亚",
+        "ratio": "1.86",
+        "shares": "5.19",
+        "value": "120.02"
+      },
+      {
+        "stock_code": "00639",
+        "stock_name": "首钢资源",
+        "ratio": "1.50",
+        "shares": "36.60",
+        "value": "96.86"
+      },
+      {
+        "stock_code": "000937",
+        "stock_name": "冀中能源",
+        "ratio": "1.40",
+        "shares": "16.84",
+        "value": "90.60"
+      },
+      {
+        "stock_code": "01308",
+        "stock_name": "海丰国际",
+        "ratio": "1.40",
+        "shares": "3.60",
+        "value": "90.59"
+      },
+      {
+        "stock_code": "00316",
+        "stock_name": "东方海外国际",
+        "ratio": "1.33",
+        "shares": "0.76",
+        "value": "86.08"
+      },
+      {
+        "stock_code": "01088",
+        "stock_name": "中国神华",
+        "ratio": "1.25",
+        "shares": "2.31",
+        "value": "81.07"
+      },
+      {
+        "stock_code": "03360",
+        "stock_name": "远东宏信",
+        "ratio": "1.22",
+        "shares": "10.83",
+        "value": "78.65"
+      },
+      {
+        "stock_code": "600256",
+        "stock_name": "广汇能源",
+        "ratio": "1.18",
+        "shares": "15.55",
+        "value": "76.51"
+      },
+      {
+        "stock_code": "00303",
+        "stock_name": "VTECH HOLDINGS",
+        "ratio": "1.14",
+        "shares": "1.34",
+        "value": "74.00"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "501306",
+    "name": "沪港深高股息LOF-B",
+    "category": "港股",
+    "report_date": "2024-06-30",
+    "holdings": [
+      {
+        "stock_code": "00316",
+        "stock_name": "东方海外国际",
+        "ratio": "6.84",
+        "shares": "24.20",
+        "value": "2,798.40"
+      },
+      {
+        "stock_code": "01308",
+        "stock_name": "海丰国际",
+        "ratio": "4.08",
+        "shares": "86.30",
+        "value": "1,669.80"
+      },
+      {
+        "stock_code": "01088",
+        "stock_name": "中国神华",
+        "ratio": "3.63",
+        "shares": "45.35",
+        "value": "1,487.97"
+      },
+      {
+        "stock_code": "01378",
+        "stock_name": "中国宏桥",
+        "ratio": "3.30",
+        "shares": "125.10",
+        "value": "1,349.56"
+      },
+      {
+        "stock_code": "00883",
+        "stock_name": "中国海洋石油",
+        "ratio": "2.85",
+        "shares": "57.00",
+        "value": "1,165.31"
+      },
+      {
+        "stock_code": "00857",
+        "stock_name": "中国石油股份",
+        "ratio": "2.79",
+        "shares": "158.40",
+        "value": "1,142.09"
+      },
+      {
+        "stock_code": "00386",
+        "stock_name": "中国石油化工股份",
+        "ratio": "2.64",
+        "shares": "233.60",
+        "value": "1,078.80"
+      },
+      {
+        "stock_code": "00998",
+        "stock_name": "中信银行",
+        "ratio": "2.61",
+        "shares": "233.30",
+        "value": "1,066.77"
+      },
+      {
+        "stock_code": "02343",
+        "stock_name": "太平洋航运",
+        "ratio": "2.34",
+        "shares": "426.00",
+        "value": "956.45"
+      },
+      {
+        "stock_code": "03988",
+        "stock_name": "中国银行",
+        "ratio": "2.31",
+        "shares": "269.40",
+        "value": "946.62"
+      },
+      {
+        "stock_code": "03328",
+        "stock_name": "交通银行",
+        "ratio": "2.20",
+        "shares": "161.20",
+        "value": "901.87"
+      },
+      {
+        "stock_code": "00762",
+        "stock_name": "中国联通",
+        "ratio": "2.06",
+        "shares": "129.00",
+        "value": "844.17"
+      },
+      {
+        "stock_code": "00939",
+        "stock_name": "建设银行",
+        "ratio": "1.97",
+        "shares": "152.90",
+        "value": "805.20"
+      },
+      {
+        "stock_code": "01288",
+        "stock_name": "农业银行",
+        "ratio": "1.95",
+        "shares": "261.40",
+        "value": "796.84"
+      },
+      {
+        "stock_code": "00728",
+        "stock_name": "中国电信",
+        "ratio": "1.92",
+        "shares": "186.40",
+        "value": "787.67"
+      },
+      {
+        "stock_code": "01171",
+        "stock_name": "兖矿能源",
+        "ratio": "1.90",
+        "shares": "76.45",
+        "value": "778.68"
+      },
+      {
+        "stock_code": "01398",
+        "stock_name": "工商银行",
+        "ratio": "1.87",
+        "shares": "181.10",
+        "value": "766.93"
+      },
+      {
+        "stock_code": "01988",
+        "stock_name": "民生银行",
+        "ratio": "1.61",
+        "shares": "267.35",
+        "value": "658.81"
+      },
+      {
+        "stock_code": "01339",
+        "stock_name": "中国人民保险集团",
+        "ratio": "1.54",
+        "shares": "257.70",
+        "value": "630.33"
+      },
+      {
+        "stock_code": "00941",
+        "stock_name": "中国移动",
+        "ratio": "1.42",
+        "shares": "8.25",
+        "value": "579.78"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "160717",
+    "name": "嘉实H股LOF",
+    "category": "港股",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "00700",
+        "stock_name": "腾讯控股",
+        "ratio": "7.45",
+        "shares": "3.38",
+        "value": "1,828.68"
+      },
+      {
+        "stock_code": "09988",
+        "stock_name": "阿里巴巴-W",
+        "ratio": "6.98",
+        "shares": "13.27",
+        "value": "1,711.56"
+      },
+      {
+        "stock_code": "00939",
+        "stock_name": "建设银行",
+        "ratio": "6.28",
+        "shares": "222.00",
+        "value": "1,541.96"
+      },
+      {
+        "stock_code": "01810",
+        "stock_name": "小米集团-W",
+        "ratio": "6.08",
+        "shares": "42.06",
+        "value": "1,492.98"
+      },
+      {
+        "stock_code": "03690",
+        "stock_name": "美团-W",
+        "ratio": "4.83",
+        "shares": "12.70",
+        "value": "1,185.13"
+      },
+      {
+        "stock_code": "01398",
+        "stock_name": "工商银行",
+        "ratio": "4.41",
+        "shares": "190.30",
+        "value": "1,081.14"
+      },
+      {
+        "stock_code": "00941",
+        "stock_name": "中国移动",
+        "ratio": "4.32",
+        "shares": "14.35",
+        "value": "1,058.93"
+      },
+      {
+        "stock_code": "02318",
+        "stock_name": "中国平安",
+        "ratio": "3.72",
+        "shares": "15.50",
+        "value": "912.09"
+      },
+      {
+        "stock_code": "01211",
+        "stock_name": "比亚迪股份",
+        "ratio": "2.99",
+        "shares": "8.51",
+        "value": "732.90"
+      },
+      {
+        "stock_code": "00883",
+        "stock_name": "中国海洋石油",
+        "ratio": "2.82",
+        "shares": "36.00",
+        "value": "692.59"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "501311",
+    "name": "嘉实恒生港股通新经济指数LOF",
+    "category": "港股",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "00700",
+        "stock_name": "腾讯控股",
+        "ratio": "14.15",
+        "shares": "109.11",
+        "value": "59,031.65"
+      },
+      {
+        "stock_code": "09988",
+        "stock_name": "阿里巴巴-W",
+        "ratio": "13.25",
+        "shares": "428.80",
+        "value": "55,306.55"
+      },
+      {
+        "stock_code": "01810",
+        "stock_name": "小米集团-W",
+        "ratio": "12.10",
+        "shares": "1,422.44",
+        "value": "50,491.71"
+      },
+      {
+        "stock_code": "03690",
+        "stock_name": "美团-W",
+        "ratio": "9.60",
+        "shares": "429.41",
+        "value": "40,064.89"
+      },
+      {
+        "stock_code": "01211",
+        "stock_name": "比亚迪股份",
+        "ratio": "5.93",
+        "shares": "287.57",
+        "value": "24,766.11"
+      },
+      {
+        "stock_code": "00981",
+        "stock_name": "中芯国际",
+        "ratio": "5.43",
+        "shares": "351.30",
+        "value": "22,671.17"
+      },
+      {
+        "stock_code": "06160",
+        "stock_name": "百济神州",
+        "ratio": "3.67",
+        "shares": "94.60",
+        "value": "15,320.22"
+      },
+      {
+        "stock_code": "01024",
+        "stock_name": "快手-W",
+        "ratio": "3.27",
+        "shares": "236.20",
+        "value": "13,643.13"
+      },
+      {
+        "stock_code": "00669",
+        "stock_name": "创科实业",
+        "ratio": "2.22",
+        "shares": "114.35",
+        "value": "9,285.16"
+      },
+      {
+        "stock_code": "09868",
+        "stock_name": "小鹏汽车-W",
+        "ratio": "2.18",
+        "shares": "126.73",
+        "value": "9,082.80"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "501301",
+    "name": "华宝港股通恒生中国(港)30LOF",
+    "category": "港股",
+    "report_date": "2025-11-11",
+    "holdings": [
+      {
+        "stock_code": "09988",
+        "stock_name": "阿里巴巴-W",
+        "ratio": "16.21",
+        "shares": "25.73",
+        "value": "3,762.26"
+      },
+      {
+        "stock_code": "00700",
+        "stock_name": "腾讯控股",
+        "ratio": "14.73",
+        "shares": "5.77",
+        "value": "3,418.96"
+      },
+      {
+        "stock_code": "00939",
+        "stock_name": "建设银行",
+        "ratio": "7.63",
+        "shares": "233.30",
+        "value": "1,771.59"
+      },
+      {
+        "stock_code": "01810",
+        "stock_name": "小米集团-W",
+        "ratio": "6.61",
+        "shares": "39.16",
+        "value": "1,534.31"
+      },
+      {
+        "stock_code": "03690",
+        "stock_name": "美团-W",
+        "ratio": "4.75",
+        "shares": "11.86",
+        "value": "1,102.59"
+      },
+      {
+        "stock_code": "00941",
+        "stock_name": "中国移动",
+        "ratio": "4.66",
+        "shares": "13.40",
+        "value": "1,081.07"
+      },
+      {
+        "stock_code": "01398",
+        "stock_name": "工商银行",
+        "ratio": "4.53",
+        "shares": "177.80",
+        "value": "1,051.92"
+      },
+      {
+        "stock_code": "02318",
+        "stock_name": "中国平安",
+        "ratio": "3.37",
+        "shares": "14.45",
+        "value": "782.45"
+      },
+      {
+        "stock_code": "01211",
+        "stock_name": "比亚迪股份",
+        "ratio": "3.16",
+        "shares": "7.94",
+        "value": "733.22"
+      },
+      {
+        "stock_code": "00883",
+        "stock_name": "中国海洋石油",
+        "ratio": "2.95",
+        "shares": "33.60",
+        "value": "685.49"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "164705",
+    "name": "汇添富恒生指数LOF",
+    "category": "港股",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "00005",
+        "stock_name": "汇丰控股",
+        "ratio": "8.45",
+        "shares": "34.44",
+        "value": "3,807.48"
+      },
+      {
+        "stock_code": "00700",
+        "stock_name": "腾讯控股",
+        "ratio": "7.43",
+        "shares": "6.19",
+        "value": "3,348.97"
+      },
+      {
+        "stock_code": "09988",
+        "stock_name": "阿里巴巴-W",
+        "ratio": "6.97",
+        "shares": "24.35",
+        "value": "3,140.66"
+      },
+      {
+        "stock_code": "01299",
+        "stock_name": "友邦保险",
+        "ratio": "4.93",
+        "shares": "30.78",
+        "value": "2,221.31"
+      },
+      {
+        "stock_code": "00939",
+        "stock_name": "建设银行",
+        "ratio": "4.34",
+        "shares": "281.80",
+        "value": "1,957.32"
+      },
+      {
+        "stock_code": "01810",
+        "stock_name": "小米集团-W",
+        "ratio": "4.20",
+        "shares": "53.40",
+        "value": "1,895.52"
+      },
+      {
+        "stock_code": "03690",
+        "stock_name": "美团-W",
+        "ratio": "3.34",
+        "shares": "16.12",
+        "value": "1,503.57"
+      },
+      {
+        "stock_code": "01398",
+        "stock_name": "工商银行",
+        "ratio": "3.04",
+        "shares": "241.60",
+        "value": "1,372.59"
+      },
+      {
+        "stock_code": "00941",
+        "stock_name": "中国移动",
+        "ratio": "2.98",
+        "shares": "18.20",
+        "value": "1,343.03"
+      },
+      {
+        "stock_code": "00388",
+        "stock_name": "香港交易所",
+        "ratio": "2.88",
+        "shares": "3.53",
+        "value": "1,299.58"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "161831",
+    "name": "银华恒生H股LOF",
+    "category": "港股",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "00700",
+        "stock_name": "腾讯控股",
+        "ratio": "7.75",
+        "shares": "3.22",
+        "value": "1,742.11"
+      },
+      {
+        "stock_code": "09988",
+        "stock_name": "阿里巴巴-W",
+        "ratio": "7.26",
+        "shares": "12.65",
+        "value": "1,631.59"
+      },
+      {
+        "stock_code": "01810",
+        "stock_name": "小米集团-W",
+        "ratio": "6.33",
+        "shares": "40.12",
+        "value": "1,424.12"
+      },
+      {
+        "stock_code": "03690",
+        "stock_name": "美团-W",
+        "ratio": "5.03",
+        "shares": "12.11",
+        "value": "1,129.89"
+      },
+      {
+        "stock_code": "01398",
+        "stock_name": "工商银行",
+        "ratio": "4.59",
+        "shares": "181.60",
+        "value": "1,031.72"
+      },
+      {
+        "stock_code": "02318",
+        "stock_name": "中国平安",
+        "ratio": "3.86",
+        "shares": "14.75",
+        "value": "867.96"
+      },
+      {
+        "stock_code": "01211",
+        "stock_name": "比亚迪股份",
+        "ratio": "3.11",
+        "shares": "8.11",
+        "value": "698.45"
+      },
+      {
+        "stock_code": "00883",
+        "stock_name": "中国海洋石油",
+        "ratio": "2.94",
+        "shares": "34.30",
+        "value": "659.88"
+      },
+      {
+        "stock_code": "00981",
+        "stock_name": "中芯国际",
+        "ratio": "2.84",
+        "shares": "9.90",
+        "value": "638.90"
+      },
+      {
+        "stock_code": "03988",
+        "stock_name": "中国银行",
+        "ratio": "2.80",
+        "shares": "156.50",
+        "value": "630.44"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "501305",
+    "name": "港股高股息LOF-A",
+    "category": "港股",
+    "report_date": "2024-06-30",
+    "holdings": [
+      {
+        "stock_code": "00316",
+        "stock_name": "东方海外国际",
+        "ratio": "6.84",
+        "shares": "24.20",
+        "value": "2,798.40"
+      },
+      {
+        "stock_code": "01308",
+        "stock_name": "海丰国际",
+        "ratio": "4.08",
+        "shares": "86.30",
+        "value": "1,669.80"
+      },
+      {
+        "stock_code": "01088",
+        "stock_name": "中国神华",
+        "ratio": "3.63",
+        "shares": "45.35",
+        "value": "1,487.97"
+      },
+      {
+        "stock_code": "01378",
+        "stock_name": "中国宏桥",
+        "ratio": "3.30",
+        "shares": "125.10",
+        "value": "1,349.56"
+      },
+      {
+        "stock_code": "00883",
+        "stock_name": "中国海洋石油",
+        "ratio": "2.85",
+        "shares": "57.00",
+        "value": "1,165.31"
+      },
+      {
+        "stock_code": "00857",
+        "stock_name": "中国石油股份",
+        "ratio": "2.79",
+        "shares": "158.40",
+        "value": "1,142.09"
+      },
+      {
+        "stock_code": "00386",
+        "stock_name": "中国石油化工股份",
+        "ratio": "2.64",
+        "shares": "233.60",
+        "value": "1,078.80"
+      },
+      {
+        "stock_code": "00998",
+        "stock_name": "中信银行",
+        "ratio": "2.61",
+        "shares": "233.30",
+        "value": "1,066.77"
+      },
+      {
+        "stock_code": "02343",
+        "stock_name": "太平洋航运",
+        "ratio": "2.34",
+        "shares": "426.00",
+        "value": "956.45"
+      },
+      {
+        "stock_code": "03988",
+        "stock_name": "中国银行",
+        "ratio": "2.31",
+        "shares": "269.40",
+        "value": "946.62"
+      },
+      {
+        "stock_code": "03328",
+        "stock_name": "交通银行",
+        "ratio": "2.20",
+        "shares": "161.20",
+        "value": "901.87"
+      },
+      {
+        "stock_code": "00762",
+        "stock_name": "中国联通",
+        "ratio": "2.06",
+        "shares": "129.00",
+        "value": "844.17"
+      },
+      {
+        "stock_code": "00939",
+        "stock_name": "建设银行",
+        "ratio": "1.97",
+        "shares": "152.90",
+        "value": "805.20"
+      },
+      {
+        "stock_code": "01288",
+        "stock_name": "农业银行",
+        "ratio": "1.95",
+        "shares": "261.40",
+        "value": "796.84"
+      },
+      {
+        "stock_code": "00728",
+        "stock_name": "中国电信",
+        "ratio": "1.92",
+        "shares": "186.40",
+        "value": "787.67"
+      },
+      {
+        "stock_code": "01171",
+        "stock_name": "兖矿能源",
+        "ratio": "1.90",
+        "shares": "76.45",
+        "value": "778.68"
+      },
+      {
+        "stock_code": "01398",
+        "stock_name": "工商银行",
+        "ratio": "1.87",
+        "shares": "181.10",
+        "value": "766.93"
+      },
+      {
+        "stock_code": "01988",
+        "stock_name": "民生银行",
+        "ratio": "1.61",
+        "shares": "267.35",
+        "value": "658.81"
+      },
+      {
+        "stock_code": "01339",
+        "stock_name": "中国人民保险集团",
+        "ratio": "1.54",
+        "shares": "257.70",
+        "value": "630.33"
+      },
+      {
+        "stock_code": "00941",
+        "stock_name": "中国移动",
+        "ratio": "1.42",
+        "shares": "8.25",
+        "value": "579.78"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "160924",
+    "name": "大成恒生指数LOF",
+    "category": "港股",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "00005",
+        "stock_name": "汇丰控股",
+        "ratio": "7.87",
+        "shares": "13.16",
+        "value": "1,454.89"
+      },
+      {
+        "stock_code": "00700",
+        "stock_name": "腾讯控股",
+        "ratio": "6.90",
+        "shares": "2.36",
+        "value": "1,276.83"
+      },
+      {
+        "stock_code": "09988",
+        "stock_name": "阿里巴巴-W",
+        "ratio": "6.48",
+        "shares": "9.29",
+        "value": "1,198.22"
+      },
+      {
+        "stock_code": "00939",
+        "stock_name": "建设银行",
+        "ratio": "5.15",
+        "shares": "137.10",
+        "value": "952.26"
+      },
+      {
+        "stock_code": "01299",
+        "stock_name": "友邦保险",
+        "ratio": "4.58",
+        "shares": "11.74",
+        "value": "847.24"
+      },
+      {
+        "stock_code": "01810",
+        "stock_name": "小米集团-W",
+        "ratio": "3.93",
+        "shares": "20.46",
+        "value": "726.26"
+      },
+      {
+        "stock_code": "03690",
+        "stock_name": "美团-W",
+        "ratio": "3.13",
+        "shares": "6.20",
+        "value": "578.76"
+      },
+      {
+        "stock_code": "00941",
+        "stock_name": "中国移动",
+        "ratio": "2.79",
+        "shares": "7.00",
+        "value": "516.55"
+      },
+      {
+        "stock_code": "00388",
+        "stock_name": "香港交易所",
+        "ratio": "2.71",
+        "shares": "1.36",
+        "value": "500.69"
+      },
+      {
+        "stock_code": "03988",
+        "stock_name": "中国银行",
+        "ratio": "2.52",
+        "shares": "115.80",
+        "value": "466.48"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "501025",
+    "name": "香港银行LOF",
+    "category": "港股",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "00005",
+        "stock_name": "汇丰控股",
+        "ratio": "15.27",
+        "shares": "963.60",
+        "value": "106,529.96"
+      },
+      {
+        "stock_code": "00939",
+        "stock_name": "建设银行",
+        "ratio": "13.66",
+        "shares": "13,722.80",
+        "value": "95,315.30"
+      },
+      {
+        "stock_code": "01398",
+        "stock_name": "工商银行",
+        "ratio": "11.57",
+        "shares": "14,213.30",
+        "value": "80,749.36"
+      },
+      {
+        "stock_code": "02888",
+        "stock_name": "渣打集团",
+        "ratio": "9.09",
+        "shares": "372.10",
+        "value": "63,452.59"
+      },
+      {
+        "stock_code": "03968",
+        "stock_name": "招商银行",
+        "ratio": "8.01",
+        "shares": "1,171.35",
+        "value": "55,861.70"
+      },
+      {
+        "stock_code": "03988",
+        "stock_name": "中国银行",
+        "ratio": "7.91",
+        "shares": "13,692.50",
+        "value": "55,158.34"
+      },
+      {
+        "stock_code": "01288",
+        "stock_name": "农业银行",
+        "ratio": "6.39",
+        "shares": "8,536.40",
+        "value": "44,565.23"
+      },
+      {
+        "stock_code": "02388",
+        "stock_name": "中银香港",
+        "ratio": "5.99",
+        "shares": "1,174.65",
+        "value": "41,823.33"
+      },
+      {
+        "stock_code": "00011",
+        "stock_name": "恒生银行",
+        "ratio": "4.13",
+        "shares": "208.05",
+        "value": "28,844.94"
+      },
+      {
+        "stock_code": "03328",
+        "stock_name": "交通银行",
+        "ratio": "4.06",
+        "shares": "4,861.70",
+        "value": "28,323.14"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "161217",
+    "name": "国投上游资源LOF",
+    "category": "A股行业",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "601899",
+        "stock_name": "紫金矿业",
+        "ratio": "17.76",
+        "shares": "175.67",
+        "value": "6,055.34"
+      },
+      {
+        "stock_code": "603993",
+        "stock_name": "洛阳钼业",
+        "ratio": "5.28",
+        "shares": "89.96",
+        "value": "1,799.20"
+      },
+      {
+        "stock_code": "601088",
+        "stock_name": "中国神华",
+        "ratio": "4.18",
+        "shares": "35.16",
+        "value": "1,423.82"
+      },
+      {
+        "stock_code": "600111",
+        "stock_name": "北方稀土",
+        "ratio": "3.74",
+        "shares": "27.63",
+        "value": "1,274.30"
+      },
+      {
+        "stock_code": "601857",
+        "stock_name": "中国石油",
+        "ratio": "3.69",
+        "shares": "120.91",
+        "value": "1,258.67"
+      },
+      {
+        "stock_code": "603799",
+        "stock_name": "华友钴业",
+        "ratio": "3.31",
+        "shares": "16.52",
+        "value": "1,127.93"
+      },
+      {
+        "stock_code": "601600",
+        "stock_name": "中国铝业",
+        "ratio": "3.05",
+        "shares": "84.98",
+        "value": "1,038.46"
+      },
+      {
+        "stock_code": "600028",
+        "stock_name": "中国石化",
+        "ratio": "2.82",
+        "shares": "155.77",
+        "value": "962.67"
+      },
+      {
+        "stock_code": "601225",
+        "stock_name": "陕西煤业",
+        "ratio": "2.61",
+        "shares": "41.69",
+        "value": "888.87"
+      },
+      {
+        "stock_code": "002460",
+        "stock_name": "赣锋锂业",
+        "ratio": "2.27",
+        "shares": "12.30",
+        "value": "773.42"
+      },
+      {
+        "stock_code": "601026",
+        "stock_name": "道生天合",
+        "ratio": "0.00",
+        "shares": "0.04",
+        "value": "0.60"
+      },
+      {
+        "stock_code": "603175",
+        "stock_name": "超颖电子",
+        "ratio": "0.00",
+        "shares": "0.01",
+        "value": "0.57"
+      },
+      {
+        "stock_code": "603262",
+        "stock_name": "技源集团",
+        "ratio": "0.00",
+        "shares": "0.02",
+        "value": "0.44"
+      },
+      {
+        "stock_code": "603406",
+        "stock_name": "天富龙",
+        "ratio": "0.00",
+        "shares": "0.01",
+        "value": "0.37"
+      },
+      {
+        "stock_code": "603370",
+        "stock_name": "华新精科",
+        "ratio": "0.00",
+        "shares": "0.01",
+        "value": "0.36"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "161715",
+    "name": "招商大宗商品LOF",
+    "category": "A股行业",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "300395",
+        "stock_name": "菲利华",
+        "ratio": "1.11",
+        "shares": "3.41",
+        "value": "342.02"
+      },
+      {
+        "stock_code": "600362",
+        "stock_name": "江西铜业",
+        "ratio": "1.10",
+        "shares": "6.22",
+        "value": "341.42"
+      },
+      {
+        "stock_code": "002493",
+        "stock_name": "荣盛石化",
+        "ratio": "1.09",
+        "shares": "28.88",
+        "value": "338.18"
+      },
+      {
+        "stock_code": "000408",
+        "stock_name": "藏格矿业",
+        "ratio": "1.09",
+        "shares": "4.00",
+        "value": "337.60"
+      },
+      {
+        "stock_code": "002738",
+        "stock_name": "中矿资源",
+        "ratio": "1.07",
+        "shares": "4.21",
+        "value": "330.82"
+      },
+      {
+        "stock_code": "600346",
+        "stock_name": "恒力石化",
+        "ratio": "1.07",
+        "shares": "14.66",
+        "value": "330.29"
+      },
+      {
+        "stock_code": "002756",
+        "stock_name": "永兴材料",
+        "ratio": "1.06",
+        "shares": "6.03",
+        "value": "326.92"
+      },
+      {
+        "stock_code": "002318",
+        "stock_name": "久立特材",
+        "ratio": "1.05",
+        "shares": "11.22",
+        "value": "324.82"
+      },
+      {
+        "stock_code": "000807",
+        "stock_name": "云铝股份",
+        "ratio": "1.04",
+        "shares": "9.83",
+        "value": "322.82"
+      },
+      {
+        "stock_code": "000301",
+        "stock_name": "东方盛虹",
+        "ratio": "1.04",
+        "shares": "29.47",
+        "value": "320.93"
+      },
+      {
+        "stock_code": "600930",
+        "stock_name": "华电新能",
+        "ratio": "0.05",
+        "shares": "2.71",
+        "value": "16.93"
+      },
+      {
+        "stock_code": "001280",
+        "stock_name": "中国铀业",
+        "ratio": "0.01",
+        "shares": "0.08",
+        "value": "3.82"
+      },
+      {
+        "stock_code": "301656",
+        "stock_name": "联合动力",
+        "ratio": "0.01",
+        "shares": "0.12",
+        "value": "3.08"
+      },
+      {
+        "stock_code": "301563",
+        "stock_name": "云汉芯城",
+        "ratio": "0.00",
+        "shares": "0.01",
+        "value": "1.47"
+      },
+      {
+        "stock_code": "301584",
+        "stock_name": "建发致新",
+        "ratio": "0.00",
+        "shares": "0.04",
+        "value": "1.20"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "161725",
+    "name": "招商中证煤炭等权LOF",
+    "category": "A股行业",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "600519",
+        "stock_name": "贵州茅台",
+        "ratio": "15.38",
+        "shares": "482.29",
+        "value": "664,201.11"
+      },
+      {
+        "stock_code": "600809",
+        "stock_name": "山西汾酒",
+        "ratio": "15.11",
+        "shares": "3,801.47",
+        "value": "652,712.47"
+      },
+      {
+        "stock_code": "000858",
+        "stock_name": "五粮液",
+        "ratio": "14.65",
+        "shares": "5,974.61",
+        "value": "632,950.60"
+      },
+      {
+        "stock_code": "000568",
+        "stock_name": "泸州老窖",
+        "ratio": "14.53",
+        "shares": "5,399.78",
+        "value": "627,562.14"
+      },
+      {
+        "stock_code": "002304",
+        "stock_name": "洋河股份",
+        "ratio": "8.34",
+        "shares": "5,930.32",
+        "value": "360,207.84"
+      },
+      {
+        "stock_code": "000596",
+        "stock_name": "古井贡酒",
+        "ratio": "5.14",
+        "shares": "1,675.45",
+        "value": "222,164.23"
+      },
+      {
+        "stock_code": "603369",
+        "stock_name": "今世缘",
+        "ratio": "4.97",
+        "shares": "6,171.43",
+        "value": "214,642.27"
+      },
+      {
+        "stock_code": "603198",
+        "stock_name": "迎驾贡酒",
+        "ratio": "2.47",
+        "shares": "2,692.85",
+        "value": "106,528.99"
+      },
+      {
+        "stock_code": "600702",
+        "stock_name": "舍得酒业",
+        "ratio": "2.14",
+        "shares": "1,645.38",
+        "value": "92,272.66"
+      },
+      {
+        "stock_code": "603589",
+        "stock_name": "口子窖",
+        "ratio": "2.06",
+        "shares": "2,967.96",
+        "value": "89,187.18"
+      },
+      {
+        "stock_code": "002646",
+        "stock_name": "天佑德酒",
+        "ratio": "0.14",
+        "shares": "705.54",
+        "value": "6,102.91"
+      },
+      {
+        "stock_code": "688981",
+        "stock_name": "中芯国际",
+        "ratio": "0.07",
+        "shares": "23.22",
+        "value": "2,851.81"
+      },
+      {
+        "stock_code": "601658",
+        "stock_name": "邮储银行",
+        "ratio": "0.01",
+        "shares": "79.66",
+        "value": "434.14"
+      },
+      {
+        "stock_code": "600930",
+        "stock_name": "华电新能",
+        "ratio": "0.00",
+        "shares": "25.46",
+        "value": "158.84"
+      },
+      {
+        "stock_code": "601077",
+        "stock_name": "渝农商行",
+        "ratio": "0.00",
+        "shares": "20.48",
+        "value": "132.29"
+      }
+    ],
+    "error": null
+  },
+  {
+    "code": "161032",
+    "name": "富国中证煤炭LOF",
+    "category": "A股行业",
+    "report_date": "2025-12-31",
+    "holdings": [
+      {
+        "stock_code": "601088",
+        "stock_name": "中国神华",
+        "ratio": "9.71",
+        "shares": "514.53",
+        "value": "20,838.65"
+      },
+      {
+        "stock_code": "601225",
+        "stock_name": "陕西煤业",
+        "ratio": "9.38",
+        "shares": "944.15",
+        "value": "20,129.29"
+      },
+      {
+        "stock_code": "600188",
+        "stock_name": "兖矿能源",
+        "ratio": "7.67",
+        "shares": "1,252.63",
+        "value": "16,472.05"
+      },
+      {
+        "stock_code": "601898",
+        "stock_name": "中煤能源",
+        "ratio": "7.43",
+        "shares": "1,281.95",
+        "value": "15,947.49"
+      },
+      {
+        "stock_code": "000983",
+        "stock_name": "山西焦煤",
+        "ratio": "5.94",
+        "shares": "1,987.83",
+        "value": "12,761.89"
+      },
+      {
+        "stock_code": "600348",
+        "stock_name": "华阳股份",
+        "ratio": "4.86",
+        "shares": "1,263.14",
+        "value": "10,433.56"
+      },
+      {
+        "stock_code": "000723",
+        "stock_name": "美锦能源",
+        "ratio": "4.73",
+        "shares": "2,158.92",
+        "value": "10,146.92"
+      },
+      {
+        "stock_code": "601699",
+        "stock_name": "潞安环能",
+        "ratio": "4.61",
+        "shares": "838.07",
+        "value": "9,889.20"
+      },
+      {
+        "stock_code": "600985",
+        "stock_name": "淮北矿业",
+        "ratio": "3.90",
+        "shares": "754.45",
+        "value": "8,381.89"
+      },
+      {
+        "stock_code": "601666",
+        "stock_name": "平煤股份",
+        "ratio": "3.80",
+        "shares": "1,037.52",
+        "value": "8,165.25"
+      },
+      {
+        "stock_code": "301638",
+        "stock_name": "南网数字",
+        "ratio": "0.00",
+        "shares": "0.23",
+        "value": "3.30"
+      },
+      {
+        "stock_code": "301632",
+        "stock_name": "广东建科",
+        "ratio": "0.00",
+        "shares": "0.07",
+        "value": "1.55"
+      },
+      {
+        "stock_code": "301563",
+        "stock_name": "云汉芯城",
+        "ratio": "0.00",
+        "shares": "0.01",
+        "value": "1.47"
+      },
+      {
+        "stock_code": "301491",
+        "stock_name": "汉桑科技",
+        "ratio": "0.00",
+        "shares": "0.02",
+        "value": "1.35"
+      },
+      {
+        "stock_code": "301584",
+        "stock_name": "建发致新",
+        "ratio": "0.00",
+        "shares": "0.04",
+        "value": "1.20"
+      }
+    ],
+    "error": null
+  }
+]
