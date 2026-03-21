@@ -729,12 +729,51 @@ async function handleRequest(request) {
 //  Mode B: Scheduled Cron
 // ══════════════════════════════════════════════════════
 
-async function handleScheduled(kv) {
+async function sendDailySummary(funds) {
+  if (!CONFIG.WECHAT_WEBHOOK) return;
+
+  const alerts = funds
+    .filter(f => f.premium != null && Math.abs(f.premium) >= CONFIG.ALERT_THRESHOLD)
+    .sort((a, b) => Math.abs(b.premium) - Math.abs(a.premium));
+
+  let content;
+  if (alerts.length === 0) {
+    content = `**LOF套利雷达 09:15 开盘播报** 📊\n当前无基金超过阈值 ${CONFIG.ALERT_THRESHOLD}%，市场平静。`;
+  } else {
+    const lines = alerts.map(f => {
+      const sign = f.premium > 0 ? '🔴 溢价' : '🟢 折价';
+      const prem = (f.premium >= 0 ? '+' : '') + f.premium.toFixed(2) + '%';
+      return `${sign} **${f.name}**（${f.code}）：${prem}`;
+    });
+    content = [
+      `**LOF套利雷达 09:15 开盘播报** 📊`,
+      `共 ${alerts.length} 只基金超过阈值 ${CONFIG.ALERT_THRESHOLD}%：`,
+      ...lines,
+    ].join('\n');
+  }
+
   try {
-    console.log('[Cron] 开始定时刷新...');
+    await fetch(CONFIG.WECHAT_WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ msgtype: 'markdown', markdown: { content } }),
+    });
+  } catch (e) {
+    console.error('09:15 汇总推送失败:', e.message);
+  }
+}
+
+async function handleScheduled(cron, kv) {
+  try {
     const data = await fetchAllData();
-    await checkAndAlert(data.funds, kv);
-    console.log(`[Cron] 完成，基金${data.funds.length}只，报警检查完毕`);
+    if (cron === '15 1 * * 1-5') {
+      console.log('[Cron 09:15] 发送开盘汇总...');
+      await sendDailySummary(data.funds);
+    } else {
+      console.log('[Cron 每分钟] 检查跃迁报警...');
+      await checkAndAlert(data.funds, kv);
+    }
+    console.log(`[Cron] 完成，基金${data.funds.length}只`);
   } catch (e) {
     console.error('[Cron] 定时任务失败:', e);
   }
@@ -752,6 +791,6 @@ export default {
 
   async scheduled(event, env, ctx) {
     if (env.WECHAT_WEBHOOK) CONFIG.WECHAT_WEBHOOK = env.WECHAT_WEBHOOK;
-    ctx.waitUntil(handleScheduled(env.LOF_STATE));
+    ctx.waitUntil(handleScheduled(event.cron, env.LOF_STATE));
   },
 };

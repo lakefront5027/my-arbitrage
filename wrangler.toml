@@ -7,7 +7,7 @@ binding = "LOF_STATE"
 id = "125e6bbea0514c6c9552186a0daeb085"
 
 [triggers]
-crons = ["* * * * *"]
+crons = ["* * * * *", "15 1 * * 1-5"]
 
 [observability]
 enabled = true
