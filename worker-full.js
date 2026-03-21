@@ -135,6 +135,7 @@ const EM_CODES = {
   'hkHSSI':    '124.HSSI',
   'hkHSMI':    '124.HSMI',
   'hkHSCI':    '124.HSCI',
+  'sinaAG0':   '113.AG0',   // 上期所白银主力合约（东财 secid）
 };
 
 // ── Header Ticker 指数 ────────────────────────────────
@@ -156,8 +157,8 @@ function getAllTqCodes() {
     else set.add(b);
   });
   TICKER_IDX.forEach(i => set.add(i.tq));
-  // 新浪处理的代码，不加入腾讯请求
-  ['sinaAG0','sz399961','sz399979','sz399987','sz399998'].forEach(c => set.delete(c));
+  // 新浪/东财专属，不走腾讯
+  ['sinaAG0','csi930917','csi930914','csi930792','sh000985','hkHSSI','hkHSMI','hkHSCI'].forEach(c => set.delete(c));
   return [...set];
 }
 
@@ -223,9 +224,8 @@ async function fetchTencent() {
       else allIdxCodes.add(b);
     });
     TICKER_IDX.forEach(i => allIdxCodes.add(i.tq));
-    // 排除新浪/东财/CSI专属
-    ['sinaAG0','sz399961','sz399979','sz399987','sz399998',
-     'csi930917','csi930914','csi930792','sh000985',
+    // 排除新浪/东财/CSI专属（sz399961等A股指数腾讯可访问，保留）
+    ['sinaAG0','csi930917','csi930914','csi930792','sh000985',
      'hkHSSI','hkHSMI','hkHSCI'].forEach(c => allIdxCodes.delete(c));
 
     for (const tqCode of allIdxCodes) {
