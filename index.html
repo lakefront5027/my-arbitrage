@@ -402,39 +402,7 @@ function fetchEastmoney() {
   });
 }
 
-// ── T-1净值：fundgz JSONP（与原始 lof_arb_monitor_v33 一致）─
-// fundgz 使用固定回调 jsonpgz()，用串行队列处理并发
-const _fgzQ = [];
-window.jsonpgz = d => { if (_fgzQ.length) _fgzQ.shift()(d); };
-
-function fetchNavFromFundgz(code) {
-  return new Promise(resolve => {
-    const handler = d => {
-      clearTimeout(timer);
-      const v = parseFloat(d?.dwjz);
-      const g = parseFloat(d?.gsz);
-      if (v > 0 && v <= 50) resolve({ nav: v, date: d?.jzrq || '' });
-      else if (g > 0)       resolve({ nav: g, date: (d?.gztime || '').slice(0, 10) });
-      else                  resolve(null);
-    };
-    const timer = setTimeout(() => {
-      const i = _fgzQ.indexOf(handler); if (i > -1) _fgzQ.splice(i, 1);
-      resolve(null);
-    }, 6000);
-    _fgzQ.push(handler);
-    const s = document.createElement('script');
-    s.onerror = () => {
-      clearTimeout(timer);
-      const i = _fgzQ.indexOf(handler); if (i > -1) _fgzQ.splice(i, 1);
-      resolve(null);
-    };
-    s.src = `https://fundgz.1234567.com.cn/js/${code}.js?rt=${Date.now()}`;
-    document.head.appendChild(s);
-    s.onload = () => s.remove();
-  });
-}
-
-// NAV 日级缓存：每天只抓一次，不阻塞15s价格刷新
+// NAV 日级缓存（由 fund_daily.json 填充，每天只加载一次）
 let _navCache = null;
 let _navCacheDate = '';
 
@@ -442,53 +410,24 @@ async function loadNavsBackground() {
   const today = new Date().toLocaleDateString('zh-CN');
   if (_navCache && _navCacheDate === today) return;
 
-  const map = {};
-
-  // Step 1: fund_daily.json — GitHub Action 每日更新，零延迟读静态文件
+  // 唯一来源：fund_daily.json（由 GitHub Action 每日 00:05 北京时间写入）
   const daily = await loadFundDaily();
-  if (daily) {
-    for (const [code, fund] of Object.entries(daily)) {
-      if (fund.nav && fund.nav > 0) {
-        map[code] = { nav: fund.nav, date: fund.nav_date || '', src: 'daily' };
-      }
-    }
-    console.log(`[NAV] fund_daily 提供 ${Object.keys(map).length} 只`);
+  if (!daily) {
+    console.warn('[NAV] fund_daily.json 加载失败，NAV 列将显示为 —');
+    return;
   }
 
-  // Step 2: 缺口用 Worker /api/nav（服务端抓取，可设 Referer）
-  const missing1 = FUNDS.filter(f => !map[f.code]);
-  if (missing1.length > 0) {
-    try {
-      const ctrl = new AbortController();
-      const t = setTimeout(() => ctrl.abort(), 10000);
-      const resp = await fetch(WORKER_URL + '/api/nav', { signal: ctrl.signal });
-      clearTimeout(t);
-      if (resp.ok) {
-        const wMap = await resp.json();
-        for (const [code, info] of Object.entries(wMap)) {
-          if (!map[code]) map[code] = info;
-        }
-        console.log(`[NAV] Worker /api/nav 补充后共 ${Object.keys(map).length} 只`);
-      }
-    } catch (e) {
-      console.warn('[NAV] Worker /api/nav 失败:', e.message);
-    }
-  }
-
-  // Step 3: 仍缺口用浏览器 fundgz JSONP 串行补（最后兜底）
-  const missing2 = FUNDS.filter(f => !map[f.code]);
-  if (missing2.length > 0) {
-    console.log(`[NAV] fundgz JSONP 补充 ${missing2.length} 只...`);
-    for (const f of missing2) {
-      const r = await fetchNavFromFundgz(f.code);
-      if (r) map[f.code] = r;
+  const map = {};
+  for (const [code, fund] of Object.entries(daily)) {
+    if (!code.startsWith('_') && fund.nav > 0) {
+      map[code] = { nav: fund.nav, date: fund.nav_date || '' };
     }
   }
 
   _navCache = map;
   _navCacheDate = today;
   renderAll();
-  console.log(`[NAV] 载入完成，${Object.keys(map).length}/${FUNDS.length} 只`);
+  console.log(`[NAV] 载入完成 ${Object.keys(map).length}/${FUNDS.length} 只  (from fund_daily.json)`);
 }
 
 function calcBenchChg(code, idxChg) {
@@ -665,20 +604,8 @@ async function doRefresh() {
     }
 
     if (snap) {
-      // 🥇 Worker 数据 + 缓存 NAV 合并
-      funds = snap.funds.map(f => {
-        const navInfo = navMap[f.code];
-        if (!navInfo) return f;
-        const officialNav = navInfo.nav;
-        const navDate = navInfo.date;
-        const base = officialNav || f.prevClose;
-        let nav = f.nav, premium = f.premium;
-        if (base > 0 && f.price != null) {
-          nav = base * (1 + (f.benchChg || 0) / 100);
-          premium = (f.price - nav) / nav * 100;
-        }
-        return { ...f, officialNav, navDate, nav, premium };
-      });
+      // 🥇 Worker 快照：NAV 已由 Worker 从 fund_daily.json 计算完毕，直接使用
+      funds = snap.funds;
       indices = snap.indices || {};
       lastTs = snap.ts || Date.now();
     } else {

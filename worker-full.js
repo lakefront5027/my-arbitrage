@@ -140,15 +140,7 @@ const BENCH = {
   '161032': 'sz399998',
 };
 
-// ── 降级基金集合（fundgz无实时估值，改用pingzhongdata+lsjz） ──
-const NO_GSZ_FUNDS = new Set([
-  '164906','164824','501300','501225','160216','164701','160719','163208','501018','161129','160723','501021','501310','161226',
-  '161125','161126','161127','161128','161130','162415','160140','160644',
-  '160717','160924','164705','161831','160322','161124',
-  '501303','501301','501302','501305','501306','501307','501311','501025',
-  '161815','165513','161116',
-  '501312','162719','162411','160416',
-]);
+// NO_GSZ_FUNDS 已移除 — NAV 统一由 GitHub Action 写入 fund_daily.json
 
 // ── 东方财富代码映射（腾讯不支持的指数） ────────────
 const EM_CODES = {
@@ -348,156 +340,7 @@ async function fetchSina() {
   }
 }
 
-/**
- * 净值获取：pingzhongdata.js（东方财富JS文件）
- * 返回 { nav, date } 或 null
- */
-async function fetchNavFromPingzhong(code) {
-  try {
-    const url = `https://fund.eastmoney.com/pingzhongdata/${code}.js`;
-    const resp = await fetch(url, {
-      headers: { 'Referer': 'https://fund.eastmoney.com' }
-    });
-    if (!resp.ok) return null;
-    const text = await resp.text();
-
-    // 解析 Data_netWorthTrend
-    let nav = null, date = '';
-    const m1 = text.match(/var\s+Data_netWorthTrend\s*=\s*(\[[\s\S]*?\]);/);
-    if (m1) {
-      try {
-        const arr = JSON.parse(m1[1]);
-        if (arr && arr.length > 0) {
-          const last = arr[arr.length - 1];
-          const v = parseFloat(last.y != null ? last.y : last[1]);
-          if (v > 0 && v <= 50) {
-            nav = v;
-            const ts = last.x != null ? last.x : last[0];
-            date = ts ? toBeijingDate(ts) : '';
-          }
-        }
-      } catch (_) {}
-    }
-
-    // 降级读 Data_ACWorthTrend
-    if (!nav) {
-      const m2 = text.match(/var\s+Data_ACWorthTrend\s*=\s*(\[[\s\S]*?\]);/);
-      if (m2) {
-        try {
-          const arr2 = JSON.parse(m2[1]);
-          if (arr2 && arr2.length > 0) {
-            const last2 = arr2[arr2.length - 1];
-            const v2 = parseFloat(Array.isArray(last2) ? last2[1] : last2.y);
-            const ts2 = Array.isArray(last2) ? last2[0] : last2.x;
-            date = ts2 ? toBeijingDate(ts2) : '';
-            if (v2 > 0) nav = v2;
-          }
-        } catch (_) {}
-      }
-    }
-
-    return nav ? { nav, date } : null;
-  } catch (e) {
-    console.error(`pingzhongdata ${code} 失败:`, e.message);
-    return null;
-  }
-}
-
-/**
- * 净值获取：lsjz API（历史净值，JSON）
- * 返回 { nav, date } 或 null
- */
-async function fetchNavFromLsjz(code) {
-  try {
-    const url = `https://api.fund.eastmoney.com/f10/lsjz?fundCode=${code}&pageIndex=1&pageSize=1&callback=cb`;
-    const resp = await fetch(url, {
-      headers: { 'Referer': 'https://fund.eastmoney.com' }
-    });
-    if (!resp.ok) return null;
-    const text = await resp.text();
-    // 剥离 JSONP wrapper
-    const m = text.match(/cb\s*\((.+)\)\s*;?\s*$/s);
-    if (!m) return null;
-    const d = JSON.parse(m[1]);
-    const item = d && d.Data && d.Data.LSJZList && d.Data.LSJZList[0];
-    if (item && item.DWJZ) {
-      return { nav: parseFloat(item.DWJZ), date: item.FSRQ || '' };
-    }
-    return null;
-  } catch (e) {
-    console.error(`lsjz ${code} 失败:`, e.message);
-    return null;
-  }
-}
-
-/**
- * 净值获取：fundgz（天天基金估值接口），用于非NO_GSZ_FUNDS
- * 返回 { nav, date } 或 null
- */
-async function fetchNavFromFundgz(code) {
-  try {
-    const url = `https://fundgz.1234567.com.cn/js/${code}.js?rt=${Date.now()}`;
-    const resp = await fetch(url, {
-      headers: { 'Referer': 'https://fund.eastmoney.com' }
-    });
-    if (!resp.ok) return null;
-    const text = await resp.text();
-    // JSONP: jsonpgz({...});
-    const m = text.match(/jsonpgz\s*\((.+)\)\s*;?\s*$/s);
-    if (!m) return null;
-    const d = JSON.parse(m[1]);
-    const dwjz = parseFloat(d.dwjz);
-    if (dwjz > 0) {
-      return { nav: dwjz, date: d.jzrq || '' };
-    }
-    const gsz = parseFloat(d.gsz);
-    if (gsz > 0) {
-      return { nav: gsz, date: (d.gztime || '').slice(0, 10) };
-    }
-    return null;
-  } catch (e) {
-    console.error(`fundgz ${code} 失败:`, e.message);
-    return null;
-  }
-}
-
-/**
- * 并行拉取两个接口，取日期更新的净值
- */
-async function fetchNavFromEM(code) {
-  const [r1, r2] = await Promise.all([fetchNavFromPingzhong(code), fetchNavFromLsjz(code)]);
-  if (!r1 && !r2) return null;
-  if (!r1) return r2;
-  if (!r2) return r1;
-  const d1 = r1.date || '', d2 = r2.date || '';
-  return d2 > d1 ? r2 : r1;
-}
-
-/**
- * 批量并行拉取所有基金净值
- * 返回 { code: { nav, date } }
- */
-async function fetchAllNavs() {
-  const results = await Promise.allSettled(
-    FUNDS.map(async f => {
-      let r = null;
-      if (NO_GSZ_FUNDS.has(f.code)) {
-        r = await fetchNavFromEM(f.code);
-      } else {
-        r = await fetchNavFromFundgz(f.code);
-        if (!r) r = await fetchNavFromEM(f.code);
-      }
-      return { code: f.code, result: r };
-    })
-  );
-  const navMap = {};
-  results.forEach(r => {
-    if (r.status === 'fulfilled' && r.value && r.value.result) {
-      navMap[r.value.code] = r.value.result;
-    }
-  });
-  return navMap;
-}
+// ── NAV 由 GitHub Action 统一写入 fund_daily.json，Worker 不做任何抓取 ──
 
 // ══════════════════════════════════════════════════════
 //  核心计算：溢价率
@@ -526,13 +369,24 @@ function calcBenchChg(code, idxChg) {
 /**
  * 聚合全量数据，计算溢价率，返回统一 JSON
  */
-async function fetchAllData(skipNav = false) {
-  const [tqData, emIdx, sinaIdx, navMap] = await Promise.all([
+async function fetchAllData(env = {}) {
+  // NAV 从 fund_daily.json 读取（由 GitHub Action 每日更新）
+  const [tqData, emIdx, sinaIdx, daily] = await Promise.all([
     fetchTencent(),
     fetchEastmoney(),
     fetchSina(),
-    skipNav ? Promise.resolve({}) : fetchAllNavs(),
+    loadFundDaily(env),
   ]);
+
+  // 从 fund_daily.json 提取 navMap
+  const navMap = {};
+  if (daily) {
+    for (const [code, fund] of Object.entries(daily)) {
+      if (!code.startsWith('_') && fund.nav > 0) {
+        navMap[code] = { nav: fund.nav, date: fund.nav_date || '' };
+      }
+    }
+  }
 
   // 合并指数涨跌幅
   const idxChg = {};
@@ -715,37 +569,17 @@ async function handleRequest(request, env = {}) {
     return new Response(null, { headers: corsHeaders(origin) });
   }
 
-  // GET /api/nav — 所有基金 T-1 净值
-  // 优先用 fund_daily.json（GitHub Action 每日更新，无需实时抓取）
-  // 缺口才 fallback 到 fundgz/lsjz
+  // GET /api/nav — 所有基金 T-1 净值（只读 fund_daily.json，不做实时抓取）
   if (path === '/api/nav') {
     try {
       const daily = await loadFundDaily(env);
       const navMap = {};
-      // 先从 fund_daily.json 填充有效净值
       if (daily) {
         for (const [code, fund] of Object.entries(daily)) {
-          if (fund.nav && fund.nav > 0) {
-            navMap[code] = { nav: fund.nav, date: fund.nav_date || '', src: 'daily' };
+          if (!code.startsWith('_') && fund.nav > 0) {
+            navMap[code] = { nav: fund.nav, date: fund.nav_date || '', src: fund.nav_src || 'daily' };
           }
         }
-      }
-      // 缺口用实时抓取补充
-      const missing = FUNDS.filter(f => !navMap[f.code]);
-      if (missing.length > 0) {
-        const fallback = await Promise.allSettled(
-          missing.map(async f => {
-            let r = NO_GSZ_FUNDS.has(f.code)
-              ? await fetchNavFromEM(f.code)
-              : (await fetchNavFromFundgz(f.code) || await fetchNavFromEM(f.code));
-            return { code: f.code, result: r };
-          })
-        );
-        fallback.forEach(r => {
-          if (r.status === 'fulfilled' && r.value && r.value.result) {
-            navMap[r.value.code] = { ...r.value.result, src: 'realtime' };
-          }
-        });
       }
       return jsonResp(navMap, 200, origin);
     } catch (e) {
@@ -774,7 +608,7 @@ async function handleRequest(request, env = {}) {
   // GET /api/snapshot — 聚合快照（主链路，NAV由浏览器端JSONP补充）
   if (path === '/api/snapshot') {
     try {
-      const data = await fetchAllData(true);  // skipNav=true，NAV交给前端抓
+      const data = await fetchAllData(env);
       return new Response(JSON.stringify(data), {
         status: 200,
         headers: {
@@ -793,7 +627,7 @@ async function handleRequest(request, env = {}) {
   // GET /api/quote — 全量数据（旧路径，保持兼容）
   if (path === '/api/quote') {
     try {
-      const data = await fetchAllData();
+      const data = await fetchAllData(env);
       return jsonResp(data, 200, origin);
     } catch (e) {
       console.error('/api/quote 失败:', e);
@@ -872,9 +706,9 @@ async function sendDailySummary(funds) {
   }
 }
 
-async function handleScheduled(cron, kv) {
+async function handleScheduled(cron, kv, env) {
   try {
-    const data = await fetchAllData();
+    const data = await fetchAllData(env);
     if (cron === '15 1 * * 1-5') {
       console.log('[Cron 09:15] 发送开盘汇总...');
       await sendDailySummary(data.funds);
@@ -900,6 +734,6 @@ export default {
 
   async scheduled(event, env, ctx) {
     if (env.WX_KEY) CONFIG.WECHAT_WEBHOOK = `https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${env.WX_KEY}`;
-    ctx.waitUntil(handleScheduled(event.cron, env.LOF_STATE));
+    ctx.waitUntil(handleScheduled(event.cron, env.LOF_STATE, env));
   },
 };

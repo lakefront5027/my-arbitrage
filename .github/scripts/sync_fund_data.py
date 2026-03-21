@@ -117,6 +117,53 @@ def fetch_lsjz(code: str) -> dict | None:
     return None
 
 
+def fetch_pingzhong(code: str) -> dict | None:
+    """
+    东方财富 pingzhongdata JS 文件（第三路兜底）。
+    解析 Data_netWorthTrend 取最新单位净值；降级读 Data_ACWorthTrend。
+    适用于 fundgz 无 dwjz/gsz 且 lsjz 也失败的场景。
+    """
+    url = f'https://fund.eastmoney.com/pingzhongdata/{code}.js'
+    text = fetch_url(url, referer='https://fund.eastmoney.com')
+    if not text:
+        return None
+
+    def _bj_date(ts_ms: int) -> str:
+        from datetime import datetime, timezone, timedelta
+        return (
+            datetime.fromtimestamp(ts_ms / 1000, tz=timezone.utc) + timedelta(hours=8)
+        ).strftime('%Y-%m-%d')
+
+    # 优先：Data_netWorthTrend（单位净值时序）
+    m1 = re.search(r'var\s+Data_netWorthTrend\s*=\s*(\[[\s\S]*?\]);', text)
+    if m1:
+        try:
+            arr = json.loads(m1.group(1))
+            if arr:
+                last = arr[-1]
+                v  = float(last['y'] if isinstance(last, dict) else last[1])
+                ts = (last.get('x') if isinstance(last, dict) else last[0])
+                if 0 < v <= 50:
+                    return {'nav': v, 'nav_date': _bj_date(ts), 'nav_src': 'pingzhong'}
+        except Exception:
+            pass
+
+    # 降级：Data_ACWorthTrend（累计净值，适用于无分红基金）
+    m2 = re.search(r'var\s+Data_ACWorthTrend\s*=\s*(\[[\s\S]*?\]);', text)
+    if m2:
+        try:
+            arr = json.loads(m2.group(1))
+            if arr:
+                last = arr[-1]
+                v  = float(last[1] if isinstance(last, list) else last.get('y', 0))
+                ts = (last[0] if isinstance(last, list) else last.get('x', 0))
+                if v > 0:
+                    return {'nav': v, 'nav_date': _bj_date(ts), 'nav_src': 'pingzhong_ac'}
+        except Exception:
+            pass
+    return None
+
+
 # ══════════════════════════════════════════════════════
 #  持仓抓取
 # ══════════════════════════════════════════════════════
@@ -445,8 +492,8 @@ def sync():
         fund = data[code]
         name = fund.get('name', code)
 
-        # ── 净值 ──────────────────────────────────────
-        nav_result = fetch_fundgz(code) or fetch_lsjz(code)
+        # ── 净值：fundgz → lsjz → pingzhong 三路兜底 ──
+        nav_result = fetch_fundgz(code) or fetch_lsjz(code) or fetch_pingzhong(code)
         if nav_result:
             old_date = fund.get('nav_date') or ''
             new_date = nav_result.get('nav_date') or ''
