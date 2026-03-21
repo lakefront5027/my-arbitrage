@@ -812,12 +812,12 @@ function renderTable() {
     const rowBg = isAlert ? (isPrem ? 'bg-premium/5' : 'bg-discount/5') : '';
     return `<tr class="border-b border-border/50 table-row-hover ${rowBg}" onclick="openModal('${f.code}')">
       <td class="py-2 px-3 font-mono text-xs text-primary whitespace-nowrap">${f.name}</td>
-      <td class="py-2 px-2 font-mono text-xs text-muted">${f.code}</td>
+      <td class="py-2 px-2 font-mono text-xs text-primary/70">${f.code}</td>
       <td class="py-2 px-2">
         <span class="font-mono text-[9px] px-1.5 py-0.5 rounded ${catTag}">${catLabel}</span>
       </td>
       <td class="py-2 px-2 font-mono text-xs text-right text-primary">${navStr}</td>
-      <td class="py-2 px-2 font-mono text-xs text-right text-muted">${officialNavStr}</td>
+      <td class="py-2 px-2 font-mono text-xs text-right text-primary/70">${officialNavStr}</td>
       <td class="py-2 px-2 font-mono text-xs text-right text-primary">${priceStr}</td>
       <td class="py-2 px-2 font-mono text-sm text-right font-medium ${premCls}">${premStr}</td>
       <td class="py-2 px-2 font-mono text-xs text-right ${chgCls}">${chgStr}</td>
