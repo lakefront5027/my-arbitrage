@@ -440,10 +440,13 @@ function calcBenchChg(code, idxChg) {
   if (!b) return 0;
   if (Array.isArray(b)) {
     let chg = 0, w = 0;
-    b.forEach(x => { chg += (idxChg[x.tq] || 0) * x.w; w += x.w; });
+    b.forEach(x => {
+      const v = idxChg[x.tq];
+      if (v != null) { chg += v * x.w; w += x.w; }  // 缺失分量不计入分母
+    });
     return w > 0 ? chg / w : 0;
   }
-  return idxChg[b] || 0;
+  return idxChg[b] ?? 0;
 }
 
 // ── 状态 ────────────────────────────────────────────
@@ -555,25 +558,41 @@ async function doRefresh() {
   refreshing = true;
   setSt('获取行情中...', true);
   try {
-    let usedWorker = false;
+    // NAV 始终由浏览器 JSONP 抓取（中国 NAV 接口封锁 CF 海外 IP）
+    const navMapPromise = fetchAllNavs();
 
     // 🥇 主链路：Worker /api/snapshot（3s 超时）
+    let snap = null;
     try {
-      const snap = await fetchSnapshot();
-      if (snap && Array.isArray(snap.funds) && snap.funds.length > 0) {
-        funds = snap.funds;
-        indices = snap.indices || {};
-        lastTs = snap.ts || Date.now();
-        usedWorker = true;
-      }
+      snap = await fetchSnapshot();
+      if (!snap || !Array.isArray(snap.funds) || snap.funds.length === 0) snap = null;
     } catch (e) {
       console.warn('☁️ Worker snapshot 不可用，切换本地直连:', e.message);
     }
 
-    // 🥈 备用链路：本地多源直连
-    if (!usedWorker) {
-      const [tqData, emIdx, sinaIdx, navMap] = await Promise.all([
-        fetchTencent(), fetchEastmoney(), fetchSina(), fetchAllNavs(),
+    const navMap = await navMapPromise;
+
+    if (snap) {
+      // 🥇 Worker 数据 + 浏览器 NAV 合并
+      funds = snap.funds.map(f => {
+        const navInfo = navMap[f.code];
+        if (!navInfo) return f;
+        const officialNav = navInfo.nav;
+        const navDate = navInfo.date;
+        const base = officialNav || f.prevClose;
+        let nav = f.nav, premium = f.premium;
+        if (base > 0 && f.price != null) {
+          nav = base * (1 + (f.benchChg || 0) / 100);
+          premium = (f.price - nav) / nav * 100;
+        }
+        return { ...f, officialNav, navDate, nav, premium };
+      });
+      indices = snap.indices || {};
+      lastTs = snap.ts || Date.now();
+    } else {
+      // 🥈 备用链路：本地多源直连（navMap 已并行就绪）
+      const [tqData, emIdx, sinaIdx] = await Promise.all([
+        fetchTencent(), fetchEastmoney(), fetchSina(),
       ]);
       const idxChg = {};
       Object.entries(tqData.indices).forEach(([c, d]) => { idxChg[c] = d.chg; });
@@ -612,7 +631,7 @@ async function doRefresh() {
     renderTickers(indices);
     checkAlerts();
     const time = new Date(lastTs).toLocaleTimeString('zh-CN', {hour12:false});
-    const src = usedWorker ? '☁️ Worker' : '⚡ 直连';
+    const src = snap ? '☁️ Worker' : '⚡ 直连';
     setSt(`✓ ${time} [${src}] — ${funds.length}只基金已更新`, false);
   } catch (e) {
     setSt(`✗ 获取失败: ${e.message}`, false);

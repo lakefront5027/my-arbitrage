@@ -488,23 +488,26 @@ function calcBenchChg(code, idxChg) {
   if (Array.isArray(benchDef)) {
     let benchChg = 0, totalW = 0;
     benchDef.forEach(b => {
-      benchChg += (idxChg[b.tq] || 0) * b.w;
-      totalW += b.w;
+      const chg = idxChg[b.tq];
+      if (chg != null) {           // 缺失分量不计入分母，避免拉低结果
+        benchChg += chg * b.w;
+        totalW += b.w;
+      }
     });
     return totalW > 0 ? benchChg / totalW : 0;
   }
-  return idxChg[benchDef] || 0;
+  return idxChg[benchDef] ?? 0;
 }
 
 /**
  * 聚合全量数据，计算溢价率，返回统一 JSON
  */
-async function fetchAllData() {
+async function fetchAllData(skipNav = false) {
   const [tqData, emIdx, sinaIdx, navMap] = await Promise.all([
     fetchTencent(),
     fetchEastmoney(),
     fetchSina(),
-    fetchAllNavs(),
+    skipNav ? Promise.resolve({}) : fetchAllNavs(),
   ]);
 
   // 合并指数涨跌幅
@@ -553,6 +556,7 @@ async function fetchAllData() {
       name: f.name,
       cat: f.cat,
       price,
+      prevClose,
       chg,
       nav,
       officialNav,
@@ -686,10 +690,10 @@ async function handleRequest(request) {
     return new Response(null, { headers: corsHeaders(origin) });
   }
 
-  // GET /api/snapshot — 聚合快照（主链路，溢价率已在云端计算）
+  // GET /api/snapshot — 聚合快照（主链路，NAV由浏览器端JSONP补充）
   if (path === '/api/snapshot') {
     try {
-      const data = await fetchAllData();
+      const data = await fetchAllData(true);  // skipNav=true，NAV交给前端抓
       return new Response(JSON.stringify(data), {
         status: 200,
         headers: {
