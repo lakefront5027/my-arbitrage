@@ -8,10 +8,11 @@ on:
 
 jobs:
   sync:
-    name: Sync NAV + Holdings from Eastmoney
+    name: Sync NAV + Holdings + Drift Audit
     runs-on: ubuntu-latest
     permissions:
-      contents: write   # 允许 Action 推送对 fund_daily.json 的修改
+      contents: write   # 写入 fund_daily.json 并 push
+      issues:   write   # 创建 Holdings Drift Issue
 
     steps:
       - uses: actions/checkout@v4
@@ -20,7 +21,13 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Run sync script (NAV + Holdings)
+      - name: Run sync + audit script
+        env:
+          # GITHUB_TOKEN 和 GITHUB_REPOSITORY 由 Actions 自动注入，显式传入更清晰
+          GITHUB_TOKEN:      ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          # WX_KEY：在仓库 Settings → Secrets → Actions 中配置
+          WX_KEY:            ${{ secrets.WX_KEY }}
         run: python .github/scripts/sync_fund_data.py
 
       - name: Commit updated fund data
@@ -28,7 +35,6 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/fund_daily.json
-          # 只有文件有变化时才 commit（无新数据时安静退出）
           git diff --staged --quiet \
             && echo "No changes to commit" \
             || (git commit -m "chore: daily sync $(date -u '+%Y-%m-%d %H:%M UTC')" && git push)
