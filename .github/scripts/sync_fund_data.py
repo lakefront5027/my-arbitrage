@@ -26,7 +26,6 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT  = os.path.dirname(os.path.dirname(SCRIPT_DIR))
 JSON_PATH  = os.path.join(REPO_ROOT, 'data', 'fund_daily.json')
 
-JJCC_CB         = 'apidata'
 DRIFT_THRESHOLD = 0.05   # 累计权重偏移阈值（5%）
 
 
@@ -168,53 +167,86 @@ def fetch_pingzhong(code: str) -> dict | None:
 #  持仓抓取
 # ══════════════════════════════════════════════════════
 
+def _recent_quarters() -> list:
+    """返回最近 6 个季报的 (year, end_month) 列表，从近到远排列。"""
+    now = datetime.now(timezone.utc)
+    y, m = now.year, now.month
+    quarters = []
+    for _ in range(6):
+        # 向下取整到季度末月（3/6/9/12）
+        qm = (m - 1) // 3 * 3 + 3
+        if qm > m:          # 当季尚未结束，退一个季度
+            qm -= 3
+        if qm < 1:
+            qm = 12
+            y -= 1
+        quarters.append((y, qm))
+        # 移到上个季度
+        m = qm - 3
+        if m < 1:
+            m = 12
+            y -= 1
+    return quarters
+
+
 def fetch_holdings(code: str) -> list | None:
     """
-    东方财富 jjcc 接口，前十大持仓。
-    合并 stockList / bondList / otherList，按 JZBL 降序，取 Top-10。
+    天天基金 FundArchivesDatas.aspx?type=jjcc 季报披露页面。
+    逐季尝试直到找到非空数据，解析 HTML 表格，返回前十大持仓。
     字段：code（标的代码）、name（中文简称）、ratio（占净值比例%）。
+
+    原 api.fund.eastmoney.com/f10/jjcc 对 QDII 基金全部返回 ErrCode=4，
+    改用此 HTML 接口可正常获取季报数据。
     """
-    url = (
-        f'https://api.fund.eastmoney.com/f10/jjcc'
-        f'?fundCode={code}&pageIndex=1&pageSize=200&callback={JJCC_CB}'
-    )
-    text = fetch_url(url, referer='https://fundf10.eastmoney.com')
-    if not text:
-        return None
-    m = re.search(rf'{JJCC_CB}\s*\((.+)\)\s*;?\s*$', text, re.DOTALL)
-    if not m:
-        return None
-    try:
-        d = json.loads(m.group(1))
-        raw = d.get('Data') or {}
-        items = (
-            (raw.get('stockList') or [])
-            + (raw.get('bondList') or [])
-            + (raw.get('otherList') or [])
+    for year, month in _recent_quarters():
+        url = (
+            f'https://fundf10.eastmoney.com/FundArchivesDatas.aspx'
+            f'?type=jjcc&code={code}&topline=10&year={year}&month={month:02d}'
+            f'&rt={int(time.time())}'
         )
-        if not items:
-            return None
-        result = []
-        for item in items:
-            name = (
-                item.get('GPJC') or item.get('GPMC')
-                or item.get('ZWMC') or item.get('GPDM') or ''
-            )
-            try:
-                ratio = float(item.get('JZBL') or 0)
-            except ValueError:
-                ratio = 0.0
-            if name:
-                result.append({
-                    'code':  item.get('GPDM', ''),
-                    'name':  name,
-                    'ratio': round(ratio, 2),
-                })
-        result.sort(key=lambda x: x['ratio'], reverse=True)
-        return result[:10] if result else None
-    except Exception as e:
-        print(f'    [holdings] {code}: parse error {e}', file=sys.stderr)
-        return None
+        text = fetch_url(url, referer=f'https://fundf10.eastmoney.com/ccmx_{code}.html')
+        if not text:
+            continue
+
+        # 找第一个有内容的 <tbody>
+        tbodies = re.findall(r'<tbody>(.*?)</tbody>', text, re.DOTALL)
+        for tbody in tbodies:
+            if not tbody.strip():
+                continue
+            rows = re.findall(r'<tr[^>]*>(.*?)</tr>', tbody, re.DOTALL)
+            result = []
+            for row in rows:
+                cells = re.findall(r'<td[^>]*>(.*?)</td>', row, re.DOTALL)
+                clean = [re.sub(r'<[^>]+>', '', c).strip() for c in cells]
+                clean = [c for c in clean if c]
+                if len(clean) < 3:
+                    continue
+                # 寻找占净值比例（末尾带 % 的数值格式）
+                ratio = None
+                for cell in clean:
+                    if cell.endswith('%'):
+                        try:
+                            ratio = float(cell.rstrip('%'))
+                            break
+                        except ValueError:
+                            pass
+                if ratio is None:
+                    continue
+                # 列顺序：序号 | 代码 | 名称 | … | 占净值% | …
+                stock_code = clean[1] if len(clean[1]) <= 12 else ''
+                stock_name = clean[2] if not clean[2].startswith('--') else clean[1]
+                if stock_name:
+                    result.append({
+                        'code':  stock_code,
+                        'name':  stock_name,
+                        'ratio': round(ratio, 2),
+                    })
+            if result:
+                return result[:10]
+
+    print(f'    [holdings] {code}: 近 6 季均无数据（可能为单只 ETF 持仓型基金）',
+          file=sys.stderr)
+    return None
 
 
 # ══════════════════════════════════════════════════════
