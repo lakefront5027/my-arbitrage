@@ -301,7 +301,7 @@ async function fetchEastmoney() {
  */
 async function fetchSina() {
   try {
-    const list = 'nf_AG0,sz399961,sz399979,sz399987,sz399998';
+    const list = 'nf_AG0,sz399961,sz399979,sz399987,sz399998,fx_susdcnh,fx_shkcnh';
     const url = `https://hq.sinajs.cn/list=${list}`;
     const resp = await fetch(url, {
       headers: {
@@ -330,6 +330,17 @@ async function fetchSina() {
         const p = m[1].split(',');
         const cur = parseFloat(p[3]), prev = parseFloat(p[2]);
         if (cur > 0 && prev > 0) out[code] = (cur - prev) / prev * 100;
+      }
+    }
+
+    // FX 现价（绝对值，非涨跌幅）供 calcAdjustedBenchChg 使用
+    // fx_susdcnh = USD/CNH 离岸人民币，fx_shkcnh = HKD/CNH
+    for (const [sinaCode, outKey] of [['fx_susdcnh', '_fxUsdCnh'], ['fx_shkcnh', '_fxHkdCnh']]) {
+      const re = new RegExp(`hq_str_${sinaCode}="([^"]+)"`);
+      const m = text.match(re);
+      if (m) {
+        const rate = parseFloat(m[1].split(',')[1]);
+        if (rate > 0) out[outKey] = rate;
       }
     }
 
@@ -367,6 +378,35 @@ function calcBenchChg(code, idxChg) {
 }
 
 /**
+ * FX 修正版基准涨跌幅计算
+ * 对每个 bench 分量独立叠加汇率变化：(1+bench_chg%/100)×(1+fx_chg%/100)−1
+ * us* → USD/CNH；hk* → HKD/CNH；sh/sz/csi/sina* → 无 FX
+ * fxChgUsd / fxChgHkd 为空时自动降级为纯指数估值
+ */
+function calcAdjustedBenchChg(code, idxChg, fxChgUsd, fxChgHkd) {
+  function fxForCode(tqCode) {
+    if (tqCode.startsWith('us')) return fxChgUsd || 0;
+    if (tqCode.startsWith('hk')) return fxChgHkd || 0;
+    return 0; // sh/sz/csi/sina — CNY 计价，无需 FX
+  }
+  const benchDef = BENCH[code];
+  if (!benchDef) return 0;
+  if (Array.isArray(benchDef)) {
+    let navReturn = 0, totalW = 0;
+    benchDef.forEach(b => {
+      const ic = idxChg[b.tq] ?? 0;
+      const fx = fxForCode(b.tq);
+      navReturn += ((1 + ic / 100) * (1 + fx / 100) - 1) * b.w;
+      totalW += b.w;
+    });
+    return totalW > 0 ? navReturn / totalW * 100 : 0;
+  }
+  const ic = idxChg[benchDef] ?? 0;
+  const fx = fxForCode(benchDef);
+  return ((1 + ic / 100) * (1 + fx / 100) - 1) * 100;
+}
+
+/**
  * 聚合全量数据，计算溢价率，返回统一 JSON
  */
 async function fetchAllData(env = {}) {
@@ -388,11 +428,22 @@ async function fetchAllData(env = {}) {
     }
   }
 
-  // 合并指数涨跌幅
+  // FX 实时现价 + T-1 结算价 → 日内涨跌幅
+  const fxUsdCnh   = sinaIdx._fxUsdCnh;
+  const fxHkdCnh   = sinaIdx._fxHkdCnh;
+  const t1Fx       = daily && daily['_fx'];
+  const fxChgUsd   = (fxUsdCnh && t1Fx && t1Fx.usd_cnh_t1)
+    ? (fxUsdCnh / t1Fx.usd_cnh_t1 - 1) * 100 : 0;
+  const fxChgHkd   = (fxHkdCnh && t1Fx && t1Fx.hkd_cnh_t1)
+    ? (fxHkdCnh / t1Fx.hkd_cnh_t1 - 1) * 100 : 0;
+
+  // 合并指数涨跌幅（_fx* 键不写入 idxChg）
   const idxChg = {};
   Object.entries(tqData.indices).forEach(([code, d]) => { idxChg[code] = d.chg; });
   Object.entries(emIdx).forEach(([code, chg]) => { idxChg[code] = chg; });
-  Object.entries(sinaIdx).forEach(([code, chg]) => { idxChg[code] = chg; });
+  Object.entries(sinaIdx).forEach(([code, chg]) => {
+    if (!code.startsWith('_')) idxChg[code] = chg;
+  });
 
   // 降级兜底
   if (idxChg['hkHSMI'] == null || idxChg['hkHSMI'] === 0) {
@@ -421,7 +472,9 @@ async function fetchAllData(env = {}) {
       prevClose = tq.prevClose;
     }
 
-    const benchChg = calcBenchChg(f.code, idxChg);
+    const benchChg    = calcBenchChg(f.code, idxChg);          // 纯指数涨幅（用于显示）
+    const adjBenchChg = calcAdjustedBenchChg(f.code, idxChg, fxChgUsd, fxChgHkd); // FX修正（用于估值）
+    const fxAdj       = adjBenchChg - benchChg;                // 汇率对估值的净贡献%
     const base = officialNav || prevClose;
     // 偏差校准：drift_5d 由 GitHub Action 每日写入 fund_daily.json
     const fundDaily = daily && daily[f.code];
@@ -430,7 +483,7 @@ async function fetchAllData(env = {}) {
     const alpha   = Math.max(-0.02, Math.min(0.02, drift5d)); // 硬限 ±2%
     let nav = null, premium = null;
     if (base > 0 && price != null) {
-      nav = base * (1 + benchChg / 100) * (1 + alpha);
+      nav = base * (1 + adjBenchChg / 100) * (1 + alpha);
       premium = (price - nav) / nav * 100;
     }
 
@@ -446,6 +499,7 @@ async function fetchAllData(env = {}) {
       navDate,
       premium,
       benchChg,
+      fxAdj,
       drift5d,
       driftN,
       quota: f.quota,
@@ -466,6 +520,14 @@ async function fetchAllData(env = {}) {
   return {
     funds,
     indices,
+    fx: {
+      usd_cnh:    fxUsdCnh  || null,
+      hkd_cnh:    fxHkdCnh  || null,
+      usd_cnh_t1: t1Fx ? t1Fx.usd_cnh_t1 : null,
+      hkd_cnh_t1: t1Fx ? t1Fx.hkd_cnh_t1 : null,
+      chg_usd:    fxChgUsd  || null,
+      chg_hkd:    fxChgHkd  || null,
+    },
     ts: Date.now(),
   };
 }

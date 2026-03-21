@@ -713,9 +713,46 @@ def run_drift_audit(data: dict):
 #  主同步函数
 # ══════════════════════════════════════════════════════
 
+def fetch_fx_settlement_rates() -> dict:
+    """
+    通过 Sina 抓取 USD/CNH 和 HKD/CNH 现价，作为 T-1 结算汇率存入 fund_daily.json._fx。
+    Action 在北京 00:05 运行，FX 市场 24/5 开放，所得汇率近似于昨日 15:00 结算价。
+    """
+    url  = 'https://hq.sinajs.cn/list=fx_susdcnh,fx_shkcnh'
+    text = fetch_url(url, referer='https://finance.sina.com.cn')
+    if not text:
+        return {}
+    result = {}
+    for sina_code, key in [('fx_susdcnh', 'usd_cnh'), ('fx_shkcnh', 'hkd_cnh')]:
+        m = re.search(rf'hq_str_{sina_code}="([^"]+)"', text)
+        if m:
+            parts = m.group(1).split(',')
+            try:
+                rate = float(parts[1])
+                if rate > 0:
+                    result[key] = round(rate, 4)
+            except (ValueError, IndexError):
+                pass
+    return result
+
+
 def sync():
     with open(JSON_PATH, 'r', encoding='utf-8') as f:
         data: dict = json.load(f)
+
+    # ── 汇率 T-1 结算价（优先于净值循环，失败则保留旧值） ──
+    print('--- 汇率 T-1 结算价 ---')
+    fx_rates = fetch_fx_settlement_rates()
+    today_utc_date = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+    if fx_rates:
+        data['_fx'] = {
+            'usd_cnh_t1': fx_rates.get('usd_cnh', (data.get('_fx') or {}).get('usd_cnh_t1')),
+            'hkd_cnh_t1': fx_rates.get('hkd_cnh', (data.get('_fx') or {}).get('hkd_cnh_t1')),
+            'date': today_utc_date,
+        }
+        print(f'  USD/CNH={data["_fx"]["usd_cnh_t1"]}  HKD/CNH={data["_fx"]["hkd_cnh_t1"]}')
+    else:
+        print('  [fx] Sina 汇率抓取失败，保留上次结算价')
 
     fund_codes = [k for k in data if not k.startswith('_')]
     total = len(fund_codes)

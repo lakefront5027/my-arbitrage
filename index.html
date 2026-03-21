@@ -482,6 +482,29 @@ function calcBenchChg(code, idxChg) {
   return idxChg[b] ?? 0;
 }
 
+// FX 修正版：对每个 bench 分量叠加汇率变化
+// us* → USD/CNH；hk* → HKD/CNH；sh/sz/csi/sina* → 0（CNY计价）
+function calcAdjustedBenchChg(code, idxChg, fxChgUsd, fxChgHkd) {
+  function fxFor(tqCode) {
+    if (tqCode.startsWith('us')) return fxChgUsd || 0;
+    if (tqCode.startsWith('hk')) return fxChgHkd || 0;
+    return 0;
+  }
+  const b = BENCH[code];
+  if (!b) return 0;
+  if (Array.isArray(b)) {
+    let ret = 0, w = 0;
+    b.forEach(x => {
+      const ic = idxChg[x.tq] ?? 0;
+      ret += ((1 + ic / 100) * (1 + fxFor(x.tq) / 100) - 1) * x.w;
+      w += x.w;
+    });
+    return w > 0 ? ret / w * 100 : 0;
+  }
+  const ic = idxChg[b] ?? 0;
+  return ((1 + ic / 100) * (1 + fxFor(b) / 100) - 1) * 100;
+}
+
 // ── 状态 ────────────────────────────────────────────
 let funds = [];          // 完整基金数据
 let indices = {};        // 指数涨跌幅
@@ -655,10 +678,19 @@ async function doRefresh() {
         _navCacheDate = new Date().toLocaleDateString('zh-CN');
       }
       const navMap = _navCache || {};
+      // FX 实时现价（来自 Sina 代理）+ T-1 结算价（来自 fund_daily.json）
+      const fxUsdCnh = sinaIdx._fxUsdCnh;
+      const fxHkdCnh = sinaIdx._fxHkdCnh;
+      const t1Fx     = daily && daily['_fx'];
+      const fxChgUsd = (fxUsdCnh && t1Fx && t1Fx.usd_cnh_t1)
+        ? (fxUsdCnh / t1Fx.usd_cnh_t1 - 1) * 100 : 0;
+      const fxChgHkd = (fxHkdCnh && t1Fx && t1Fx.hkd_cnh_t1)
+        ? (fxHkdCnh / t1Fx.hkd_cnh_t1 - 1) * 100 : 0;
+
       const idxChg = {};
       Object.entries(tqData.indices).forEach(([c, d]) => { idxChg[c] = d.chg; });
       Object.entries(emIdx).forEach(([c, v]) => { idxChg[c] = v; });
-      Object.entries(sinaIdx).forEach(([c, v]) => { idxChg[c] = v; });
+      Object.entries(sinaIdx).forEach(([c, v]) => { if (!c.startsWith('_')) idxChg[c] = v; });
       if (!idxChg['hkHSMI']) idxChg['hkHSMI'] = idxChg['hkHSSI'] ?? idxChg['hkHSI'] ?? null;
       if (!idxChg['hkHSSI']) idxChg['hkHSSI'] = idxChg['hkHSI'] ?? null;
       if (!idxChg['hkHSCI']) idxChg['hkHSCI'] = idxChg['hkHSI'] ?? null;
@@ -671,7 +703,9 @@ async function doRefresh() {
         const chg = tq ? tq.chg : null;
         const vol = tq ? tq.vol : 0;
         const prevClose = tq ? tq.prevClose : null;
-        const benchChg = calcBenchChg(f.code, idxChg);
+        const benchChg    = calcBenchChg(f.code, idxChg);
+        const adjBenchChg = calcAdjustedBenchChg(f.code, idxChg, fxChgUsd, fxChgHkd);
+        const fxAdj       = adjBenchChg - benchChg;
         const base = officialNav || prevClose;
         // 偏差校准：drift_5d 由 GitHub Action 每日写入 fund_daily.json
         const fundDaily = _fundDaily && _fundDaily[f.code];
@@ -680,10 +714,10 @@ async function doRefresh() {
         const alpha   = Math.max(-0.02, Math.min(0.02, drift5d));
         let nav = null, premium = null;
         if (base > 0 && price != null) {
-          nav = base * (1 + benchChg / 100) * (1 + alpha);
+          nav = base * (1 + adjBenchChg / 100) * (1 + alpha);
           premium = (price - nav) / nav * 100;
         }
-        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, navDate, premium, benchChg, drift5d, driftN, quota: f.quota, fee: f.fee, rfee: f.rfee, vol, _src: 'L' };
+        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, navDate, premium, benchChg, fxAdj, drift5d, driftN, quota: f.quota, fee: f.fee, rfee: f.rfee, vol, _src: 'L' };
       });
       indices = {};
       TICKER_IDX.forEach(i => {
@@ -1019,15 +1053,22 @@ function openModal(code) {
         </div>`).join('')}
     </div>
 
-    ${(f.drift5d != null && Math.abs(f.drift5d) > 0.0005 && (f.driftN || 0) >= 3) ? `
-    <div class="flex items-center justify-between bg-surface border border-border rounded px-3 py-2 mb-4">
-      <div>
-        <span class="font-mono text-[9px] text-muted tracking-wider">估值修正 α&thinsp;</span>
-        <span class="font-mono text-[9px] ${f.drift5d > 0 ? 'text-green-400/60' : 'text-red-400/60'}">
-          ${f.drift5d >= 0 ? '+' : ''}${(f.drift5d * 100).toFixed(2)}%（近 ${f.driftN} 日均值，已计入盘中估值）
-        </span>
-      </div>
+    ${(f.fxAdj != null && Math.abs(f.fxAdj) >= 0.05) ? `
+    <div class="flex items-center justify-between bg-surface border border-border rounded px-3 py-2 mb-2">
+      <span class="font-mono text-[9px] text-muted tracking-wider">汇率调整</span>
+      <span class="font-mono text-[9px] ${f.fxAdj > 0 ? 'text-green-400/70' : 'text-red-400/70'}">
+        ${f.fxAdj >= 0 ? '+' : ''}${f.fxAdj.toFixed(2)}%&thinsp;（USD/CNH 波动，已计入估值）
+      </span>
     </div>` : ''}
+
+    ${(f.drift5d != null && Math.abs(f.drift5d) > 0.0005 && (f.driftN || 0) >= 3) ? `
+    <div class="flex items-center justify-between bg-surface border border-border rounded px-3 py-2 mb-2">
+      <span class="font-mono text-[9px] text-muted tracking-wider">估值修正 α</span>
+      <span class="font-mono text-[9px] ${f.drift5d > 0 ? 'text-green-400/60' : 'text-red-400/60'}">
+        ${f.drift5d >= 0 ? '+' : ''}${(f.drift5d * 100).toFixed(2)}%（近 ${f.driftN} 日均值，已计入估值）
+      </span>
+    </div>` : ''}
+
 
     <div class="border border-border rounded p-3 mb-4" style="background:#0d0d0d">
       <div class="font-mono text-[10px] text-muted tracking-wider mb-1">套利信号</div>
