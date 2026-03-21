@@ -693,31 +693,32 @@ async function handleRequest(request) {
     }
   }
 
-  // GET /api/sina?list=nf_AG0,sz399961,sz399979 — 新浪代理
+  // GET /api/sina?callback=xxx — 新浪代理（JSONP模式，返回解析后的涨跌幅）
+  // GET /api/sina        — 普通JSON模式
   if (path === '/api/sina') {
-    const list = url.searchParams.get('list') || 'nf_AG0,sz399961,sz399979';
+    const callback = url.searchParams.get('callback');
     try {
-      const resp = await fetch(`https://hq.sinajs.cn/list=${list}`, {
-        headers: {
-          'Referer': 'https://finance.sina.com.cn',
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        },
-      });
-      const buf = await resp.arrayBuffer();
-      const text = new TextDecoder('gbk').decode(buf);
-      return new Response(text, {
-        status: 200,
-        headers: {
-          'Content-Type': 'text/plain;charset=UTF-8',
-          'Cache-Control': 'no-cache',
-          ...corsHeaders(),
-        },
-      });
+      const sinaData = await fetchSina();
+      if (callback) {
+        const body = `${callback}(${JSON.stringify(sinaData)});`;
+        return new Response(body, {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/javascript;charset=UTF-8',
+            'Cache-Control': 'no-cache',
+            ...corsHeaders(),
+          },
+        });
+      }
+      return jsonResp(sinaData);
     } catch (e) {
-      return new Response('', {
-        status: 502,
-        headers: corsHeaders(),
-      });
+      if (callback) {
+        return new Response(`${callback}({});`, {
+          status: 200,
+          headers: { 'Content-Type': 'application/javascript;charset=UTF-8', ...corsHeaders() },
+        });
+      }
+      return new Response('', { status: 502, headers: corsHeaders() });
     }
   }
 
@@ -785,12 +786,12 @@ async function handleScheduled(cron, kv) {
 
 export default {
   async fetch(request, env, ctx) {
-    if (env.WECHAT_WEBHOOK) CONFIG.WECHAT_WEBHOOK = env.WECHAT_WEBHOOK;
+    if (env.WX_KEY) CONFIG.WECHAT_WEBHOOK = `https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${env.WX_KEY}`;
     return handleRequest(request);
   },
 
   async scheduled(event, env, ctx) {
-    if (env.WECHAT_WEBHOOK) CONFIG.WECHAT_WEBHOOK = env.WECHAT_WEBHOOK;
+    if (env.WX_KEY) CONFIG.WECHAT_WEBHOOK = `https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${env.WX_KEY}`;
     ctx.waitUntil(handleScheduled(event.cron, env.LOF_STATE));
   },
 };

@@ -237,8 +237,205 @@ tailwind.config = {
      JAVASCRIPT
 ══════════════════════════════════════════════════ -->
 <script>
-// ── 配置 ────────────────────────────────────────────
-const WORKER_URL = 'https://lof-arb-radar.3031315027ghb.workers.dev';
+// ── 基金数据（47只，完整） ────────────────────────────
+const FUNDS = [
+  {code:'161127',name:'标普生物科技LOF',  tq:'sz161127',cat:'us',quota:'限10',   fee:'1.20%',rfee:'1.00%'},
+  {code:'164906',name:'中概互联网LOF',    tq:'sz164906',cat:'us',quota:'开放',   fee:'1.20%',rfee:'1.50%'},
+  {code:'501312',name:'海外科技LOF',      tq:'sh501312',cat:'us',quota:'限2千',  fee:'1.20%',rfee:'1.20%'},
+  {code:'164824',name:'印度基金LOF',      tq:'sz164824',cat:'us',quota:'限1千',  fee:'1.20%',rfee:'1.50%'},
+  {code:'160644',name:'港美互联网LOF',    tq:'sz160644',cat:'us',quota:'限10万', fee:'1.50%',rfee:'1.50%'},
+  {code:'162415',name:'美国消费LOF',      tq:'sz162415',cat:'us',quota:'限500',  fee:'1.20%',rfee:'1.50%'},
+  {code:'161126',name:'标普医疗保健LOF',  tq:'sz161126',cat:'us',quota:'限10',   fee:'1.20%',rfee:'1.00%'},
+  {code:'161128',name:'标普信息科技LOF',  tq:'sz161128',cat:'us',quota:'限10',   fee:'1.20%',rfee:'1.00%'},
+  {code:'161125',name:'标普500LOF',       tq:'sz161125',cat:'us',quota:'限10',   fee:'1.20%',rfee:'1.50%'},
+  {code:'161130',name:'纳斯达克100LOF',   tq:'sz161130',cat:'us',quota:'限10',   fee:'1.20%',rfee:'0.60%'},
+  {code:'501300',name:'美元债LOF',        tq:'sh501300',cat:'us',quota:'限1万',  fee:'0.80%',rfee:'1.50%'},
+  {code:'160140',name:'美国REIT精选LOF',  tq:'sz160140',cat:'us',quota:'限100万',fee:'1.20%',rfee:'1.00%'},
+  {code:'501225',name:'全球芯片LOF',      tq:'sh501225',cat:'us',quota:'暂停',   fee:'1.50%',rfee:'1.50%'},
+  {code:'160216',name:'国泰商品LOF',      tq:'sz160216',cat:'cm',quota:'限1千',  fee:'1.50%',rfee:'1.50%'},
+  {code:'161116',name:'黄金主题LOF',      tq:'sz161116',cat:'cm',quota:'暂停',   fee:'0%',   rfee:'1.50%'},
+  {code:'164701',name:'黄金LOF',          tq:'sz164701',cat:'cm',quota:'限50',   fee:'0.80%',rfee:'1.50%'},
+  {code:'165513',name:'中信保诚商品LOF',  tq:'sz165513',cat:'cm',quota:'开放',   fee:'1.60%',rfee:'1.50%'},
+  {code:'160719',name:'嘉实黄金LOF',      tq:'sz160719',cat:'cm',quota:'暂停',   fee:'1.20%',rfee:'1.50%'},
+  {code:'161815',name:'抗通胀LOF',        tq:'sz161815',cat:'cm',quota:'开放',   fee:'1.60%',rfee:'1.50%'},
+  {code:'163208',name:'全球油气能源LOF',  tq:'sz163208',cat:'cm',quota:'暂停',   fee:'1.50%',rfee:'1.50%'},
+  {code:'501018',name:'南方原油LOF',      tq:'sh501018',cat:'cm',quota:'暂停',   fee:'1.20%',rfee:'1.50%'},
+  {code:'161129',name:'原油LOF易方达',    tq:'sz161129',cat:'cm',quota:'暂停',   fee:'1.20%',rfee:'1.50%'},
+  {code:'160723',name:'嘉实原油LOF',      tq:'sz160723',cat:'cm',quota:'暂停',   fee:'1.20%',rfee:'1.50%'},
+  {code:'162719',name:'石油LOF',          tq:'sz162719',cat:'cm',quota:'暂停',   fee:'1.20%',rfee:'1.50%'},
+  {code:'162411',name:'华宝油气LOF',      tq:'sz162411',cat:'cm',quota:'开放',   fee:'1.50%',rfee:'1.50%'},
+  {code:'160416',name:'石油基金LOF',      tq:'sz160416',cat:'cm',quota:'暂停',   fee:'1.20%',rfee:'1.50%'},
+  {code:'501303',name:'恒生中型股LOF',    tq:'sh501303',cat:'hk',quota:'开放',   fee:'1.20%',rfee:'0.60%'},
+  {code:'161124',name:'港股小盘LOF',      tq:'sz161124',cat:'hk',quota:'限1千',  fee:'1.20%',rfee:'1.00%'},
+  {code:'160322',name:'港股精选LOF',      tq:'sz160322',cat:'hk',quota:'开放',   fee:'1.20%',rfee:'1.50%'},
+  {code:'501021',name:'香港中小LOF',      tq:'sh501021',cat:'hk',quota:'暂停',   fee:'1.20%',rfee:'1.20%'},
+  {code:'501310',name:'价值基金LOF',      tq:'sh501310',cat:'cn',quota:'开放',   fee:'1.20%',rfee:'0.90%'},
+  {code:'501302',name:'恒生指数基金LOF',  tq:'sh501302',cat:'hk',quota:'开放',   fee:'1.20%',rfee:'0.60%'},
+  {code:'501307',name:'银河高股息LOF',    tq:'sh501307',cat:'hk',quota:'开放',   fee:'1.00%',rfee:'0.68%'},
+  {code:'501306',name:'港股高股息LOFC',   tq:'sh501306',cat:'hk',quota:'开放',   fee:'0.00%',rfee:'0.60%'},
+  {code:'160717',name:'H股LOF',           tq:'sz160717',cat:'hk',quota:'开放',   fee:'1.20%',rfee:'0.95%'},
+  {code:'501311',name:'新经济港通LOF',    tq:'sh501311',cat:'hk',quota:'开放',   fee:'1.20%',rfee:'0.90%'},
+  {code:'501301',name:'香港大盘LOF',      tq:'sh501301',cat:'hk',quota:'开放',   fee:'1.20%',rfee:'0.90%'},
+  {code:'164705',name:'恒生LOF',          tq:'sz164705',cat:'hk',quota:'开放',   fee:'1.20%',rfee:'1.00%'},
+  {code:'161831',name:'恒生国企LOF',      tq:'sz161831',cat:'hk',quota:'开放',   fee:'1.20%',rfee:'1.20%'},
+  {code:'501305',name:'港股高股息LOF',    tq:'sh501305',cat:'hk',quota:'开放',   fee:'1.20%',rfee:'0.60%'},
+  {code:'160924',name:'恒生指数LOF',      tq:'sz160924',cat:'hk',quota:'开放',   fee:'1.20%',rfee:'1.20%'},
+  {code:'501025',name:'香港银行LOF',      tq:'sh501025',cat:'hk',quota:'开放',   fee:'1.20%',rfee:'0.90%'},
+  {code:'161226',name:'国投白银LOF',      tq:'sz161226',cat:'cm',quota:'暂停',   fee:'1.50%',rfee:'0.50%'},
+  {code:'161217',name:'国投上游资源LOF',  tq:'sz161217',cat:'cn',quota:'开放',   fee:'1.50%',rfee:'0.50%'},
+  {code:'161715',name:'招商大宗商品LOF',  tq:'sz161715',cat:'cn',quota:'开放',   fee:'1.50%',rfee:'0.50%'},
+  {code:'161725',name:'招商中证白酒LOF',  tq:'sz161725',cat:'cn',quota:'开放',   fee:'1.50%',rfee:'0.50%'},
+  {code:'161032',name:'富国中证煤炭LOF',  tq:'sz161032',cat:'cn',quota:'开放',   fee:'1.50%',rfee:'0.50%'},
+];
+
+const BENCH = {
+  '161127':'usXBI', '164906':'usKWEB',
+  '501312':[{tq:'usQQQ',w:0.8},{tq:'hkHSTECH',w:0.1},{tq:'sh000985',w:0.1}],
+  '164824':'usINDA', '160644':'usKWEB', '162415':'usXLY', '161126':'usRSPH',
+  '161128':'usXLK',  '161125':'usINX',  '161130':'usQQQ',  '501300':'usAGG',
+  '160140':'usRWR',  '501225':'usSMH',
+  '160216':[{tq:'usSGOL',w:0.234},{tq:'usGLD',w:0.193},{tq:'usGLDM',w:0.154},{tq:'usUSO',w:0.153},{tq:'usSLV',w:0.151},{tq:'usCPER',w:0.143},{tq:'usXOP',w:0.038}],
+  '161116':'sh518880', '164701':'usGLD', '165513':'usGLD', '160719':'sh518880',
+  '161815':[{tq:'usGLD',w:0.171},{tq:'usIAU',w:0.168},{tq:'usAAAU',w:0.144},{tq:'usSGOL',w:0.139},{tq:'usBCI',w:0.122},{tq:'usCOMT',w:0.095},{tq:'usUSO',w:0.051},{tq:'usBNO',w:0.044},{tq:'usSLV',w:0.024},{tq:'usCPER',w:0.053}],
+  '163208':'usXLE',
+  '501018':[{tq:'usUSO',w:0.6},{tq:'usBNO',w:0.4}],
+  '161129':'usUSO', '160723':'usUSO', '162719':'usXOP', '162411':'usXOP', '160416':'usIXC',
+  '501303':'hkHSMI', '161124':'hkHSSI', '160322':'hkHSCI',
+  '501021':[{tq:'hkHSMI',w:0.5},{tq:'hkHSSI',w:0.5}],
+  '501310':[{tq:'sh000300',w:0.5},{tq:'hkHSCEI',w:0.5}],
+  '501302':'hkHSI',  '501307':'csi930917', '501306':'csi930914',
+  '160717':'hkHSCEI','501311':'hkHSTECH', '501301':'hkHSCEI',
+  '164705':'hkHSI',  '161831':'hkHSCEI',  '501305':'csi930914',
+  '160924':'hkHSI',  '501025':'csi930792',
+  '161226':'sinaAG0','161217':'sz399961',  '161715':'sz399979',
+  '161725':'sz399987','161032':'sz399998',
+};
+
+// 东方财富专属指数代码（腾讯不支持）
+const EM_CODES = {
+  'csi930917':'2.930917', 'csi930914':'2.930914', 'csi930792':'2.930792',
+  'sh000985':'1.000985',  'hkHSSI':'124.HSSI',    'hkHSMI':'124.HSMI',
+  'hkHSCI':'124.HSCI',
+};
+
+// ── 直连抓取：腾讯行情（script注入 JSONP） ────────────
+function getAllTqCodes() {
+  const set = new Set();
+  FUNDS.forEach(f => set.add(f.tq));
+  Object.values(BENCH).forEach(b => {
+    if (Array.isArray(b)) b.forEach(x => set.add(x.tq));
+    else set.add(b);
+  });
+  TICKER_IDX.forEach(i => set.add(i.tq));
+  // 东方财富专属，不走腾讯
+  ['sinaAG0','csi930917','csi930914','csi930792','sh000985','hkHSSI','hkHSMI','hkHSCI'].forEach(c => set.delete(c));
+  // sz399961等A股指数腾讯可访问，保留
+  return [...set];
+}
+
+function fetchTencent() {
+  return new Promise(resolve => {
+    const codes = getAllTqCodes().join(',');
+    const s = document.createElement('script');
+    let done = false;
+    const t = setTimeout(() => {
+      if (!done) { done = true; s.remove(); resolve({ funds: {}, indices: {} }); }
+    }, 10000);
+    s.onload = () => {
+      if (done) return; done = true; clearTimeout(t);
+      const r = { funds: {}, indices: {} };
+      // 解析基金行情
+      FUNDS.forEach(f => {
+        const v = window['v_' + f.tq];
+        if (!v || v.length < 10) return;
+        const p = v.split('~');
+        const price = parseFloat(p[3]), prev = parseFloat(p[4]);
+        const vol = parseFloat(p[37]) || 0;
+        if (price > 0) r.funds[f.code] = { price, prevClose: prev, chg: prev > 0 ? (price - prev) / prev * 100 : 0, vol };
+      });
+      // 解析指数行情
+      const idxSet = new Set();
+      Object.values(BENCH).forEach(b => {
+        if (Array.isArray(b)) b.forEach(x => idxSet.add(x.tq));
+        else idxSet.add(b);
+      });
+      TICKER_IDX.forEach(i => idxSet.add(i.tq));
+      ['sinaAG0','csi930917','csi930914','csi930792','sh000985','hkHSSI','hkHSMI','hkHSCI'].forEach(c => idxSet.delete(c));
+      idxSet.forEach(tq => {
+        const v = window['v_' + tq];
+        if (!v || v.length < 5) return;
+        const p = v.split('~');
+        const price = parseFloat(p[3]), prev = parseFloat(p[4]);
+        if (price > 0) r.indices[tq] = { chg: prev > 0 ? (price - prev) / prev * 100 : 0 };
+      });
+      s.remove(); resolve(r);
+    };
+    s.onerror = () => { if (!done) { done = true; clearTimeout(t); s.remove(); resolve({ funds: {}, indices: {} }); } };
+    s.src = `https://qt.gtimg.cn/q=${codes}&_=${Date.now()}`;
+    document.head.appendChild(s);
+  });
+}
+
+// ── 直连抓取：东方财富指数（fetch，有CORS头） ─────────
+function fetchEastmoney() {
+  return Promise.all(
+    Object.entries(EM_CODES).map(([key, secid]) =>
+      fetch(`https://push2.eastmoney.com/api/qt/stock/get?secid=${secid}&fields=f43,f169,f170&_=${Date.now()}`)
+        .then(r => r.json())
+        .then(d => d.data?.f43 > 0 ? [key, (d.data.f170 || 0) / 100] : null)
+        .catch(() => null)
+    )
+  ).then(results => {
+    const out = {};
+    results.forEach(r => { if (r) out[r[0]] = r[1]; });
+    return out;
+  });
+}
+
+// ── 直连抓取：天天基金净值（JSONP，唯一回调名） ────────
+function fetchNavFromLsjz(code) {
+  return new Promise(resolve => {
+    const cb = '_lsjz_' + code + '_' + (Date.now() % 1000000 | 0);
+    let done = false;
+    const t = setTimeout(() => { if (!done) { done = true; delete window[cb]; resolve(null); } }, 7000);
+    window[cb] = d => {
+      if (done) return; done = true; clearTimeout(t); delete window[cb];
+      const item = d?.Data?.LSJZList?.[0];
+      resolve(item?.DWJZ ? { nav: parseFloat(item.DWJZ), date: item.FSRQ || '' } : null);
+    };
+    const s = document.createElement('script');
+    s.onerror = () => { if (!done) { done = true; clearTimeout(t); delete window[cb]; resolve(null); } };
+    s.src = `https://api.fund.eastmoney.com/f10/lsjz?fundCode=${code}&pageIndex=1&pageSize=1&callback=${cb}&_=${Date.now()}`;
+    document.head.appendChild(s);
+    s.onload = () => s.remove();
+  });
+}
+
+async function fetchAllNavs() {
+  const BATCH = 10;
+  const navMap = {};
+  for (let i = 0; i < FUNDS.length; i += BATCH) {
+    const batch = FUNDS.slice(i, i + BATCH);
+    const results = await Promise.allSettled(
+      batch.map(f => fetchNavFromLsjz(f.code).then(r => ({ code: f.code, result: r })))
+    );
+    results.forEach(r => {
+      if (r.status === 'fulfilled' && r.value?.result) navMap[r.value.code] = r.value.result;
+    });
+  }
+  return navMap;
+}
+
+function calcBenchChg(code, idxChg) {
+  const b = BENCH[code];
+  if (!b) return 0;
+  if (Array.isArray(b)) {
+    let chg = 0, w = 0;
+    b.forEach(x => { chg += (idxChg[x.tq] || 0) * x.w; w += x.w; });
+    return w > 0 ? chg / w : 0;
+  }
+  return idxChg[b] || 0;
+}
 
 // ── 状态 ────────────────────────────────────────────
 let funds = [];          // 完整基金数据
@@ -256,6 +453,29 @@ let pgStart = 0;
 let rfInterval = 15000;
 let refreshing = false;
 let prevAlerts = new Set();
+
+// ── Worker 代理地址 ──────────────────────────────────
+const WORKER_URL = 'https://patient-pond-824c.3031315027ghb.workers.dev';
+
+// ── 通过 Worker 代理新浪财经（JSONP跨域） ─────────────
+function fetchSina() {
+  return new Promise(resolve => {
+    const cb = '_sina_' + (Date.now() % 1000000 | 0);
+    let done = false;
+    const t = setTimeout(() => {
+      if (!done) { done = true; delete window[cb]; resolve({}); }
+    }, 8000);
+    window[cb] = d => {
+      if (done) return; done = true; clearTimeout(t); delete window[cb];
+      resolve(d || {});
+    };
+    const s = document.createElement('script');
+    s.onerror = () => { if (!done) { done = true; clearTimeout(t); delete window[cb]; resolve({}); } };
+    s.src = `${WORKER_URL}/api/sina?callback=${cb}&_=${Date.now()}`;
+    document.head.appendChild(s);
+    s.onload = () => s.remove();
+  });
+}
 
 // ── Ticker 配置 ──────────────────────────────────────
 const TICKER_IDX = [
@@ -326,12 +546,41 @@ async function doRefresh() {
   refreshing = true;
   setSt('获取行情中...', true);
   try {
-    const resp = await fetch(`${WORKER_URL}/api/quote`, { cache: 'no-store' });
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const data = await resp.json();
-    funds = data.funds || [];
-    indices = data.indices || {};
-    lastTs = data.ts;
+    const [tqData, emIdx, sinaIdx, navMap] = await Promise.all([
+      fetchTencent(), fetchEastmoney(), fetchSina(), fetchAllNavs(),
+    ]);
+    const idxChg = {};
+    Object.entries(tqData.indices).forEach(([c, d]) => { idxChg[c] = d.chg; });
+    Object.entries(emIdx).forEach(([c, v]) => { idxChg[c] = v; });
+    Object.entries(sinaIdx).forEach(([c, v]) => { idxChg[c] = v; });
+    // HK指数降级兜底
+    if (!idxChg['hkHSMI']) idxChg['hkHSMI'] = idxChg['hkHSSI'] ?? idxChg['hkHSI'] ?? null;
+    if (!idxChg['hkHSSI']) idxChg['hkHSSI'] = idxChg['hkHSI'] ?? null;
+    if (!idxChg['hkHSCI']) idxChg['hkHSCI'] = idxChg['hkHSI'] ?? null;
+    funds = FUNDS.map(f => {
+      const tq = tqData.funds[f.code];
+      const navInfo = navMap[f.code];
+      const officialNav = navInfo ? navInfo.nav : null;
+      const navDate = navInfo ? navInfo.date : '';
+      const price = tq ? tq.price : null;
+      const chg = tq ? tq.chg : null;
+      const vol = tq ? tq.vol : 0;
+      const prevClose = tq ? tq.prevClose : null;
+      const benchChg = calcBenchChg(f.code, idxChg);
+      const base = officialNav || prevClose;
+      let nav = null, premium = null;
+      if (base > 0 && price != null) {
+        nav = base * (1 + benchChg / 100);
+        premium = (price - nav) / nav * 100;
+      }
+      return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, navDate, premium, benchChg, quota: f.quota, fee: f.fee, rfee: f.rfee, vol };
+    });
+    indices = {};
+    TICKER_IDX.forEach(i => {
+      const d = tqData.indices[i.tq];
+      if (d) indices[i.tq] = d.chg;
+    });
+    lastTs = Date.now();
     renderAll();
     renderTickers(indices);
     checkAlerts();
