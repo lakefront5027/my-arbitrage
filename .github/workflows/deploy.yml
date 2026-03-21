@@ -34,7 +34,7 @@ jobs:
           node-version: '20'
 
       - name: Install wrangler
-        run: npm install -g wrangler
+        run: npm install -g wrangler@3
 
       - name: Deploy worker-full.js
         run: wrangler deploy
