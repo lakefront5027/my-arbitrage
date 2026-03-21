@@ -227,9 +227,9 @@ tailwind.config = {
 <div id="modal" class="fixed inset-0 z-50 hidden">
   <div class="modal-backdrop absolute inset-0 bg-black/70" onclick="closeModal()"></div>
   <div class="absolute inset-0 flex items-center justify-center p-4">
-    <div class="relative bg-surface border border-border rounded-lg w-full max-w-md p-6 shadow-2xl">
-      <button onclick="closeModal()" class="absolute top-4 right-4 text-muted hover:text-primary font-mono text-lg leading-none">✕</button>
-      <div id="modalContent"></div>
+    <div class="relative bg-surface border border-border rounded-lg w-full max-w-md shadow-2xl flex flex-col" style="max-height:90vh">
+      <button onclick="closeModal()" class="absolute top-4 right-4 text-muted hover:text-primary font-mono text-lg leading-none z-10">✕</button>
+      <div id="modalContent" class="overflow-y-auto p-6"></div>
     </div>
   </div>
 </div>
@@ -410,24 +410,62 @@ async function loadNavsBackground() {
   const today = new Date().toLocaleDateString('zh-CN');
   if (_navCache && _navCacheDate === today) return;
 
-  // 唯一来源：fund_daily.json（由 GitHub Action 每日 00:05 北京时间写入）
+  // 主路：fund_daily.json（GitHub Action 每日 00:05 北京时间写入）
   const daily = await loadFundDaily();
-  if (!daily) {
-    console.warn('[NAV] fund_daily.json 加载失败，NAV 列将显示为 —');
-    return;
-  }
-
   const map = {};
-  for (const [code, fund] of Object.entries(daily)) {
-    if (!code.startsWith('_') && fund.nav > 0) {
-      map[code] = { nav: fund.nav, date: fund.nav_date || '' };
+  if (daily) {
+    for (const [code, fund] of Object.entries(daily)) {
+      if (!code.startsWith('_') && fund.nav > 0) {
+        map[code] = { nav: fund.nav, date: fund.nav_date || '', src: fund.nav_src || 'daily' };
+      }
     }
   }
 
   _navCache = map;
   _navCacheDate = today;
   renderAll();
-  console.log(`[NAV] 载入完成 ${Object.keys(map).length}/${FUNDS.length} 只  (from fund_daily.json)`);
+
+  const ok = Object.keys(map).length;
+  const missing = FUNDS.filter(f => !map[f.code]).map(f => f.code);
+  console.log(`[NAV] 主路载入 ${ok}/${FUNDS.length} 只 (fund_daily.json)${missing.length ? `，${missing.length} 只缺失` : ''}`);
+
+  // 紧急避险：仅在 Action 数据残缺时，用 fundgz JSONP 异步补位
+  // 单向优先原则：此为临时措施，持续缺失请修复 Action 脚本
+  if (missing.length > 0) {
+    console.warn(`[FB] 应急 fundgz 补位 ${missing.length} 只（非常态，根本修复在 Action）`);
+    runFgzFallback(missing); // 后台异步，不阻塞主渲染
+  }
+}
+
+// ── 应急补位：fundgz JSONP（仅 Action 数据残缺时启用）─────
+// fundgz 使用固定回调名 jsonpgz，必须串行；后台执行不阻塞刷新
+async function runFgzFallback(codes) {
+  const LIMIT = 20; // 超过 20 只缺失说明 Action 有系统性问题，不做无限补偿
+  if (codes.length > LIMIT) {
+    console.warn(`[FB] 缺失 ${codes.length} 只 > 上限 ${LIMIT}，仅补前 ${LIMIT} 只，请排查 Action`);
+  }
+  for (const code of codes.slice(0, LIMIT)) {
+    await new Promise(resolve => {
+      let done = false;
+      const t = setTimeout(() => { done = true; delete window.jsonpgz; resolve(); }, 4000);
+      window.jsonpgz = d => {
+        if (done) return; done = true; clearTimeout(t); delete window.jsonpgz;
+        try {
+          const nav = parseFloat(d.dwjz || d.gsz || 0);
+          const date = (d.jzrq || d.gztime || '').substring(0, 10);
+          if (nav > 0 && nav <= 50 && _navCache) _navCache[code] = { nav, date, src: 'fgz_fb' };
+        } catch (_) {}
+        resolve();
+      };
+      const s = document.createElement('script');
+      s.onerror = () => { if (!done) { done = true; clearTimeout(t); delete window.jsonpgz; resolve(); } };
+      s.src = `https://fundgz.1234567.com.cn/js/${code}.js?rt=${Date.now()}`;
+      document.head.appendChild(s);
+      s.onload = () => s.remove();
+    });
+  }
+  renderAll();
+  console.log(`[FB] 补位完成，navCache 共 ${Object.keys(_navCache || {}).length} 条`);
 }
 
 function calcBenchChg(code, idxChg) {
@@ -993,9 +1031,9 @@ function openModal(code) {
 
     ${buildHoldingsHtml(f.code)}
 
-    <div class="mt-3 flex items-center justify-between">
-      <span class="font-mono text-[9px] text-muted/60">${buildSyncTimeHtml()}</span>
-      <span class="font-mono text-[9px] text-muted/60">数据来源: ${f._src === 'W' ? '☁️ Worker' : '⚡ 直连'}</span>
+    <div class="mt-2 pt-2 border-t border-border/30 flex items-center justify-between gap-2">
+      <span class="font-mono text-[9px] text-muted/50 leading-tight">${buildSyncTimeHtml()}</span>
+      <span class="font-mono text-[9px] text-muted/50 flex-shrink-0">来源: ${f._src === 'W' ? 'Worker' : '直连'}</span>
     </div>
   `;
   document.getElementById('modal').classList.remove('hidden');
@@ -1006,29 +1044,69 @@ function buildSyncTimeHtml() {
   if (!meta || !meta.sync_time) return '';
   const t = new Date(meta.sync_time);
   const bj = t.toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false });
-  return `上次同步: ${bj.replace('T', ' ')} (北京)`;
+  const holdStr = (meta.hold_ok != null && meta.total != null)
+    ? `  持仓 ${meta.hold_ok}/${meta.total}`
+    : '';
+  return `上次同步: ${bj} (北京)${holdStr}`;
+}
+
+function buildBenchLabel(bench) {
+  if (!bench) return '—';
+  if (typeof bench === 'string') return bench.replace(/^(us|hk|sh|sz|sina|csi)/i, '');
+  if (Array.isArray(bench)) {
+    return bench.map(b => {
+      const sym = b.tq.replace(/^(us|hk|sh|sz|sina|csi)/i, '');
+      return `${sym} ${Math.round(b.w * 100)}%`;
+    }).join(' + ');
+  }
+  return '—';
 }
 
 function buildHoldingsHtml(code) {
   const daily = _fundDaily && _fundDaily[code];
+  const benchLabel = daily ? buildBenchLabel(daily.bench) : '';
+  const header = `
+    <div class="border border-border rounded overflow-hidden mb-3">
+      <div class="flex items-center justify-between px-2 py-1.5 border-b border-border" style="background:#0d0d0d">
+        <span class="font-mono text-[9px] text-muted tracking-wider">前十大持仓</span>
+        ${benchLabel ? `<span class="font-mono text-[9px] text-muted/60">基准: ${benchLabel}</span>` : ''}
+      </div>`;
+
   if (!daily || !daily.holdings || daily.holdings.length === 0) {
-    return ''; // 暂无持仓数据时不显示
-  }
-  const rows = daily.holdings.slice(0, 10).map(h =>
-    `<tr class="border-b border-border/30">
-      <td class="py-1 px-2 font-mono text-[10px] text-primary">${h.name || h.code || '—'}</td>
-      <td class="py-1 px-2 font-mono text-[10px] text-muted text-right">${h.ratio != null ? h.ratio.toFixed(2) + '%' : '—'}</td>
-    </tr>`
-  ).join('');
-  return `
-    <div class="border border-border rounded overflow-hidden mb-2">
-      <div class="font-mono text-[9px] text-muted px-2 py-1.5 tracking-wider border-b border-border" style="background:#0d0d0d">
-        前十大持仓
+    return header + `
+      <div class="px-3 py-4 text-center">
+        <div class="font-mono text-[10px] text-muted/50">暂无持仓数据</div>
+        <div class="font-mono text-[9px] text-muted/30 mt-1">每日凌晨 00:05 同步</div>
       </div>
-      <table class="w-full">
-        <tbody>${rows}</tbody>
-      </table>
     </div>`;
+  }
+
+  const maxRatio = Math.max(...daily.holdings.map(h => h.ratio || 0));
+  const rows = daily.holdings.slice(0, 10).map((h, i) => {
+    const ratio = h.ratio != null ? h.ratio : 0;
+    const barW = maxRatio > 0 ? Math.round(ratio / maxRatio * 100) : 0;
+    const name = h.name || h.code || '—';
+    const codeStr = h.code ? `<span class="text-muted/50">${h.code}</span>` : '';
+    return `<tr class="border-b border-border/30 last:border-0">
+      <td class="py-1.5 px-2 w-4 font-mono text-[9px] text-muted/40">${i + 1}</td>
+      <td class="py-1.5 px-1">
+        <div class="font-mono text-[10px] text-primary leading-tight">${name}</div>
+        <div class="font-mono text-[9px] leading-tight mt-0.5">${codeStr}</div>
+      </td>
+      <td class="py-1.5 px-2 w-28">
+        <div class="flex items-center gap-1.5">
+          <div class="flex-1 h-1 rounded-full bg-border/40">
+            <div class="h-1 rounded-full bg-blue-500/60" style="width:${barW}%"></div>
+          </div>
+          <span class="font-mono text-[10px] text-muted w-10 text-right flex-shrink-0">${ratio.toFixed(2)}%</span>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  return header + `
+    <table class="w-full"><tbody>${rows}</tbody></table>
+  </div>`;
 }
 
 function closeModal() {

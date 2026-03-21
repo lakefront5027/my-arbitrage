@@ -605,7 +605,7 @@ async function handleRequest(request, env = {}) {
     }
   }
 
-  // GET /api/snapshot — 聚合快照（主链路，NAV由浏览器端JSONP补充）
+  // GET /api/snapshot — 聚合快照（NAV 由 fund_daily.json 提供，Worker 不抓取）
   if (path === '/api/snapshot') {
     try {
       const data = await fetchAllData(env);
