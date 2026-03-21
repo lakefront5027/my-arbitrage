@@ -423,9 +423,14 @@ async function fetchAllData(env = {}) {
 
     const benchChg = calcBenchChg(f.code, idxChg);
     const base = officialNav || prevClose;
+    // 偏差校准：drift_5d 由 GitHub Action 每日写入 fund_daily.json
+    const fundDaily = daily && daily[f.code];
+    const drift5d = fundDaily ? (fundDaily.drift_5d || 0) : 0;
+    const driftN  = fundDaily ? (fundDaily.drift_n  || 0) : 0;
+    const alpha   = Math.max(-0.02, Math.min(0.02, drift5d)); // 硬限 ±2%
     let nav = null, premium = null;
     if (base > 0 && price != null) {
-      nav = base * (1 + benchChg / 100);
+      nav = base * (1 + benchChg / 100) * (1 + alpha);
       premium = (price - nav) / nav * 100;
     }
 
@@ -441,6 +446,8 @@ async function fetchAllData(env = {}) {
       navDate,
       premium,
       benchChg,
+      drift5d,
+      driftN,
       quota: f.quota,
       fee: f.fee,
       rfee: f.rfee,

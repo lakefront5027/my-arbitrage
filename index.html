@@ -673,12 +673,17 @@ async function doRefresh() {
         const prevClose = tq ? tq.prevClose : null;
         const benchChg = calcBenchChg(f.code, idxChg);
         const base = officialNav || prevClose;
+        // 偏差校准：drift_5d 由 GitHub Action 每日写入 fund_daily.json
+        const fundDaily = _fundDaily && _fundDaily[f.code];
+        const drift5d = fundDaily ? (fundDaily.drift_5d || 0) : 0;
+        const driftN  = fundDaily ? (fundDaily.drift_n  || 0) : 0;
+        const alpha   = Math.max(-0.02, Math.min(0.02, drift5d));
         let nav = null, premium = null;
         if (base > 0 && price != null) {
-          nav = base * (1 + benchChg / 100);
+          nav = base * (1 + benchChg / 100) * (1 + alpha);
           premium = (price - nav) / nav * 100;
         }
-        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, navDate, premium, benchChg, quota: f.quota, fee: f.fee, rfee: f.rfee, vol, _src: 'L' };
+        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, navDate, premium, benchChg, drift5d, driftN, quota: f.quota, fee: f.fee, rfee: f.rfee, vol, _src: 'L' };
       });
       indices = {};
       TICKER_IDX.forEach(i => {
@@ -1013,6 +1018,16 @@ function openModal(code) {
           <div class="font-mono text-sm ${cls} mt-0.5">${val}</div>
         </div>`).join('')}
     </div>
+
+    ${(f.drift5d != null && Math.abs(f.drift5d) > 0.0005 && (f.driftN || 0) >= 3) ? `
+    <div class="flex items-center justify-between bg-surface border border-border rounded px-3 py-2 mb-4">
+      <div>
+        <span class="font-mono text-[9px] text-muted tracking-wider">估值修正 α&thinsp;</span>
+        <span class="font-mono text-[9px] ${f.drift5d > 0 ? 'text-green-400/60' : 'text-red-400/60'}">
+          ${f.drift5d >= 0 ? '+' : ''}${(f.drift5d * 100).toFixed(2)}%（近 ${f.driftN} 日均值，已计入盘中估值）
+        </span>
+      </div>
+    </div>` : ''}
 
     <div class="border border-border rounded p-3 mb-4" style="background:#0d0d0d">
       <div class="font-mono text-[10px] text-muted tracking-wider mb-1">套利信号</div>

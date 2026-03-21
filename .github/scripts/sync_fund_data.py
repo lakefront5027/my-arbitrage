@@ -26,7 +26,22 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT  = os.path.dirname(os.path.dirname(SCRIPT_DIR))
 JSON_PATH  = os.path.join(REPO_ROOT, 'data', 'fund_daily.json')
 
-DRIFT_THRESHOLD = 0.05   # 累计权重偏移阈值（5%）
+DRIFT_THRESHOLD     = 0.05   # 累计权重偏移阈值（5%）
+DRIFT_HISTORY_PATH  = os.path.join(REPO_ROOT, 'data', 'drift_history.json')
+DRIFT_HISTORY_DAYS  = 30     # 滚动保留天数
+DRIFT_MIN_SAMPLES   = 3      # drift_5d 最少有效样本数
+
+# EM 指数代码映射（同 worker-full.js EM_CODES）
+_EM_CODES = {
+    'csi930917': '2.930917',
+    'csi930914': '2.930914',
+    'csi930792': '2.930792',
+    'sh000985':  '1.000985',
+    'hkHSSI':    '124.HSSI',
+    'hkHSMI':    '124.HSMI',
+    'hkHSCI':    '124.HSCI',
+    'sinaAG0':   '113.AG0',
+}
 
 
 # ══════════════════════════════════════════════════════
@@ -275,6 +290,166 @@ def fetch_holdings(code: str) -> list | None:
     print(f'    [holdings] {code}: 近 6 季均无数据（可能为单只 ETF 持仓型基金）',
           file=sys.stderr)
     return None
+
+
+# ══════════════════════════════════════════════════════
+#  偏差校准 Drift
+# ══════════════════════════════════════════════════════
+
+def fetch_bench_chg_batch(data: dict) -> dict:
+    """
+    从 fund_daily.json 收集所有基准代码，批量拉取当日涨跌幅。
+    Tencent 一次批量请求；EM 代码逐个请求（与 Worker fetchEastmoney 等价）。
+    返回 { tq_code: chg_pct }。
+    注意：Action 运行于北京 00:05（UTC 16:05），此时：
+      • A 股 / 港股指数：当日收盘完毕，chg 为准确的全天变化。
+      • 美股 ETF：美市仍开盘（ET 12:05），chg 为盘中值；5日均值可平滑此噪声。
+    """
+    tq_needed: set = set()
+    for code, fund in data.items():
+        if code.startswith('_'):
+            continue
+        bench = fund.get('bench')
+        if not bench:
+            continue
+        if isinstance(bench, str):
+            tq_needed.add(bench)
+        elif isinstance(bench, list):
+            for b in bench:
+                tq_needed.add(b['tq'])
+
+    em_keys   = {k for k in tq_needed if k in _EM_CODES}
+    tq_direct = [c for c in tq_needed if c not in em_keys]
+
+    chg_map: dict = {}
+
+    # ── Tencent 批量 ──
+    if tq_direct:
+        url  = f'https://qt.gtimg.cn/q={",".join(tq_direct)}'
+        text = fetch_url(url, referer='https://gu.qq.com')
+        if text:
+            for code in tq_direct:
+                m = re.search(rf'v_{re.escape(code)}="([^"]+)"', text)
+                if not m:
+                    continue
+                p = m.group(1).split('~')
+                try:
+                    price, prev = float(p[3]), float(p[4])
+                    if price > 0 and prev > 0:
+                        chg_map[code] = (price - prev) / prev * 100
+                except (ValueError, IndexError):
+                    pass
+        print(f'  [drift/bench] Tencent: '
+              f'{sum(1 for c in tq_direct if c in chg_map)}/{len(tq_direct)} 成功')
+
+    # ── East Money 逐个 ──
+    for tq_key in em_keys:
+        secid = _EM_CODES[tq_key]
+        url   = (f'https://push2.eastmoney.com/api/qt/stock/get'
+                 f'?secid={secid}&fields=f43,f169,f170')
+        text  = fetch_url(url)
+        if text:
+            try:
+                d = json.loads(text)
+                if d.get('data') and d['data'].get('f43', 0) > 0:
+                    chg_map[tq_key] = (d['data'].get('f170') or 0) / 100
+            except Exception:
+                pass
+        time.sleep(0.05)
+    print(f'  [drift/bench] EM: '
+          f'{sum(1 for k in em_keys if k in chg_map)}/{len(em_keys)} 成功')
+
+    return chg_map
+
+
+def _calc_bench_chg(bench_def, chg_map: dict) -> float | None:
+    """加权基准涨跌幅。镜像 Worker calcBenchChg 逻辑。"""
+    if isinstance(bench_def, str):
+        return chg_map.get(bench_def)
+    if isinstance(bench_def, list):
+        total_chg = total_w = 0.0
+        for b in bench_def:
+            c = chg_map.get(b['tq'])
+            if c is not None:
+                total_chg += c * b['w']
+                total_w   += b['w']
+        return total_chg / total_w if total_w > 0 else None
+    return None
+
+
+def update_drift(data: dict, chg_map: dict) -> None:
+    """
+    对每只基金：
+      est_nav = prev_nav × (1 + bench_chg%)
+      drift   = (curr_nav − est_nav) / est_nav
+    追加到 drift_history.json（滚动 30 天），
+    计算 drift_5d（近 5 个有效样本均值），写回 data[code]['drift_5d']。
+    """
+    try:
+        with open(DRIFT_HISTORY_PATH, 'r', encoding='utf-8') as f:
+            history: dict = json.load(f)
+    except FileNotFoundError:
+        history = {}
+
+    new_entries = 0
+    for code, fund in data.items():
+        if code.startswith('_'):
+            continue
+        curr_nav  = fund.get('nav')
+        curr_date = fund.get('nav_date', '')
+        bench_def = fund.get('bench')
+        if not curr_nav or not curr_date or not bench_def:
+            continue
+
+        hist = history.setdefault(code, [])
+
+        if hist:
+            prev      = hist[-1]
+            prev_date = prev.get('date', '')
+            prev_nav  = prev.get('nav')
+
+            if curr_date > prev_date and prev_nav:
+                # 新交易日：计算本次偏差
+                bench_chg = _calc_bench_chg(bench_def, chg_map)
+                if bench_chg is not None:
+                    est_nav = prev_nav * (1 + bench_chg / 100)
+                    drift   = (curr_nav - est_nav) / est_nav
+                    hist.append({
+                        'date':      curr_date,
+                        'nav':       curr_nav,
+                        'prev_nav':  prev_nav,
+                        'bench_chg': round(bench_chg, 4),
+                        'est_nav':   round(est_nav, 6),
+                        'drift':     round(drift, 6),
+                    })
+                    new_entries += 1
+                    print(f'    drift {code}: bench={bench_chg:+.2f}% '
+                          f'est={est_nav:.4f} act={curr_nav:.4f} '
+                          f'drift={drift * 100:+.3f}%')
+                else:
+                    # bench 数据缺失：仅记录 nav，不计 drift
+                    hist.append({'date': curr_date, 'nav': curr_nav})
+
+            elif curr_date == prev_date:
+                # 同日净值刷新（不重新计算 drift）
+                hist[-1] = {**prev, 'nav': curr_nav}
+        else:
+            # 首次记录：无前值，无法计算 drift
+            hist.append({'date': curr_date, 'nav': curr_nav})
+
+        # 滚动窗口截断
+        history[code] = hist[-DRIFT_HISTORY_DAYS:]
+
+        # 计算 drift_5d（最近 5 个含 drift 字段的条目）
+        drift_vals = [e['drift'] for e in history[code] if 'drift' in e][-5:]
+        if len(drift_vals) >= DRIFT_MIN_SAMPLES:
+            fund['drift_5d'] = round(sum(drift_vals) / len(drift_vals), 6)
+            fund['drift_n']  = len(drift_vals)
+
+    with open(DRIFT_HISTORY_PATH, 'w', encoding='utf-8') as f:
+        json.dump(history, f, ensure_ascii=False, indent=2)
+
+    print(f'  [drift] {new_entries} 只新增记录 | 已保存 {DRIFT_HISTORY_PATH}')
 
 
 # ══════════════════════════════════════════════════════
@@ -599,6 +774,11 @@ def sync():
             fund['shares'] = shares
             print(f'    份额 {shares}亿份')
         time.sleep(0.08)
+
+    # ── 偏差校准 Drift ──────────────────────────────────────
+    print('\n--- 偏差校准 Drift ---')
+    bench_chg_map = fetch_bench_chg_batch(data)
+    update_drift(data, bench_chg_map)
 
     # ── 写 _meta ──────────────────────────────────────
     now_utc = datetime.now(timezone.utc).isoformat(timespec='seconds')
