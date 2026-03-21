@@ -12,7 +12,58 @@
     "nav_date": "2026-03-05",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "FOLD",
+        "name": "爱美医疗",
+        "ratio": 1.39
+      },
+      {
+        "code": "PRAX",
+        "name": "Praxis Precision Medicines Inc",
+        "ratio": 1.3
+      },
+      {
+        "code": "TVTX",
+        "name": "Travere Therapeutics Inc",
+        "ratio": 1.28
+      },
+      {
+        "code": "BMRN",
+        "name": "拜玛林制药",
+        "ratio": 1.28
+      },
+      {
+        "code": "HALO",
+        "name": "奥洛兹美医疗",
+        "ratio": 1.24
+      },
+      {
+        "code": "ROIV",
+        "name": "Roivant Sciences Ltd",
+        "ratio": 1.24
+      },
+      {
+        "code": "EXEL",
+        "name": "伊克力西斯",
+        "ratio": 1.23
+      },
+      {
+        "code": "REGN",
+        "name": "再生元制药",
+        "ratio": 1.22
+      },
+      {
+        "code": "PCVX",
+        "name": "Vaxcyte Inc",
+        "ratio": 1.22
+      },
+      {
+        "code": "MDGL",
+        "name": "Madrigal Pharmaceuticals Inc",
+        "ratio": 1.21
+      }
+    ]
   },
   "164906": {
     "code": "164906",
@@ -27,7 +78,58 @@
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "00700",
+        "name": "腾讯控股",
+        "ratio": 9.51
+      },
+      {
+        "code": "09988",
+        "name": "阿里巴巴-W",
+        "ratio": 8.16
+      },
+      {
+        "code": "PDD",
+        "name": "拼多多",
+        "ratio": 7.65
+      },
+      {
+        "code": "03690",
+        "name": "美团-W",
+        "ratio": 6.87
+      },
+      {
+        "code": "09999",
+        "name": "网易-S",
+        "ratio": 5.66
+      },
+      {
+        "code": "09888",
+        "name": "百度集团-SW",
+        "ratio": 4.01
+      },
+      {
+        "code": "09961",
+        "name": "携程集团-S",
+        "ratio": 3.91
+      },
+      {
+        "code": "TME",
+        "name": "腾讯音乐",
+        "ratio": 3.74
+      },
+      {
+        "code": "09618",
+        "name": "京东集团-SW",
+        "ratio": 3.69
+      },
+      {
+        "code": "01024",
+        "name": "快手-W",
+        "ratio": 3.61
+      }
+    ]
   },
   "501312": {
     "code": "501312",
@@ -85,7 +187,58 @@
     "nav_date": "2026-03-05",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "GOOGL",
+        "name": "谷歌-A",
+        "ratio": 9.21
+      },
+      {
+        "code": "NVDA",
+        "name": "英伟达",
+        "ratio": 9.16
+      },
+      {
+        "code": "TSM",
+        "name": "台积电",
+        "ratio": 9.12
+      },
+      {
+        "code": "00700",
+        "name": "腾讯控股",
+        "ratio": 8.84
+      },
+      {
+        "code": "09988",
+        "name": "阿里巴巴-W",
+        "ratio": 7.9
+      },
+      {
+        "code": "AVGO",
+        "name": "博通",
+        "ratio": 6.62
+      },
+      {
+        "code": "MU",
+        "name": "美光科技",
+        "ratio": 6.32
+      },
+      {
+        "code": "09992",
+        "name": "泡泡玛特",
+        "ratio": 5.47
+      },
+      {
+        "code": "SNDK",
+        "name": "闪迪",
+        "ratio": 3.75
+      },
+      {
+        "code": "02899",
+        "name": "紫金矿业",
+        "ratio": 3.36
+      }
+    ]
   },
   "162415": {
     "code": "162415",
@@ -100,7 +253,58 @@
     "nav_date": "2026-03-05",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "AMZN",
+        "name": "亚马逊",
+        "ratio": 21.78
+      },
+      {
+        "code": "TSLA",
+        "name": "特斯拉",
+        "ratio": 19.7
+      },
+      {
+        "code": "HD",
+        "name": "家得宝",
+        "ratio": 5.34
+      },
+      {
+        "code": "MCD",
+        "name": "麦当劳",
+        "ratio": 4.21
+      },
+      {
+        "code": "BKNG",
+        "name": "Booking Holdings",
+        "ratio": 3.77
+      },
+      {
+        "code": "TJX",
+        "name": "The TJX Companies Inc",
+        "ratio": 3.73
+      },
+      {
+        "code": "LOW",
+        "name": "劳氏",
+        "ratio": 2.95
+      },
+      {
+        "code": "SBUX",
+        "name": "星巴克",
+        "ratio": 2.09
+      },
+      {
+        "code": "DASH",
+        "name": "DoorDash Inc-A",
+        "ratio": 1.85
+      },
+      {
+        "code": "ORLY",
+        "name": "奥莱利",
+        "ratio": 1.68
+      }
+    ]
   },
   "161126": {
     "code": "161126",
@@ -115,7 +319,58 @@
     "nav_date": "2026-03-05",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "LLY",
+        "name": "礼来",
+        "ratio": 1.7
+      },
+      {
+        "code": "MOH",
+        "name": "Molina Healthcare Inc",
+        "ratio": 1.69
+      },
+      {
+        "code": "MRK",
+        "name": "默沙东",
+        "ratio": 1.69
+      },
+      {
+        "code": "VTRS",
+        "name": "Viatris Inc",
+        "ratio": 1.68
+      },
+      {
+        "code": "ZTS",
+        "name": "硕腾",
+        "ratio": 1.67
+      },
+      {
+        "code": "CNC",
+        "name": "康西哥",
+        "ratio": 1.67
+      },
+      {
+        "code": "REGN",
+        "name": "再生元制药",
+        "ratio": 1.67
+      },
+      {
+        "code": "BMY",
+        "name": "百时美施贵宝",
+        "ratio": 1.65
+      },
+      {
+        "code": "CI",
+        "name": "信诺",
+        "ratio": 1.64
+      },
+      {
+        "code": "BAX",
+        "name": "百特国际",
+        "ratio": 1.64
+      }
+    ]
   },
   "161128": {
     "code": "161128",
@@ -130,7 +385,58 @@
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "NVDA",
+        "name": "英伟达",
+        "ratio": 19.61
+      },
+      {
+        "code": "AAPL",
+        "name": "苹果",
+        "ratio": 17.38
+      },
+      {
+        "code": "MSFT",
+        "name": "微软",
+        "ratio": 15.55
+      },
+      {
+        "code": "AVGO",
+        "name": "博通",
+        "ratio": 7.07
+      },
+      {
+        "code": "PLTR",
+        "name": "Palantir Technologies Inc-A",
+        "ratio": 1.76
+      },
+      {
+        "code": "AMD",
+        "name": "超威半导体",
+        "ratio": 1.51
+      },
+      {
+        "code": "ORCL",
+        "name": "甲骨文",
+        "ratio": 1.42
+      },
+      {
+        "code": "MU",
+        "name": "美光科技",
+        "ratio": 1.39
+      },
+      {
+        "code": "CSCO",
+        "name": "思科",
+        "ratio": 1.31
+      },
+      {
+        "code": "IBM",
+        "name": "IBM国际商业机器",
+        "ratio": 1.2
+      }
+    ]
   },
   "161125": {
     "code": "161125",
@@ -145,7 +451,58 @@
     "nav_date": "2026-03-05",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "NVDA",
+        "name": "英伟达",
+        "ratio": 6.55
+      },
+      {
+        "code": "AAPL",
+        "name": "苹果",
+        "ratio": 5.81
+      },
+      {
+        "code": "MSFT",
+        "name": "微软",
+        "ratio": 5.2
+      },
+      {
+        "code": "AMZN",
+        "name": "亚马逊",
+        "ratio": 3.25
+      },
+      {
+        "code": "GOOGL",
+        "name": "谷歌-A",
+        "ratio": 2.63
+      },
+      {
+        "code": "AVGO",
+        "name": "博通",
+        "ratio": 2.36
+      },
+      {
+        "code": "GOOG",
+        "name": "谷歌-C",
+        "ratio": 2.11
+      },
+      {
+        "code": "META",
+        "name": "Meta Platforms Inc-A",
+        "ratio": 2.08
+      },
+      {
+        "code": "TSLA",
+        "name": "特斯拉",
+        "ratio": 1.83
+      },
+      {
+        "code": "BRK_B",
+        "name": "伯克希尔哈撒韦-B",
+        "ratio": 1.33
+      }
+    ]
   },
   "161130": {
     "code": "161130",
@@ -190,7 +547,58 @@
     "nav_date": "2026-03-05",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "WELL",
+        "name": "Welltower Inc",
+        "ratio": 10.81
+      },
+      {
+        "code": "PLD",
+        "name": "安博",
+        "ratio": 10.06
+      },
+      {
+        "code": "EQIX",
+        "name": "易昆尼克斯",
+        "ratio": 6.38
+      },
+      {
+        "code": "SPG",
+        "name": "西蒙地产",
+        "ratio": 5.13
+      },
+      {
+        "code": "O",
+        "name": "Realty Income Corp",
+        "ratio": 4.4
+      },
+      {
+        "code": "DLR",
+        "name": "数字房地产信托",
+        "ratio": 4.24
+      },
+      {
+        "code": "PSA",
+        "name": "大众仓储",
+        "ratio": 3.48
+      },
+      {
+        "code": "VTR",
+        "name": "芬塔公司",
+        "ratio": 3.09
+      },
+      {
+        "code": "EXR",
+        "name": "Extra Space Storage Inc",
+        "ratio": 2.35
+      },
+      {
+        "code": "AVB",
+        "name": "艾芙隆海湾社区",
+        "ratio": 2.18
+      }
+    ]
   },
   "501225": {
     "code": "501225",
@@ -380,7 +788,58 @@
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "00916",
+        "name": "龙源电力",
+        "ratio": 3.21
+      },
+      {
+        "code": "00836",
+        "name": "华润电力",
+        "ratio": 2.46
+      },
+      {
+        "code": "00135",
+        "name": "昆仑能源",
+        "ratio": 1.97
+      },
+      {
+        "code": "01798",
+        "name": "大唐新能源",
+        "ratio": 1.87
+      },
+      {
+        "code": "06865",
+        "name": "福莱特玻璃",
+        "ratio": 1.43
+      },
+      {
+        "code": "00968",
+        "name": "信义光能",
+        "ratio": 1.16
+      },
+      {
+        "code": "01811",
+        "name": "中广核新能源",
+        "ratio": 1.14
+      },
+      {
+        "code": "01171",
+        "name": "兖矿能源",
+        "ratio": 1.13
+      },
+      {
+        "code": "00857",
+        "name": "中国石油股份",
+        "ratio": 0.9
+      },
+      {
+        "code": "00386",
+        "name": "中国石油化工股份",
+        "ratio": 0.72
+      }
+    ]
   },
   "501018": {
     "code": "501018",
@@ -449,7 +908,58 @@
     "nav_date": "2026-03-05",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "COP",
+        "name": "康菲石油",
+        "ratio": 17.42
+      },
+      {
+        "code": "EOG",
+        "name": "EOG能源",
+        "ratio": 8.53
+      },
+      {
+        "code": "PSX",
+        "name": "Phillips 66",
+        "ratio": 7.77
+      },
+      {
+        "code": "MPC",
+        "name": "马拉松原油",
+        "ratio": 5.86
+      },
+      {
+        "code": "DVN",
+        "name": "戴文能源",
+        "ratio": 4.09
+      },
+      {
+        "code": "FANG",
+        "name": "Diamondback Energy Inc",
+        "ratio": 4.03
+      },
+      {
+        "code": "EXE",
+        "name": "Expand Energy Corp",
+        "ratio": 4.0
+      },
+      {
+        "code": "EQT",
+        "name": "EQT能源",
+        "ratio": 3.95
+      },
+      {
+        "code": "VLO",
+        "name": "瓦莱罗能源",
+        "ratio": 3.88
+      },
+      {
+        "code": "CTRA",
+        "name": "Coterra Energy Inc",
+        "ratio": 3.74
+      }
+    ]
   },
   "162411": {
     "code": "162411",
@@ -464,7 +974,58 @@
     "nav_date": "2026-03-05",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "VG",
+        "name": "Venture Global Inc-A",
+        "ratio": 2.91
+      },
+      {
+        "code": "XOM",
+        "name": "埃克森美孚",
+        "ratio": 2.61
+      },
+      {
+        "code": "CVX",
+        "name": "雪佛龙",
+        "ratio": 2.61
+      },
+      {
+        "code": "GPOR",
+        "name": "格尔夫波特能源",
+        "ratio": 2.6
+      },
+      {
+        "code": "OXY",
+        "name": "西方石油",
+        "ratio": 2.55
+      },
+      {
+        "code": "CTRA",
+        "name": "Coterra Energy Inc",
+        "ratio": 2.52
+      },
+      {
+        "code": "COP",
+        "name": "康菲石油",
+        "ratio": 2.51
+      },
+      {
+        "code": "TPL",
+        "name": "Texas Pacific Land Corp",
+        "ratio": 2.5
+      },
+      {
+        "code": "DVN",
+        "name": "戴文能源",
+        "ratio": 2.47
+      },
+      {
+        "code": "MGY",
+        "name": "Magnolia Oil & Gas Corp-A",
+        "ratio": 2.47
+      }
+    ]
   },
   "160416": {
     "code": "160416",
@@ -479,7 +1040,58 @@
     "nav_date": "2026-03-05",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "XOM",
+        "name": "埃克森美孚",
+        "ratio": 9.33
+      },
+      {
+        "code": "CVX",
+        "name": "雪佛龙",
+        "ratio": 7.87
+      },
+      {
+        "code": "RIGD",
+        "name": "印度瑞来斯实业",
+        "ratio": 5.94
+      },
+      {
+        "code": "SHEL",
+        "name": "壳牌",
+        "ratio": 5.56
+      },
+      {
+        "code": "TTEFP",
+        "name": "道达尔集团",
+        "ratio": 3.71
+      },
+      {
+        "code": "COP",
+        "name": "康菲石油",
+        "ratio": 2.96
+      },
+      {
+        "code": "ENBCN",
+        "name": "Enbridge股份有限公司",
+        "ratio": 2.61
+      },
+      {
+        "code": "BP.",
+        "name": "英国石油",
+        "ratio": 2.36
+      },
+      {
+        "code": "WMB",
+        "name": "威廉姆斯",
+        "ratio": 1.84
+      },
+      {
+        "code": "CNQCN",
+        "name": "加拿大自然资源有限公司",
+        "ratio": 1.78
+      }
+    ]
   },
   "501303": {
     "code": "501303",
@@ -494,7 +1106,58 @@
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "09926",
+        "name": "康方生物",
+        "ratio": 2.2
+      },
+      {
+        "code": "03993",
+        "name": "洛阳钼业",
+        "ratio": 1.85
+      },
+      {
+        "code": "00020",
+        "name": "商汤-W",
+        "ratio": 1.85
+      },
+      {
+        "code": "00728",
+        "name": "中国电信",
+        "ratio": 1.81
+      },
+      {
+        "code": "01339",
+        "name": "中国人民保险集团",
+        "ratio": 1.5
+      },
+      {
+        "code": "01336",
+        "name": "新华保险",
+        "ratio": 1.36
+      },
+      {
+        "code": "01818",
+        "name": "招金矿业",
+        "ratio": 1.35
+      },
+      {
+        "code": "01347",
+        "name": "华虹半导体",
+        "ratio": 1.34
+      },
+      {
+        "code": "00300",
+        "name": "美的集团",
+        "ratio": 1.34
+      },
+      {
+        "code": "00788",
+        "name": "中国铁塔",
+        "ratio": 1.31
+      }
+    ]
   },
   "161124": {
     "code": "161124",
@@ -509,7 +1172,58 @@
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "01787",
+        "name": "山东黄金",
+        "ratio": 3.02
+      },
+      {
+        "code": "01772",
+        "name": "赣锋锂业",
+        "ratio": 2.02
+      },
+      {
+        "code": "00489",
+        "name": "东风集团股份",
+        "ratio": 1.73
+      },
+      {
+        "code": "02400",
+        "name": "心动公司",
+        "ratio": 1.69
+      },
+      {
+        "code": "06855",
+        "name": "亚盛医药-B",
+        "ratio": 1.37
+      },
+      {
+        "code": "09969",
+        "name": "诺诚健华",
+        "ratio": 1.29
+      },
+      {
+        "code": "03618",
+        "name": "重庆农村商业银行",
+        "ratio": 1.22
+      },
+      {
+        "code": "06682",
+        "name": "范式智能",
+        "ratio": 1.18
+      },
+      {
+        "code": "03931",
+        "name": "中创新航",
+        "ratio": 1.17
+      },
+      {
+        "code": "01070",
+        "name": "TCL电子",
+        "ratio": 1.14
+      }
+    ]
   },
   "160322": {
     "code": "160322",
@@ -524,7 +1238,58 @@
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "00005",
+        "name": "汇丰控股",
+        "ratio": 9.99
+      },
+      {
+        "code": "00700",
+        "name": "腾讯控股",
+        "ratio": 9.79
+      },
+      {
+        "code": "09988",
+        "name": "阿里巴巴-W",
+        "ratio": 9.03
+      },
+      {
+        "code": "02899",
+        "name": "紫金矿业",
+        "ratio": 4.89
+      },
+      {
+        "code": "01299",
+        "name": "友邦保险",
+        "ratio": 4.55
+      },
+      {
+        "code": "01398",
+        "name": "工商银行",
+        "ratio": 4.5
+      },
+      {
+        "code": "01810",
+        "name": "小米集团-W",
+        "ratio": 4.0
+      },
+      {
+        "code": "00981",
+        "name": "中芯国际",
+        "ratio": 3.85
+      },
+      {
+        "code": "03690",
+        "name": "美团-W",
+        "ratio": 3.18
+      },
+      {
+        "code": "03988",
+        "name": "中国银行",
+        "ratio": 2.94
+      }
+    ]
   },
   "501021": {
     "code": "501021",
@@ -548,7 +1313,58 @@
     "nav_date": "2026-03-20",
     "nav_src": "lsjz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "09987",
+        "name": "百胜中国",
+        "ratio": 3.02
+      },
+      {
+        "code": "09868",
+        "name": "小鹏汽车-W",
+        "ratio": 2.64
+      },
+      {
+        "code": "02269",
+        "name": "药明生物",
+        "ratio": 2.54
+      },
+      {
+        "code": "01801",
+        "name": "信达生物",
+        "ratio": 2.46
+      },
+      {
+        "code": "01378",
+        "name": "中国宏桥",
+        "ratio": 2.42
+      },
+      {
+        "code": "09660",
+        "name": "地平线机器人-W",
+        "ratio": 2.11
+      },
+      {
+        "code": "00175",
+        "name": "吉利汽车",
+        "ratio": 2.09
+      },
+      {
+        "code": "02423",
+        "name": "贝壳-W",
+        "ratio": 1.83
+      },
+      {
+        "code": "01109",
+        "name": "华润置地",
+        "ratio": 1.76
+      },
+      {
+        "code": "09926",
+        "name": "康方生物",
+        "ratio": 1.76
+      }
+    ]
   },
   "501310": {
     "code": "501310",
@@ -572,7 +1388,58 @@
     "nav_date": "2026-03-20",
     "nav_src": "lsjz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "02318",
+        "name": "中国平安",
+        "ratio": 5.77
+      },
+      {
+        "code": "00857",
+        "name": "中国石油股份",
+        "ratio": 5.23
+      },
+      {
+        "code": "01398",
+        "name": "工商银行",
+        "ratio": 4.42
+      },
+      {
+        "code": "03988",
+        "name": "中国银行",
+        "ratio": 4.3
+      },
+      {
+        "code": "00939",
+        "name": "建设银行",
+        "ratio": 4.21
+      },
+      {
+        "code": "601668",
+        "name": "中国建筑",
+        "ratio": 3.73
+      },
+      {
+        "code": "02628",
+        "name": "中国人寿",
+        "ratio": 3.62
+      },
+      {
+        "code": "00267",
+        "name": "中信股份",
+        "ratio": 3.44
+      },
+      {
+        "code": "00386",
+        "name": "中国石油化工股份",
+        "ratio": 3.43
+      },
+      {
+        "code": "03328",
+        "name": "交通银行",
+        "ratio": 2.34
+      }
+    ]
   },
   "501302": {
     "code": "501302",
@@ -602,7 +1469,58 @@
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "01919",
+        "name": "中远海控",
+        "ratio": 3.02
+      },
+      {
+        "code": "03668",
+        "name": "兖煤澳大利亚",
+        "ratio": 1.86
+      },
+      {
+        "code": "00639",
+        "name": "首钢资源",
+        "ratio": 1.5
+      },
+      {
+        "code": "000937",
+        "name": "冀中能源",
+        "ratio": 1.4
+      },
+      {
+        "code": "01308",
+        "name": "海丰国际",
+        "ratio": 1.4
+      },
+      {
+        "code": "00316",
+        "name": "东方海外国际",
+        "ratio": 1.33
+      },
+      {
+        "code": "01088",
+        "name": "中国神华",
+        "ratio": 1.25
+      },
+      {
+        "code": "03360",
+        "name": "远东宏信",
+        "ratio": 1.22
+      },
+      {
+        "code": "600256",
+        "name": "广汇能源",
+        "ratio": 1.18
+      },
+      {
+        "code": "00303",
+        "name": "VTECH HOLDINGS",
+        "ratio": 1.14
+      }
+    ]
   },
   "501306": {
     "code": "501306",
@@ -617,7 +1535,58 @@
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "00316",
+        "name": "东方海外国际",
+        "ratio": 6.84
+      },
+      {
+        "code": "01308",
+        "name": "海丰国际",
+        "ratio": 4.08
+      },
+      {
+        "code": "01088",
+        "name": "中国神华",
+        "ratio": 3.63
+      },
+      {
+        "code": "01378",
+        "name": "中国宏桥",
+        "ratio": 3.3
+      },
+      {
+        "code": "00883",
+        "name": "中国海洋石油",
+        "ratio": 2.85
+      },
+      {
+        "code": "00857",
+        "name": "中国石油股份",
+        "ratio": 2.79
+      },
+      {
+        "code": "00386",
+        "name": "中国石油化工股份",
+        "ratio": 2.64
+      },
+      {
+        "code": "00998",
+        "name": "中信银行",
+        "ratio": 2.61
+      },
+      {
+        "code": "02343",
+        "name": "太平洋航运",
+        "ratio": 2.34
+      },
+      {
+        "code": "03988",
+        "name": "中国银行",
+        "ratio": 2.31
+      }
+    ]
   },
   "160717": {
     "code": "160717",
@@ -632,7 +1601,58 @@
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "00700",
+        "name": "腾讯控股",
+        "ratio": 7.45
+      },
+      {
+        "code": "09988",
+        "name": "阿里巴巴-W",
+        "ratio": 6.98
+      },
+      {
+        "code": "00939",
+        "name": "建设银行",
+        "ratio": 6.28
+      },
+      {
+        "code": "01810",
+        "name": "小米集团-W",
+        "ratio": 6.08
+      },
+      {
+        "code": "03690",
+        "name": "美团-W",
+        "ratio": 4.83
+      },
+      {
+        "code": "01398",
+        "name": "工商银行",
+        "ratio": 4.41
+      },
+      {
+        "code": "00941",
+        "name": "中国移动",
+        "ratio": 4.32
+      },
+      {
+        "code": "02318",
+        "name": "中国平安",
+        "ratio": 3.72
+      },
+      {
+        "code": "01211",
+        "name": "比亚迪股份",
+        "ratio": 2.99
+      },
+      {
+        "code": "00883",
+        "name": "中国海洋石油",
+        "ratio": 2.82
+      }
+    ]
   },
   "501311": {
     "code": "501311",
@@ -647,7 +1667,58 @@
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "00700",
+        "name": "腾讯控股",
+        "ratio": 14.15
+      },
+      {
+        "code": "09988",
+        "name": "阿里巴巴-W",
+        "ratio": 13.25
+      },
+      {
+        "code": "01810",
+        "name": "小米集团-W",
+        "ratio": 12.1
+      },
+      {
+        "code": "03690",
+        "name": "美团-W",
+        "ratio": 9.6
+      },
+      {
+        "code": "01211",
+        "name": "比亚迪股份",
+        "ratio": 5.93
+      },
+      {
+        "code": "00981",
+        "name": "中芯国际",
+        "ratio": 5.43
+      },
+      {
+        "code": "06160",
+        "name": "百济神州",
+        "ratio": 3.67
+      },
+      {
+        "code": "01024",
+        "name": "快手-W",
+        "ratio": 3.27
+      },
+      {
+        "code": "00669",
+        "name": "创科实业",
+        "ratio": 2.22
+      },
+      {
+        "code": "09868",
+        "name": "小鹏汽车-W",
+        "ratio": 2.18
+      }
+    ]
   },
   "501301": {
     "code": "501301",
@@ -662,7 +1733,58 @@
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "09988",
+        "name": "阿里巴巴-W",
+        "ratio": 16.21
+      },
+      {
+        "code": "00700",
+        "name": "腾讯控股",
+        "ratio": 14.73
+      },
+      {
+        "code": "00939",
+        "name": "建设银行",
+        "ratio": 7.63
+      },
+      {
+        "code": "01810",
+        "name": "小米集团-W",
+        "ratio": 6.61
+      },
+      {
+        "code": "03690",
+        "name": "美团-W",
+        "ratio": 4.75
+      },
+      {
+        "code": "00941",
+        "name": "中国移动",
+        "ratio": 4.66
+      },
+      {
+        "code": "01398",
+        "name": "工商银行",
+        "ratio": 4.53
+      },
+      {
+        "code": "02318",
+        "name": "中国平安",
+        "ratio": 3.37
+      },
+      {
+        "code": "01211",
+        "name": "比亚迪股份",
+        "ratio": 3.16
+      },
+      {
+        "code": "00883",
+        "name": "中国海洋石油",
+        "ratio": 2.95
+      }
+    ]
   },
   "164705": {
     "code": "164705",
@@ -677,7 +1799,58 @@
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "00005",
+        "name": "汇丰控股",
+        "ratio": 8.45
+      },
+      {
+        "code": "00700",
+        "name": "腾讯控股",
+        "ratio": 7.43
+      },
+      {
+        "code": "09988",
+        "name": "阿里巴巴-W",
+        "ratio": 6.97
+      },
+      {
+        "code": "01299",
+        "name": "友邦保险",
+        "ratio": 4.93
+      },
+      {
+        "code": "00939",
+        "name": "建设银行",
+        "ratio": 4.34
+      },
+      {
+        "code": "01810",
+        "name": "小米集团-W",
+        "ratio": 4.2
+      },
+      {
+        "code": "03690",
+        "name": "美团-W",
+        "ratio": 3.34
+      },
+      {
+        "code": "01398",
+        "name": "工商银行",
+        "ratio": 3.04
+      },
+      {
+        "code": "00941",
+        "name": "中国移动",
+        "ratio": 2.98
+      },
+      {
+        "code": "00388",
+        "name": "香港交易所",
+        "ratio": 2.88
+      }
+    ]
   },
   "161831": {
     "code": "161831",
@@ -692,7 +1865,58 @@
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "00700",
+        "name": "腾讯控股",
+        "ratio": 7.75
+      },
+      {
+        "code": "09988",
+        "name": "阿里巴巴-W",
+        "ratio": 7.26
+      },
+      {
+        "code": "01810",
+        "name": "小米集团-W",
+        "ratio": 6.33
+      },
+      {
+        "code": "03690",
+        "name": "美团-W",
+        "ratio": 5.03
+      },
+      {
+        "code": "01398",
+        "name": "工商银行",
+        "ratio": 4.59
+      },
+      {
+        "code": "02318",
+        "name": "中国平安",
+        "ratio": 3.86
+      },
+      {
+        "code": "01211",
+        "name": "比亚迪股份",
+        "ratio": 3.11
+      },
+      {
+        "code": "00883",
+        "name": "中国海洋石油",
+        "ratio": 2.94
+      },
+      {
+        "code": "00981",
+        "name": "中芯国际",
+        "ratio": 2.84
+      },
+      {
+        "code": "03988",
+        "name": "中国银行",
+        "ratio": 2.8
+      }
+    ]
   },
   "501305": {
     "code": "501305",
@@ -707,7 +1931,58 @@
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "00316",
+        "name": "东方海外国际",
+        "ratio": 6.84
+      },
+      {
+        "code": "01308",
+        "name": "海丰国际",
+        "ratio": 4.08
+      },
+      {
+        "code": "01088",
+        "name": "中国神华",
+        "ratio": 3.63
+      },
+      {
+        "code": "01378",
+        "name": "中国宏桥",
+        "ratio": 3.3
+      },
+      {
+        "code": "00883",
+        "name": "中国海洋石油",
+        "ratio": 2.85
+      },
+      {
+        "code": "00857",
+        "name": "中国石油股份",
+        "ratio": 2.79
+      },
+      {
+        "code": "00386",
+        "name": "中国石油化工股份",
+        "ratio": 2.64
+      },
+      {
+        "code": "00998",
+        "name": "中信银行",
+        "ratio": 2.61
+      },
+      {
+        "code": "02343",
+        "name": "太平洋航运",
+        "ratio": 2.34
+      },
+      {
+        "code": "03988",
+        "name": "中国银行",
+        "ratio": 2.31
+      }
+    ]
   },
   "160924": {
     "code": "160924",
@@ -722,7 +1997,58 @@
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "00005",
+        "name": "汇丰控股",
+        "ratio": 7.87
+      },
+      {
+        "code": "00700",
+        "name": "腾讯控股",
+        "ratio": 6.9
+      },
+      {
+        "code": "09988",
+        "name": "阿里巴巴-W",
+        "ratio": 6.48
+      },
+      {
+        "code": "00939",
+        "name": "建设银行",
+        "ratio": 5.15
+      },
+      {
+        "code": "01299",
+        "name": "友邦保险",
+        "ratio": 4.58
+      },
+      {
+        "code": "01810",
+        "name": "小米集团-W",
+        "ratio": 3.93
+      },
+      {
+        "code": "03690",
+        "name": "美团-W",
+        "ratio": 3.13
+      },
+      {
+        "code": "00941",
+        "name": "中国移动",
+        "ratio": 2.79
+      },
+      {
+        "code": "00388",
+        "name": "香港交易所",
+        "ratio": 2.71
+      },
+      {
+        "code": "03988",
+        "name": "中国银行",
+        "ratio": 2.52
+      }
+    ]
   },
   "501025": {
     "code": "501025",
@@ -737,7 +2063,58 @@
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "00005",
+        "name": "汇丰控股",
+        "ratio": 15.27
+      },
+      {
+        "code": "00939",
+        "name": "建设银行",
+        "ratio": 13.66
+      },
+      {
+        "code": "01398",
+        "name": "工商银行",
+        "ratio": 11.57
+      },
+      {
+        "code": "02888",
+        "name": "渣打集团",
+        "ratio": 9.09
+      },
+      {
+        "code": "03968",
+        "name": "招商银行",
+        "ratio": 8.01
+      },
+      {
+        "code": "03988",
+        "name": "中国银行",
+        "ratio": 7.91
+      },
+      {
+        "code": "01288",
+        "name": "农业银行",
+        "ratio": 6.39
+      },
+      {
+        "code": "02388",
+        "name": "中银香港",
+        "ratio": 5.99
+      },
+      {
+        "code": "00011",
+        "name": "恒生银行",
+        "ratio": 4.13
+      },
+      {
+        "code": "03328",
+        "name": "交通银行",
+        "ratio": 4.06
+      }
+    ]
   },
   "161226": {
     "code": "161226",
@@ -767,7 +2144,58 @@
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "601899",
+        "name": "紫金矿业",
+        "ratio": 17.76
+      },
+      {
+        "code": "603993",
+        "name": "洛阳钼业",
+        "ratio": 5.28
+      },
+      {
+        "code": "601088",
+        "name": "中国神华",
+        "ratio": 4.18
+      },
+      {
+        "code": "600111",
+        "name": "北方稀土",
+        "ratio": 3.74
+      },
+      {
+        "code": "601857",
+        "name": "中国石油",
+        "ratio": 3.69
+      },
+      {
+        "code": "603799",
+        "name": "华友钴业",
+        "ratio": 3.31
+      },
+      {
+        "code": "601600",
+        "name": "中国铝业",
+        "ratio": 3.05
+      },
+      {
+        "code": "600028",
+        "name": "中国石化",
+        "ratio": 2.82
+      },
+      {
+        "code": "601225",
+        "name": "陕西煤业",
+        "ratio": 2.61
+      },
+      {
+        "code": "002460",
+        "name": "赣锋锂业",
+        "ratio": 2.27
+      }
+    ]
   },
   "161715": {
     "code": "161715",
@@ -782,7 +2210,58 @@
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "300395",
+        "name": "菲利华",
+        "ratio": 1.11
+      },
+      {
+        "code": "600362",
+        "name": "江西铜业",
+        "ratio": 1.1
+      },
+      {
+        "code": "002493",
+        "name": "荣盛石化",
+        "ratio": 1.09
+      },
+      {
+        "code": "000408",
+        "name": "藏格矿业",
+        "ratio": 1.09
+      },
+      {
+        "code": "002738",
+        "name": "中矿资源",
+        "ratio": 1.07
+      },
+      {
+        "code": "600346",
+        "name": "恒力石化",
+        "ratio": 1.07
+      },
+      {
+        "code": "002756",
+        "name": "永兴材料",
+        "ratio": 1.06
+      },
+      {
+        "code": "002318",
+        "name": "久立特材",
+        "ratio": 1.05
+      },
+      {
+        "code": "000807",
+        "name": "云铝股份",
+        "ratio": 1.04
+      },
+      {
+        "code": "000301",
+        "name": "东方盛虹",
+        "ratio": 1.04
+      }
+    ]
   },
   "161725": {
     "code": "161725",
@@ -793,11 +2272,62 @@
     "fee": "1.50%",
     "rfee": "0.50%",
     "bench": "sz399987",
-    "nav": 0.6569,
-    "nav_date": "2026-03-19",
-    "nav_src": "fundgz",
+    "nav": 0.6519,
+    "nav_date": "2026-03-20",
+    "nav_src": "lsjz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "600519",
+        "name": "贵州茅台",
+        "ratio": 15.38
+      },
+      {
+        "code": "600809",
+        "name": "山西汾酒",
+        "ratio": 15.11
+      },
+      {
+        "code": "000858",
+        "name": "五粮液",
+        "ratio": 14.65
+      },
+      {
+        "code": "000568",
+        "name": "泸州老窖",
+        "ratio": 14.53
+      },
+      {
+        "code": "002304",
+        "name": "洋河股份",
+        "ratio": 8.34
+      },
+      {
+        "code": "000596",
+        "name": "古井贡酒",
+        "ratio": 5.14
+      },
+      {
+        "code": "603369",
+        "name": "今世缘",
+        "ratio": 4.97
+      },
+      {
+        "code": "603198",
+        "name": "迎驾贡酒",
+        "ratio": 2.47
+      },
+      {
+        "code": "600702",
+        "name": "舍得酒业",
+        "ratio": 2.14
+      },
+      {
+        "code": "603589",
+        "name": "口子窖",
+        "ratio": 2.06
+      }
+    ]
   },
   "161032": {
     "code": "161032",
@@ -812,13 +2342,64 @@
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
     "shares": null,
-    "holdings": null
+    "holdings": [
+      {
+        "code": "601088",
+        "name": "中国神华",
+        "ratio": 9.71
+      },
+      {
+        "code": "601225",
+        "name": "陕西煤业",
+        "ratio": 9.38
+      },
+      {
+        "code": "600188",
+        "name": "兖矿能源",
+        "ratio": 7.67
+      },
+      {
+        "code": "601898",
+        "name": "中煤能源",
+        "ratio": 7.43
+      },
+      {
+        "code": "000983",
+        "name": "山西焦煤",
+        "ratio": 5.94
+      },
+      {
+        "code": "600348",
+        "name": "华阳股份",
+        "ratio": 4.86
+      },
+      {
+        "code": "000723",
+        "name": "美锦能源",
+        "ratio": 4.73
+      },
+      {
+        "code": "601699",
+        "name": "潞安环能",
+        "ratio": 4.61
+      },
+      {
+        "code": "600985",
+        "name": "淮北矿业",
+        "ratio": 3.9
+      },
+      {
+        "code": "601666",
+        "name": "平煤股份",
+        "ratio": 3.8
+      }
+    ]
   },
   "_meta": {
-    "sync_time": "2026-03-21T10:12:15+00:00",
-    "nav_ok": 47,
-    "nav_kept": 0,
-    "hold_ok": 0,
+    "sync_time": "2026-03-21T12:02:49+00:00",
+    "nav_ok": 46,
+    "nav_kept": 1,
+    "hold_ok": 31,
     "total": 47
   }
 }
