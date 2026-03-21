@@ -1066,11 +1066,20 @@ function openModal(code) {
 
     ${buildHoldingsHtml(f.code)}
 
-    <div class="mt-3 text-right">
+    <div class="mt-3 flex items-center justify-between">
+      <span class="font-mono text-[9px] text-muted/60">${buildSyncTimeHtml()}</span>
       <span class="font-mono text-[9px] text-muted/60">数据来源: ${f._src === 'W' ? '☁️ Worker' : '⚡ 直连'}</span>
     </div>
   `;
   document.getElementById('modal').classList.remove('hidden');
+}
+
+function buildSyncTimeHtml() {
+  const meta = _fundDaily && _fundDaily['_meta'];
+  if (!meta || !meta.sync_time) return '';
+  const t = new Date(meta.sync_time);
+  const bj = t.toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false });
+  return `上次同步: ${bj.replace('T', ' ')} (北京)`;
 }
 
 function buildHoldingsHtml(code) {

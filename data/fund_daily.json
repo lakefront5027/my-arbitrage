@@ -45,5 +45,6 @@
   "161217": { "code": "161217", "name": "国投上游资源LOF",  "tq": "sz161217", "cat": "cn", "quota": "开放",    "fee": "1.50%", "rfee": "0.50%", "bench": "sz399961", "nav": null, "nav_date": null, "nav_src": null, "shares": null, "holdings": null },
   "161715": { "code": "161715", "name": "招商大宗商品LOF",  "tq": "sz161715", "cat": "cn", "quota": "开放",    "fee": "1.50%", "rfee": "0.50%", "bench": "sz399979", "nav": null, "nav_date": null, "nav_src": null, "shares": null, "holdings": null },
   "161725": { "code": "161725", "name": "招商中证白酒LOF",  "tq": "sz161725", "cat": "cn", "quota": "开放",    "fee": "1.50%", "rfee": "0.50%", "bench": "sz399987", "nav": null, "nav_date": null, "nav_src": null, "shares": null, "holdings": null },
-  "161032": { "code": "161032", "name": "富国中证煤炭LOF",  "tq": "sz161032", "cat": "cn", "quota": "开放",    "fee": "1.50%", "rfee": "0.50%", "bench": "sz399998", "nav": null, "nav_date": null, "nav_src": null, "shares": null, "holdings": null }
+  "161032": { "code": "161032", "name": "富国中证煤炭LOF",  "tq": "sz161032", "cat": "cn", "quota": "开放",    "fee": "1.50%", "rfee": "0.50%", "bench": "sz399998", "nav": null, "nav_date": null, "nav_src": null, "shares": null, "holdings": null },
+  "_meta": { "sync_time": null, "nav_ok": 0, "nav_kept": 0, "hold_ok": 0, "total": 47 }
 }
