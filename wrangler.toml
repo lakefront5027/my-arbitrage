@@ -2,6 +2,10 @@ name = "lof-arb-radar"
 main = "worker-full.js"
 compatibility_date = "2024-11-01"
 
+[[kv_namespaces]]
+binding = "LOF_STATE"
+id = "125e6bbea0514c6c9552186a0daeb085"
+
 [triggers]
 crons = ["* * * * *"]
 

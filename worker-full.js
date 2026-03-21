@@ -161,8 +161,7 @@ function getAllTqCodes() {
   return [...set];
 }
 
-// ── 简单的报警去重 Map（每个 isolate 生命周期内有效，MVP） ──
-const alertedFunds = new Map(); // code -> timestamp
+// 状态跃迁报警：KV 持久化，key=alert:{code}，value="above"|"below"
 
 // ══════════════════════════════════════════════════════
 //  数据获取函数（Worker 环境，使用 fetch()，非浏览器）
@@ -647,20 +646,26 @@ async function sendWechatAlert(fund) {
   }
 }
 
-async function checkAndAlert(funds) {
+async function checkAndAlert(funds, kv) {
   if (!CONFIG.WECHAT_WEBHOOK) return;
-  const now = Date.now();
-  const DEDUP_MS = 30 * 60 * 1000; // 30分钟去重
 
   for (const fund of funds) {
     if (fund.premium == null) continue;
-    if (Math.abs(fund.premium) < CONFIG.ALERT_THRESHOLD) continue;
 
-    const lastAlert = alertedFunds.get(fund.code);
-    if (lastAlert && now - lastAlert < DEDUP_MS) continue;
+    const isAbove = Math.abs(fund.premium) >= CONFIG.ALERT_THRESHOLD;
+    const kvKey = `alert:${fund.code}`;
+    const prevState = kv ? await kv.get(kvKey) : null; // "above" | "below" | null
 
-    alertedFunds.set(fund.code, now);
-    await sendWechatAlert(fund);
+    if (isAbove) {
+      // 只在从 below/null → above 的跃迁时推送
+      if (prevState !== 'above') {
+        await sendWechatAlert(fund);
+      }
+      if (kv) await kv.put(kvKey, 'above', { expirationTtl: 86400 });
+    } else {
+      // 回落到阈值以下，重置状态（下次再超过阈值会重新推）
+      if (prevState === 'above' && kv) await kv.put(kvKey, 'below', { expirationTtl: 86400 });
+    }
   }
 }
 
@@ -724,11 +729,11 @@ async function handleRequest(request) {
 //  Mode B: Scheduled Cron
 // ══════════════════════════════════════════════════════
 
-async function handleScheduled() {
+async function handleScheduled(kv) {
   try {
     console.log('[Cron] 开始定时刷新...');
     const data = await fetchAllData();
-    await checkAndAlert(data.funds);
+    await checkAndAlert(data.funds, kv);
     console.log(`[Cron] 完成，基金${data.funds.length}只，报警检查完毕`);
   } catch (e) {
     console.error('[Cron] 定时任务失败:', e);
@@ -747,6 +752,6 @@ export default {
 
   async scheduled(event, env, ctx) {
     if (env.WECHAT_WEBHOOK) CONFIG.WECHAT_WEBHOOK = env.WECHAT_WEBHOOK;
-    ctx.waitUntil(handleScheduled());
+    ctx.waitUntil(handleScheduled(env.LOF_STATE));
   },
 };
