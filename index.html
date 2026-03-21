@@ -439,15 +439,35 @@ let _navCacheDate = '';
 
 async function loadNavsBackground() {
   const today = new Date().toLocaleDateString('zh-CN');
-  if (_navCache && _navCacheDate === today) return;   // 已有今日缓存
+  if (_navCache && _navCacheDate === today) return;
+
   const map = {};
-  for (const f of FUNDS) {
-    const r = await fetchNavFromFundgz(f.code);       // 串行，保证队列有序
-    if (r) map[f.code] = r;
+
+  // Step 1: Worker /api/nav — 服务端 fetch 可加 Referer，lsjz/fundgz 均可访问
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 10000);
+    const resp = await fetch(WORKER_URL + '/api/nav', { signal: ctrl.signal });
+    clearTimeout(t);
+    if (resp.ok) Object.assign(map, await resp.json());
+    console.log(`[NAV] Worker 返回 ${Object.keys(map).length} 只`);
+  } catch (e) {
+    console.warn('[NAV] Worker /api/nav 失败:', e.message);
   }
+
+  // Step 2: 缺口用浏览器 fundgz JSONP 补（串行，保证队列有序）
+  const missing = FUNDS.filter(f => !map[f.code]);
+  if (missing.length > 0) {
+    console.log(`[NAV] fundgz 补充 ${missing.length} 只...`);
+    for (const f of missing) {
+      const r = await fetchNavFromFundgz(f.code);
+      if (r) map[f.code] = r;
+    }
+  }
+
   _navCache = map;
   _navCacheDate = today;
-  renderAll();   // NAV 到位后刷新一次界面
+  renderAll();
   console.log(`[NAV] 载入完成，${Object.keys(map).length}/${FUNDS.length} 只`);
 }
 
