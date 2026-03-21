@@ -164,6 +164,34 @@ def fetch_pingzhong(code: str) -> dict | None:
 
 
 # ══════════════════════════════════════════════════════
+#  总份额抓取
+# ══════════════════════════════════════════════════════
+
+def fetch_shares(code: str) -> float | None:
+    """
+    从东方财富 pingzhongdata.js 解析基金最新总份额（亿份）。
+    取 Data_buySedemption 中 "总份额" 系列的最后一个季度值。
+    """
+    url = f'https://fund.eastmoney.com/pingzhongdata/{code}.js'
+    text = fetch_url(url, referer='https://fund.eastmoney.com')
+    if not text:
+        return None
+    m = re.search(r'var\s+Data_buySedemption\s*=\s*(\{[\s\S]*?\});', text)
+    if not m:
+        return None
+    try:
+        d = json.loads(m.group(1))
+        for series in (d.get('series') or []):
+            if series.get('name') == '总份额':
+                data_pts = series.get('data') or []
+                if data_pts:
+                    return round(float(data_pts[-1]), 4)
+    except Exception:
+        pass
+    return None
+
+
+# ══════════════════════════════════════════════════════
 #  持仓抓取
 # ══════════════════════════════════════════════════════
 
@@ -563,6 +591,13 @@ def sync():
         else:
             hold_fail += 1
             print(f'    持仓 FAILED — 保留旧值', file=sys.stderr)
+        time.sleep(0.08)
+
+        # ── 总份额 ────────────────────────────────────
+        shares = fetch_shares(code)
+        if shares is not None:
+            fund['shares'] = shares
+            print(f'    份额 {shares}亿份')
         time.sleep(0.08)
 
     # ── 写 _meta ──────────────────────────────────────

@@ -198,8 +198,8 @@ tailwind.config = {
           <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider">操作方向</th>
           <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider">申购限额</th>
           <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider text-right">费率</th>
-          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider text-right" onclick="setSort('vol')">
-            成交额(万) <span id="sort-vol" class="sort-arrow">↕</span>
+          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider text-right" onclick="setSort('shares')">
+            总份额(亿) <span id="sort-shares" class="sort-arrow">↕</span>
           </th>
           <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider text-center">来源</th>
         </tr>
@@ -808,7 +808,8 @@ function renderTable() {
       action = '<span class="text-muted text-xs">接近阈值</span>';
     }
     const quotaCls = f.quota === '暂停' ? 'text-red-400' : f.quota === '开放' ? 'text-green-400' : 'text-yellow-400';
-    const volStr = f.vol ? (f.vol / 10000).toFixed(0) + '' : '—';
+    const sharesInfo = _fundDaily && _fundDaily[f.code];
+    const sharesStr = sharesInfo && sharesInfo.shares != null ? sharesInfo.shares.toFixed(2) : '—';
     const rowBg = isAlert ? (isPrem ? 'bg-premium/5' : 'bg-discount/5') : '';
     return `<tr class="border-b border-border/50 table-row-hover ${rowBg}" onclick="openModal('${f.code}')">
       <td class="py-2 px-3 font-mono text-xs text-primary whitespace-nowrap">${f.name}</td>
@@ -826,7 +827,7 @@ function renderTable() {
       <td class="py-2 px-2">${action}</td>
       <td class="py-2 px-2 font-mono text-[10px] ${quotaCls}">${f.quota}</td>
       <td class="py-2 px-2 font-mono text-[10px] text-muted text-right">${f.fee}</td>
-      <td class="py-2 px-2 font-mono text-xs text-right text-muted">${volStr}</td>
+      <td class="py-2 px-2 font-mono text-xs text-right text-primary/70">${sharesStr}</td>
       <td class="py-2 px-2 text-center"><span class="font-mono text-[9px] px-1 py-0.5 rounded ${f._src === 'W' ? 'text-blue-400 bg-blue-400/10 border border-blue-400/30' : 'text-muted bg-surface border border-border'}">${f._src || '—'}</span></td>
     </tr>`;
   }).join('');
