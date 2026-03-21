@@ -401,49 +401,54 @@ function fetchEastmoney() {
   });
 }
 
-// ── 直连抓取：天天基金净值（JSONP，唯一回调名） ────────
-function fetchNavFromLsjz(code) {
+// ── T-1净值：fundgz JSONP（与原始 lof_arb_monitor_v33 一致）─
+// fundgz 使用固定回调 jsonpgz()，用串行队列处理并发
+const _fgzQ = [];
+window.jsonpgz = d => { if (_fgzQ.length) _fgzQ.shift()(d); };
+
+function fetchNavFromFundgz(code) {
   return new Promise(resolve => {
-    const cb = '_lsjz_' + code + '_' + (Date.now() % 1000000 | 0);
-    let done = false;
-    const t = setTimeout(() => { if (!done) { done = true; delete window[cb]; resolve(null); } }, 7000);
-    window[cb] = d => {
-      if (done) return; done = true; clearTimeout(t); delete window[cb];
-      const item = d?.Data?.LSJZList?.[0];
-      resolve(item?.DWJZ ? { nav: parseFloat(item.DWJZ), date: item.FSRQ || '' } : null);
+    const handler = d => {
+      clearTimeout(timer);
+      const v = parseFloat(d?.dwjz);
+      const g = parseFloat(d?.gsz);
+      if (v > 0 && v <= 50) resolve({ nav: v, date: d?.jzrq || '' });
+      else if (g > 0)       resolve({ nav: g, date: (d?.gztime || '').slice(0, 10) });
+      else                  resolve(null);
     };
+    const timer = setTimeout(() => {
+      const i = _fgzQ.indexOf(handler); if (i > -1) _fgzQ.splice(i, 1);
+      resolve(null);
+    }, 6000);
+    _fgzQ.push(handler);
     const s = document.createElement('script');
-    s.onerror = () => { if (!done) { done = true; clearTimeout(t); delete window[cb]; resolve(null); } };
-    s.src = `https://api.fund.eastmoney.com/f10/lsjz?fundCode=${code}&pageIndex=1&pageSize=1&callback=${cb}&_=${Date.now()}`;
+    s.onerror = () => {
+      clearTimeout(timer);
+      const i = _fgzQ.indexOf(handler); if (i > -1) _fgzQ.splice(i, 1);
+      resolve(null);
+    };
+    s.src = `https://fundgz.1234567.com.cn/js/${code}.js?rt=${Date.now()}`;
     document.head.appendChild(s);
     s.onload = () => s.remove();
   });
 }
 
-async function fetchAllNavs() {
-  // 第一步：Worker /api/nav（服务端抓，不受 Referer 限制，5s超时）
-  let navMap = {};
-  try {
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), 5000);
-    const resp = await fetch(WORKER_URL + '/api/nav', { signal: ctrl.signal });
-    clearTimeout(t);
-    if (resp.ok) navMap = await resp.json();
-  } catch (e) {
-    console.warn('Worker /api/nav 失败，将用浏览器直连补充:', e.message);
-  }
+// NAV 日级缓存：每天只抓一次，不阻塞15s价格刷新
+let _navCache = null;
+let _navCacheDate = '';
 
-  // 第二步：Worker 未返回的基金，用浏览器 JSONP 补（并发，7s超时）
-  const missing = FUNDS.filter(f => !navMap[f.code]);
-  if (missing.length > 0) {
-    const results = await Promise.allSettled(
-      missing.map(f => fetchNavFromLsjz(f.code).then(r => ({ code: f.code, result: r })))
-    );
-    results.forEach(r => {
-      if (r.status === 'fulfilled' && r.value?.result) navMap[r.value.code] = r.value.result;
-    });
+async function loadNavsBackground() {
+  const today = new Date().toLocaleDateString('zh-CN');
+  if (_navCache && _navCacheDate === today) return;   // 已有今日缓存
+  const map = {};
+  for (const f of FUNDS) {
+    const r = await fetchNavFromFundgz(f.code);       // 串行，保证队列有序
+    if (r) map[f.code] = r;
   }
-  return navMap;
+  _navCache = map;
+  _navCacheDate = today;
+  renderAll();   // NAV 到位后刷新一次界面
+  console.log(`[NAV] 载入完成，${Object.keys(map).length}/${FUNDS.length} 只`);
 }
 
 function calcBenchChg(code, idxChg) {
@@ -519,6 +524,8 @@ window.addEventListener('DOMContentLoaded', () => {
     resetTimer();
   });
   startAutoRefresh();
+  // NAV 后台串行加载（不阻塞价格刷新，加载完毕自动触发 renderAll）
+  loadNavsBackground();
 });
 
 function initClock() {
@@ -569,8 +576,8 @@ async function doRefresh() {
   refreshing = true;
   setSt('获取行情中...', true);
   try {
-    // NAV 始终由浏览器 JSONP 抓取（中国 NAV 接口封锁 CF 海外 IP）
-    const navMapPromise = fetchAllNavs();
+    // NAV 用日级缓存（由 loadNavsBackground 后台填充，不阻塞价格刷新）
+    const navMap = _navCache || {};
 
     // 🥇 主链路：Worker /api/snapshot（3s 超时）
     let snap = null;
@@ -581,10 +588,8 @@ async function doRefresh() {
       console.warn('☁️ Worker snapshot 不可用，切换本地直连:', e.message);
     }
 
-    const navMap = await navMapPromise;
-
     if (snap) {
-      // 🥇 Worker 数据 + 浏览器 NAV 合并
+      // 🥇 Worker 数据 + 缓存 NAV 合并
       funds = snap.funds.map(f => {
         const navInfo = navMap[f.code];
         if (!navInfo) return f;
