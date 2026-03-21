@@ -201,11 +201,12 @@ tailwind.config = {
           <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider text-right" onclick="setSort('vol')">
             成交额(万) <span id="sort-vol" class="sort-arrow">↕</span>
           </th>
+          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider text-center">来源</th>
         </tr>
       </thead>
       <tbody id="tbody">
         <tr>
-          <td colspan="14" class="py-16 text-center text-muted font-mono text-xs">
+          <td colspan="15" class="py-16 text-center text-muted font-mono text-xs">
             暂无数据 — 请等待自动刷新或点击「↺ 刷新」
           </td>
         </tr>
@@ -443,23 +444,42 @@ async function loadNavsBackground() {
 
   const map = {};
 
-  // Step 1: Worker /api/nav — 服务端 fetch 可加 Referer，lsjz/fundgz 均可访问
-  try {
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), 10000);
-    const resp = await fetch(WORKER_URL + '/api/nav', { signal: ctrl.signal });
-    clearTimeout(t);
-    if (resp.ok) Object.assign(map, await resp.json());
-    console.log(`[NAV] Worker 返回 ${Object.keys(map).length} 只`);
-  } catch (e) {
-    console.warn('[NAV] Worker /api/nav 失败:', e.message);
+  // Step 1: fund_daily.json — GitHub Action 每日更新，零延迟读静态文件
+  const daily = await loadFundDaily();
+  if (daily) {
+    for (const [code, fund] of Object.entries(daily)) {
+      if (fund.nav && fund.nav > 0) {
+        map[code] = { nav: fund.nav, date: fund.nav_date || '', src: 'daily' };
+      }
+    }
+    console.log(`[NAV] fund_daily 提供 ${Object.keys(map).length} 只`);
   }
 
-  // Step 2: 缺口用浏览器 fundgz JSONP 补（串行，保证队列有序）
-  const missing = FUNDS.filter(f => !map[f.code]);
-  if (missing.length > 0) {
-    console.log(`[NAV] fundgz 补充 ${missing.length} 只...`);
-    for (const f of missing) {
+  // Step 2: 缺口用 Worker /api/nav（服务端抓取，可设 Referer）
+  const missing1 = FUNDS.filter(f => !map[f.code]);
+  if (missing1.length > 0) {
+    try {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 10000);
+      const resp = await fetch(WORKER_URL + '/api/nav', { signal: ctrl.signal });
+      clearTimeout(t);
+      if (resp.ok) {
+        const wMap = await resp.json();
+        for (const [code, info] of Object.entries(wMap)) {
+          if (!map[code]) map[code] = info;
+        }
+        console.log(`[NAV] Worker /api/nav 补充后共 ${Object.keys(map).length} 只`);
+      }
+    } catch (e) {
+      console.warn('[NAV] Worker /api/nav 失败:', e.message);
+    }
+  }
+
+  // Step 3: 仍缺口用浏览器 fundgz JSONP 串行补（最后兜底）
+  const missing2 = FUNDS.filter(f => !map[f.code]);
+  if (missing2.length > 0) {
+    console.log(`[NAV] fundgz JSONP 补充 ${missing2.length} 只...`);
+    for (const f of missing2) {
       const r = await fetchNavFromFundgz(f.code);
       if (r) map[f.code] = r;
     }
@@ -505,6 +525,41 @@ let prevAlerts = new Set();
 // ── Worker 代理地址 ──────────────────────────────────
 const WORKER_URL = 'https://patient-pond-824c.3031315027ghb.workers.dev';
 
+// ── fund_daily.json 静态配置（含 NAV、holdings） ──────
+// 相对路径，在 CF Pages / GitHub Pages 上均可访问
+const FUND_DAILY_PATH = './data/fund_daily.json';
+let _fundDaily = null;          // { code: { nav, nav_date, holdings, ... } }
+let _fundDailyLoaded = false;
+
+async function loadFundDaily() {
+  if (_fundDailyLoaded) return _fundDaily;
+  try {
+    // 先尝试 Worker 的 /api/daily（附 CORS，更快）
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 5000);
+    const resp = await fetch(WORKER_URL + '/api/daily', { signal: ctrl.signal });
+    clearTimeout(t);
+    if (resp.ok) {
+      _fundDaily = await resp.json();
+      _fundDailyLoaded = true;
+      console.log('[daily] Worker /api/daily 加载成功');
+      return _fundDaily;
+    }
+  } catch (_) {}
+  // Fallback: 直接读静态文件
+  try {
+    const r = await fetch(FUND_DAILY_PATH);
+    if (r.ok) {
+      _fundDaily = await r.json();
+      _fundDailyLoaded = true;
+      console.log('[daily] 静态 fund_daily.json 加载成功');
+    }
+  } catch (e) {
+    console.warn('[daily] fund_daily.json 加载失败:', e.message);
+  }
+  return _fundDaily;
+}
+
 // ── 通过 Worker 代理新浪财经（JSONP跨域） ─────────────
 function fetchSina() {
   return new Promise(resolve => {
@@ -544,7 +599,8 @@ window.addEventListener('DOMContentLoaded', () => {
     resetTimer();
   });
   startAutoRefresh();
-  // NAV 后台串行加载（不阻塞价格刷新，加载完毕自动触发 renderAll）
+  // fund_daily.json + NAV 后台加载（不阻塞价格刷新）
+  // loadFundDaily 在 loadNavsBackground 内部已调用，此处不重复启动
   loadNavsBackground();
 });
 
@@ -653,7 +709,7 @@ async function doRefresh() {
           nav = base * (1 + benchChg / 100);
           premium = (price - nav) / nav * 100;
         }
-        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, navDate, premium, benchChg, quota: f.quota, fee: f.fee, rfee: f.rfee, vol };
+        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, navDate, premium, benchChg, quota: f.quota, fee: f.fee, rfee: f.rfee, vol, _src: 'L' };
       });
       indices = {};
       TICKER_IDX.forEach(i => {
@@ -667,8 +723,9 @@ async function doRefresh() {
     renderTickers(indices);
     checkAlerts();
     const time = new Date(lastTs).toLocaleTimeString('zh-CN', {hour12:false});
-    const src = snap ? '☁️ Worker' : '⚡ 直连';
-    setSt(`✓ ${time} [${src}] — ${funds.length}只基金已更新`, false);
+    const src = snap ? '☁W' : '⚡L';
+    const srcFull = snap ? '☁️ Worker' : '⚡ 直连';
+    setSt(`✓ ${time} [${srcFull}] — ${funds.length}只基金已更新`, false);
   } catch (e) {
     setSt(`✗ 获取失败: ${e.message}`, false);
     console.error(e);
@@ -749,7 +806,7 @@ function renderTable() {
   const data = getFiltered();
   const tbody = document.getElementById('tbody');
   if (!data.length) {
-    tbody.innerHTML = `<tr><td colspan="14" class="py-16 text-center text-muted font-mono text-xs">暂无符合条件的数据</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="15" class="py-16 text-center text-muted font-mono text-xs">暂无符合条件的数据</td></tr>`;
     return;
   }
   tbody.innerHTML = data.map(f => {
@@ -801,6 +858,7 @@ function renderTable() {
       <td class="py-2 px-2 font-mono text-[10px] ${quotaCls}">${f.quota}</td>
       <td class="py-2 px-2 font-mono text-[10px] text-muted text-right">${f.fee}</td>
       <td class="py-2 px-2 font-mono text-xs text-right text-muted">${volStr}</td>
+      <td class="py-2 px-2 text-center"><span class="font-mono text-[9px] px-1 py-0.5 rounded ${f._src === 'W' ? 'text-blue-400 bg-blue-400/10 border border-blue-400/30' : 'text-muted bg-surface border border-border'}">${f._src || '—'}</span></td>
     </tr>`;
   }).join('');
 }
@@ -991,7 +1049,7 @@ function openModal(code) {
       <div class="font-mono text-xs">${signalHtml}</div>
     </div>
 
-    <div class="grid grid-cols-3 gap-2 text-center">
+    <div class="grid grid-cols-3 gap-2 text-center mb-4">
       <div class="bg-surface border border-border rounded p-2">
         <div class="font-mono text-[9px] text-muted">申购限额</div>
         <div class="font-mono text-xs text-primary mt-0.5">${f.quota}</div>
@@ -1005,8 +1063,36 @@ function openModal(code) {
         <div class="font-mono text-xs text-primary mt-0.5">${f.rfee}</div>
       </div>
     </div>
+
+    ${buildHoldingsHtml(f.code)}
+
+    <div class="mt-3 text-right">
+      <span class="font-mono text-[9px] text-muted/60">数据来源: ${f._src === 'W' ? '☁️ Worker' : '⚡ 直连'}</span>
+    </div>
   `;
   document.getElementById('modal').classList.remove('hidden');
+}
+
+function buildHoldingsHtml(code) {
+  const daily = _fundDaily && _fundDaily[code];
+  if (!daily || !daily.holdings || daily.holdings.length === 0) {
+    return ''; // 暂无持仓数据时不显示
+  }
+  const rows = daily.holdings.slice(0, 10).map(h =>
+    `<tr class="border-b border-border/30">
+      <td class="py-1 px-2 font-mono text-[10px] text-primary">${h.name || h.code || '—'}</td>
+      <td class="py-1 px-2 font-mono text-[10px] text-muted text-right">${h.ratio != null ? h.ratio.toFixed(2) + '%' : '—'}</td>
+    </tr>`
+  ).join('');
+  return `
+    <div class="border border-border rounded overflow-hidden mb-2">
+      <div class="font-mono text-[9px] text-muted px-2 py-1.5 tracking-wider border-b border-border" style="background:#0d0d0d">
+        前十大持仓
+      </div>
+      <table class="w-full">
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
 }
 
 function closeModal() {

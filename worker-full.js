@@ -8,7 +8,31 @@ const CONFIG = {
   ALERT_THRESHOLD: 1.5,        // 溢价预警阈值(%)
   WECHAT_WEBHOOK: '',           // 企业微信机器人Webhook URL（留空则不发送）
   SINA_PROXY_URL: 'https://patient-pond-824c.3031315027ghb.workers.dev', // 新浪代理（保留供前端用）
+  // fund_daily.json 托管地址（CF Pages），由 GitHub Action 每日更新
+  FUND_DAILY_URL: 'https://my-arbitrage.pages.dev/data/fund_daily.json',
 };
+
+// ── fund_daily.json 内存缓存（isolate 级别，约 30s 有效） ─
+let _dailyCache = null;
+let _dailyCacheTs = 0;
+const DAILY_CACHE_TTL = 30 * 60 * 1000; // 30 分钟
+
+async function loadFundDaily(env) {
+  const now = Date.now();
+  if (_dailyCache && now - _dailyCacheTs < DAILY_CACHE_TTL) return _dailyCache;
+  // 优先用 env 变量覆盖 URL（wrangler.toml [vars] FUND_DAILY_URL = "..."）
+  const url = (env && env.FUND_DAILY_URL) || CONFIG.FUND_DAILY_URL;
+  try {
+    const resp = await fetch(url, { cf: { cacheTtl: 1800 } });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    _dailyCache = await resp.json();
+    _dailyCacheTs = now;
+  } catch (e) {
+    console.warn('[daily] loadFundDaily 失败:', e.message);
+    // 保持旧缓存（如果有）
+  }
+  return _dailyCache;
+}
 
 // ── 基金列表（47只，完整数据） ────────────────────────
 const FUNDS = [
@@ -567,6 +591,7 @@ async function fetchAllData(skipNav = false) {
       fee: f.fee,
       rfee: f.rfee,
       vol,
+      _src: 'W',   // 数据来源标记：W = Worker 聚合
     };
   });
 
@@ -680,7 +705,7 @@ async function checkAndAlert(funds, kv) {
 //  Mode A: HTTP Handler
 // ══════════════════════════════════════════════════════
 
-async function handleRequest(request) {
+async function handleRequest(request, env = {}) {
   const url = new URL(request.url);
   const path = url.pathname;
   const origin = request.headers.get('Origin') || '';
@@ -690,13 +715,59 @@ async function handleRequest(request) {
     return new Response(null, { headers: corsHeaders(origin) });
   }
 
-  // GET /api/nav — 所有基金 T-1 净值（Worker 服务端抓，绕过浏览器 Referer 限制）
+  // GET /api/nav — 所有基金 T-1 净值
+  // 优先用 fund_daily.json（GitHub Action 每日更新，无需实时抓取）
+  // 缺口才 fallback 到 fundgz/lsjz
   if (path === '/api/nav') {
     try {
-      const navMap = await fetchAllNavs();
+      const daily = await loadFundDaily(env);
+      const navMap = {};
+      // 先从 fund_daily.json 填充有效净值
+      if (daily) {
+        for (const [code, fund] of Object.entries(daily)) {
+          if (fund.nav && fund.nav > 0) {
+            navMap[code] = { nav: fund.nav, date: fund.nav_date || '', src: 'daily' };
+          }
+        }
+      }
+      // 缺口用实时抓取补充
+      const missing = FUNDS.filter(f => !navMap[f.code]);
+      if (missing.length > 0) {
+        const fallback = await Promise.allSettled(
+          missing.map(async f => {
+            let r = NO_GSZ_FUNDS.has(f.code)
+              ? await fetchNavFromEM(f.code)
+              : (await fetchNavFromFundgz(f.code) || await fetchNavFromEM(f.code));
+            return { code: f.code, result: r };
+          })
+        );
+        fallback.forEach(r => {
+          if (r.status === 'fulfilled' && r.value && r.value.result) {
+            navMap[r.value.code] = { ...r.value.result, src: 'realtime' };
+          }
+        });
+      }
       return jsonResp(navMap, 200, origin);
     } catch (e) {
       return jsonResp({}, 500, origin);
+    }
+  }
+
+  // GET /api/daily — 透传 fund_daily.json（含 nav + holdings + bench 配置）
+  if (path === '/api/daily') {
+    try {
+      const daily = await loadFundDaily(env);
+      if (!daily) return jsonResp({ error: 'unavailable' }, 503, origin);
+      return new Response(JSON.stringify(daily), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+          'Cache-Control': 'public, max-age=1800, s-maxage=1800',
+          ...corsHeaders(origin),
+        },
+      });
+    } catch (e) {
+      return jsonResp({ error: e.message }, 500, origin);
     }
   }
 
@@ -824,7 +895,7 @@ async function handleScheduled(cron, kv) {
 export default {
   async fetch(request, env, ctx) {
     if (env.WX_KEY) CONFIG.WECHAT_WEBHOOK = `https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${env.WX_KEY}`;
-    return handleRequest(request);
+    return handleRequest(request, env);
   },
 
   async scheduled(event, env, ctx) {

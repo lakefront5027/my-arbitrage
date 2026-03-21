@@ -1,0 +1,34 @@
+name: Daily Fund Data Sync
+
+on:
+  schedule:
+    # 09:30 UTC = 17:30 北京时间，每个工作日收盘后同步净值
+    - cron: '30 9 * * 1-5'
+  workflow_dispatch:   # 支持手动触发
+
+jobs:
+  sync:
+    name: Sync NAV from fundgz / lsjz
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # 允许 Action 推送对 fund_daily.json 的修改
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run NAV sync script
+        run: python .github/scripts/sync_fund_data.py
+
+      - name: Commit updated NAV data
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/fund_daily.json
+          # 只有文件有变化时才 commit
+          git diff --staged --quiet \
+            && echo "No changes to commit" \
+            || (git commit -m "chore: daily NAV sync $(date -u '+%Y-%m-%d')" && git push)
