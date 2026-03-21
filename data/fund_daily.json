@@ -2396,10 +2396,15 @@
     ]
   },
   "_meta": {
-    "sync_time": "2026-03-21T13:13:49+00:00",
-    "nav_ok": 45,
-    "nav_kept": 2,
+    "sync_time": "2026-03-21T16:42:21+00:00",
+    "nav_ok": 41,
+    "nav_kept": 6,
     "hold_ok": 31,
     "total": 47
+  },
+  "_fx": {
+    "usd_cnh_t1": 6.904,
+    "hkd_cnh_t1": null,
+    "date": "2026-03-21"
   }
 }
