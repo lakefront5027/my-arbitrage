@@ -421,12 +421,23 @@ function fetchNavFromLsjz(code) {
 }
 
 async function fetchAllNavs() {
-  const BATCH = 10;
-  const navMap = {};
-  for (let i = 0; i < FUNDS.length; i += BATCH) {
-    const batch = FUNDS.slice(i, i + BATCH);
+  // 第一步：Worker /api/nav（服务端抓，不受 Referer 限制，5s超时）
+  let navMap = {};
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 5000);
+    const resp = await fetch(WORKER_URL + '/api/nav', { signal: ctrl.signal });
+    clearTimeout(t);
+    if (resp.ok) navMap = await resp.json();
+  } catch (e) {
+    console.warn('Worker /api/nav 失败，将用浏览器直连补充:', e.message);
+  }
+
+  // 第二步：Worker 未返回的基金，用浏览器 JSONP 补（并发，7s超时）
+  const missing = FUNDS.filter(f => !navMap[f.code]);
+  if (missing.length > 0) {
     const results = await Promise.allSettled(
-      batch.map(f => fetchNavFromLsjz(f.code).then(r => ({ code: f.code, result: r })))
+      missing.map(f => fetchNavFromLsjz(f.code).then(r => ({ code: f.code, result: r })))
     );
     results.forEach(r => {
       if (r.status === 'fulfilled' && r.value?.result) navMap[r.value.code] = r.value.result;

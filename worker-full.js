@@ -690,6 +690,16 @@ async function handleRequest(request) {
     return new Response(null, { headers: corsHeaders(origin) });
   }
 
+  // GET /api/nav — 所有基金 T-1 净值（Worker 服务端抓，绕过浏览器 Referer 限制）
+  if (path === '/api/nav') {
+    try {
+      const navMap = await fetchAllNavs();
+      return jsonResp(navMap, 200, origin);
+    } catch (e) {
+      return jsonResp({}, 500, origin);
+    }
+  }
+
   // GET /api/snapshot — 聚合快照（主链路，NAV由浏览器端JSONP补充）
   if (path === '/api/snapshot') {
     try {
