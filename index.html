@@ -1078,12 +1078,36 @@ function buildHoldingsHtml(code) {
       </div>`;
 
   if (!daily || !daily.holdings || daily.holdings.length === 0) {
-    return header + `
-      <div class="px-3 py-4 text-center">
-        <div class="font-mono text-[10px] text-muted/50">暂无持仓数据</div>
-        <div class="font-mono text-[9px] text-muted/30 mt-1">每日凌晨 00:05 同步</div>
-      </div>
-    </div>`;
+    // 无持仓明细时，展示对标指数作为替代
+    const bench = daily && daily.bench;
+    let benchRows = '';
+    if (bench) {
+      const items = typeof bench === 'string'
+        ? [{ sym: bench.replace(/^(us|hk|sh|sz|sina|csi)/i, ''), w: 100 }]
+        : bench.map(b => ({ sym: b.tq.replace(/^(us|hk|sh|sz|sina|csi)/i, ''), w: Math.round(b.w * 100) }));
+      const maxW = Math.max(...items.map(x => x.w));
+      benchRows = items.map(({ sym, w }) => {
+        const barW = maxW > 0 ? Math.round(w / maxW * 100) : 100;
+        return `<tr class="border-b border-border/30 last:border-0">
+          <td class="py-1.5 px-2 w-4 font-mono text-[9px] text-blue-400/60">≈</td>
+          <td class="py-1.5 px-1">
+            <div class="font-mono text-[10px] text-primary/80 leading-tight">${sym}</div>
+            <div class="font-mono text-[9px] text-muted/40 leading-tight">对标指数</div>
+          </td>
+          <td class="py-1.5 px-2 w-28">
+            <div class="flex items-center gap-1.5">
+              <div class="flex-1 h-1 rounded-full bg-border/40">
+                <div class="h-1 rounded-full bg-blue-400/40" style="width:${barW}%"></div>
+              </div>
+              <span class="font-mono text-[10px] text-muted w-10 text-right flex-shrink-0">${w}%</span>
+            </div>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+    return header + (benchRows
+      ? `<table class="w-full"><tbody>${benchRows}</tbody></table></div>`
+      : `<div class="px-3 py-4 text-center font-mono text-[10px] text-muted/40">暂无数据</div></div>`);
   }
 
   const maxRatio = Math.max(...daily.holdings.map(h => h.ratio || 0));
