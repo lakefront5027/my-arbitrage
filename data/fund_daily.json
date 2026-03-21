@@ -11,7 +11,7 @@
     "nav": 1.7031,
     "nav_date": "2026-03-05",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 2.87,
     "holdings": [
       {
         "code": "FOLD",
@@ -77,7 +77,7 @@
     "nav": 1.0584,
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
-    "shares": null,
+    "shares": 55.25,
     "holdings": [
       {
         "code": "00700",
@@ -153,10 +153,10 @@
         "w": 0.1
       }
     ],
-    "nav": 1.97,
-    "nav_date": "2026-03-05",
-    "nav_src": "fundgz",
-    "shares": null,
+    "nav": 1.9156,
+    "nav_date": "2026-03-19",
+    "nav_src": "lsjz",
+    "shares": 4.03,
     "holdings": null
   },
   "164824": {
@@ -171,7 +171,7 @@
     "nav": 1.2762,
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
-    "shares": null,
+    "shares": 18.25,
     "holdings": null
   },
   "160644": {
@@ -186,7 +186,7 @@
     "nav": 1.5797,
     "nav_date": "2026-03-05",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 1.28,
     "holdings": [
       {
         "code": "GOOGL",
@@ -252,7 +252,7 @@
     "nav": 2.913,
     "nav_date": "2026-03-05",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 2.3,
     "holdings": [
       {
         "code": "AMZN",
@@ -315,10 +315,10 @@
     "fee": "1.20%",
     "rfee": "1.00%",
     "bench": "usRSPH",
-    "nav": 1.9,
-    "nav_date": "2026-03-05",
-    "nav_src": "fundgz",
-    "shares": null,
+    "nav": 1.8025,
+    "nav_date": "2026-03-19",
+    "nav_src": "lsjz",
+    "shares": 0.76,
     "holdings": [
       {
         "code": "LLY",
@@ -384,7 +384,7 @@
     "nav": 5.3593,
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
-    "shares": null,
+    "shares": 6.35,
     "holdings": [
       {
         "code": "NVDA",
@@ -450,7 +450,7 @@
     "nav": 2.8661,
     "nav_date": "2026-03-05",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 5.05,
     "holdings": [
       {
         "code": "NVDA",
@@ -516,7 +516,7 @@
     "nav": 3.8546,
     "nav_date": "2026-03-05",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 4.07,
     "holdings": null
   },
   "501300": {
@@ -531,7 +531,7 @@
     "nav": 0.9561,
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
-    "shares": null,
+    "shares": 22.43,
     "holdings": null
   },
   "160140": {
@@ -546,7 +546,7 @@
     "nav": 1.3768,
     "nav_date": "2026-03-05",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 2.4,
     "holdings": [
       {
         "code": "WELL",
@@ -612,7 +612,7 @@
     "nav": 2.1602,
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
-    "shares": null,
+    "shares": 2.27,
     "holdings": null
   },
   "160216": {
@@ -656,7 +656,7 @@
     "nav": 0.767,
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
-    "shares": null,
+    "shares": 15.4,
     "holdings": null
   },
   "161116": {
@@ -671,7 +671,7 @@
     "nav": 1.8986,
     "nav_date": "2026-03-05",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 2.71,
     "holdings": null
   },
   "164701": {
@@ -686,7 +686,7 @@
     "nav": 1.858,
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
-    "shares": null,
+    "shares": 6.81,
     "holdings": null
   },
   "165513": {
@@ -701,7 +701,7 @@
     "nav": 1.2124,
     "nav_date": "2026-03-05",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 4.52,
     "holdings": null
   },
   "160719": {
@@ -716,7 +716,7 @@
     "nav": 2.101,
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
-    "shares": null,
+    "shares": 2.24,
     "holdings": null
   },
   "161815": {
@@ -772,7 +772,7 @@
     "nav": 1.149,
     "nav_date": "2026-03-05",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 2.85,
     "holdings": null
   },
   "163208": {
@@ -787,7 +787,7 @@
     "nav": 1.353,
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
-    "shares": null,
+    "shares": 3.04,
     "holdings": [
       {
         "code": "00916",
@@ -862,7 +862,7 @@
     "nav": 1.789,
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
-    "shares": null,
+    "shares": 8.85,
     "holdings": null
   },
   "161129": {
@@ -877,7 +877,7 @@
     "nav": 1.7047,
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
-    "shares": null,
+    "shares": 4.35,
     "holdings": null
   },
   "160723": {
@@ -892,7 +892,7 @@
     "nav": 2.0645,
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
-    "shares": null,
+    "shares": 3.5,
     "holdings": null
   },
   "162719": {
@@ -907,7 +907,7 @@
     "nav": 2.6595,
     "nav_date": "2026-03-05",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 2.95,
     "holdings": [
       {
         "code": "COP",
@@ -973,7 +973,7 @@
     "nav": 0.8799,
     "nav_date": "2026-03-05",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 20.34,
     "holdings": [
       {
         "code": "VG",
@@ -1036,10 +1036,10 @@
     "fee": "1.20%",
     "rfee": "1.50%",
     "bench": "usIXC",
-    "nav": 2.0389,
-    "nav_date": "2026-03-05",
-    "nav_src": "fundgz",
-    "shares": null,
+    "nav": 2.175,
+    "nav_date": "2026-03-19",
+    "nav_src": "lsjz",
+    "shares": 1.84,
     "holdings": [
       {
         "code": "XOM",
@@ -1105,7 +1105,7 @@
     "nav": 1.0471,
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 0.43,
     "holdings": [
       {
         "code": "09926",
@@ -1171,7 +1171,7 @@
     "nav": 1.0968,
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 0.44,
     "holdings": [
       {
         "code": "01787",
@@ -1237,7 +1237,7 @@
     "nav": 1.1461,
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 1.13,
     "holdings": [
       {
         "code": "00005",
@@ -1312,7 +1312,7 @@
     "nav": 1.4041,
     "nav_date": "2026-03-20",
     "nav_src": "lsjz",
-    "shares": null,
+    "shares": 2.34,
     "holdings": [
       {
         "code": "09987",
@@ -1387,7 +1387,7 @@
     "nav": 1.3608,
     "nav_date": "2026-03-20",
     "nav_src": "lsjz",
-    "shares": null,
+    "shares": 0.53,
     "holdings": [
       {
         "code": "02318",
@@ -1453,7 +1453,7 @@
     "nav": 1.1736,
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 2.07,
     "holdings": null
   },
   "501307": {
@@ -1468,7 +1468,7 @@
     "nav": 1.3055,
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 0.43,
     "holdings": [
       {
         "code": "01919",
@@ -1534,7 +1534,7 @@
     "nav": 1.2758,
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 5.46,
     "holdings": [
       {
         "code": "00316",
@@ -1597,10 +1597,10 @@
     "fee": "1.20%",
     "rfee": "0.95%",
     "bench": "hkHSCEI",
-    "nav": 0.7519,
-    "nav_date": "2026-03-19",
-    "nav_src": "fundgz",
-    "shares": null,
+    "nav": 0.7411,
+    "nav_date": "2026-03-20",
+    "nav_src": "lsjz",
+    "shares": 3.1,
     "holdings": [
       {
         "code": "00700",
@@ -1666,7 +1666,7 @@
     "nav": 1.0191,
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 11.91,
     "holdings": [
       {
         "code": "00700",
@@ -1732,7 +1732,7 @@
     "nav": 1.2819,
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 0.97,
     "holdings": [
       {
         "code": "09988",
@@ -1798,7 +1798,7 @@
     "nav": 1.1509,
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 2.81,
     "holdings": [
       {
         "code": "00005",
@@ -1864,7 +1864,7 @@
     "nav": 0.7701,
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 2.74,
     "holdings": [
       {
         "code": "00700",
@@ -1930,7 +1930,7 @@
     "nav": 1.3199,
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 4.72,
     "holdings": [
       {
         "code": "00316",
@@ -1996,7 +1996,7 @@
     "nav": 1.0209,
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 1.24,
     "holdings": [
       {
         "code": "00005",
@@ -2062,7 +2062,7 @@
     "nav": 1.623,
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 5.47,
     "holdings": [
       {
         "code": "00005",
@@ -2128,7 +2128,7 @@
     "nav": 1.9754,
     "nav_date": "2026-03-20",
     "nav_src": "lsjz",
-    "shares": null,
+    "shares": 51.41,
     "holdings": null
   },
   "161217": {
@@ -2143,7 +2143,7 @@
     "nav": 2.3234,
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 1.49,
     "holdings": [
       {
         "code": "601899",
@@ -2209,7 +2209,7 @@
     "nav": 2.4013,
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 1.45,
     "holdings": [
       {
         "code": "300395",
@@ -2275,7 +2275,7 @@
     "nav": 0.6519,
     "nav_date": "2026-03-20",
     "nav_src": "lsjz",
-    "shares": null,
+    "shares": 401.42,
     "holdings": [
       {
         "code": "600519",
@@ -2341,7 +2341,7 @@
     "nav": 2.326,
     "nav_date": "2026-03-19",
     "nav_src": "fundgz",
-    "shares": null,
+    "shares": 3.06,
     "holdings": [
       {
         "code": "601088",
@@ -2396,9 +2396,9 @@
     ]
   },
   "_meta": {
-    "sync_time": "2026-03-21T12:02:49+00:00",
-    "nav_ok": 46,
-    "nav_kept": 1,
+    "sync_time": "2026-03-21T13:13:49+00:00",
+    "nav_ok": 45,
+    "nav_kept": 2,
     "hold_ok": 31,
     "total": 47
   }
