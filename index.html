@@ -318,6 +318,15 @@ const EM_CODES = {
   'hkHSCI':'124.HSCI',
 };
 
+// ── 主链路：Worker 聚合快照（3s 超时，失败自动降级） ───
+function fetchSnapshot() {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 3000);
+  return fetch(WORKER_URL + '/api/snapshot', { signal: ctrl.signal })
+    .then(r => { clearTimeout(timer); if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+    .catch(e => { clearTimeout(timer); throw e; });
+}
+
 // ── 直连抓取：腾讯行情（script注入 JSONP） ────────────
 function getAllTqCodes() {
   const set = new Set();
@@ -540,52 +549,71 @@ function manualRefresh() {
   resetTimer();
 }
 
-// ── 核心刷新 ────────────────────────────────────────
+// ── 核心刷新（Hybrid：Worker 主链路 → 本地直连备用） ──
 async function doRefresh() {
   if (refreshing) return;
   refreshing = true;
   setSt('获取行情中...', true);
   try {
-    const [tqData, emIdx, sinaIdx, navMap] = await Promise.all([
-      fetchTencent(), fetchEastmoney(), fetchSina(), fetchAllNavs(),
-    ]);
-    const idxChg = {};
-    Object.entries(tqData.indices).forEach(([c, d]) => { idxChg[c] = d.chg; });
-    Object.entries(emIdx).forEach(([c, v]) => { idxChg[c] = v; });
-    Object.entries(sinaIdx).forEach(([c, v]) => { idxChg[c] = v; });
-    // HK指数降级兜底
-    if (!idxChg['hkHSMI']) idxChg['hkHSMI'] = idxChg['hkHSSI'] ?? idxChg['hkHSI'] ?? null;
-    if (!idxChg['hkHSSI']) idxChg['hkHSSI'] = idxChg['hkHSI'] ?? null;
-    if (!idxChg['hkHSCI']) idxChg['hkHSCI'] = idxChg['hkHSI'] ?? null;
-    funds = FUNDS.map(f => {
-      const tq = tqData.funds[f.code];
-      const navInfo = navMap[f.code];
-      const officialNav = navInfo ? navInfo.nav : null;
-      const navDate = navInfo ? navInfo.date : '';
-      const price = tq ? tq.price : null;
-      const chg = tq ? tq.chg : null;
-      const vol = tq ? tq.vol : 0;
-      const prevClose = tq ? tq.prevClose : null;
-      const benchChg = calcBenchChg(f.code, idxChg);
-      const base = officialNav || prevClose;
-      let nav = null, premium = null;
-      if (base > 0 && price != null) {
-        nav = base * (1 + benchChg / 100);
-        premium = (price - nav) / nav * 100;
+    let usedWorker = false;
+
+    // 🥇 主链路：Worker /api/snapshot（3s 超时）
+    try {
+      const snap = await fetchSnapshot();
+      if (snap && Array.isArray(snap.funds) && snap.funds.length > 0) {
+        funds = snap.funds;
+        indices = snap.indices || {};
+        lastTs = snap.ts || Date.now();
+        usedWorker = true;
       }
-      return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, navDate, premium, benchChg, quota: f.quota, fee: f.fee, rfee: f.rfee, vol };
-    });
-    indices = {};
-    TICKER_IDX.forEach(i => {
-      const d = tqData.indices[i.tq];
-      if (d) indices[i.tq] = d.chg;
-    });
-    lastTs = Date.now();
+    } catch (e) {
+      console.warn('☁️ Worker snapshot 不可用，切换本地直连:', e.message);
+    }
+
+    // 🥈 备用链路：本地多源直连
+    if (!usedWorker) {
+      const [tqData, emIdx, sinaIdx, navMap] = await Promise.all([
+        fetchTencent(), fetchEastmoney(), fetchSina(), fetchAllNavs(),
+      ]);
+      const idxChg = {};
+      Object.entries(tqData.indices).forEach(([c, d]) => { idxChg[c] = d.chg; });
+      Object.entries(emIdx).forEach(([c, v]) => { idxChg[c] = v; });
+      Object.entries(sinaIdx).forEach(([c, v]) => { idxChg[c] = v; });
+      if (!idxChg['hkHSMI']) idxChg['hkHSMI'] = idxChg['hkHSSI'] ?? idxChg['hkHSI'] ?? null;
+      if (!idxChg['hkHSSI']) idxChg['hkHSSI'] = idxChg['hkHSI'] ?? null;
+      if (!idxChg['hkHSCI']) idxChg['hkHSCI'] = idxChg['hkHSI'] ?? null;
+      funds = FUNDS.map(f => {
+        const tq = tqData.funds[f.code];
+        const navInfo = navMap[f.code];
+        const officialNav = navInfo ? navInfo.nav : null;
+        const navDate = navInfo ? navInfo.date : '';
+        const price = tq ? tq.price : null;
+        const chg = tq ? tq.chg : null;
+        const vol = tq ? tq.vol : 0;
+        const prevClose = tq ? tq.prevClose : null;
+        const benchChg = calcBenchChg(f.code, idxChg);
+        const base = officialNav || prevClose;
+        let nav = null, premium = null;
+        if (base > 0 && price != null) {
+          nav = base * (1 + benchChg / 100);
+          premium = (price - nav) / nav * 100;
+        }
+        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, navDate, premium, benchChg, quota: f.quota, fee: f.fee, rfee: f.rfee, vol };
+      });
+      indices = {};
+      TICKER_IDX.forEach(i => {
+        const d = tqData.indices[i.tq];
+        if (d) indices[i.tq] = d.chg;
+      });
+      lastTs = Date.now();
+    }
+
     renderAll();
     renderTickers(indices);
     checkAlerts();
     const time = new Date(lastTs).toLocaleTimeString('zh-CN', {hour12:false});
-    setSt(`✓ ${time} — ${funds.length}只基金已更新`, false);
+    const src = usedWorker ? '☁️ Worker' : '⚡ 直连';
+    setSt(`✓ ${time} [${src}] — ${funds.length}只基金已更新`, false);
   } catch (e) {
     setSt(`✗ 获取失败: ${e.message}`, false);
     console.error(e);

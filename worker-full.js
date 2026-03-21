@@ -590,21 +590,24 @@ function toBeijingDate(ts) {
   return new Date(d.getTime() + offset).toISOString().slice(0, 10);
 }
 
-function corsHeaders() {
+function corsHeaders(origin) {
+  const allowed = ['https://lakefront5027.github.io'];
+  const ao = (origin && allowed.includes(origin)) ? origin : '*';
   return {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Origin': ao,
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Cache-Control',
     'Access-Control-Max-Age': '86400',
+    'Vary': 'Origin',
   };
 }
 
-function jsonResp(data, status = 200) {
+function jsonResp(data, status = 200, origin) {
   return new Response(JSON.stringify(data), {
     status,
     headers: {
       'Content-Type': 'application/json;charset=UTF-8',
-      ...corsHeaders(),
+      ...corsHeaders(origin),
     },
   });
 }
@@ -676,20 +679,40 @@ async function checkAndAlert(funds, kv) {
 async function handleRequest(request) {
   const url = new URL(request.url);
   const path = url.pathname;
+  const origin = request.headers.get('Origin') || '';
 
   // CORS preflight
   if (request.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders() });
+    return new Response(null, { headers: corsHeaders(origin) });
   }
 
-  // GET /api/quote — 全量数据
+  // GET /api/snapshot — 聚合快照（主链路，溢价率已在云端计算）
+  if (path === '/api/snapshot') {
+    try {
+      const data = await fetchAllData();
+      return new Response(JSON.stringify(data), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+          'Cache-Control': 'public, max-age=12, s-maxage=12',
+          'CF-Cache-Status': 'DYNAMIC',
+          ...corsHeaders(origin),
+        },
+      });
+    } catch (e) {
+      console.error('/api/snapshot 失败:', e);
+      return jsonResp({ error: e.message }, 500, origin);
+    }
+  }
+
+  // GET /api/quote — 全量数据（旧路径，保持兼容）
   if (path === '/api/quote') {
     try {
       const data = await fetchAllData();
-      return jsonResp(data);
+      return jsonResp(data, 200, origin);
     } catch (e) {
       console.error('/api/quote 失败:', e);
-      return jsonResp({ error: e.message }, 500);
+      return jsonResp({ error: e.message }, 500, origin);
     }
   }
 
@@ -706,24 +729,24 @@ async function handleRequest(request) {
           headers: {
             'Content-Type': 'application/javascript;charset=UTF-8',
             'Cache-Control': 'no-cache',
-            ...corsHeaders(),
+            ...corsHeaders(origin),
           },
         });
       }
-      return jsonResp(sinaData);
+      return jsonResp(sinaData, 200, origin);
     } catch (e) {
       if (callback) {
         return new Response(`${callback}({});`, {
           status: 200,
-          headers: { 'Content-Type': 'application/javascript;charset=UTF-8', ...corsHeaders() },
+          headers: { 'Content-Type': 'application/javascript;charset=UTF-8', ...corsHeaders(origin) },
         });
       }
-      return new Response('', { status: 502, headers: corsHeaders() });
+      return new Response('', { status: 502, headers: corsHeaders(origin) });
     }
   }
 
   // 404
-  return new Response('Not found', { status: 404, headers: corsHeaders() });
+  return new Response('Not found', { status: 404, headers: corsHeaders(origin) });
 }
 
 // ══════════════════════════════════════════════════════
