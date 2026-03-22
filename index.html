@@ -496,16 +496,16 @@ async function runFgzFallback(codes) {
 
 function calcBenchChg(code, idxChg) {
   const b = BENCH[code];
-  if (!b) return 0;
+  if (!b) return null;
   if (Array.isArray(b)) {
     let chg = 0, w = 0;
     b.forEach(x => {
       const v = idxChg[x.tq];
       if (v != null) { chg += v * x.w; w += x.w; }  // 缺失分量不计入分母
     });
-    return w > 0 ? chg / w : 0;
+    return w > 0 ? chg / w : null;  // 全部缺失 → null，不是 0
   }
-  return idxChg[b] ?? 0;
+  return idxChg[b] ?? null;  // 未抓到 → null，与真实 0% 区分
 }
 
 // FX 修正版：对每个 bench 分量叠加汇率变化
@@ -517,17 +517,19 @@ function calcAdjustedBenchChg(code, idxChg, fxChgUsd, fxChgHkd) {
     return 0;
   }
   const b = BENCH[code];
-  if (!b) return 0;
+  if (!b) return null;
   if (Array.isArray(b)) {
     let ret = 0, w = 0;
     b.forEach(x => {
-      const ic = idxChg[x.tq] ?? 0;
+      const ic = idxChg[x.tq];
+      if (ic == null) return;  // 缺失分量跳过，与 calcBenchChg 对齐
       ret += ((1 + ic / 100) * (1 + fxFor(x.tq) / 100) - 1) * x.w;
       w += x.w;
     });
-    return w > 0 ? ret / w * 100 : 0;
+    return w > 0 ? ret / w * 100 : null;  // 全部缺失 → null
   }
-  const ic = idxChg[b] ?? 0;
+  const ic = idxChg[b];
+  if (ic == null) return null;
   return ((1 + ic / 100) * (1 + fxFor(b) / 100) - 1) * 100;
 }
 
@@ -573,7 +575,9 @@ function calcDynamicNavReturn(code, idxChg, stockChg, fxChgUsd, fxChgHkd, daily)
     coveredReturn += ((1 + chg / 100) * (1 + fx / 100) - 1) * w;
     coveredW += w;
   }
-  const benchReturn = calcAdjustedBenchChg(code, idxChg, fxChgUsd, fxChgHkd) / 100;
+  const adjBench = calcAdjustedBenchChg(code, idxChg, fxChgUsd, fxChgHkd);
+  if (adjBench == null && coveredW < 1.0) return null;  // 残差无法填补 → 不计算
+  const benchReturn = (adjBench ?? 0) / 100;
   return (coveredReturn + benchReturn * (1 - coveredW)) * 100;
 }
 
@@ -799,8 +803,9 @@ async function doRefresh() {
         const prevClose = tq ? tq.prevClose : null;
         const benchChg       = calcBenchChg(f.code, idxChg);
         const adjBenchChg    = calcAdjustedBenchChg(f.code, idxChg, fxChgUsd, fxChgHkd);
-        const fxAdj          = adjBenchChg - benchChg;
+        const fxAdj          = (adjBenchChg != null && benchChg != null) ? adjBenchChg - benchChg : null;
         const dynNavReturn   = calcDynamicNavReturn(f.code, idxChg, stockChg, fxChgUsd, fxChgHkd, daily);
+        const benchOk        = benchChg != null;
         const holdingCoverage = calcHoldingCoverage(f.code, stockChg, daily);
         // 偏差校准：Hard Enforcement — 宁可无补偿，不可乱补偿
         const fundDaily       = daily && daily[f.code];
@@ -824,12 +829,12 @@ async function doRefresh() {
         const base = useChained ? estNavYesterday : (officialNav || prevClose);
 
         let nav = null, premium = null;
-        if (base > 0 && price != null) {
+        if (base > 0 && price != null && dynNavReturn != null) {  // dynNavReturn null = 指数缺失
           nav = base * (1 + dynNavReturn / 100) * (1 + alpha);
           premium = (price - nav) / nav * 100;
         }
         const holdingsDate = fundDaily ? (fundDaily.holdings_date || null) : null;
-        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, estNavYesterday: useChained ? estNavYesterday : null, navDate, navLag, useChained, premium, benchChg, fxAdj, holdingCoverage, holdingsDate, drift5d, driftN, driftStatus, quota: f.quota, fee: f.fee, rfee: f.rfee, vol, _src: 'L' };
+        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, estNavYesterday: useChained ? estNavYesterday : null, navDate, navLag, useChained, premium, benchChg, benchOk, fxAdj, holdingCoverage, holdingsDate, drift5d, driftN, driftStatus, quota: f.quota, fee: f.fee, rfee: f.rfee, vol, _src: 'L' };
       });
       indices = {};
       TICKER_IDX.forEach(i => {
@@ -947,7 +952,7 @@ function renderTable() {
     const premCls = p == null ? 'text-muted'
       : isAlert ? (isPrem ? 'text-premium font-semibold pulse-alert' : 'text-discount font-semibold pulse-alert')
       : isPrem ? 'text-premium' : 'text-discount';
-    const premStr = p != null ? (p >= 0 ? '+' : '') + p.toFixed(2) + '%' : '—';
+    const premStr = p != null ? (p >= 0 ? '+' : '') + p.toFixed(2) + '%' : (f.benchOk === false ? '指数缺失' : '—');
     const navStr = f.nav != null ? f.nav.toFixed(4) : '—';
     const t1NavVal = f.useChained
       ? (f.estNavYesterday != null ? f.estNavYesterday.toFixed(4) : '—')
@@ -1015,7 +1020,7 @@ function renderCards() {
     const p = f.premium;
     const isAlert = p != null && Math.abs(p) >= thr;
     const isPrem = p != null && p > 0;
-    const premStr = p != null ? (p >= 0 ? '+' : '') + p.toFixed(2) + '%' : '—';
+    const premStr = p != null ? (p >= 0 ? '+' : '') + p.toFixed(2) + '%' : (f.benchOk === false ? '指数缺失' : '—');
     const premBg = p == null ? 'bg-surface border-border'
       : isAlert ? (isPrem ? 'bg-premium/10 border-premium/40' : 'bg-discount/10 border-discount/40')
       : isPrem ? 'bg-surface border-border' : 'bg-surface border-border';
@@ -1140,7 +1145,7 @@ function openModal(code) {
   const p = f.premium;
   const isAlert = p != null && Math.abs(p) >= thr;
   const isPrem = p != null && p > 0;
-  const premStr = p != null ? (p >= 0 ? '+' : '') + p.toFixed(2) + '%' : '—';
+  const premStr = p != null ? (p >= 0 ? '+' : '') + p.toFixed(2) + '%' : (f.benchOk === false ? '指数缺失' : '—');
   const premCls = p == null ? 'text-muted' : isPrem ? 'text-premium' : 'text-discount';
   const catLabel = {us:'美股',hk:'港股',cm:'商品',cn:'A股'}[f.cat] || f.cat;
   const catTag = {us:'tag-us',hk:'tag-hk',cm:'tag-cm',cn:'tag-cn'}[f.cat] || '';
