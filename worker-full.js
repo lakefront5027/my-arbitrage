@@ -3,6 +3,29 @@
 //  Mode A: HTTP Fetch  (/api/quote, /api/sina)
 //  Mode B: Scheduled Cron (every 1 minute)
 // ══════════════════════════════════════════════════════
+//
+//  ┌─────────────────────────────────────────────────────┐
+//  │              KV 使用规范（强制约束）                   │
+//  ├─────────────────────────────────────────────────────┤
+//  │  定位：KV 仅作为 Transient Cache（瞬时缓存）            │
+//  │        严禁作为 Source of Truth 或历史序列存储           │
+//  │                                                     │
+//  │  Source of Truth = GitHub 仓库内的 JSON 文件           │
+//  │    data/fund_daily.json  ← 净值 / 持仓 / drift 历史    │
+//  │                                                     │
+//  │  ✅ 允许写入 KV：                                     │
+//  │    • 跨 isolate 的实时状态（如报警跃迁去重）             │
+//  │      → 但当前已改用模块级 _alertState，KV 已完全移除      │
+//  │                                                     │
+//  │  ❌ 禁止写入 KV：                                     │
+//  │    • drift_history / 误差历史序列                     │
+//  │    • 每日估值快照                                     │
+//  │    • 任何可由 Action + Git commit 持久化的数据           │
+//  │                                                     │
+//  │  Action 规范：                                       │
+//  │    同步数据优先写文件系统（data/*.json + git push）       │
+//  │    仅当需要跨环境毫秒级实时共享时才考虑 KV                │
+//  └─────────────────────────────────────────────────────┘
 
 const CONFIG = {
   ALERT_THRESHOLD: 1.5,        // 溢价预警阈值(%)
@@ -178,6 +201,39 @@ function getAllTqCodes() {
   return [...set];
 }
 
+// ── 持仓代码工具 ──────────────────────────────────────
+
+/**
+ * 将 fund_daily.json holdings[].code 转为腾讯行情代码
+ * HK 5位数字 → hkXXXXX
+ * A股 6位数字 → sh/szXXXXXX（6/7/8/9开头→SH，0/3开头→SZ）
+ * US 纯字母  → usXXX（昨收价，A股时段美市休市）
+ * 含特殊字符 / 格式异常 → null（跳过）
+ */
+function holdingToTqCode(raw) {
+  if (!raw || typeof raw !== 'string') return null;
+  const code = raw.trim().replace(/\.(HK|US|SH|SZ)$/i, '');
+  if (!code || code.includes('.') || code.includes(' ')) return null;
+  if (/^\d{5}$/.test(code)) return 'hk' + code;
+  if (/^\d{6}$/.test(code)) return ('6789'.includes(code[0]) ? 'sh' : 'sz') + code;
+  if (/^[A-Z]{1,5}$/.test(code)) return 'us' + code;
+  return null;
+}
+
+/** 从 fund_daily.json 收集所有持仓的腾讯代码（去重） */
+function getHoldingTqCodes(daily) {
+  if (!daily) return [];
+  const set = new Set();
+  for (const [code, fund] of Object.entries(daily)) {
+    if (code.startsWith('_') || !fund.holdings) continue;
+    for (const h of fund.holdings) {
+      const tq = holdingToTqCode(h.code);
+      if (tq) set.add(tq);
+    }
+  }
+  return [...set];
+}
+
 // 状态跃迁报警：KV 持久化，key=alert:{code}，value="above"|"below"
 
 // ══════════════════════════════════════════════════════
@@ -185,11 +241,13 @@ function getAllTqCodes() {
 // ══════════════════════════════════════════════════════
 
 /**
- * 腾讯行情：批量拉取所有代码
- * 返回 { funds: {code: {price,prevClose,chg,vol}}, indices: {tqCode: {price,chg}} }
+ * 腾讯行情：批量拉取所有代码（含持仓个股）
+ * 返回 { funds, indices, stockChg:{tqCode:chgPct} }
+ * daily 已知时将持仓 tq 码一并打入同一请求，零额外 HTTP
  */
-async function fetchTencent() {
-  const codes = getAllTqCodes().join(',');
+async function fetchTencent(daily = null) {
+  const holdingTqs = getHoldingTqCodes(daily);
+  const codes = [...new Set([...getAllTqCodes(), ...holdingTqs])].join(',');
   const url = `https://qt.gtimg.cn/q=${codes}`;
   try {
     const resp = await fetch(url, {
@@ -258,10 +316,30 @@ async function fetchTencent() {
       }
     }
 
+    // 持仓个股涨跌幅（Plan A：仅 HK + A股；US 跳过，归入 bench 残差）
+    const stockChg = {};
+    if (daily) {
+      for (const [code, fund] of Object.entries(daily)) {
+        if (code.startsWith('_') || !fund.holdings) continue;
+        for (const h of fund.holdings) {
+          const tq = holdingToTqCode(h.code);
+          if (!tq || tq.startsWith('us')) continue; // US 股跳过
+          if (stockChg[tq] !== undefined) continue;  // 已解析
+          const raw = lineMap[tq];
+          if (!raw || raw.length < 5) continue;
+          const p = raw.split('~');
+          const price = parseFloat(p[3]);
+          const prev  = parseFloat(p[4]);
+          if (price > 0 && prev > 0) stockChg[tq] = (price - prev) / prev * 100;
+        }
+      }
+    }
+    result.stockChg = stockChg;
+
     return result;
   } catch (e) {
     console.error('腾讯行情失败:', e.message);
-    return { funds: {}, indices: {} };
+    return { funds: {}, indices: {}, stockChg: {} };
   }
 }
 
@@ -407,16 +485,62 @@ function calcAdjustedBenchChg(code, idxChg, fxChgUsd, fxChgHkd) {
 }
 
 /**
+ * 动态持仓加权估值
+ * HK + A 股持仓个股：逐笔加权 × FX 修正
+ * 无价格的分量（含全部 US 股）：用 bench 残差填补
+ */
+function calcDynamicNavReturn(code, idxChg, stockChg, fxChgUsd, fxChgHkd, daily) {
+  const holdings = daily && daily[code] && daily[code].holdings;
+  if (!holdings || !holdings.length) {
+    return calcAdjustedBenchChg(code, idxChg, fxChgUsd, fxChgHkd);
+  }
+  let coveredReturn = 0, coveredW = 0;
+  for (const h of holdings) {
+    const tq = holdingToTqCode(h.code);
+    if (!tq || tq.startsWith('us')) continue; // US 在 A 股时段无盘中价，归残差
+    const chg = stockChg[tq];
+    if (chg == null) continue;
+    const w  = h.ratio / 100;
+    const fx = tq.startsWith('hk') ? (fxChgHkd || 0) : 0;
+    coveredReturn += ((1 + chg / 100) * (1 + fx / 100) - 1) * w;
+    coveredW += w;
+  }
+  const benchReturn = calcAdjustedBenchChg(code, idxChg, fxChgUsd, fxChgHkd) / 100;
+  return (coveredReturn + benchReturn * (1 - coveredW)) * 100;
+}
+
+/**
+ * 持仓覆盖率：有实时价格的持仓权重 / 全部持仓权重（US 权重不计入分子）
+ */
+function calcHoldingCoverage(code, stockChg, daily) {
+  const holdings = daily && daily[code] && daily[code].holdings;
+  if (!holdings || !holdings.length) return 0;
+  let totalW = 0, coveredW = 0;
+  for (const h of holdings) {
+    const w = h.ratio / 100;
+    totalW += w;
+    const tq = holdingToTqCode(h.code);
+    if (!tq || tq.startsWith('us')) continue;
+    if (stockChg[tq] != null) coveredW += w;
+  }
+  return totalW > 0 ? coveredW / totalW : 0;
+}
+
+/**
  * 聚合全量数据，计算溢价率，返回统一 JSON
  */
 async function fetchAllData(env = {}) {
-  // NAV 从 fund_daily.json 读取（由 GitHub Action 每日更新）
-  const [tqData, emIdx, sinaIdx, daily] = await Promise.all([
-    fetchTencent(),
+  // 先加载 daily（30 分钟内存缓存，通常即时返回）
+  const daily = await loadFundDaily(env);
+
+  // 再并行拉取行情（fetchTencent 需要 daily 来批量加持仓代码）
+  const [tqData, emIdx, sinaIdx] = await Promise.all([
+    fetchTencent(daily),
     fetchEastmoney(),
     fetchSina(),
-    loadFundDaily(env),
   ]);
+
+  const stockChg = tqData.stockChg || {};
 
   // 从 fund_daily.json 提取 navMap
   const navMap = {};
@@ -472,9 +596,11 @@ async function fetchAllData(env = {}) {
       prevClose = tq.prevClose;
     }
 
-    const benchChg    = calcBenchChg(f.code, idxChg);          // 纯指数涨幅（用于显示）
-    const adjBenchChg = calcAdjustedBenchChg(f.code, idxChg, fxChgUsd, fxChgHkd); // FX修正（用于估值）
-    const fxAdj       = adjBenchChg - benchChg;                // 汇率对估值的净贡献%
+    const benchChg       = calcBenchChg(f.code, idxChg);       // 纯指数涨幅（用于显示）
+    const adjBenchChg    = calcAdjustedBenchChg(f.code, idxChg, fxChgUsd, fxChgHkd); // FX修正基准
+    const fxAdj          = adjBenchChg - benchChg;             // 汇率净贡献%
+    const dynNavReturn   = calcDynamicNavReturn(f.code, idxChg, stockChg, fxChgUsd, fxChgHkd, daily);
+    const holdingCoverage = calcHoldingCoverage(f.code, stockChg, daily);
     const base = officialNav || prevClose;
     // 偏差校准：drift_5d 由 GitHub Action 每日写入 fund_daily.json
     const fundDaily = daily && daily[f.code];
@@ -483,7 +609,7 @@ async function fetchAllData(env = {}) {
     const alpha   = Math.max(-0.02, Math.min(0.02, drift5d)); // 硬限 ±2%
     let nav = null, premium = null;
     if (base > 0 && price != null) {
-      nav = base * (1 + adjBenchChg / 100) * (1 + alpha);
+      nav = base * (1 + dynNavReturn / 100) * (1 + alpha);
       premium = (price - nav) / nav * 100;
     }
 
@@ -500,6 +626,7 @@ async function fetchAllData(env = {}) {
       premium,
       benchChg,
       fxAdj,
+      holdingCoverage,
       drift5d,
       driftN,
       quota: f.quota,
@@ -601,25 +728,24 @@ async function sendWechatAlert(fund) {
   }
 }
 
-async function checkAndAlert(funds, kv) {
+// 模块级报警状态（代替 KV，同一 isolate 生命周期内去重）
+// isolate 回收后状态重置，最多多发一次通知，成本可控。
+const _alertState = {}; // { [code]: 'above' | 'below' }
+
+async function checkAndAlert(funds) {
   if (!CONFIG.WECHAT_WEBHOOK) return;
 
   for (const fund of funds) {
     if (fund.premium == null) continue;
 
     const isAbove = Math.abs(fund.premium) >= CONFIG.ALERT_THRESHOLD;
-    const kvKey = `alert:${fund.code}`;
-    const prevState = kv ? await kv.get(kvKey) : null; // "above" | "below" | null
+    const prevState = _alertState[fund.code] || null;
 
     if (isAbove) {
-      // 只在从 below/null → above 的跃迁时推送
-      if (prevState !== 'above') {
-        await sendWechatAlert(fund);
-      }
-      if (kv) await kv.put(kvKey, 'above', { expirationTtl: 86400 });
+      if (prevState !== 'above') await sendWechatAlert(fund); // 跃迁时推送
+      _alertState[fund.code] = 'above';
     } else {
-      // 回落到阈值以下，重置状态（下次再超过阈值会重新推）
-      if (prevState === 'above' && kv) await kv.put(kvKey, 'below', { expirationTtl: 86400 });
+      if (prevState === 'above') _alertState[fund.code] = 'below';
     }
   }
 }
@@ -783,7 +909,7 @@ async function sendDailySummary(funds) {
   }
 }
 
-async function handleScheduled(cron, kv, env) {
+async function handleScheduled(cron, env) {
   try {
     const data = await fetchAllData(env);
     if (cron === '15 1 * * 1-5') {
@@ -791,7 +917,7 @@ async function handleScheduled(cron, kv, env) {
       await sendDailySummary(data.funds);
     } else {
       console.log('[Cron 每分钟] 检查跃迁报警...');
-      await checkAndAlert(data.funds, kv);
+      await checkAndAlert(data.funds);
     }
     console.log(`[Cron] 完成，基金${data.funds.length}只`);
   } catch (e) {
@@ -811,6 +937,6 @@ export default {
 
   async scheduled(event, env, ctx) {
     if (env.WX_KEY) CONFIG.WECHAT_WEBHOOK = `https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${env.WX_KEY}`;
-    ctx.waitUntil(handleScheduled(event.cron, env.LOF_STATE, env));
+    ctx.waitUntil(handleScheduled(event.cron, env));
   },
 };

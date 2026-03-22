@@ -2,3 +2,6 @@
 Archive/
 Backup/
 node_modules/
+.wrangler/
+__pycache__/
+*.pyc

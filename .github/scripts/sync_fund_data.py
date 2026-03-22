@@ -26,10 +26,9 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT  = os.path.dirname(os.path.dirname(SCRIPT_DIR))
 JSON_PATH  = os.path.join(REPO_ROOT, 'data', 'fund_daily.json')
 
-DRIFT_THRESHOLD     = 0.05   # 累计权重偏移阈值（5%）
-DRIFT_HISTORY_PATH  = os.path.join(REPO_ROOT, 'data', 'drift_history.json')
-DRIFT_HISTORY_DAYS  = 30     # 滚动保留天数
-DRIFT_MIN_SAMPLES   = 3      # drift_5d 最少有效样本数
+DRIFT_THRESHOLD   = 0.05   # 累计权重偏移阈值（5%）
+HISTORY_DAYS      = 30     # fund_daily.json 内嵌历史滚动窗口（交易日）
+DRIFT_MIN_SAMPLES = 3      # drift_5d 最少有效样本数
 
 # EM 指数代码映射（同 worker-full.js EM_CODES）
 _EM_CODES = {
@@ -379,19 +378,25 @@ def _calc_bench_chg(bench_def, chg_map: dict) -> float | None:
 
 def update_drift(data: dict, chg_map: dict) -> None:
     """
-    对每只基金：
-      est_nav = prev_nav × (1 + bench_chg%)
-      drift   = (curr_nav − est_nav) / est_nav
-    追加到 drift_history.json（滚动 30 天），
-    计算 drift_5d（近 5 个有效样本均值），写回 data[code]['drift_5d']。
-    """
-    try:
-        with open(DRIFT_HISTORY_PATH, 'r', encoding='utf-8') as f:
-            history: dict = json.load(f)
-    except FileNotFoundError:
-        history = {}
+    偏差校准 — 零外部文件版（全量内嵌于 fund_daily.json）。
 
+    每只基金维护：
+      fund['history'] = {
+          'date':  ['MM-DD', ...],   # 30条滚动
+          'nav':   [float, ...],     # 官方净值
+          'est':   [float|None, ...],# 雷达估值
+          'drift': [float|None, ...],# 相对偏差
+      }
+      fund['est_nav_yesterday'] = float  # 本次对账使用的估值（供前端展示）
+      fund['drift_5d']          = float  # 近5日均偏差（实时修正因子）
+      fund['drift_n']           = int
+
+    逻辑：
+      est_nav  = prev_nav × (1 + bench_chg%)
+      drift    = (curr_nav − est_nav) / est_nav
+    """
     new_entries = 0
+
     for code, fund in data.items():
         if code.startswith('_'):
             continue
@@ -401,55 +406,61 @@ def update_drift(data: dict, chg_map: dict) -> None:
         if not curr_nav or not curr_date or not bench_def:
             continue
 
-        hist = history.setdefault(code, [])
+        # ── 加载 / 初始化嵌入式历史（列式存储）──────────────
+        raw = fund.get('history')
+        if not isinstance(raw, dict):
+            raw = {}
+        hist: dict[str, list] = {
+            'date':  list(raw.get('date',  [])),
+            'nav':   list(raw.get('nav',   [])),
+            'est':   list(raw.get('est',   [])),
+            'drift': list(raw.get('drift', [])),
+        }
+        last_date = hist['date'][-1] if hist['date'] else ''
 
-        if hist:
-            prev      = hist[-1]
-            prev_date = prev.get('date', '')
-            prev_nav  = prev.get('nav')
+        if curr_date > last_date:
+            # ── 新交易日：计算偏差 ────────────────────────
+            bench_chg = _calc_bench_chg(bench_def, chg_map)
 
-            if curr_date > prev_date and prev_nav:
-                # 新交易日：计算本次偏差
-                bench_chg = _calc_bench_chg(bench_def, chg_map)
-                if bench_chg is not None:
-                    est_nav = prev_nav * (1 + bench_chg / 100)
-                    drift   = (curr_nav - est_nav) / est_nav
-                    hist.append({
-                        'date':      curr_date,
-                        'nav':       curr_nav,
-                        'prev_nav':  prev_nav,
-                        'bench_chg': round(bench_chg, 4),
-                        'est_nav':   round(est_nav, 6),
-                        'drift':     round(drift, 6),
-                    })
-                    new_entries += 1
-                    print(f'    drift {code}: bench={bench_chg:+.2f}% '
-                          f'est={est_nav:.4f} act={curr_nav:.4f} '
-                          f'drift={drift * 100:+.3f}%')
-                else:
-                    # bench 数据缺失：仅记录 nav，不计 drift
-                    hist.append({'date': curr_date, 'nav': curr_nav})
+            if bench_chg is not None and hist['nav']:
+                prev_nav = hist['nav'][-1]
+                est_nav  = round(prev_nav * (1 + bench_chg / 100), 6)
+                drift    = round((curr_nav - est_nav) / est_nav, 6)
 
-            elif curr_date == prev_date:
-                # 同日净值刷新（不重新计算 drift）
-                hist[-1] = {**prev, 'nav': curr_nav}
-        else:
-            # 首次记录：无前值，无法计算 drift
-            hist.append({'date': curr_date, 'nav': curr_nav})
+                hist['date'].append(curr_date[5:])   # MM-DD
+                hist['nav'].append(curr_nav)
+                hist['est'].append(est_nav)
+                hist['drift'].append(drift)
 
-        # 滚动窗口截断
-        history[code] = hist[-DRIFT_HISTORY_DAYS:]
+                fund['est_nav_yesterday'] = est_nav  # 供前端展示本次对账估值
+                new_entries += 1
+                print(f'    drift {code}: bench={bench_chg:+.2f}%'
+                      f'  est={est_nav:.4f}  act={curr_nav:.4f}'
+                      f'  drift={drift * 100:+.3f}%')
+            else:
+                # bench 缺失 or 首次记录（无 prev_nav）
+                hist['date'].append(curr_date[5:])
+                hist['nav'].append(curr_nav)
+                hist['est'].append(None)
+                hist['drift'].append(None)
 
-        # 计算 drift_5d（最近 5 个含 drift 字段的条目）
-        drift_vals = [e['drift'] for e in history[code] if 'drift' in e][-5:]
+        elif curr_date == last_date and hist['nav']:
+            # ── 同日净值刷新（保留已有 drift，仅更新 nav）────
+            hist['nav'][-1] = curr_nav
+
+        # ── 截断至滚动窗口 ────────────────────────────────
+        fund['history'] = {k: v[-HISTORY_DAYS:] for k, v in hist.items()}
+
+        # ── drift_5d：取最近 5 个非 None 值 ──────────────
+        drift_vals = [d for d in fund['history']['drift'] if d is not None][-5:]
         if len(drift_vals) >= DRIFT_MIN_SAMPLES:
             fund['drift_5d'] = round(sum(drift_vals) / len(drift_vals), 6)
             fund['drift_n']  = len(drift_vals)
+        else:
+            fund.pop('drift_5d', None)
+            fund.pop('drift_n',  None)
 
-    with open(DRIFT_HISTORY_PATH, 'w', encoding='utf-8') as f:
-        json.dump(history, f, ensure_ascii=False, indent=2)
-
-    print(f'  [drift] {new_entries} 只新增记录 | 已保存 {DRIFT_HISTORY_PATH}')
+    print(f'  [drift] {new_entries} 只新增记录（嵌入 fund_daily.json，无独立文件）')
 
 
 # ══════════════════════════════════════════════════════

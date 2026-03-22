@@ -53,6 +53,7 @@ tailwind.config = {
   .tag-cm { background: #6b4c1a22; color: #fbbf24; border: 1px solid #6b4c1a; }
   .tag-cn { background: #1a6b3c22; color: #34d399; border: 1px solid #1a6b3c; }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
 </head>
 <body class="min-h-screen">
 
@@ -359,17 +360,18 @@ function getAllTqCodes() {
   return [...set];
 }
 
-function fetchTencent() {
+function fetchTencent(daily = null) {
   return new Promise(resolve => {
-    const codes = getAllTqCodes().join(',');
+    const holdingTqs = getHoldingTqCodes(daily);
+    const codes = [...new Set([...getAllTqCodes(), ...holdingTqs])].join(',');
     const s = document.createElement('script');
     let done = false;
     const t = setTimeout(() => {
-      if (!done) { done = true; s.remove(); resolve({ funds: {}, indices: {} }); }
+      if (!done) { done = true; s.remove(); resolve({ funds: {}, indices: {}, stockChg: {} }); }
     }, 10000);
     s.onload = () => {
       if (done) return; done = true; clearTimeout(t);
-      const r = { funds: {}, indices: {} };
+      const r = { funds: {}, indices: {}, stockChg: {} };
       // 解析基金行情
       FUNDS.forEach(f => {
         const v = window['v_' + f.tq];
@@ -394,9 +396,18 @@ function fetchTencent() {
         const price = parseFloat(p[3]), prev = parseFloat(p[4]);
         if (price > 0) r.indices[tq] = { chg: prev > 0 ? (price - prev) / prev * 100 : 0 };
       });
+      // 解析持仓个股涨跌幅（Plan A：仅 HK + A股）
+      holdingTqs.forEach(tq => {
+        if (tq.startsWith('us')) return; // US 在 A 股时段无盘中价
+        const v = window['v_' + tq];
+        if (!v || v.length < 5) return;
+        const p = v.split('~');
+        const price = parseFloat(p[3]), prev = parseFloat(p[4]);
+        if (price > 0 && prev > 0) r.stockChg[tq] = (price - prev) / prev * 100;
+      });
       s.remove(); resolve(r);
     };
-    s.onerror = () => { if (!done) { done = true; clearTimeout(t); s.remove(); resolve({ funds: {}, indices: {} }); } };
+    s.onerror = () => { if (!done) { done = true; clearTimeout(t); s.remove(); resolve({ funds: {}, indices: {}, stockChg: {} }); } };
     s.src = `https://qt.gtimg.cn/q=${codes}&_=${Date.now()}`;
     document.head.appendChild(s);
   });
@@ -521,10 +532,74 @@ function calcAdjustedBenchChg(code, idxChg, fxChgUsd, fxChgHkd) {
   return ((1 + ic / 100) * (1 + fxFor(b) / 100) - 1) * 100;
 }
 
+// ── 持仓代码工具（与 Worker 同逻辑） ────────────────
+function holdingToTqCode(raw) {
+  if (!raw || typeof raw !== 'string') return null;
+  const code = raw.trim().replace(/\.(HK|US|SH|SZ)$/i, '');
+  if (!code || code.includes('.') || code.includes(' ')) return null;
+  if (/^\d{5}$/.test(code)) return 'hk' + code;
+  if (/^\d{6}$/.test(code)) return ('6789'.includes(code[0]) ? 'sh' : 'sz') + code;
+  if (/^[A-Z]{1,5}$/.test(code)) return 'us' + code;
+  return null;
+}
+
+function getHoldingTqCodes(daily) {
+  if (!daily) return [];
+  const set = new Set();
+  for (const [code, fund] of Object.entries(daily)) {
+    if (code.startsWith('_') || !fund.holdings) continue;
+    for (const h of fund.holdings) {
+      const tq = holdingToTqCode(h.code);
+      if (tq) set.add(tq);
+    }
+  }
+  return [...set];
+}
+
+/**
+ * 动态持仓加权估值（Plan A：US 跳过，归入 bench 残差）
+ */
+function calcDynamicNavReturn(code, idxChg, stockChg, fxChgUsd, fxChgHkd, daily) {
+  const holdings = daily && daily[code] && daily[code].holdings;
+  if (!holdings || !holdings.length)
+    return calcAdjustedBenchChg(code, idxChg, fxChgUsd, fxChgHkd);
+  let coveredReturn = 0, coveredW = 0;
+  for (const h of holdings) {
+    const tq = holdingToTqCode(h.code);
+    if (!tq || tq.startsWith('us')) continue;
+    const chg = stockChg[tq];
+    if (chg == null) continue;
+    const w  = h.ratio / 100;
+    const fx = tq.startsWith('hk') ? (fxChgHkd || 0) : 0;
+    coveredReturn += ((1 + chg / 100) * (1 + fx / 100) - 1) * w;
+    coveredW += w;
+  }
+  const benchReturn = calcAdjustedBenchChg(code, idxChg, fxChgUsd, fxChgHkd) / 100;
+  return (coveredReturn + benchReturn * (1 - coveredW)) * 100;
+}
+
+/**
+ * 持仓覆盖率：有实时价格的持仓权重占比（US 权重不计入分子）
+ */
+function calcHoldingCoverage(code, stockChg, daily) {
+  const holdings = daily && daily[code] && daily[code].holdings;
+  if (!holdings || !holdings.length) return 0;
+  let totalW = 0, coveredW = 0;
+  for (const h of holdings) {
+    const w = h.ratio / 100;
+    totalW += w;
+    const tq = holdingToTqCode(h.code);
+    if (!tq || tq.startsWith('us')) continue;
+    if (stockChg[tq] != null) coveredW += w;
+  }
+  return totalW > 0 ? coveredW / totalW : 0;
+}
+
 // ── 状态 ────────────────────────────────────────────
 let funds = [];          // 完整基金数据
 let indices = {};        // 指数涨跌幅
 let lastTs = null;
+let _lastStockChg = {}; // 最近一次持仓个股涨跌幅缓存（供 buildHoldingsHtml 使用）
 
 let curTab = 'all';
 let curCat = 'all';
@@ -541,10 +616,11 @@ let prevAlerts = new Set();
 // ── Worker 代理地址 ──────────────────────────────────
 const WORKER_URL = 'https://patient-pond-824c.3031315027ghb.workers.dev';
 
-// ── fund_daily.json 静态配置（含 NAV、holdings） ──────
+// ── fund_daily.json 静态配置（含 NAV、holdings、drift history） ──
 // 相对路径，在 CF Pages / GitHub Pages 上均可访问
+// history 已内嵌于每个基金对象，无需独立文件，零额外请求。
 const FUND_DAILY_PATH = './data/fund_daily.json';
-let _fundDaily = null;          // { code: { nav, nav_date, holdings, ... } }
+let _fundDaily = null;          // { code: { nav, nav_date, holdings, history, ... } }
 let _fundDailyLoaded = false;
 
 async function loadFundDaily() {
@@ -679,9 +755,10 @@ async function doRefresh() {
       indices = snap.indices || {};
       lastTs = snap.ts || Date.now();
     } else {
-      // 🥈 备用链路：本地多源直连，fund_daily.json 与行情并行加载
-      const [tqData, emIdx, sinaIdx, daily] = await Promise.all([
-        fetchTencent(), fetchEastmoney(), fetchSina(), loadFundDaily(),
+      // 🥈 备用链路：先加载 daily（缓存已热则瞬返），再并行拉取行情
+      const daily = await loadFundDaily();
+      const [tqData, emIdx, sinaIdx] = await Promise.all([
+        fetchTencent(daily), fetchEastmoney(), fetchSina(),
       ]);
       // 若 _navCache 尚未就绪，直接从 daily 构建（不等 loadNavsBackground）
       if (!_navCache && daily) {
@@ -694,6 +771,8 @@ async function doRefresh() {
         _navCacheDate = new Date().toLocaleDateString('zh-CN');
       }
       const navMap = _navCache || {};
+      const stockChg = tqData.stockChg || {};
+      _lastStockChg = stockChg;
       // FX 实时现价（来自 Sina 代理）+ T-1 结算价（来自 fund_daily.json）
       const fxUsdCnh = sinaIdx._fxUsdCnh;
       const fxHkdCnh = sinaIdx._fxHkdCnh;
@@ -719,21 +798,23 @@ async function doRefresh() {
         const chg = tq ? tq.chg : null;
         const vol = tq ? tq.vol : 0;
         const prevClose = tq ? tq.prevClose : null;
-        const benchChg    = calcBenchChg(f.code, idxChg);
-        const adjBenchChg = calcAdjustedBenchChg(f.code, idxChg, fxChgUsd, fxChgHkd);
-        const fxAdj       = adjBenchChg - benchChg;
+        const benchChg       = calcBenchChg(f.code, idxChg);
+        const adjBenchChg    = calcAdjustedBenchChg(f.code, idxChg, fxChgUsd, fxChgHkd);
+        const fxAdj          = adjBenchChg - benchChg;
+        const dynNavReturn   = calcDynamicNavReturn(f.code, idxChg, stockChg, fxChgUsd, fxChgHkd, daily);
+        const holdingCoverage = calcHoldingCoverage(f.code, stockChg, daily);
         const base = officialNav || prevClose;
         // 偏差校准：drift_5d 由 GitHub Action 每日写入 fund_daily.json
-        const fundDaily = _fundDaily && _fundDaily[f.code];
+        const fundDaily = daily && daily[f.code];
         const drift5d = fundDaily ? (fundDaily.drift_5d || 0) : 0;
         const driftN  = fundDaily ? (fundDaily.drift_n  || 0) : 0;
         const alpha   = Math.max(-0.02, Math.min(0.02, drift5d));
         let nav = null, premium = null;
         if (base > 0 && price != null) {
-          nav = base * (1 + adjBenchChg / 100) * (1 + alpha);
+          nav = base * (1 + dynNavReturn / 100) * (1 + alpha);
           premium = (price - nav) / nav * 100;
         }
-        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, navDate, premium, benchChg, fxAdj, drift5d, driftN, quota: f.quota, fee: f.fee, rfee: f.rfee, vol, _src: 'L' };
+        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, navDate, premium, benchChg, fxAdj, holdingCoverage, drift5d, driftN, quota: f.quota, fee: f.fee, rfee: f.rfee, vol, _src: 'L' };
       });
       indices = {};
       TICKER_IDX.forEach(i => {
@@ -1117,7 +1198,17 @@ function openModal(code) {
       </div>
     </div>
 
-    ${buildHoldingsHtml(f.code)}
+    ${buildHoldingsHtml(f.code, f)}
+
+    <div id="driftChartWrap" class="border border-border rounded overflow-hidden mb-3">
+      <div class="px-2 py-1.5 border-b border-border flex items-center justify-between" style="background:#0d0d0d">
+        <span class="font-mono text-[9px] text-muted tracking-wider">30日误差趋势</span>
+        <span class="font-mono text-[9px] text-muted/40">日 drift = (实际净值 − 估值) / 估值</span>
+      </div>
+      <div class="p-2" style="height:110px;position:relative">
+        <canvas id="driftChart"></canvas>
+      </div>
+    </div>
 
     <div class="mt-2 pt-2 border-t border-border/30 flex items-center justify-between gap-2">
       <span class="font-mono text-[9px] text-muted/50 leading-tight">${buildSyncTimeHtml()}</span>
@@ -1125,6 +1216,16 @@ function openModal(code) {
     </div>
   `;
   document.getElementById('modal').classList.remove('hidden');
+
+  // history 已内嵌于 _fundDaily[code].history，无需额外请求。
+  // 若 _fundDaily 尚未就绪（冷启动），loadFundDaily() 会即时 fetch 并缓存。
+  const _modalCode = code;
+  loadFundDaily().then(daily => {
+    if (!document.getElementById('driftChart')) return; // 弹窗已关闭
+    if (_modalCode === code) {
+      renderDriftChart(daily && daily[_modalCode] && daily[_modalCode].history);
+    }
+  });
 }
 
 function buildSyncTimeHtml() {
@@ -1150,14 +1251,20 @@ function buildBenchLabel(bench) {
   return '—';
 }
 
-function buildHoldingsHtml(code) {
+function buildHoldingsHtml(code, fund) {
   const daily = _fundDaily && _fundDaily[code];
   const benchLabel = daily ? buildBenchLabel(daily.bench) : '';
+  const coverage = fund && fund.holdingCoverage > 0
+    ? Math.round(fund.holdingCoverage * 100) + '%'
+    : null;
   const header = `
     <div class="border border-border rounded overflow-hidden mb-3">
       <div class="flex items-center justify-between px-2 py-1.5 border-b border-border" style="background:#0d0d0d">
         <span class="font-mono text-[9px] text-muted tracking-wider">前十大持仓</span>
-        ${benchLabel ? `<span class="font-mono text-[9px] text-muted/60">基准: ${benchLabel}</span>` : ''}
+        <div class="flex items-center gap-2">
+          ${coverage ? `<span class="font-mono text-[9px] text-blue-400/70">持仓覆盖 ${coverage}</span>` : ''}
+          ${benchLabel ? `<span class="font-mono text-[9px] text-muted/60">基准: ${benchLabel}</span>` : ''}
+        </div>
       </div>`;
 
   if (!daily || !daily.holdings || daily.holdings.length === 0) {
@@ -1199,18 +1306,25 @@ function buildHoldingsHtml(code) {
     const barW = maxRatio > 0 ? Math.round(ratio / maxRatio * 100) : 0;
     const name = h.name || h.code || '—';
     const codeStr = h.code ? `<span class="text-muted/50">${h.code}</span>` : '';
+    // 持仓个股实时涨跌幅（仅 HK/A 股）
+    const tq = holdingToTqCode(h.code);
+    const chg = (tq && !tq.startsWith('us')) ? _lastStockChg[tq] : null;
+    const chgHtml = chg != null
+      ? `<span class="font-mono text-[9px] ${chg > 0 ? 'text-green-400/70' : chg < 0 ? 'text-red-400/70' : 'text-muted/50'} flex-shrink-0 w-14 text-right">${chg >= 0 ? '+' : ''}${chg.toFixed(2)}%</span>`
+      : '<span class="w-14"></span>';
     return `<tr class="border-b border-border/30 last:border-0">
       <td class="py-1.5 px-2 w-4 font-mono text-[9px] text-muted/40">${i + 1}</td>
       <td class="py-1.5 px-1">
         <div class="font-mono text-[10px] text-primary leading-tight">${name}</div>
         <div class="font-mono text-[9px] leading-tight mt-0.5">${codeStr}</div>
       </td>
-      <td class="py-1.5 px-2 w-28">
+      <td class="py-1.5 px-2">
         <div class="flex items-center gap-1.5">
           <div class="flex-1 h-1 rounded-full bg-border/40">
             <div class="h-1 rounded-full bg-blue-500/60" style="width:${barW}%"></div>
           </div>
           <span class="font-mono text-[10px] text-muted w-10 text-right flex-shrink-0">${ratio.toFixed(2)}%</span>
+          ${chgHtml}
         </div>
       </td>
     </tr>`;
@@ -1219,6 +1333,137 @@ function buildHoldingsHtml(code) {
   return header + `
     <table class="w-full"><tbody>${rows}</tbody></table>
   </div>`;
+}
+
+// ── 30日误差趋势图 ───────────────────────────────────
+let _driftChartInst = null;
+
+/**
+ * 渲染/更新 drift 趋势图
+ * @param {object} history  fund_daily.json 内嵌的列式历史 {date,nav,est,drift}（可能为 null）
+ */
+function renderDriftChart(history) {
+  const canvas = document.getElementById('driftChart');
+  const wrap   = document.getElementById('driftChartWrap');
+  if (!canvas || !wrap) return;
+
+  // 销毁旧实例
+  if (_driftChartInst) { _driftChartInst.destroy(); _driftChartInst = null; }
+
+  // history 为列式存储 {date:[], nav:[], est:[], drift:[]}
+  // 过滤出有效（非 null）drift 索引
+  if (!history || !Array.isArray(history.drift)) { wrap.style.display = 'none'; return; }
+  const validIdx = history.drift
+    .map((d, i) => (typeof d === 'number' ? i : -1))
+    .filter(i => i >= 0)
+    .slice(-30);
+  if (validIdx.length < 2) { wrap.style.display = 'none'; return; }
+
+  wrap.style.display = '';
+  const labels = validIdx.map(i => (history.date[i] || '').replace('-', '/'));  // MM/DD
+  const values = validIdx.map(i => parseFloat((history.drift[i] * 100).toFixed(4)));
+
+  // 5日均值参考线
+  const tail5  = values.slice(-5);
+  const avg5   = parseFloat((tail5.reduce((s, v) => s + v, 0) / tail5.length).toFixed(4));
+
+  const ctx = canvas.getContext('2d');
+  _driftChartInst = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        // 正值填充（绿）
+        {
+          data: values.map(v => v >= 0 ? v : 0),
+          fill: 'origin',
+          backgroundColor: 'rgba(74,222,128,0.12)',
+          borderColor: 'transparent',
+          pointRadius: 0,
+          tension: 0.3,
+        },
+        // 负值填充（红）
+        {
+          data: values.map(v => v < 0 ? v : 0),
+          fill: 'origin',
+          backgroundColor: 'rgba(248,113,113,0.12)',
+          borderColor: 'transparent',
+          pointRadius: 0,
+          tension: 0.3,
+        },
+        // 主折线
+        {
+          label: '日误差',
+          data: values,
+          borderColor: 'rgba(96,165,250,0.85)',
+          borderWidth: 1.5,
+          fill: false,
+          pointRadius: values.length > 15 ? 0 : 2,
+          pointHoverRadius: 4,
+          pointBackgroundColor: 'rgba(96,165,250,1)',
+          tension: 0.3,
+        },
+        // 5日均值参考线
+        {
+          label: '5日均',
+          data: Array(values.length).fill(avg5),
+          borderColor: 'rgba(251,191,36,0.55)',
+          borderWidth: 1,
+          borderDash: [5, 3],
+          fill: false,
+          pointRadius: 0,
+          pointHoverRadius: 0,
+          tension: 0,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      interaction: { intersect: false, mode: 'index' },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(17,17,17,0.92)',
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1,
+          bodyFont: { size: 9, family: 'monospace' },
+          titleFont: { size: 9, family: 'monospace' },
+          callbacks: {
+            title: items => items[0].label,
+            label: item => {
+              if (item.datasetIndex === 2)
+                return ` 误差: ${item.parsed.y >= 0 ? '+' : ''}${item.parsed.y.toFixed(3)}%`;
+              if (item.datasetIndex === 3)
+                return ` 5日均: ${item.parsed.y >= 0 ? '+' : ''}${item.parsed.y.toFixed(3)}%`;
+              return null; // 隐藏填充数据集的 tooltip
+            },
+            filter: item => item.datasetIndex >= 2, // 只显示主线和均线
+          },
+        },
+      },
+      scales: {
+        x: {
+          grid:   { color: 'rgba(255,255,255,0.04)' },
+          border: { color: 'rgba(255,255,255,0.08)' },
+          ticks:  { color: '#505050', font: { size: 8 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 7 },
+        },
+        y: {
+          grid: {
+            color:     ctx => ctx.tick.value === 0 ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.04)',
+            lineWidth: ctx => ctx.tick.value === 0 ? 1.5 : 1,
+          },
+          border: { color: 'rgba(255,255,255,0.08)' },
+          ticks:  {
+            color: '#505050',
+            font: { size: 8 },
+            callback: v => (v >= 0 ? '+' : '') + v.toFixed(2) + '%',
+          },
+        },
+      },
+    },
+  });
 }
 
 function closeModal() {
