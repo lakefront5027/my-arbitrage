@@ -293,6 +293,91 @@ const STALENESS = {
 
 ---
 
+### 五、实时行情中间值有效性规范
+
+本节是对第二节的补充扩展。第二节管住"静态数据（NAV/Drift）是否够新"；本节管住"实时抓取的中间值（指数/汇率）是否真的取到了"。
+
+#### 5.1 null ≠ 0（最高优先原则）
+
+实时抓取的指数涨跌幅，**必须严格区分"未抓到（null）"和"真实零涨跌（0）"**：
+
+```js
+// ❌ 禁止：抓取失败静默变 0，污染下游计算
+return idxChg[benchCode] ?? 0;
+const chg = (d.data.f170 || 0) / 100;   // f170=null 时误置 0%
+
+// ✅ 正确：抓取失败返回 null，让 null 向下传播
+return idxChg[benchCode] ?? null;
+if (d.data.f170 == null) return null;    // 不记录，下游感知缺失
+```
+
+#### 5.2 null 向下强制传播
+
+中间值一旦为 null，必须阻断后续所有依赖它的计算：
+
+```
+idxChg[code] = null（未抓到）
+  → calcBenchChg() = null
+  → calcDynamicNavReturn() = null（残差无法填补时）
+  → nav = null（不计算）
+  → premium = null（不计算）
+  → UI 显示 "指数缺失"，而非基于错误数据的溢折价率
+```
+
+`benchOk = benchChg != null` 字段必须随快照输出，供 UI 区分"估值不可信"与"价格缺失"。
+
+#### 5.3 指数涨跌幅双层合理性校验
+
+**第一层：写入 idxChg 之前（数据源层）**
+
+所有来源（腾讯/东财/新浪/Yahoo）的指数值，写入 `idxChg` 前必须通过 `idxSanityOk()` 校验：
+
+| 指数类别 | 阈值 | 说明 |
+|---------|------|------|
+| 普通股票/综合指数 | ±20% | 即使成分股打板，指数层面不会超过此幅度 |
+| 商品期货/商品 ETF | ±30% | 原油等品种历史极端行情预留空间 |
+
+超出阈值 → 丢弃并记录 warn 日志，**不写入 idxChg**（等同于未抓到，触发 null 传播）。
+
+**商品类代码集合**（`COMMODITY_IDX`，在 worker-full.js 和 index.html 中各维护一份）：
+`sinaAG0 / usUSO / usBNO / usXOP / usIXC / usGLD / usGLDM / usIAU / usSGOL / usAAAU / usSLV / usCPER / usBCI / usCOMT / usXLE`
+
+**第二层：calcBenchChg 输出后（计算结果层）**
+
+加权基准涨跌幅计算结果 `|benchChg| > 20%` → 返回 null。
+防御持仓加权或复合基准在极端情况下产生异常结果。
+
+注意：个股涨跌幅（`stockChg`）**不做合理性过滤**，让其正常参与持仓加权估值。
+
+#### 5.4 数据源状态随快照透出
+
+每次 `/api/snapshot` 必须携带 `fetchStatus` 对象：
+
+```json
+{
+  "tencent": true,
+  "eastmoney": false,
+  "sina": true,
+  "yahoo": true,
+  "idxMissing": ["sz399961", "sinaAG0"]
+}
+```
+
+`idxMissing` 列出所有 BENCH 用到但未能取到的指数代码，无需看 Worker 日志即可定位数据链断点。
+
+#### 5.5 fallback 路径强制对齐
+
+`index.html` 降级路径的所有数据校验逻辑**必须与 worker-full.js 完全一致**，包括：
+- `EM_CODES` 保持同步（同样包含 `sinaAG0`、`sz399961`、`sz399979`）
+- `idxSanityOk()` 使用相同的阈值和 `COMMODITY_IDX` 集合
+- null 传播链路与 Worker 相同
+
+> 背景：2026-03 发现 3 只 A 股 LOF（161217/161715/161226）基准指数持续显示 0%，
+> 根因：`sz399961`/`sz399979` 腾讯/新浪均不支持，遗漏加入东财；`f170||0` 将 null 误置 0%。
+> 修复方案：P0-P3 系统性数据校验改造。
+
+---
+
 ## 估值计算逻辑（完整）
 
 ### 完整计算链
