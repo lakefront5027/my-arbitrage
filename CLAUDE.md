@@ -101,6 +101,140 @@ sync_fund_data.py               worker-full.js            browser
 > 修复方案：将 30 日 drift 历史嵌入 `fund_daily.json` 每基金对象的 `history` 字段。
 > 此后 Worker 对 KV 的依赖已**完全移除**。
 
+## 数据质量与时间戳规范（技术宪法）
+
+本节是项目的最高技术原则。所有新功能开发、Bug 修复、数据管道改动，必须以此为准。违反任一条款视为引入数据质量缺陷。
+
+---
+
+### 一、数据原子结构（强制三元组）
+
+所有 fetch 接口返回值与 JSON 持久化字段，**必须**采用以下三元组结构，严禁只存数值：
+
+```
+{ value, date, sync_at }
+```
+
+| 字段 | 含义 | 示例 |
+|------|------|------|
+| `value` | 数值本体 | `3.7564` |
+| `date` | 数值所属的业务日期（交易日） | `"2026-03-20"` |
+| `sync_at` | 本次成功抓取/计算的 UTC 时间戳 | `"2026-03-23T01:15:00Z"` |
+
+各核心对象对应的三元组字段名：
+
+| 对象 | value 字段 | date 字段 | sync_at 字段 |
+|------|-----------|-----------|-------------|
+| NAV | `nav` | `nav_date` | `nav_fetch_time` |
+| 估算净值 | `est_nav` / `est_nav_yesterday` | `est_nav_date` | `drift_computed_at`（Action 计算时刻）|
+| 持仓 | `holdings[]` | `holdings_date` | `holdings_fetch_time` |
+| Drift 修正因子 | `drift_5d` | _(由 history 窗口隐含)_ | `drift_computed_at` |
+| 汇率 T-1 结算 | `usd_cnh_t1` / `hkd_cnh_t1` | `_fx.date` | _(sync_time 隐含)_ |
+
+---
+
+### 二、全量计算准入规则（计算前必须校验）
+
+#### 2.1 实时估值（`raw_est = base_nav × (1 + bench_chg%)`）
+
+| 前置条件 | 校验方式 | 失败处理 |
+|---------|---------|---------|
+| `nav_fetch_time` 距今 ≤ 36 小时 | `fetchAgeH ≤ 36` | 禁止计算，`nav = null` |
+| `navLag`（nav_date 距今自然日）≤ 3 | `navLag ≤ 3` OR 开启链式补偿 | `navLag ≥ 2` 时开启 T-2 链式估值 |
+| T-2 链式估值额外前提 | `estNavYesterday != null` AND `fetchAgeH ≤ 36` | 不满足则回退至 `officialNav` |
+
+#### 2.2 Drift 修正（`adjusted_est = raw_est × (1 + drift_5d)`）
+
+**三重前置条件，缺一不可：**
+
+```
+drift_active = (drift5d ≠ 0) AND (drift_n ≥ 3) AND (driftLagDays ≤ 2)
+```
+
+| 前置条件 | 含义 |
+|---------|------|
+| `drift5d ≠ 0` | 存在有效修正值 |
+| `drift_n ≥ 3` | 样本量充足（最少 3 个交易日） |
+| `driftLagDays ≤ 2` | `drift_computed_at` 距今 ≤ 2 天（数据未过期）|
+
+**不满足任一条件 → `alpha = 0`（禁用补偿，回归原始估值）**
+
+原则：**宁可无补偿，不可乱补偿。**
+
+#### 2.3 溢价报警（UI 警报触发）
+
+若底层任一数据戳超过 `staleness_policy` 阈值，**必须**强制锁定为 Unavailable：
+
+```
+staleness_policy:
+  nav_max_lag_days: 3                               # nav_date 距今超过3天 → 估值不可用
+  chain_estimation_required_fetch_within_hours: 36  # nav_fetch_time 超过36h → 禁止链式补偿
+  drift_max_lag_days: 2                             # drift_computed_at 超过2天 → Drift Offline
+  drift_min_n: 3                                    # 有效样本 < 3 → Drift Offline
+```
+
+UI 状态映射：
+
+| 数据状态 | 溢价显示 | Drift 标注 |
+|---------|---------|-----------|
+| 全部新鲜，drift 有效 | 正常溢折价率 | `[Drift Calibrated]`（绿色） |
+| 全部新鲜，drift 过期/不足 | 正常溢折价率 | `[Drift Offline]`（灰色） |
+| nav_fetch_time > 36h | `Unavailable` | — |
+| navLag > 3 且无链式补偿 | `Unavailable` | — |
+
+---
+
+### 三、开发禁令
+
+> ❌ **严禁**在代码中使用任何不带日期校验的原始数值进行数学运算。
+
+具体禁止行为：
+
+```js
+// ❌ 禁止：直接取值计算，不校验日期
+const nav = fund.nav;
+const est = nav * (1 + benchChg / 100);
+
+// ✅ 正确：先校验 fetch_time 和 nav_date，再计算
+const fetchAgeH = navFetchTime
+  ? (Date.now() - new Date(navFetchTime).getTime()) / 3600000 : 999;
+if (fetchAgeH > 36) { nav = null; /* 不计算 */ }
+```
+
+```python
+# ❌ 禁止：不保存日期，只更新数值
+fund['nav'] = new_value
+
+# ✅ 正确：原子写入三元组
+fund['nav']            = new_value
+fund['nav_date']       = nav_date
+fund['nav_fetch_time'] = now_utc
+```
+
+**附加禁令：**
+- 严禁在 Action 中写入任何 KV 接口
+- 严禁将历史序列（drift_history 等）写入 KV
+- 严禁在 sync_fund_data.py 中用旧数据"假装成功"（fetch 失败必须递增 `nav_consecutive_fails`，≥3 次必须抛出 RuntimeError）
+
+---
+
+### 四、staleness_policy 是唯一阈值来源
+
+所有超时判断的**数字常量**必须从 `staleness_policy`（`fund_manifest.json`）或等效的集中常量读取，禁止在计算代码中硬编码魔法数字（如直接写 `36`、`3`、`2`）。
+
+Worker 和 index.html 当前直接使用字面量（历史遗留），后续重构时应统一提取为：
+
+```js
+const STALENESS = {
+  NAV_FETCH_MAX_AGE_H:  36,
+  NAV_MAX_LAG_DAYS:      3,
+  DRIFT_MAX_LAG_DAYS:    2,
+  DRIFT_MIN_N:           3,
+};
+```
+
+---
+
 ## Important Conventions
 
 - The version suffix (e.g., `v33`) appears in all filenames; increment consistently when releasing a new version.

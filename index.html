@@ -802,11 +802,17 @@ async function doRefresh() {
         const fxAdj          = adjBenchChg - benchChg;
         const dynNavReturn   = calcDynamicNavReturn(f.code, idxChg, stockChg, fxChgUsd, fxChgHkd, daily);
         const holdingCoverage = calcHoldingCoverage(f.code, stockChg, daily);
-        // 偏差校准：drift_5d 由 GitHub Action 每日写入 fund_daily.json
-        const fundDaily = daily && daily[f.code];
-        const drift5d = fundDaily ? (fundDaily.drift_5d || 0) : 0;
-        const driftN  = fundDaily ? (fundDaily.drift_n  || 0) : 0;
-        const alpha   = Math.max(-0.02, Math.min(0.02, drift5d));
+        // 偏差校准：Hard Enforcement — 宁可无补偿，不可乱补偿
+        const fundDaily       = daily && daily[f.code];
+        const drift5d         = fundDaily ? (fundDaily.drift_5d          || 0)   : 0;
+        const driftN          = fundDaily ? (fundDaily.drift_n           || 0)   : 0;
+        const driftComputedAt = fundDaily ? (fundDaily.drift_computed_at || null): null;
+        const driftLagDays    = driftComputedAt
+          ? Math.round((Date.now() - new Date(driftComputedAt).getTime()) / 86400000)
+          : 99;
+        const driftActive  = drift5d !== 0 && driftN >= 3 && driftLagDays <= 2;
+        const alpha        = driftActive ? Math.max(-0.02, Math.min(0.02, drift5d)) : 0;
+        const driftStatus  = driftActive ? 'ACTIVE' : 'SUSPENDED';
 
         // T-2 检测与链式修正（同 Worker 逻辑）
         const todayStr = new Date().toISOString().slice(0, 10);
@@ -823,7 +829,7 @@ async function doRefresh() {
           premium = (price - nav) / nav * 100;
         }
         const holdingsDate = fundDaily ? (fundDaily.holdings_date || null) : null;
-        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, navDate, navLag, premium, benchChg, fxAdj, holdingCoverage, holdingsDate, drift5d, driftN, quota: f.quota, fee: f.fee, rfee: f.rfee, vol, _src: 'L' };
+        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, navDate, navLag, premium, benchChg, fxAdj, holdingCoverage, holdingsDate, drift5d, driftN, driftStatus, quota: f.quota, fee: f.fee, rfee: f.rfee, vol, _src: 'L' };
       });
       indices = {};
       TICKER_IDX.forEach(i => {
@@ -976,7 +982,10 @@ function renderTable() {
       <td class="py-2 px-2 font-mono text-xs text-right text-primary">${navStr}</td>
       <td class="py-2 px-2 font-mono text-xs text-right text-primary/70">${officialNavStr}</td>
       <td class="py-2 px-2 font-mono text-xs text-right text-primary">${priceStr}</td>
-      <td class="py-2 px-2 font-mono text-sm text-right font-medium ${premCls}">${premStr}</td>
+      <td class="py-2 px-2 text-right">
+        <div class="font-mono text-sm font-medium ${premCls}">${premStr}</div>
+        <div class="font-mono text-[8px] ${f.driftStatus === 'ACTIVE' ? 'text-green-400/40' : 'text-muted/30'}">${f.driftStatus === 'ACTIVE' ? '[Drift Calibrated]' : '[Drift Offline]'}</div>
+      </td>
       <td class="py-2 px-2 font-mono text-xs text-right ${chgCls}">${chgStr}</td>
       <td class="py-2 px-2 font-mono text-xs text-right ${benchCls}">${benchStr}</td>
       <td class="py-2 px-2">${signal}</td>
@@ -1035,6 +1044,7 @@ function renderCards() {
           <div class="text-right flex-shrink-0 ml-3">
             <div class="font-mono text-xl font-semibold ${premCls}">${premStr}</div>
             <div class="font-mono text-[9px] text-muted mt-0.5">溢折价率</div>
+            <div class="font-mono text-[8px] ${f.driftStatus === 'ACTIVE' ? 'text-green-400/40' : 'text-muted/30'} mt-0.5">${f.driftStatus === 'ACTIVE' ? '[Drift Calibrated]' : '[Drift Offline]'}</div>
           </div>
         </div>
         <div class="grid grid-cols-3 gap-2 text-center border-t border-border/40 pt-2">
@@ -1178,13 +1188,14 @@ function openModal(code) {
       </span>
     </div>` : ''}
 
-    ${(f.drift5d != null && Math.abs(f.drift5d) > 0.0005 && (f.driftN || 0) >= 3) ? `
     <div class="flex items-center justify-between bg-surface border border-border rounded px-3 py-2 mb-2">
       <span class="font-mono text-[9px] text-muted tracking-wider">估值修正 α</span>
-      <span class="font-mono text-[9px] ${f.drift5d > 0 ? 'text-green-400/60' : 'text-red-400/60'}">
-        ${f.drift5d >= 0 ? '+' : ''}${(f.drift5d * 100).toFixed(2)}%（近 ${f.driftN} 日均值，已计入估值）
-      </span>
-    </div>` : ''}
+      ${f.driftStatus === 'ACTIVE'
+        ? `<span class="font-mono text-[9px] ${f.drift5d > 0 ? 'text-green-400/60' : 'text-red-400/60'}">
+             ${f.drift5d >= 0 ? '+' : ''}${(f.drift5d * 100).toFixed(2)}%（近 ${f.driftN} 日，<span class="text-green-400/50">[Drift Calibrated]</span>）
+           </span>`
+        : `<span class="font-mono text-[9px] text-muted/40">[Drift Offline] — 数据过期或样本不足，已回退至原始估值</span>`}
+    </div>
 
 
     <div class="border border-border rounded p-3 mb-4" style="background:#0d0d0d">

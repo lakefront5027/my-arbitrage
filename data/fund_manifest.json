@@ -1,0 +1,164 @@
+{
+  "_manifest": {
+    "schema_version": "2.0.0",
+    "description": "LOF套利雷达 — 基金数据全链路时间戳规范",
+    "generated_at": "2026-03-23T01:15:00Z",
+    "data_date": "2026-03-20",
+    "field_contract": {
+      "nav":      ["value", "date", "src", "fetch_time"],
+      "est_nav":  ["value", "date", "basis_nav_date", "computed_at"],
+      "holdings": ["items", "report_date", "fetch_time"],
+      "drift":    ["value_5d", "n", "computed_at", "status"]
+    },
+    "staleness_policy": {
+      "nav_max_lag_days": 3,
+      "chain_estimation_allowed_lag_days": 2,
+      "chain_estimation_requires_fresh_fetch_within_hours": 36,
+      "drift_max_lag_days": 2,
+      "drift_min_n": 3
+    }
+  },
+
+  "161130": {
+    "meta": {
+      "code": "161130",
+      "name": "纳斯达克100LOF",
+      "tq": "sz161130",
+      "cat": "us",
+      "bench": "usQQQ",
+      "quota": "限10",
+      "fee": "1.20%",
+      "rfee": "0.60%"
+    },
+    "nav": {
+      "value": 3.7564,
+      "date": "2026-03-20",
+      "src": "lsjz",
+      "fetch_time": "2026-03-23T01:15:00Z",
+      "consecutive_fails": 0
+    },
+    "est_nav": {
+      "value": 3.7234,
+      "date": "2026-03-20",
+      "basis_nav_date": "2026-03-19",
+      "computed_at": "2026-03-23T01:15:00Z"
+    },
+    "holdings": {
+      "items": [
+        {"code": "AAPL", "name": "苹果",   "ratio": 8.92},
+        {"code": "NVDA", "name": "英伟达", "ratio": 8.01},
+        {"code": "MSFT", "name": "微软",   "ratio": 7.65}
+      ],
+      "report_date": "2025-12-31",
+      "fetch_time": "2026-03-23T01:15:00Z"
+    },
+    "drift": {
+      "value_5d": 0.0023,
+      "n": 5,
+      "computed_at": "2026-03-23T01:15:00Z",
+      "status": "ACTIVE",
+      "history": {
+        "date":     ["03-14", "03-17", "03-18", "03-19", "03-20"],
+        "nav":      [3.6200,  3.7000,  3.7200,  3.7400,  3.7564],
+        "nav_date": ["03-14", "03-17", "03-18", "03-19", "03-20"],
+        "est":      [3.6100,  3.6950,  3.7110,  3.7290,  null  ],
+        "est_date": ["03-14", "03-17", "03-18", "03-19", null  ],
+        "drift":    [0.0028,  0.0027,  0.0024,  0.0015,  null  ]
+      }
+    }
+  },
+
+  "501301": {
+    "meta": {
+      "code": "501301",
+      "name": "香港大盘LOF",
+      "tq": "sh501301",
+      "cat": "hk",
+      "bench": "hkHSCEI",
+      "quota": "开放",
+      "fee": "1.20%",
+      "rfee": "0.90%"
+    },
+    "nav": {
+      "value": 1.2819,
+      "date": "2026-03-19",
+      "src": "fundgz",
+      "fetch_time": "2026-03-23T01:15:00Z",
+      "consecutive_fails": 0
+    },
+    "est_nav": {
+      "value": 1.2943,
+      "date": "2026-03-20",
+      "basis_nav_date": "2026-03-19",
+      "computed_at": "2026-03-23T01:15:00Z"
+    },
+    "holdings": {
+      "items": [
+        {"code": "09988", "name": "阿里巴巴-W", "ratio": 16.21},
+        {"code": "00700", "name": "腾讯控股",   "ratio": 15.43},
+        {"code": "03690", "name": "美团-W",      "ratio": 8.30}
+      ],
+      "report_date": "2025-12-31",
+      "fetch_time": "2026-03-23T01:15:00Z"
+    },
+    "drift": {
+      "value_5d": -0.0011,
+      "n": 5,
+      "computed_at": "2026-03-23T01:15:00Z",
+      "status": "ACTIVE",
+      "history": {
+        "date":     ["03-14", "03-17", "03-18", "03-19", "03-20"],
+        "nav":      [1.2500,  1.2610,  1.2710,  1.2819,  null  ],
+        "nav_date": ["03-14", "03-17", "03-18", "03-19", null  ],
+        "est":      [1.2520,  1.2625,  1.2720,  1.2833,  null  ],
+        "est_date": ["03-14", "03-17", "03-18", "03-19", null  ],
+        "drift":    [-0.0016, -0.0012, -0.0008, -0.0011, null  ]
+      }
+    }
+  },
+
+  "164701": {
+    "meta": {
+      "code": "164701",
+      "name": "黄金LOF",
+      "tq": "sz164701",
+      "cat": "cm",
+      "bench": "usGLD",
+      "quota": "限50",
+      "fee": "0.80%",
+      "rfee": "1.50%"
+    },
+    "nav": {
+      "value": 1.8580,
+      "date": "2026-03-19",
+      "src": "lsjz",
+      "fetch_time": "2026-03-23T01:15:00Z",
+      "consecutive_fails": 0
+    },
+    "est_nav": {
+      "value": 1.8720,
+      "date": "2026-03-20",
+      "basis_nav_date": "2026-03-19",
+      "computed_at": "2026-03-23T01:15:00Z"
+    },
+    "holdings": {
+      "items": [],
+      "report_date": null,
+      "fetch_time": "2026-03-23T01:15:00Z"
+    },
+    "drift": {
+      "value_5d": 0.0005,
+      "n": 5,
+      "computed_at": "2026-03-23T01:15:00Z",
+      "status": "ACTIVE",
+      "history": {
+        "date":     ["03-14", "03-17", "03-18", "03-19", "03-20"],
+        "nav":      [1.8100,  1.8230,  1.8350,  1.8580,  null  ],
+        "nav_date": ["03-14", "03-17", "03-18", "03-19", null  ],
+        "est":      [1.8092,  1.8221,  1.8341,  1.8571,  null  ],
+        "est_date": ["03-14", "03-17", "03-18", "03-19", null  ],
+        "drift":    [0.0004,  0.0005,  0.0005,  0.0005,  null  ]
+      }
+    }
+  }
+}

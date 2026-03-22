@@ -643,11 +643,18 @@ async function fetchAllData(env = {}) {
     const dynNavReturn   = calcDynamicNavReturn(f.code, idxChg, stockChg, fxChgUsd, fxChgHkd, daily);
     const holdingCoverage = calcHoldingCoverage(f.code, stockChg, daily);
 
-    // 偏差校准：drift_5d 由 GitHub Action 每日写入 fund_daily.json
-    const fundDaily      = daily && daily[f.code];
-    const drift5d        = fundDaily ? (fundDaily.drift_5d || 0) : 0;
-    const driftN         = fundDaily ? (fundDaily.drift_n  || 0) : 0;
-    const alpha          = Math.max(-0.02, Math.min(0.02, drift5d)); // 硬限 ±2%
+    // 偏差校准：Hard Enforcement — 宁可无补偿，不可乱补偿
+    // 前置条件：drift_computed_at ≤2天 AND drift_n ≥3；否则 alpha=0（禁用补偿）
+    const fundDaily         = daily && daily[f.code];
+    const drift5d           = fundDaily ? (fundDaily.drift_5d           || 0)   : 0;
+    const driftN            = fundDaily ? (fundDaily.drift_n            || 0)   : 0;
+    const driftComputedAt   = fundDaily ? (fundDaily.drift_computed_at  || null): null;
+    const driftLagDays      = driftComputedAt
+      ? Math.round((Date.now() - new Date(driftComputedAt).getTime()) / 86400000)
+      : 99;
+    const driftActive  = drift5d !== 0 && driftN >= 3 && driftLagDays <= 2;
+    const alpha        = driftActive ? Math.max(-0.02, Math.min(0.02, drift5d)) : 0;
+    const driftStatus  = driftActive ? 'ACTIVE' : 'SUSPENDED';
 
     // T-2 检测：计算 nav_date 距今自然日数，≥2 表示滞后超过1个交易日
     const todayStr = new Date().toISOString().slice(0, 10);
@@ -689,6 +696,7 @@ async function fetchAllData(env = {}) {
       holdingsDate: fundDaily ? (fundDaily.holdings_date || null) : null,
       drift5d,
       driftN,
+      driftStatus,
       quota: f.quota,
       fee: f.fee,
       rfee: f.rfee,

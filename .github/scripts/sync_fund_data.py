@@ -456,11 +456,13 @@ def update_drift(data: dict, chg_map: dict) -> None:
         # ── drift_5d：取最近 5 个非 None 值 ──────────────
         drift_vals = [d for d in fund['history']['drift'] if d is not None][-5:]
         if len(drift_vals) >= DRIFT_MIN_SAMPLES:
-            fund['drift_5d'] = round(sum(drift_vals) / len(drift_vals), 6)
-            fund['drift_n']  = len(drift_vals)
+            fund['drift_5d']          = round(sum(drift_vals) / len(drift_vals), 6)
+            fund['drift_n']           = len(drift_vals)
+            fund['drift_computed_at'] = now_utc   # 时间戳：本次 Action 计算 drift 的时刻
         else:
-            fund.pop('drift_5d', None)
-            fund.pop('drift_n',  None)
+            fund.pop('drift_5d',          None)
+            fund.pop('drift_n',           None)
+            fund.pop('drift_computed_at', None)
 
     print(f'  [drift] {new_entries} 只新增记录（嵌入 fund_daily.json，无独立文件）')
 
