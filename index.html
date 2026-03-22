@@ -1332,8 +1332,48 @@ function buildHoldingsHtml(code, fund) {
     </tr>`;
   }).join('');
 
+  // 底部汇总：持仓贡献 + Bench残差 + 估值合计
+  let coveredContrib = 0, coveredW = 0;
+  for (const h of daily.holdings) {
+    const tq = holdingToTqCode(h.code);
+    if (!tq || tq.startsWith('us')) continue;
+    const chg = _lastStockChg[tq];
+    if (chg == null) continue;
+    coveredContrib += (h.ratio / 100) * chg;
+    coveredW += h.ratio / 100;
+  }
+  const benchResidual = (fund && fund.benchChg != null) ? fund.benchChg * (1 - coveredW) : null;
+  const totalEst = (fund && fund.nav && fund.officialNav) ? (fund.nav / fund.officialNav - 1) * 100 : null;
+
+  const sfmt = v => `${v >= 0 ? '+' : ''}${v.toFixed(2)}%`;
+  const scol = v => v > 0 ? 'text-green-400/80' : v < 0 ? 'text-red-400/80' : 'text-muted/50';
+  const maxAbs = Math.max(Math.abs(coveredContrib), Math.abs(benchResidual ?? 0), 0.01);
+  const sbar = v => {
+    const w = Math.round(Math.abs(v) / maxAbs * 100);
+    const c = v >= 0 ? 'bg-green-500/40' : 'bg-red-500/40';
+    return `<div class="flex-1 h-1 rounded-full bg-border/40"><div class="h-1 rounded-full ${c}" style="width:${w}%"></div></div>`;
+  };
+
+  const summaryRows = (coveredW > 0 || benchResidual != null) ? `
+    <tr class="border-t border-border/50">
+      <td class="pt-2 pb-1 px-2"></td>
+      <td class="pt-2 pb-1 px-1 font-mono text-[9px] text-muted/50 whitespace-nowrap">持仓贡献</td>
+      <td class="pt-2 pb-1 px-2"><div class="flex items-center gap-1.5">${sbar(coveredContrib)}<span class="font-mono text-[9px] ${scol(coveredContrib)} w-16 text-right flex-shrink-0">${sfmt(coveredContrib)}</span></div></td>
+    </tr>
+    ${benchResidual != null ? `<tr>
+      <td class="py-1 px-2"></td>
+      <td class="py-1 px-1 font-mono text-[9px] text-muted/50 whitespace-nowrap">Bench残差</td>
+      <td class="py-1 px-2"><div class="flex items-center gap-1.5">${sbar(benchResidual)}<span class="font-mono text-[9px] ${scol(benchResidual)} w-16 text-right flex-shrink-0">${sfmt(benchResidual)}</span></div></td>
+    </tr>` : ''}
+    ${totalEst != null ? `<tr class="border-t border-border/30">
+      <td class="pt-1.5 pb-2 px-2"></td>
+      <td class="pt-1.5 pb-2 px-1 font-mono text-[9px] text-muted/60 whitespace-nowrap">估值涨跌</td>
+      <td class="pt-1.5 pb-2 px-2 text-right font-mono text-[9px] ${scol(totalEst)} font-medium">${sfmt(totalEst)}</td>
+    </tr>` : ''}
+  ` : '';
+
   return header + `
-    <table class="w-full"><tbody>${rows}</tbody></table>
+    <table class="w-full"><tbody>${rows}${summaryRows}</tbody></table>
   </div>`;
 }
 
