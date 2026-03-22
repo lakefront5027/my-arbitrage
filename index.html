@@ -317,8 +317,20 @@ const BENCH = {
 const EM_CODES = {
   'csi930917':'2.930917', 'csi930914':'2.930914', 'csi930792':'2.930792',
   'sh000985':'1.000985',  'hkHSSI':'124.HSSI',    'hkHSMI':'124.HSMI',
-  'hkHSCI':'124.HSCI',
+  'hkHSCI':'124.HSCI',    'sinaAG0':'113.AG0',
+  'sz399961':'0.399961',  'sz399979':'0.399979',
 };
+
+// 商品类指数/期货（±30% 阈值），其余指数 ±20%
+const COMMODITY_IDX = new Set([
+  'sinaAG0','usUSO','usBNO','usXOP','usIXC',
+  'usGLD','usGLDM','usIAU','usSGOL','usAAAU',
+  'usSLV','usCPER','usBCI','usCOMT','usXLE',
+]);
+function idxSanityOk(tqCode, chg) {
+  if (chg == null || !isFinite(chg)) return false;
+  return Math.abs(chg) <= (COMMODITY_IDX.has(tqCode) ? 30 : 20);
+}
 
 // ── 主链路：先 ping（100ms），存活再拉 snapshot（3s 超时） ──
 async function fetchSnapshot() {
@@ -418,7 +430,7 @@ function fetchEastmoney() {
     Object.entries(EM_CODES).map(([key, secid]) =>
       fetch(`https://push2.eastmoney.com/api/qt/stock/get?secid=${secid}&fields=f43,f169,f170&_=${Date.now()}`)
         .then(r => r.json())
-        .then(d => d.data?.f43 > 0 ? [key, (d.data.f170 || 0) / 100] : null)
+        .then(d => (d.data?.f43 > 0 && d.data.f170 != null) ? [key, d.data.f170 / 100] : null)
         .catch(() => null)
     )
   ).then(results => {
@@ -497,15 +509,20 @@ async function runFgzFallback(codes) {
 function calcBenchChg(code, idxChg) {
   const b = BENCH[code];
   if (!b) return null;
+  let result;
   if (Array.isArray(b)) {
     let chg = 0, w = 0;
     b.forEach(x => {
       const v = idxChg[x.tq];
       if (v != null) { chg += v * x.w; w += x.w; }  // 缺失分量不计入分母
     });
-    return w > 0 ? chg / w : null;  // 全部缺失 → null，不是 0
+    result = w > 0 ? chg / w : null;  // 全部缺失 → null，不是 0
+  } else {
+    result = idxChg[b] ?? null;  // 未抓到 → null，与真实 0% 区分
   }
-  return idxChg[b] ?? null;  // 未抓到 → null，与真实 0% 区分
+  // 加权结果合理性校验：复合 bench 超过 ±20% 视为脏数据
+  if (result != null && Math.abs(result) > 20) return null;
+  return result;
 }
 
 // FX 修正版：对每个 bench 分量叠加汇率变化
@@ -786,9 +803,10 @@ async function doRefresh() {
         ? (fxHkdCnh / t1Fx.hkd_cnh_t1 - 1) * 100 : 0;
 
       const idxChg = {};
-      Object.entries(tqData.indices).forEach(([c, d]) => { idxChg[c] = d.chg; });
-      Object.entries(emIdx).forEach(([c, v]) => { idxChg[c] = v; });
-      Object.entries(sinaIdx).forEach(([c, v]) => { if (!c.startsWith('_')) idxChg[c] = v; });
+      function setIdx(c, chg) { if (idxSanityOk(c, chg)) idxChg[c] = chg; }
+      Object.entries(tqData.indices).forEach(([c, d]) => setIdx(c, d.chg));
+      Object.entries(emIdx).forEach(([c, v]) => setIdx(c, v));
+      Object.entries(sinaIdx).forEach(([c, v]) => { if (!c.startsWith('_')) setIdx(c, v); });
       if (!idxChg['hkHSMI']) idxChg['hkHSMI'] = idxChg['hkHSSI'] ?? idxChg['hkHSI'] ?? null;
       if (!idxChg['hkHSSI']) idxChg['hkHSSI'] = idxChg['hkHSI'] ?? null;
       if (!idxChg['hkHSCI']) idxChg['hkHSCI'] = idxChg['hkHSI'] ?? null;

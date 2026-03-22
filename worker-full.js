@@ -179,6 +179,24 @@ const EM_CODES = {
   'sz399979':  '0.399979',  // 中证大宗商品股票（腾讯/新浪均不支持）
 };
 
+// ── 商品类指数/期货（单日允许更大波动，±30% 阈值）────────
+// 其余指数使用 ±20% 阈值（指数层面即使成分股打板也不会超过此幅度）
+const COMMODITY_IDX = new Set([
+  'sinaAG0',                                           // 上期所白银主力
+  'usUSO','usBNO','usXOP','usIXC',                     // 原油/油气 ETF
+  'usGLD','usGLDM','usIAU','usSGOL','usAAAU',          // 黄金 ETF
+  'usSLV','usCPER',                                    // 白银/铜 ETF
+  'usBCI','usCOMT',                                    // 大宗商品综合
+  'usXLE',                                             // 能源板块
+]);
+
+/** 合理性校验：指数单日涨跌幅是否在合理范围内（过滤解析脏数据） */
+function idxSanityOk(tqCode, chg) {
+  if (chg == null || !isFinite(chg)) return false;
+  const limit = COMMODITY_IDX.has(tqCode) ? 30 : 20;
+  return Math.abs(chg) <= limit;
+}
+
 // ── Header Ticker 指数 ────────────────────────────────
 const TICKER_IDX = [
   {tq:'usIXIC', label:'纳斯达克'},
@@ -482,6 +500,7 @@ async function fetchSina() {
 function calcBenchChg(code, idxChg) {
   const benchDef = BENCH[code];
   if (!benchDef) return null;
+  let result;
   if (Array.isArray(benchDef)) {
     let benchChg = 0, totalW = 0;
     benchDef.forEach(b => {
@@ -491,9 +510,16 @@ function calcBenchChg(code, idxChg) {
         totalW += b.w;
       }
     });
-    return totalW > 0 ? benchChg / totalW : null;  // 全部缺失 → null，不是 0
+    result = totalW > 0 ? benchChg / totalW : null;  // 全部缺失 → null，不是 0
+  } else {
+    result = idxChg[benchDef] ?? null;  // 未抓到 → null，与真实 0% 区分
   }
-  return idxChg[benchDef] ?? null;  // 未抓到 → null，与真实 0% 区分
+  // 加权结果合理性校验：复合 bench 超过 ±20% 视为脏数据
+  if (result != null && Math.abs(result) > 20) {
+    console.warn(`[sanity] ${code} benchChg=${result.toFixed(2)}% 超出合理范围，返回null`);
+    return null;
+  }
+  return result;
 }
 
 /**
@@ -607,16 +633,23 @@ async function fetchAllData(env = {}) {
   const fxChgHkd   = (fxHkdCnh && t1Fx && t1Fx.hkd_cnh_t1)
     ? (fxHkdCnh / t1Fx.hkd_cnh_t1 - 1) * 100 : 0;
 
-  // 合并指数涨跌幅（_fx* 键不写入 idxChg）
+  // 合并指数涨跌幅（_fx* 键不写入 idxChg；合理性校验过滤脏数据）
   const idxChg = {};
-  Object.entries(tqData.indices).forEach(([code, d]) => { idxChg[code] = d.chg; });
-  Object.entries(emIdx).forEach(([code, chg]) => { idxChg[code] = chg; });
+  function setIdx(code, chg) {
+    if (idxSanityOk(code, chg)) {
+      idxChg[code] = chg;
+    } else {
+      console.warn(`[sanity] ${code} chg=${chg} 超出合理范围，丢弃`);
+    }
+  }
+  Object.entries(tqData.indices).forEach(([code, d]) => setIdx(code, d.chg));
+  Object.entries(emIdx).forEach(([code, chg]) => setIdx(code, chg));
   Object.entries(sinaIdx).forEach(([code, chg]) => {
-    if (!code.startsWith('_')) idxChg[code] = chg;
+    if (!code.startsWith('_')) setIdx(code, chg);
   });
 
   // CME 期货覆盖（A股时段实时，优先级高于腾讯T-1数据）
-  Object.entries(futuresOverrides).forEach(([tq, chg]) => { idxChg[tq] = chg; });
+  Object.entries(futuresOverrides).forEach(([tq, chg]) => setIdx(tq, chg));
 
   // 降级兜底
   if (idxChg['hkHSMI'] == null || idxChg['hkHSMI'] === 0) {
