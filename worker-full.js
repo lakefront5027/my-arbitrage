@@ -175,6 +175,8 @@ const EM_CODES = {
   'hkHSMI':    '124.HSMI',
   'hkHSCI':    '124.HSCI',
   'sinaAG0':   '113.AG0',   // 上期所白银主力合约（东财 secid）
+  'sz399961':  '0.399961',  // 中证资源与环境（腾讯/新浪均不支持）
+  'sz399979':  '0.399979',  // 中证大宗商品股票（腾讯/新浪均不支持）
 };
 
 // ── Header Ticker 指数 ────────────────────────────────
@@ -197,7 +199,8 @@ function getAllTqCodes() {
   });
   TICKER_IDX.forEach(i => set.add(i.tq));
   // 新浪/东财专属，不走腾讯
-  ['sinaAG0','csi930917','csi930914','csi930792','sh000985','hkHSSI','hkHSMI','hkHSCI'].forEach(c => set.delete(c));
+  ['sinaAG0','csi930917','csi930914','csi930792','sh000985','hkHSSI','hkHSMI','hkHSCI',
+   'sz399961','sz399979'].forEach(c => set.delete(c));
   return [...set];
 }
 
@@ -335,9 +338,9 @@ async function fetchTencent(daily = null) {
       else allIdxCodes.add(b);
     });
     TICKER_IDX.forEach(i => allIdxCodes.add(i.tq));
-    // 排除新浪/东财/CSI专属（sz399961等A股指数腾讯可访问，保留）
+    // 排除新浪/东财专属，不在腾讯请求中
     ['sinaAG0','csi930917','csi930914','csi930792','sh000985',
-     'hkHSSI','hkHSMI','hkHSCI'].forEach(c => allIdxCodes.delete(c));
+     'hkHSSI','hkHSMI','hkHSCI','sz399961','sz399979'].forEach(c => allIdxCodes.delete(c));
 
     for (const tqCode of allIdxCodes) {
       const raw = lineMap[tqCode];
@@ -393,7 +396,8 @@ async function fetchEastmoney() {
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const d = await resp.json();
         if (d.data && d.data.f43 > 0) {
-          const chg = (d.data.f170 || 0) / 100;
+          if (d.data.f170 == null) return null;  // 涨跌幅字段缺失，不记录（避免误置 0）
+          const chg = d.data.f170 / 100;
           return [key, chg];
         }
         return null;
@@ -477,7 +481,7 @@ async function fetchSina() {
  */
 function calcBenchChg(code, idxChg) {
   const benchDef = BENCH[code];
-  if (!benchDef) return 0;
+  if (!benchDef) return null;
   if (Array.isArray(benchDef)) {
     let benchChg = 0, totalW = 0;
     benchDef.forEach(b => {
@@ -487,9 +491,9 @@ function calcBenchChg(code, idxChg) {
         totalW += b.w;
       }
     });
-    return totalW > 0 ? benchChg / totalW : 0;
+    return totalW > 0 ? benchChg / totalW : null;  // 全部缺失 → null，不是 0
   }
-  return idxChg[benchDef] ?? 0;
+  return idxChg[benchDef] ?? null;  // 未抓到 → null，与真实 0% 区分
 }
 
 /**
@@ -505,18 +509,20 @@ function calcAdjustedBenchChg(code, idxChg, fxChgUsd, fxChgHkd) {
     return 0; // sh/sz/csi/sina — CNY 计价，无需 FX
   }
   const benchDef = BENCH[code];
-  if (!benchDef) return 0;
+  if (!benchDef) return null;
   if (Array.isArray(benchDef)) {
     let navReturn = 0, totalW = 0;
     benchDef.forEach(b => {
-      const ic = idxChg[b.tq] ?? 0;
+      const ic = idxChg[b.tq];
+      if (ic == null) return;      // 与 calcBenchChg 对齐：缺失分量跳过，不补 0
       const fx = fxForCode(b.tq);
       navReturn += ((1 + ic / 100) * (1 + fx / 100) - 1) * b.w;
       totalW += b.w;
     });
-    return totalW > 0 ? navReturn / totalW * 100 : 0;
+    return totalW > 0 ? navReturn / totalW * 100 : null;  // 全部缺失 → null
   }
-  const ic = idxChg[benchDef] ?? 0;
+  const ic = idxChg[benchDef];
+  if (ic == null) return null;
   const fx = fxForCode(benchDef);
   return ((1 + ic / 100) * (1 + fx / 100) - 1) * 100;
 }
@@ -542,7 +548,9 @@ function calcDynamicNavReturn(code, idxChg, stockChg, fxChgUsd, fxChgHkd, daily)
     coveredReturn += ((1 + chg / 100) * (1 + fx / 100) - 1) * w;
     coveredW += w;
   }
-  const benchReturn = calcAdjustedBenchChg(code, idxChg, fxChgUsd, fxChgHkd) / 100;
+  const adjBench = calcAdjustedBenchChg(code, idxChg, fxChgUsd, fxChgHkd);
+  if (adjBench == null && coveredW < 1.0) return null;  // 残差无法填补 → 不计算
+  const benchReturn = (adjBench ?? 0) / 100;
   return (coveredReturn + benchReturn * (1 - coveredW)) * 100;
 }
 
@@ -637,10 +645,11 @@ async function fetchAllData(env = {}) {
       prevClose = tq.prevClose;
     }
 
-    const benchChg       = calcBenchChg(f.code, idxChg);       // 纯指数涨幅（用于显示）
+    const benchChg       = calcBenchChg(f.code, idxChg);       // 纯指数涨幅（用于显示），null = 未抓到
     const adjBenchChg    = calcAdjustedBenchChg(f.code, idxChg, fxChgUsd, fxChgHkd); // FX修正基准
-    const fxAdj          = adjBenchChg - benchChg;             // 汇率净贡献%
+    const fxAdj          = (adjBenchChg != null && benchChg != null) ? adjBenchChg - benchChg : null;
     const dynNavReturn   = calcDynamicNavReturn(f.code, idxChg, stockChg, fxChgUsd, fxChgHkd, daily);
+    const benchOk        = benchChg != null;                   // false → 指数未抓到，估值不可信
     const holdingCoverage = calcHoldingCoverage(f.code, stockChg, daily);
 
     // 偏差校准：Hard Enforcement — 宁可无补偿，不可乱补偿
@@ -673,7 +682,7 @@ async function fetchAllData(env = {}) {
     const base       = useChained ? estNavYesterday : (officialNav || prevClose);
 
     let nav = null, premium = null;
-    if (base > 0 && price != null) {
+    if (base > 0 && price != null && dynNavReturn != null) {  // dynNavReturn null = 指数缺失
       nav = base * (1 + dynNavReturn / 100) * (1 + alpha);
       premium = (price - nav) / nav * 100;
     }
@@ -691,6 +700,7 @@ async function fetchAllData(env = {}) {
       navLag,
       premium,
       benchChg,
+      benchOk,
       fxAdj,
       holdingCoverage,
       useChained,
