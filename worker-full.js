@@ -581,6 +581,19 @@ function calcDynamicNavReturn(code, idxChg, stockChg, fxChgUsd, fxChgHkd, daily)
 }
 
 /**
+ * 该基金所需汇率是否全部取到
+ * us* bench → 需要 fxChgUsd；hk* bench → 需要 fxChgHkd；cn/csi → 不需要 FX
+ */
+function calcFxOk(code, fxChgUsd, fxChgHkd) {
+  const benchDef = BENCH[code];
+  if (!benchDef) return true;
+  const tqs = Array.isArray(benchDef) ? benchDef.map(b => b.tq) : [benchDef];
+  if (tqs.some(c => c.startsWith('us')) && fxChgUsd == null) return false;
+  if (tqs.some(c => c.startsWith('hk')) && fxChgHkd == null) return false;
+  return true;
+}
+
+/**
  * 持仓覆盖率：有实时价格的持仓权重 / 全部持仓权重（US 权重不计入分子）
  */
 function calcHoldingCoverage(code, stockChg, daily) {
@@ -628,10 +641,12 @@ async function fetchAllData(env = {}) {
   const fxUsdCnh   = sinaIdx._fxUsdCnh;
   const fxHkdCnh   = sinaIdx._fxHkdCnh;
   const t1Fx       = daily && daily['_fx'];
+  // null 表示"未取到"，calcAdjustedBenchChg 内部用 fxChgUsd||0 降级计算
+  // 但 null 本身会被 calcFxOk() 检测，输出 fxOk=false 标记估值精度下降
   const fxChgUsd   = (fxUsdCnh && t1Fx && t1Fx.usd_cnh_t1)
-    ? (fxUsdCnh / t1Fx.usd_cnh_t1 - 1) * 100 : 0;
+    ? (fxUsdCnh / t1Fx.usd_cnh_t1 - 1) * 100 : null;
   const fxChgHkd   = (fxHkdCnh && t1Fx && t1Fx.hkd_cnh_t1)
-    ? (fxHkdCnh / t1Fx.hkd_cnh_t1 - 1) * 100 : 0;
+    ? (fxHkdCnh / t1Fx.hkd_cnh_t1 - 1) * 100 : null;
 
   // 合并指数涨跌幅（_fx* 键不写入 idxChg；合理性校验过滤脏数据）
   const idxChg = {};
@@ -683,6 +698,7 @@ async function fetchAllData(env = {}) {
     const fxAdj          = (adjBenchChg != null && benchChg != null) ? adjBenchChg - benchChg : null;
     const dynNavReturn   = calcDynamicNavReturn(f.code, idxChg, stockChg, fxChgUsd, fxChgHkd, daily);
     const benchOk        = benchChg != null;                   // false → 指数未抓到，估值不可信
+    const fxOk           = calcFxOk(f.code, fxChgUsd, fxChgHkd); // false → 汇率缺失，估值未计入即时汇率
     const holdingCoverage = calcHoldingCoverage(f.code, stockChg, daily);
 
     // 偏差校准：Hard Enforcement — 宁可无补偿，不可乱补偿
@@ -734,6 +750,7 @@ async function fetchAllData(env = {}) {
       premium,
       benchChg,
       benchOk,
+      fxOk,
       fxAdj,
       holdingCoverage,
       useChained,
@@ -773,6 +790,7 @@ async function fetchAllData(env = {}) {
     eastmoney: Object.keys(emIdx).length > 0,
     sina:      sinaIdx._fxUsdCnh != null,
     yahoo:     Object.keys(futuresOverrides).length > 0,
+    fxOk:      fxChgUsd != null && fxChgHkd != null,  // 汇率数据是否完整
     idxMissing,  // bench 用到但未能取到的指数代码列表
   };
 

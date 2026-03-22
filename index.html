@@ -506,6 +506,15 @@ async function runFgzFallback(codes) {
   console.log(`[FB] 补位完成，navCache 共 ${Object.keys(_navCache || {}).length} 条`);
 }
 
+function calcFxOk(code, fxChgUsd, fxChgHkd) {
+  const b = BENCH[code];
+  if (!b) return true;
+  const tqs = Array.isArray(b) ? b.map(x => x.tq) : [b];
+  if (tqs.some(c => c.startsWith('us')) && fxChgUsd == null) return false;
+  if (tqs.some(c => c.startsWith('hk')) && fxChgHkd == null) return false;
+  return true;
+}
+
 function calcBenchChg(code, idxChg) {
   const b = BENCH[code];
   if (!b) return null;
@@ -798,9 +807,9 @@ async function doRefresh() {
       const fxHkdCnh = sinaIdx._fxHkdCnh;
       const t1Fx     = daily && daily['_fx'];
       const fxChgUsd = (fxUsdCnh && t1Fx && t1Fx.usd_cnh_t1)
-        ? (fxUsdCnh / t1Fx.usd_cnh_t1 - 1) * 100 : 0;
+        ? (fxUsdCnh / t1Fx.usd_cnh_t1 - 1) * 100 : null;
       const fxChgHkd = (fxHkdCnh && t1Fx && t1Fx.hkd_cnh_t1)
-        ? (fxHkdCnh / t1Fx.hkd_cnh_t1 - 1) * 100 : 0;
+        ? (fxHkdCnh / t1Fx.hkd_cnh_t1 - 1) * 100 : null;
 
       const idxChg = {};
       function setIdx(c, chg) { if (idxSanityOk(c, chg)) idxChg[c] = chg; }
@@ -824,6 +833,7 @@ async function doRefresh() {
         const fxAdj          = (adjBenchChg != null && benchChg != null) ? adjBenchChg - benchChg : null;
         const dynNavReturn   = calcDynamicNavReturn(f.code, idxChg, stockChg, fxChgUsd, fxChgHkd, daily);
         const benchOk        = benchChg != null;
+        const fxOk           = calcFxOk(f.code, fxChgUsd, fxChgHkd);
         const holdingCoverage = calcHoldingCoverage(f.code, stockChg, daily);
         // 偏差校准：Hard Enforcement — 宁可无补偿，不可乱补偿
         const fundDaily       = daily && daily[f.code];
@@ -852,7 +862,7 @@ async function doRefresh() {
           premium = (price - nav) / nav * 100;
         }
         const holdingsDate = fundDaily ? (fundDaily.holdings_date || null) : null;
-        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, estNavYesterday: useChained ? estNavYesterday : null, navDate, navLag, useChained, premium, benchChg, benchOk, fxAdj, holdingCoverage, holdingsDate, drift5d, driftN, driftStatus, quota: f.quota, fee: f.fee, rfee: f.rfee, vol, _src: 'L' };
+        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, estNavYesterday: useChained ? estNavYesterday : null, navDate, navLag, useChained, premium, benchChg, benchOk, fxOk, fxAdj, holdingCoverage, holdingsDate, drift5d, driftN, driftStatus, quota: f.quota, fee: f.fee, rfee: f.rfee, vol, _src: 'L' };
       });
       indices = {};
       TICKER_IDX.forEach(i => {
@@ -1010,7 +1020,7 @@ function renderTable() {
       </td>
       <td class="py-2 px-2 font-mono text-xs text-right text-primary">${priceStr}</td>
       <td class="py-2 px-2 text-right">
-        <div class="font-mono text-sm font-medium ${premCls}">${premStr}</div>
+        <div class="font-mono text-sm font-medium ${premCls}">${premStr}${f.fxOk === false ? '<span title="汇率接口失效，当前估值未计入即时汇率变动" class="ml-1 text-yellow-400/50 text-[10px] cursor-help">⚠</span>' : ''}</div>
         <div class="font-mono text-[8px] ${f.driftStatus === 'ACTIVE' ? 'text-green-400/40' : 'text-muted/30'}">${f.driftStatus === 'ACTIVE' ? '[Drift Calibrated]' : '[Drift Offline]'}</div>
       </td>
       <td class="py-2 px-2 font-mono text-xs text-right ${chgCls}">${chgStr}</td>
@@ -1069,7 +1079,7 @@ function renderCards() {
             </div>
           </div>
           <div class="text-right flex-shrink-0 ml-3">
-            <div class="font-mono text-xl font-semibold ${premCls}">${premStr}</div>
+            <div class="font-mono text-xl font-semibold ${premCls}">${premStr}${f.fxOk === false ? '<span title="汇率接口失效，当前估值未计入即时汇率变动" class="ml-1 text-yellow-400/50 text-[10px] cursor-help">⚠</span>' : ''}</div>
             <div class="font-mono text-[9px] text-muted mt-0.5">溢折价率</div>
             <div class="font-mono text-[8px] ${f.driftStatus === 'ACTIVE' ? 'text-green-400/40' : 'text-muted/30'} mt-0.5">${f.driftStatus === 'ACTIVE' ? '[Drift Calibrated]' : '[Drift Offline]'}</div>
           </div>
@@ -1188,7 +1198,7 @@ function openModal(code) {
     </div>
 
     <div class="text-center py-4 border border-border rounded-lg mb-4" style="background:#0d0d0d">
-      <div class="font-mono text-4xl font-semibold ${premCls} ${isAlert ? 'pulse-alert' : ''}">${premStr}</div>
+      <div class="font-mono text-4xl font-semibold ${premCls} ${isAlert ? 'pulse-alert' : ''}">${premStr}${f.fxOk === false ? '<span title="汇率接口失效，当前估值未计入即时汇率变动" class="ml-1 text-yellow-400/50 text-[10px] cursor-help">⚠</span>' : ''}</div>
       <div class="font-mono text-[10px] text-muted mt-1">溢折价率</div>
     </div>
 
