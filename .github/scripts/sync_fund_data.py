@@ -20,7 +20,18 @@ import os
 import urllib.request
 import urllib.parse
 import urllib.error
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
+
+try:
+    from chinese_calendar import is_workday as _is_workday
+    def is_trading_day(d: date) -> bool:
+        return _is_workday(d)
+except ImportError:
+    # 未安装时降级为简单周末判断
+    def is_trading_day(d: date) -> bool:
+        return d.weekday() < 5
+
+TRADING_DATES_WINDOW = 90  # 保留最近 90 个交易日
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT  = os.path.dirname(os.path.dirname(SCRIPT_DIR))
@@ -852,13 +863,24 @@ def sync():
     all_nav_dates = [v.get('nav_date','') for k,v in data.items()
                      if not k.startswith('_') and v.get('nav_date')]
     data_date = max(all_nav_dates) if all_nav_dates else ''
+    # ── trading_dates：滚动保留最近 N 个交易日（供 Worker 计算 navLag） ──
+    today_local = datetime.now(timezone.utc).date()  # Action 运行时为 UTC 次日凌晨，nav_date 才是真实交易日
+    # 用 data_date（本次净值对应的交易日）而非 Action 运行日期，更准确
+    if data_date and is_trading_day(date.fromisoformat(data_date)):
+        prev_dates = (data.get('_meta') or {}).get('trading_dates', [])
+        trading_dates = list(dict.fromkeys(prev_dates + [data_date]))  # 去重保序
+        trading_dates = sorted(trading_dates)[-TRADING_DATES_WINDOW:]
+    else:
+        trading_dates = (data.get('_meta') or {}).get('trading_dates', [])
+
     data['_meta'] = {
-        'sync_time': now_utc,
-        'data_date': data_date,          # 本次数据覆盖的交易日
-        'nav_ok':    nav_ok,
-        'nav_kept':  nav_kept,
-        'hold_ok':   hold_ok,
-        'total':     total,
+        'sync_time':     now_utc,
+        'data_date':     data_date,          # 本次数据覆盖的交易日
+        'nav_ok':        nav_ok,
+        'nav_kept':      nav_kept,
+        'hold_ok':       hold_ok,
+        'total':         total,
+        'trading_dates': trading_dates,      # 滚动交易日历（最近90个交易日）
     }
 
     # ── 写文件（必须在报警之前完成） ─────────────────

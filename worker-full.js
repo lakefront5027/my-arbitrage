@@ -209,6 +209,54 @@ const COMMODITY_IDX = new Set([
   'usXLE',                                             // 能源板块
 ]);
 
+// ── 交易日工具函数 ────────────────────────────────────
+// trading_dates 由 sync_fund_data.py 每日写入 fund_daily.json._meta，滚动保留90个交易日。
+// 历史窗口内：精确判断（有记录=交易日，无记录=节假日/周末）
+// 历史窗口外：降级为周末判断（不影响 navLag，navLag 只看近期历史）
+
+let _tradingDates = null;  // Set<string>，由 fetchAllData 注入
+
+function setTradingDates(arr) {
+  _tradingDates = new Set(arr || []);
+}
+
+/** 判断某日是否为交易日（dateStr: 'YYYY-MM-DD'） */
+function isTradingDay(dateStr) {
+  if (_tradingDates && _tradingDates.size > 0) {
+    // 在窗口内：有记录=交易日，无记录=非交易日
+    const sorted = [..._tradingDates].sort();
+    if (dateStr >= sorted[0]) return _tradingDates.has(dateStr);
+  }
+  // 窗口外或未加载：降级周末判断
+  const d = new Date(dateStr + 'T00:00:00Z');
+  const dow = d.getUTCDay();
+  return dow !== 0 && dow !== 6;
+}
+
+/** 计算两日期间（左开右闭）的交易日数，用于 navLag */
+function tradingDayLag(fromDateStr, toDateStr) {
+  if (!fromDateStr || !toDateStr || fromDateStr >= toDateStr) return 0;
+  let count = 0;
+  const end = new Date(toDateStr + 'T00:00:00Z');
+  const cur = new Date(fromDateStr + 'T00:00:00Z');
+  cur.setUTCDate(cur.getUTCDate() + 1);
+  while (cur <= end) {
+    const ds = cur.toISOString().slice(0, 10);
+    if (isTradingDay(ds)) count++;
+    cur.setUTCDate(cur.getUTCDate() + 1);
+  }
+  return count;
+}
+
+/** 当前是否处于北京时间交易时段（09:15–15:00，且当天是交易日） */
+function isBjTradingHours() {
+  const now = new Date();
+  const bj = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Shanghai' }));
+  const bjDate = `${bj.getFullYear()}-${String(bj.getMonth()+1).padStart(2,'0')}-${String(bj.getDate()).padStart(2,'0')}`;
+  const mins = bj.getHours() * 60 + bj.getMinutes();
+  return isTradingDay(bjDate) && mins >= 555 && mins < 900;  // 09:15–15:00
+}
+
 /** 合理性校验：指数单日涨跌幅是否在合理范围内（过滤解析脏数据） */
 function idxSanityOk(tqCode, chg) {
   if (chg == null || !isFinite(chg)) return false;
@@ -639,6 +687,9 @@ async function fetchAllData(env = {}) {
     loadIdxClosing(env),
   ]);
 
+  // 注入交易日历（供 isTradingDay / tradingDayLag 使用）
+  setTradingDates(daily && daily._meta && daily._meta.trading_dates);
+
   // 再并行拉取行情（fetchTencent 需要 daily 来批量加持仓代码）
   const [tqData, emIdx, sinaIdx, futuresOverrides] = await Promise.all([
     fetchTencent(daily),
@@ -703,8 +754,9 @@ async function fetchAllData(env = {}) {
   // 收盘快照 fallback：补充非交易时段 null 的指数代码
   // 数据来自 data/idx_closing.json（closing-data-sync.yml 每日 15:05 写入）
   // 遵守 staleness_policy：sync_at 超过 36 小时视为过期，不回填
+  // 交易时段（09:15-15:00）内禁用：此时应显示"指数缺失"而非用昨日收盘数据误导用户
   const staleIdxCodes = new Set();
-  if (closingData) {
+  if (closingData && !isBjTradingHours()) {
     const MAX_STALE_MS = 36 * 3600 * 1000;
     const nowMs = Date.now();
     for (const [code, entry] of Object.entries(closingData)) {
@@ -762,11 +814,10 @@ async function fetchAllData(env = {}) {
     const alpha        = driftActive ? Math.max(-0.02, Math.min(0.02, drift5d)) : 0;
     const driftStatus  = driftActive ? 'ACTIVE' : 'SUSPENDED';
 
-    // T-2 检测：计算 nav_date 距今自然日数，≥2 表示滞后超过1个交易日
+    // T-2 检测：计算 nav_date 距今交易日数，≥2 表示滞后超过1个交易日
+    // 使用交易日而非日历日，避免周一 navLag=3 误触发链式补偿
     const todayStr = new Date().toISOString().slice(0, 10);
-    const navLag   = navDate
-      ? Math.round((new Date(todayStr) - new Date(navDate)) / 86400000)
-      : 99;
+    const navLag   = navDate ? tradingDayLag(navDate, todayStr) : 99;
 
     // T-2 链式修正：前提是 nav_fetch_time 足够新（≤36h）才可信
     // 若 fetch_time 陈旧，说明数据源本身有问题，不应盲目信任链式推算

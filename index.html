@@ -655,6 +655,44 @@ let _fundDailyLoaded = false;
 let _idxClosing = null;
 let _idxClosingTs = 0;
 
+// ── 交易日工具函数（与 worker-full.js 保持一致） ──────
+let _tradingDates = null;  // Set<string>
+
+function setTradingDates(arr) {
+  _tradingDates = new Set(arr || []);
+}
+
+function isTradingDay(dateStr) {
+  if (_tradingDates && _tradingDates.size > 0) {
+    const sorted = [..._tradingDates].sort();
+    if (dateStr >= sorted[0]) return _tradingDates.has(dateStr);
+  }
+  const d = new Date(dateStr + 'T00:00:00Z');
+  const dow = d.getUTCDay();
+  return dow !== 0 && dow !== 6;
+}
+
+function tradingDayLag(fromDateStr, toDateStr) {
+  if (!fromDateStr || !toDateStr || fromDateStr >= toDateStr) return 0;
+  let count = 0;
+  const end = new Date(toDateStr + 'T00:00:00Z');
+  const cur = new Date(fromDateStr + 'T00:00:00Z');
+  cur.setUTCDate(cur.getUTCDate() + 1);
+  while (cur <= end) {
+    const ds = cur.toISOString().slice(0, 10);
+    if (isTradingDay(ds)) count++;
+    cur.setUTCDate(cur.getUTCDate() + 1);
+  }
+  return count;
+}
+
+function isBjTradingHours() {
+  const bj = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Shanghai' }));
+  const bjDate = `${bj.getFullYear()}-${String(bj.getMonth()+1).padStart(2,'0')}-${String(bj.getDate()).padStart(2,'0')}`;
+  const mins = bj.getHours() * 60 + bj.getMinutes();
+  return isTradingDay(bjDate) && mins >= 555 && mins < 900;
+}
+
 async function loadFundDaily() {
   if (_fundDailyLoaded) return _fundDaily;
   // 主路：直接读同域静态文件（CF Pages CDN 边缘节点，最快）
@@ -799,6 +837,7 @@ async function doRefresh() {
     } else {
       // 🥈 备用链路：先加载 daily（缓存已热则瞬返），再并行拉取行情
       const [daily, closingData] = await Promise.all([loadFundDaily(), loadIdxClosing()]);
+      setTradingDates(daily && daily._meta && daily._meta.trading_dates);
       const [tqData, emIdx, sinaIdx] = await Promise.all([
         fetchTencent(daily), fetchEastmoney(), fetchSina(),
       ]);
@@ -832,9 +871,9 @@ async function doRefresh() {
       if (!idxChg['hkHSMI']) idxChg['hkHSMI'] = idxChg['hkHSSI'] ?? idxChg['hkHSI'] ?? null;
       if (!idxChg['hkHSSI']) idxChg['hkHSSI'] = idxChg['hkHSI'] ?? null;
       if (!idxChg['hkHSCI']) idxChg['hkHSCI'] = idxChg['hkHSI'] ?? null;
-      // 收盘快照兜底：仅在实时未取到时用，36小时时效
+      // 收盘快照兜底：仅在实时未取到且非交易时段时用，36小时时效
       const staleIdxCodes = new Set();
-      if (closingData) {
+      if (closingData && !isBjTradingHours()) {
         const MAX_STALE_MS = 36 * 3600 * 1000;
         for (const [code, entry] of Object.entries(closingData)) {
           if (code.startsWith('_')) continue;
@@ -880,7 +919,7 @@ async function doRefresh() {
 
         // T-2 检测与链式修正（同 Worker 逻辑）
         const todayStr = new Date().toISOString().slice(0, 10);
-        const navLag   = navDate ? Math.round((new Date(todayStr) - new Date(navDate)) / 86400000) : 99;
+        const navLag   = navDate ? tradingDayLag(navDate, todayStr) : 99;
         const estNavYesterday = fundDaily ? (fundDaily.est_nav_yesterday || null) : null;
         const navFetchTime    = fundDaily ? (fundDaily.nav_fetch_time || null) : null;
         const fetchAgeH       = navFetchTime ? (Date.now() - new Date(navFetchTime).getTime()) / 3600000 : 999;

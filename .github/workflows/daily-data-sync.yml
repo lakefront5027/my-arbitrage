@@ -21,6 +21,9 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Install dependencies
+        run: pip install chinesecalendar
+
       - name: Run sync + audit script
         env:
           # GITHUB_TOKEN 和 GITHUB_REPOSITORY 由 Actions 自动注入，显式传入更清晰
