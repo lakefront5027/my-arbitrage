@@ -257,6 +257,133 @@ const STALENESS = {
 
 ---
 
+## 估值计算逻辑（完整）
+
+### 完整计算链
+
+```
+Step 1  基准净值选取
+        base = est_nav_yesterday        （T-2 滞后且链式条件满足时）
+             | officialNav(T-1)         （正常情况）
+             | prevClose                （NAV 完全缺失时降级）
+
+Step 2  盘中动态估值收益率
+        dynNavReturn = calcDynamicNavReturn()   （持仓加权 + bench 残差，含 FX 修正）
+
+Step 3  Drift 偏差修正因子
+        alpha = clamp(drift_5d, −2%, +2%)       （Drift Active 时）
+              | 0                               （Drift Offline 时）
+
+Step 4  当日估算净值
+        nav = base × (1 + dynNavReturn / 100) × (1 + alpha)
+
+Step 5  溢折价率
+        premium% = (price − nav) / nav × 100
+```
+
+### 基准涨跌幅计算
+
+单一基准：`benchChg = idxChg[benchCode]`
+
+复合基准（缺失分量不计入分母，避免低估）：
+```
+benchChg = Σ(idxChg[i] × w[i]) / Σ(w[i] for available i)
+```
+
+典型复合基准：
+
+| 基金 | 复合基准配置 | 说明 |
+|------|------------|------|
+| 501312 海外科技 | QQQ×0.8 + HSTECH×0.1 + A股×0.1 | 混合美港A |
+| 160644 港美互联网 | QQQ×0.5 + HSTECH×0.5 | 港美各半 |
+| 163208 全球油气 | XLE×0.5 + HSCEI×0.5 | 美油气+港能源 |
+| 164906 中概互联网 | HSTECH | 持仓为港股中概，非 KWEB |
+
+### 汇率修正
+
+```
+fxChgUsd = (usd_cnh_live / usd_cnh_t1 − 1) × 100
+fxChgHkd = (hkd_cnh_live / hkd_cnh_t1 − 1) × 100
+
+adj_return = (1 + bench_chg/100) × (1 + fx_chg/100) − 1   ← 乘法叠加，非加法
+```
+
+- `us*` → 叠加 USD/CNH；`hk*` → 叠加 HKD/CNH；`sh/sz/csi/sina*` → 无 FX
+
+### 动态持仓加权估值
+
+```
+for holding in holdings:
+    if tq.startswith('us'): skip  # 美股 A 股时段无盘中价，归入残差
+    if chg == null: skip
+    fx = fxChgHkd if tq.startswith('hk') else 0
+    coveredReturn += ((1 + chg/100) × (1 + fx/100) − 1) × w
+    coveredW      += w
+
+dynNavReturn = (coveredReturn + adjBenchChg/100 × (1 − coveredW)) × 100
+```
+
+`holdingCoverage = coveredW / totalW`（港股基金通常 >80%，美股基金 = 0）
+
+### T-2 链式净值补偿
+
+```
+# Action 每日凌晨写入
+est_nav_yesterday = officialNav(T-2) × (1 + T-1_bench_chg%)
+
+# Worker/前端用链式基准
+nav = est_nav_yesterday × (1 + today_bench%)
+    = officialNav(T-2) × (1 + T-1_bench%) × (1 + today_bench%)   ← 正确两步链
+```
+
+触发条件（三重，缺一不可）：
+```
+useChained = estNavYesterday != null && navLag >= 2 && fetchAgeH <= 36
+```
+
+UI：正常白色显示 officialNav；链式补偿时黄色显示 estNavYesterday + `est` 标注。
+
+### Drift 偏差校准
+
+离线计算（Action 每日）：
+```
+est_nav(t) = nav(t-1) × (1 + bench_chg(t) / 100)
+drift(t)   = (nav(t) − est_nav(t)) / est_nav(t)
+drift_5d   = mean(drift 最近5个有效值)
+```
+
+Hard Enforcement：
+```
+driftActive = (drift5d ≠ 0) && (drift_n ≥ 3) && (driftLagDays ≤ 2)
+alpha = driftActive ? clamp(drift_5d, −2%, +2%) : 0
+```
+
+### 溢折价报警
+
+默认阈值 1.5%（前端可调）：
+
+| 溢折价绝对值 | 状态 | 显示 |
+|------------|------|------|
+| ≥ 阈值 | 报警 | 闪烁 + 背景高亮 + 微信推送 |
+| ≥ 0.65 × 阈值 | 观察 | `⊙ 观察` |
+| < 0.65 × 阈值 | 正常 | — |
+
+Worker 内置状态机（`_alertState{}`）防重复推送。
+
+### 回测逻辑
+
+> 回测文件：`Archive/lof_backtest_v33.html`（归档，不在主部署中）
+
+```
+est_nav(t) = officialNav(t-1) × (1 + bench_chg(t))
+premium(t) = (close_price(t) − est_nav(t)) / est_nav(t) × 100
+signal = "sell" | "buy" | "hold"
+```
+
+回测指标：累计收益率、最大溢/折幅、信号频率、平均持仓天数（含 T+2 赎回延迟）。
+
+---
+
 ## Important Conventions
 
 - Fund codes, benchmark mappings, fee structures, and subscription quotas are hardcoded in `worker-full.js` (`FUNDS` / `BENCH` constants) and mirrored in `index.html` for the fallback path. Updates require editing both files.
