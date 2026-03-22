@@ -8,9 +8,9 @@
     "fee": "1.20%",
     "rfee": "1.00%",
     "bench": "usXBI",
-    "nav": 1.7031,
-    "nav_date": "2026-03-05",
-    "nav_src": "fundgz",
+    "nav": 1.6808,
+    "nav_date": "2026-03-19",
+    "nav_src": "lsjz",
     "shares": 2.87,
     "holdings": [
       {
@@ -63,7 +63,25 @@
         "name": "Madrigal Pharmaceuticals Inc",
         "ratio": 1.21
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        1.6808
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "164906": {
     "code": "164906",
@@ -129,7 +147,25 @@
         "name": "快手-W",
         "ratio": 3.61
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        1.0584
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "501312": {
     "code": "501312",
@@ -157,7 +193,23 @@
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
     "shares": 4.03,
-    "holdings": null
+    "holdings": null,
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        1.9156
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "164824": {
     "code": "164824",
@@ -172,7 +224,23 @@
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
     "shares": 18.25,
-    "holdings": null
+    "holdings": null,
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        1.2762
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "160644": {
     "code": "160644",
@@ -183,9 +251,9 @@
     "fee": "1.50%",
     "rfee": "1.50%",
     "bench": "usKWEB",
-    "nav": 1.5797,
-    "nav_date": "2026-03-05",
-    "nav_src": "fundgz",
+    "nav": 1.6343,
+    "nav_date": "2026-03-19",
+    "nav_src": "lsjz",
     "shares": 1.28,
     "holdings": [
       {
@@ -238,7 +306,25 @@
         "name": "紫金矿业",
         "ratio": 3.36
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        1.6343
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "162415": {
     "code": "162415",
@@ -249,9 +335,9 @@
     "fee": "1.20%",
     "rfee": "1.50%",
     "bench": "usXLY",
-    "nav": 2.913,
-    "nav_date": "2026-03-05",
-    "nav_src": "fundgz",
+    "nav": 2.75,
+    "nav_date": "2026-03-19",
+    "nav_src": "lsjz",
     "shares": 2.3,
     "holdings": [
       {
@@ -304,7 +390,25 @@
         "name": "奥莱利",
         "ratio": 1.68
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        2.75
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "161126": {
     "code": "161126",
@@ -370,7 +474,25 @@
         "name": "百特国际",
         "ratio": 1.64
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        1.8025
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "161128": {
     "code": "161128",
@@ -436,7 +558,25 @@
         "name": "IBM国际商业机器",
         "ratio": 1.2
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        5.3593
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "161125": {
     "code": "161125",
@@ -447,9 +587,9 @@
     "fee": "1.20%",
     "rfee": "1.50%",
     "bench": "usINX",
-    "nav": 2.8661,
-    "nav_date": "2026-03-05",
-    "nav_src": "fundgz",
+    "nav": 2.7777,
+    "nav_date": "2026-03-19",
+    "nav_src": "lsjz",
     "shares": 5.05,
     "holdings": [
       {
@@ -502,7 +642,25 @@
         "name": "伯克希尔哈撒韦-B",
         "ratio": 1.33
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        2.7777
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "161130": {
     "code": "161130",
@@ -513,11 +671,27 @@
     "fee": "1.20%",
     "rfee": "0.60%",
     "bench": "usQQQ",
-    "nav": 3.8546,
-    "nav_date": "2026-03-05",
-    "nav_src": "fundgz",
+    "nav": 3.7564,
+    "nav_date": "2026-03-19",
+    "nav_src": "lsjz",
     "shares": 4.07,
-    "holdings": null
+    "holdings": null,
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        3.7564
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "501300": {
     "code": "501300",
@@ -532,7 +706,23 @@
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
     "shares": 22.43,
-    "holdings": null
+    "holdings": null,
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        0.9561
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "160140": {
     "code": "160140",
@@ -543,9 +733,9 @@
     "fee": "1.20%",
     "rfee": "1.00%",
     "bench": "usRWR",
-    "nav": 1.3768,
-    "nav_date": "2026-03-05",
-    "nav_src": "fundgz",
+    "nav": 1.339,
+    "nav_date": "2026-03-19",
+    "nav_src": "lsjz",
     "shares": 2.4,
     "holdings": [
       {
@@ -598,7 +788,25 @@
         "name": "艾芙隆海湾社区",
         "ratio": 2.18
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        1.339
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "501225": {
     "code": "501225",
@@ -613,7 +821,23 @@
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
     "shares": 2.27,
-    "holdings": null
+    "holdings": null,
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        2.1602
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "160216": {
     "code": "160216",
@@ -657,7 +881,23 @@
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
     "shares": 15.4,
-    "holdings": null
+    "holdings": null,
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        0.767
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "161116": {
     "code": "161116",
@@ -668,11 +908,27 @@
     "fee": "0%",
     "rfee": "1.50%",
     "bench": "sh518880",
-    "nav": 1.8986,
-    "nav_date": "2026-03-05",
-    "nav_src": "fundgz",
+    "nav": 1.7444,
+    "nav_date": "2026-03-19",
+    "nav_src": "lsjz",
     "shares": 2.71,
-    "holdings": null
+    "holdings": null,
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        1.7444
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "164701": {
     "code": "164701",
@@ -687,7 +943,23 @@
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
     "shares": 6.81,
-    "holdings": null
+    "holdings": null,
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        1.858
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "165513": {
     "code": "165513",
@@ -698,11 +970,27 @@
     "fee": "1.60%",
     "rfee": "1.50%",
     "bench": "usGLD",
-    "nav": 1.2124,
-    "nav_date": "2026-03-05",
-    "nav_src": "fundgz",
+    "nav": 1.1181,
+    "nav_date": "2026-03-19",
+    "nav_src": "lsjz",
     "shares": 4.52,
-    "holdings": null
+    "holdings": null,
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        1.1181
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "160719": {
     "code": "160719",
@@ -717,7 +1005,23 @@
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
     "shares": 2.24,
-    "holdings": null
+    "holdings": null,
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        2.101
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "161815": {
     "code": "161815",
@@ -769,11 +1073,27 @@
         "w": 0.053
       }
     ],
-    "nav": 1.149,
-    "nav_date": "2026-03-05",
-    "nav_src": "fundgz",
+    "nav": 1.186,
+    "nav_date": "2026-03-19",
+    "nav_src": "lsjz",
     "shares": 2.85,
-    "holdings": null
+    "holdings": null,
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        1.186
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "163208": {
     "code": "163208",
@@ -839,7 +1159,25 @@
         "name": "中国石油化工股份",
         "ratio": 0.72
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        1.353
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "501018": {
     "code": "501018",
@@ -863,7 +1201,23 @@
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
     "shares": 8.85,
-    "holdings": null
+    "holdings": null,
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        1.789
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "161129": {
     "code": "161129",
@@ -878,7 +1232,23 @@
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
     "shares": 4.35,
-    "holdings": null
+    "holdings": null,
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        1.7047
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "160723": {
     "code": "160723",
@@ -893,7 +1263,23 @@
     "nav_date": "2026-03-19",
     "nav_src": "lsjz",
     "shares": 3.5,
-    "holdings": null
+    "holdings": null,
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        2.0645
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "162719": {
     "code": "162719",
@@ -904,9 +1290,9 @@
     "fee": "1.20%",
     "rfee": "1.50%",
     "bench": "usXOP",
-    "nav": 2.6595,
-    "nav_date": "2026-03-05",
-    "nav_src": "fundgz",
+    "nav": 2.8354,
+    "nav_date": "2026-03-19",
+    "nav_src": "lsjz",
     "shares": 2.95,
     "holdings": [
       {
@@ -959,7 +1345,25 @@
         "name": "Coterra Energy Inc",
         "ratio": 3.74
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        2.8354
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "162411": {
     "code": "162411",
@@ -970,9 +1374,9 @@
     "fee": "1.50%",
     "rfee": "1.50%",
     "bench": "usXOP",
-    "nav": 0.8799,
-    "nav_date": "2026-03-05",
-    "nav_src": "fundgz",
+    "nav": 0.9366,
+    "nav_date": "2026-03-19",
+    "nav_src": "lsjz",
     "shares": 20.34,
     "holdings": [
       {
@@ -1025,7 +1429,25 @@
         "name": "Magnolia Oil & Gas Corp-A",
         "ratio": 2.47
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        0.9366
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "160416": {
     "code": "160416",
@@ -1091,7 +1513,25 @@
         "name": "加拿大自然资源有限公司",
         "ratio": 1.78
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-19"
+      ],
+      "nav": [
+        2.175
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "501303": {
     "code": "501303",
@@ -1102,9 +1542,9 @@
     "fee": "1.20%",
     "rfee": "0.60%",
     "bench": "hkHSMI",
-    "nav": 1.0471,
-    "nav_date": "2026-03-19",
-    "nav_src": "fundgz",
+    "nav": 1.0417,
+    "nav_date": "2026-03-20",
+    "nav_src": "lsjz",
     "shares": 0.43,
     "holdings": [
       {
@@ -1157,7 +1597,25 @@
         "name": "中国铁塔",
         "ratio": 1.31
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-20"
+      ],
+      "nav": [
+        1.0417
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "161124": {
     "code": "161124",
@@ -1168,9 +1626,9 @@
     "fee": "1.20%",
     "rfee": "1.00%",
     "bench": "hkHSSI",
-    "nav": 1.0968,
-    "nav_date": "2026-03-19",
-    "nav_src": "fundgz",
+    "nav": 1.0927,
+    "nav_date": "2026-03-20",
+    "nav_src": "lsjz",
     "shares": 0.44,
     "holdings": [
       {
@@ -1223,7 +1681,25 @@
         "name": "TCL电子",
         "ratio": 1.14
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-20"
+      ],
+      "nav": [
+        1.0927
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "160322": {
     "code": "160322",
@@ -1234,9 +1710,9 @@
     "fee": "1.20%",
     "rfee": "1.50%",
     "bench": "hkHSCI",
-    "nav": 1.1461,
-    "nav_date": "2026-03-19",
-    "nav_src": "fundgz",
+    "nav": 1.1427,
+    "nav_date": "2026-03-20",
+    "nav_src": "lsjz",
     "shares": 1.13,
     "holdings": [
       {
@@ -1289,7 +1765,25 @@
         "name": "中国银行",
         "ratio": 2.94
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-20"
+      ],
+      "nav": [
+        1.1427
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "501021": {
     "code": "501021",
@@ -1364,7 +1858,25 @@
         "name": "康方生物",
         "ratio": 1.76
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-20"
+      ],
+      "nav": [
+        1.4041
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "501310": {
     "code": "501310",
@@ -1439,7 +1951,25 @@
         "name": "交通银行",
         "ratio": 2.34
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-20"
+      ],
+      "nav": [
+        1.3608
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "501302": {
     "code": "501302",
@@ -1450,11 +1980,27 @@
     "fee": "1.20%",
     "rfee": "0.60%",
     "bench": "hkHSI",
-    "nav": 1.1736,
-    "nav_date": "2026-03-19",
-    "nav_src": "fundgz",
+    "nav": 1.1621,
+    "nav_date": "2026-03-20",
+    "nav_src": "lsjz",
     "shares": 2.07,
-    "holdings": null
+    "holdings": null,
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-20"
+      ],
+      "nav": [
+        1.1621
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "501307": {
     "code": "501307",
@@ -1465,9 +2011,9 @@
     "fee": "1.00%",
     "rfee": "0.68%",
     "bench": "csi930917",
-    "nav": 1.3055,
-    "nav_date": "2026-03-19",
-    "nav_src": "fundgz",
+    "nav": 1.3015,
+    "nav_date": "2026-03-20",
+    "nav_src": "lsjz",
     "shares": 0.43,
     "holdings": [
       {
@@ -1520,7 +2066,25 @@
         "name": "VTECH HOLDINGS",
         "ratio": 1.14
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-20"
+      ],
+      "nav": [
+        1.3015
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "501306": {
     "code": "501306",
@@ -1532,8 +2096,8 @@
     "rfee": "0.60%",
     "bench": "csi930914",
     "nav": 1.2758,
-    "nav_date": "2026-03-19",
-    "nav_src": "fundgz",
+    "nav_date": "2026-03-20",
+    "nav_src": "lsjz",
     "shares": 5.46,
     "holdings": [
       {
@@ -1586,7 +2150,25 @@
         "name": "中国银行",
         "ratio": 2.31
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2024-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-20"
+      ],
+      "nav": [
+        1.2758
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "160717": {
     "code": "160717",
@@ -1652,7 +2234,25 @@
         "name": "中国海洋石油",
         "ratio": 2.82
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-20"
+      ],
+      "nav": [
+        0.7411
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "501311": {
     "code": "501311",
@@ -1663,9 +2263,9 @@
     "fee": "1.20%",
     "rfee": "0.90%",
     "bench": "hkHSTECH",
-    "nav": 1.0191,
-    "nav_date": "2026-03-19",
-    "nav_src": "fundgz",
+    "nav": 0.9913,
+    "nav_date": "2026-03-20",
+    "nav_src": "lsjz",
     "shares": 11.91,
     "holdings": [
       {
@@ -1718,7 +2318,25 @@
         "name": "小鹏汽车-W",
         "ratio": 2.18
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-20"
+      ],
+      "nav": [
+        0.9913
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "501301": {
     "code": "501301",
@@ -1729,9 +2347,9 @@
     "fee": "1.20%",
     "rfee": "0.90%",
     "bench": "hkHSCEI",
-    "nav": 1.2819,
-    "nav_date": "2026-03-19",
-    "nav_src": "fundgz",
+    "nav": 1.2605,
+    "nav_date": "2026-03-20",
+    "nav_src": "lsjz",
     "shares": 0.97,
     "holdings": [
       {
@@ -1784,7 +2402,25 @@
         "name": "中国海洋石油",
         "ratio": 2.95
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-20"
+      ],
+      "nav": [
+        1.2605
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "164705": {
     "code": "164705",
@@ -1795,9 +2431,9 @@
     "fee": "1.20%",
     "rfee": "1.00%",
     "bench": "hkHSI",
-    "nav": 1.1509,
-    "nav_date": "2026-03-19",
-    "nav_src": "fundgz",
+    "nav": 1.1403,
+    "nav_date": "2026-03-20",
+    "nav_src": "lsjz",
     "shares": 2.81,
     "holdings": [
       {
@@ -1850,7 +2486,25 @@
         "name": "香港交易所",
         "ratio": 2.88
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-20"
+      ],
+      "nav": [
+        1.1403
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "161831": {
     "code": "161831",
@@ -1861,9 +2515,9 @@
     "fee": "1.20%",
     "rfee": "1.20%",
     "bench": "hkHSCEI",
-    "nav": 0.7701,
-    "nav_date": "2026-03-19",
-    "nav_src": "fundgz",
+    "nav": 0.7583,
+    "nav_date": "2026-03-20",
+    "nav_src": "lsjz",
     "shares": 2.74,
     "holdings": [
       {
@@ -1916,7 +2570,25 @@
         "name": "中国银行",
         "ratio": 2.8
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-20"
+      ],
+      "nav": [
+        0.7583
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "501305": {
     "code": "501305",
@@ -1928,8 +2600,8 @@
     "rfee": "0.60%",
     "bench": "csi930914",
     "nav": 1.3199,
-    "nav_date": "2026-03-19",
-    "nav_src": "fundgz",
+    "nav_date": "2026-03-20",
+    "nav_src": "lsjz",
     "shares": 4.72,
     "holdings": [
       {
@@ -1982,7 +2654,25 @@
         "name": "中国银行",
         "ratio": 2.31
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2024-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-20"
+      ],
+      "nav": [
+        1.3199
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "160924": {
     "code": "160924",
@@ -1993,9 +2683,9 @@
     "fee": "1.20%",
     "rfee": "1.20%",
     "bench": "hkHSI",
-    "nav": 1.0209,
-    "nav_date": "2026-03-19",
-    "nav_src": "fundgz",
+    "nav": 1.0115,
+    "nav_date": "2026-03-20",
+    "nav_src": "lsjz",
     "shares": 1.24,
     "holdings": [
       {
@@ -2048,7 +2738,25 @@
         "name": "中国银行",
         "ratio": 2.52
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-20"
+      ],
+      "nav": [
+        1.0115
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "501025": {
     "code": "501025",
@@ -2059,9 +2767,9 @@
     "fee": "1.20%",
     "rfee": "0.90%",
     "bench": "csi930792",
-    "nav": 1.623,
-    "nav_date": "2026-03-19",
-    "nav_src": "fundgz",
+    "nav": 1.624,
+    "nav_date": "2026-03-20",
+    "nav_src": "lsjz",
     "shares": 5.47,
     "holdings": [
       {
@@ -2114,7 +2822,25 @@
         "name": "交通银行",
         "ratio": 4.06
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-20"
+      ],
+      "nav": [
+        1.624
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "161226": {
     "code": "161226",
@@ -2129,7 +2855,23 @@
     "nav_date": "2026-03-20",
     "nav_src": "lsjz",
     "shares": 51.41,
-    "holdings": null
+    "holdings": null,
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-20"
+      ],
+      "nav": [
+        1.9754
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "161217": {
     "code": "161217",
@@ -2140,9 +2882,9 @@
     "fee": "1.50%",
     "rfee": "0.50%",
     "bench": "sz399961",
-    "nav": 2.3234,
-    "nav_date": "2026-03-19",
-    "nav_src": "fundgz",
+    "nav": 2.2938,
+    "nav_date": "2026-03-20",
+    "nav_src": "lsjz",
     "shares": 1.49,
     "holdings": [
       {
@@ -2195,7 +2937,25 @@
         "name": "赣锋锂业",
         "ratio": 2.27
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-20"
+      ],
+      "nav": [
+        2.2938
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "161715": {
     "code": "161715",
@@ -2206,9 +2966,9 @@
     "fee": "1.50%",
     "rfee": "0.50%",
     "bench": "sz399979",
-    "nav": 2.4013,
-    "nav_date": "2026-03-19",
-    "nav_src": "fundgz",
+    "nav": 2.3689,
+    "nav_date": "2026-03-20",
+    "nav_src": "lsjz",
     "shares": 1.45,
     "holdings": [
       {
@@ -2261,7 +3021,25 @@
         "name": "东方盛虹",
         "ratio": 1.04
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-20"
+      ],
+      "nav": [
+        2.3689
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "161725": {
     "code": "161725",
@@ -2327,7 +3105,25 @@
         "name": "口子窖",
         "ratio": 2.06
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-20"
+      ],
+      "nav": [
+        0.6519
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "161032": {
     "code": "161032",
@@ -2338,9 +3134,9 @@
     "fee": "1.50%",
     "rfee": "0.50%",
     "bench": "sz399998",
-    "nav": 2.326,
-    "nav_date": "2026-03-19",
-    "nav_src": "fundgz",
+    "nav": 2.333,
+    "nav_date": "2026-03-20",
+    "nav_src": "lsjz",
     "shares": 3.06,
     "holdings": [
       {
@@ -2393,18 +3189,37 @@
         "name": "平煤股份",
         "ratio": 3.8
       }
-    ]
+    ],
+    "nav_fetch_time": "2026-03-22T16:37:19+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-22T16:37:19+00:00",
+    "history": {
+      "date": [
+        "03-20"
+      ],
+      "nav": [
+        2.333
+      ],
+      "est": [
+        null
+      ],
+      "drift": [
+        null
+      ]
+    }
   },
   "_meta": {
-    "sync_time": "2026-03-21T16:42:21+00:00",
-    "nav_ok": 41,
-    "nav_kept": 6,
+    "sync_time": "2026-03-22T16:42:36+00:00",
+    "data_date": "2026-03-20",
+    "nav_ok": 47,
+    "nav_kept": 0,
     "hold_ok": 31,
     "total": 47
   },
   "_fx": {
     "usd_cnh_t1": 6.904,
     "hkd_cnh_t1": null,
-    "date": "2026-03-21"
+    "date": "2026-03-22"
   }
 }
