@@ -655,12 +655,15 @@ async function fetchAllData(env = {}) {
       ? Math.round((new Date(todayStr) - new Date(navDate)) / 86400000)
       : 99;
 
-    // T-2 链式修正：若有 est_nav_yesterday（Action 每日计算的链式估值），用它作为基准
-    // est_nav_yesterday = official_nav_T2 × T1_bench_chg，再叠加今日盘中涨跌
-    // 这样最终 nav = official_nav_T2 × T1_bench × today_bench（正确链式）
+    // T-2 链式修正：前提是 nav_fetch_time 足够新（≤36h）才可信
+    // 若 fetch_time 陈旧，说明数据源本身有问题，不应盲目信任链式推算
     const estNavYesterday = fundDaily ? (fundDaily.est_nav_yesterday || null) : null;
-    const useChained      = estNavYesterday && navLag >= 2;
-    const base            = useChained ? estNavYesterday : (officialNav || prevClose);
+    const navFetchTime    = fundDaily ? (fundDaily.nav_fetch_time || null) : null;
+    const fetchAgeH       = navFetchTime
+      ? (Date.now() - new Date(navFetchTime).getTime()) / 3600000
+      : 999;
+    const useChained = estNavYesterday && navLag >= 2 && fetchAgeH <= 36;
+    const base       = useChained ? estNavYesterday : (officialNav || prevClose);
 
     let nav = null, premium = null;
     if (base > 0 && price != null) {
@@ -683,6 +686,7 @@ async function fetchAllData(env = {}) {
       benchChg,
       fxAdj,
       holdingCoverage,
+      holdingsDate: fundDaily ? (fundDaily.holdings_date || null) : null,
       drift5d,
       driftN,
       quota: f.quota,

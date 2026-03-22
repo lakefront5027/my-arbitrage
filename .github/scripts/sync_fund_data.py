@@ -231,15 +231,15 @@ def _recent_quarters() -> list:
     return quarters
 
 
-def fetch_holdings(code: str) -> list | None:
+def fetch_holdings(code: str) -> dict | None:
     """
     天天基金 FundArchivesDatas.aspx?type=jjcc 季报披露页面。
-    逐季尝试直到找到非空数据，解析 HTML 表格，返回前十大持仓。
+    逐季尝试直到找到非空数据，解析 HTML 表格，返回:
+      {'holdings': [...], 'holdings_date': 'YYYY-MM-DD'}
+    其中 holdings_date 为该季报的季末日期（如 2025-12-31）。
     字段：code（标的代码）、name（中文简称）、ratio（占净值比例%）。
-
-    原 api.fund.eastmoney.com/f10/jjcc 对 QDII 基金全部返回 ErrCode=4，
-    改用此 HTML 接口可正常获取季报数据。
     """
+    _quarter_last_day = {3: 31, 6: 30, 9: 30, 12: 31}
     for year, month in _recent_quarters():
         url = (
             f'https://fundf10.eastmoney.com/FundArchivesDatas.aspx'
@@ -284,7 +284,9 @@ def fetch_holdings(code: str) -> list | None:
                         'ratio': round(ratio, 2),
                     })
             if result:
-                return result[:10]
+                last_day = _quarter_last_day.get(month, 30)
+                holdings_date = f'{year}-{month:02d}-{last_day}'
+                return {'holdings': result[:10], 'holdings_date': holdings_date}
 
     print(f'    [holdings] {code}: 近 6 季均无数据（可能为单只 ETF 持仓型基金）',
           file=sys.stderr)
@@ -768,8 +770,9 @@ def sync():
     fund_codes = [k for k in data if not k.startswith('_')]
     total = len(fund_codes)
     nav_ok = nav_kept = nav_fail = hold_ok = hold_fail = 0
+    now_utc = datetime.now(timezone.utc).isoformat(timespec='seconds')
 
-    print(f'=== 同步开始 | {total} 只基金 | {datetime.now(timezone.utc).isoformat(timespec="seconds")} UTC\n')
+    print(f'=== 同步开始 | {total} 只基金 | {now_utc} UTC\n')
 
     for code in fund_codes:
         fund = data[code]
@@ -789,6 +792,8 @@ def sync():
             new_date = nav_result.get('nav_date') or ''
             if new_date >= old_date:
                 fund.update(nav_result)
+                fund['nav_fetch_time'] = now_utc          # 时间戳：本次成功抓取时刻
+                fund['nav_consecutive_fails'] = 0          # 连续失败计数归零
                 nav_ok += 1
                 print(
                     f'  ✓ NAV  {code} {name:16s}  '
@@ -804,20 +809,24 @@ def sync():
         else:
             nav_kept += 1
             nav_fail += 1
+            fails = fund.get('nav_consecutive_fails', 0) + 1
+            fund['nav_consecutive_fails'] = fails          # 连续失败计数累加
             print(
-                f'  ✗ NAV  {code} {name:16s}  FAILED — 保留 '
+                f'  ✗ NAV  {code} {name:16s}  FAILED (连续{fails}次) — 保留 '
                 f'{fund.get("nav")} ({fund.get("nav_date")})',
                 file=sys.stderr,
             )
         time.sleep(0.08)
 
         # ── 持仓 ──────────────────────────────────────
-        holdings = fetch_holdings(code)
-        if holdings:
-            fund['holdings'] = holdings
+        hold_result = fetch_holdings(code)
+        if hold_result:
+            fund['holdings']       = hold_result['holdings']
+            fund['holdings_date']  = hold_result['holdings_date']   # 季报截止日期
+            fund['holdings_fetch_time'] = now_utc                   # 本次成功抓取时刻
             hold_ok += 1
-            top = holdings[0]
-            print(f'    持仓 {len(holdings):2d}只  首位: {top["name"]} {top["ratio"]}%')
+            top = hold_result['holdings'][0]
+            print(f'    持仓 {len(hold_result["holdings"]):2d}只  截止:{hold_result["holdings_date"]}  首位: {top["name"]} {top["ratio"]}%')
         else:
             hold_fail += 1
             print(f'    持仓 FAILED — 保留旧值', file=sys.stderr)
@@ -837,8 +846,13 @@ def sync():
 
     # ── 写 _meta ──────────────────────────────────────
     now_utc = datetime.now(timezone.utc).isoformat(timespec='seconds')
+    # data_date = 本次同步覆盖的最新交易日（取所有基金 nav_date 最大值）
+    all_nav_dates = [v.get('nav_date','') for k,v in data.items()
+                     if not k.startswith('_') and v.get('nav_date')]
+    data_date = max(all_nav_dates) if all_nav_dates else ''
     data['_meta'] = {
         'sync_time': now_utc,
+        'data_date': data_date,          # 本次数据覆盖的交易日
         'nav_ok':    nav_ok,
         'nav_kept':  nav_kept,
         'hold_ok':   hold_ok,
@@ -854,6 +868,16 @@ def sync():
         f'NAV {nav_ok} 更新 / {nav_kept} 保留 / {nav_fail} 失败 | '
         f'持仓 {hold_ok}/{total} | {now_utc}'
     )
+
+    # ── 连续失败检查：≥3 次则 Action 报错（强制暴露数据源故障）──
+    critical = [(k, v.get('nav_consecutive_fails',0))
+                for k, v in data.items()
+                if not k.startswith('_') and v.get('nav_consecutive_fails', 0) >= 3]
+    if critical:
+        msgs = ', '.join(f'{c[0]}({c[1]}次)' for c in critical)
+        raise RuntimeError(
+            f'NAV 连续抓取失败 ≥3 次，请检查数据源: {msgs}'
+        )
 
     # ── 持仓审计 + 双路报警（容错，失败不影响 commit） ─
     print('\n--- 持仓审计 ---')
