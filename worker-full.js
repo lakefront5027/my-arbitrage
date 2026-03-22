@@ -413,10 +413,9 @@ async function fetchEastmoney() {
         const resp = await fetch(url);
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const d = await resp.json();
-        if (d.data && d.data.f43 > 0) {
-          if (d.data.f170 == null) return null;  // 涨跌幅字段缺失，不记录（避免误置 0）
-          const chg = d.data.f170 / 100;
-          return [key, chg];
+        // 不依赖 f43：CSI 计算型指数 f43 可能为 null/0，但 f170 仍有效
+        if (d.data && d.data.f170 != null) {
+          return [key, d.data.f170 / 100];
         }
         return null;
       } catch (e) {
@@ -433,12 +432,13 @@ async function fetchEastmoney() {
 }
 
 /**
- * 新浪财经：拉取白银AG0 + A股指数 sz399961/sz399979/sz399987/sz399998
- * 返回 { sinaAG0: chg, sz399961: chg, sz399979: chg, sz399987: chg, sz399998: chg }
+ * 新浪财经：拉取白银AG0 + A股指数 sz399987/sz399998 + 实时汇率
+ * sz399961/sz399979 已移至 EM_CODES（新浪 merge 顺序在 EM 之后，会覆盖 EM 的正确值）
+ * 返回 { sinaAG0: chg, sz399987: chg, sz399998: chg, _fxUsdCnh, _fxHkdCnh }
  */
 async function fetchSina() {
   try {
-    const list = 'nf_AG0,sz399961,sz399979,sz399987,sz399998,fx_susdcnh,fx_shkcnh';
+    const list = 'nf_AG0,sz399987,sz399998,fx_susdcnh,fx_shkcnh';
     const url = `https://hq.sinajs.cn/list=${list}`;
     const resp = await fetch(url, {
       headers: {
@@ -459,8 +459,8 @@ async function fetchSina() {
       if (cur > 0 && prev > 0) out.sinaAG0 = (cur - prev) / prev * 100;
     }
 
-    // A股指数：p[3]=现价，p[2]=昨收
-    for (const code of ['sz399961', 'sz399979', 'sz399987', 'sz399998']) {
+    // A股指数：p[3]=现价，p[2]=昨收（sz399961/sz399979 由 EM_CODES 提供，不在此列）
+    for (const code of ['sz399987', 'sz399998']) {
       const re = new RegExp(`hq_str_${code}="([^"]+)"`);
       const m = text.match(re);
       if (m) {

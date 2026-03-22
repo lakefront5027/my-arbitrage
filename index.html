@@ -430,7 +430,7 @@ function fetchEastmoney() {
     Object.entries(EM_CODES).map(([key, secid]) =>
       fetch(`https://push2.eastmoney.com/api/qt/stock/get?secid=${secid}&fields=f43,f169,f170&_=${Date.now()}`)
         .then(r => r.json())
-        .then(d => (d.data?.f43 > 0 && d.data.f170 != null) ? [key, d.data.f170 / 100] : null)
+        .then(d => (d.data && d.data.f170 != null) ? [key, d.data.f170 / 100] : null)
         .catch(() => null)
     )
   ).then(results => {
