@@ -59,6 +59,42 @@ The system runs entirely on Cloudflare infrastructure (Worker + Pages), backed b
 
 ---
 
+## Layer Responsibilities & Development Constraints
+
+### 核心职责分层
+
+| 层级 | 角色 | 职责边界 |
+|------|------|----------|
+| **Action（数据层）** | 法定数据水源 | 负责净值、持仓等**重量级/静态数据**的定时抓取与审计。`fund_daily.json` 是唯一净值权威来源。 |
+| **Worker（逻辑层）** | 实时合成引擎 | 负责指数/汇率等**热数据**的实时抓取，结合 Action 提供的静态基准进行估值计算。**不抓取基金净值**。 |
+| **Page（展示层）** | 只读终端 + 应急补位 | 负责 UI 展现。拥有**【紧急避险抓取权】**：仅在 Action 数据残缺时，允许用 fundgz JSONP 临时补位，不可常态化。 |
+
+### 开发红线
+
+**单向优先原则**
+> 严禁将「临时补位逻辑」常态化。`runFgzFallback()` 是应急措施，不是正常流程。
+> 若净值大面积缺失，**必须在 Action 层（`sync_fund_data.py`）排查并修复根因**，而不是扩大前端补偿范围。
+
+**禁止越位**
+> 严禁在 Worker 中集成重量级 HTML 解析逻辑或大规模基金净值抓取。
+> Worker 只做：读 JSON + 抓指数 + 做数学。
+
+**单一水源**
+> `fund_daily.json` 是净值的唯一主权威。Worker 从它读，前端从它读。
+> 任何净值数据质量问题，溯源至 `sync_fund_data.py`，而不是在下游打补丁。
+
+### 数据流（严格单向）
+
+```
+Action 写入 → fund_daily.json → Worker 读取 → /api/snapshot → Page 渲染
+                     ↓
+              Page 直读（fallback，仅 Worker 不可达时）
+                     ↓
+              fundgz JSONP（应急，仅 Action 数据残缺时）
+```
+
+---
+
 ## Key Files
 
 | File | Role |
@@ -384,6 +420,33 @@ signal = "sell" | "buy" | "hold"
 
 ---
 
+## Data Sources
+
+| 来源 | 用途 | 层级 |
+|------|------|------|
+| `fundgz.1234567.com.cn` | T-1 净值（主路） | Action |
+| `api.fund.eastmoney.com/f10/lsjz` | T-1 净值（备路） | Action |
+| `fund.eastmoney.com/pingzhongdata` | T-1 净值（第三路） | Action |
+| `api.fund.eastmoney.com/f10/jjcc` | 前十大持仓 | Action |
+| `qt.gtimg.cn` | 实时价格 + 40+ 指数 | Worker / Page |
+| `push2.eastmoney.com` | 大陆指数（备） | Worker / Page |
+| `query1.finance.yahoo.com` | CME 期货实时（NQ=F / ES=F）| Worker |
+| `hq.sinajs.cn` | 实时汇率（USD/CNH、HKD/CNH）| Worker / Page |
+| `fundgz.1234567.com.cn` | 净值应急补位 JSONP | Page（应急） |
+
+---
+
+## Environment Variables / Secrets
+
+| 名称 | 位置 | 用途 |
+|------|------|------|
+| `CF_API_TOKEN` | GitHub Secrets | Cloudflare 部署 |
+| `CF_ACCOUNT_ID` | GitHub Secrets | Cloudflare 账号 |
+| `WX_KEY` | GitHub Secrets | 企业微信 Webhook（持仓漂移预警） |
+| `FUND_DAILY_URL` | wrangler.toml `[vars]` | 覆盖 Worker 读取的 JSON 地址 |
+
+---
+
 ## Important Conventions
 
 - Fund codes, benchmark mappings, fee structures, and subscription quotas are hardcoded in `worker-full.js` (`FUNDS` / `BENCH` constants) and mirrored in `index.html` for the fallback path. Updates require editing both files.
@@ -391,3 +454,15 @@ signal = "sell" | "buy" | "hold"
 - BENCH composite entries use `[{tq, w}, ...]` format; missing components are excluded from the denominator (not treated as zero).
 - CME futures (NQ=F → usQQQ/usIXIC/usXLK/usSMH, ES=F → usINX) override Tencent T-1 close prices during A-share trading hours. This is Worker-side only (server-to-server, no CORS issue).
 - HK index fallback chain: `hkHSMI → hkHSSI → hkHSI`, `hkHSSI → hkHSI`, `hkHSCI → hkHSI`.
+
+---
+
+## Known Limitations
+
+| 局限 | 原因 | 备注 |
+|------|------|------|
+| 美股持仓 A 股时段无价格 | 美股完全休市 | CME 期货已覆盖指数级别，个股无解 |
+| Drift 历史需积累 3+ 日才生效 | 首次部署历史为空 | 等 Action 自然积累 |
+| 持仓为季报，最多滞后 3 个月 | 信息披露规定 | 已标注 `holdings_date` |
+| navLag > 3 时无估值 | 数据源故障 | 3-strike 机制触发红叉报警 |
+| HK 孪生股覆盖率极低 | 仅 TME→01698.HK | 当前基金池不可行 |
