@@ -115,10 +115,10 @@ const FUNDS = [
 // ── 外盘基准映射（完整47只） ────────────────────────
 const BENCH = {
   '161127': 'usXBI',
-  '164906': 'usKWEB',
+  '164906': 'hkHSTECH',                                              // 持仓主体为港股中概，usKWEB(T-1)→hkHSTECH(实时)
   '501312': [{tq:'usQQQ',w:0.8},{tq:'hkHSTECH',w:0.1},{tq:'sh000985',w:0.1}],
   '164824': 'usINDA',
-  '160644': 'usKWEB',
+  '160644': [{tq:'usQQQ',w:0.5},{tq:'hkHSTECH',w:0.5}],            // 港美各半：GOOGL/NVDA/TSM + 腾讯/阿里HK
   '162415': 'usXLY',
   '161126': 'usRSPH',
   '161128': 'usXLK',
@@ -133,7 +133,7 @@ const BENCH = {
   '165513': 'usGLD',
   '160719': 'sh518880',
   '161815': [{tq:'usGLD',w:0.171},{tq:'usIAU',w:0.168},{tq:'usAAAU',w:0.144},{tq:'usSGOL',w:0.139},{tq:'usBCI',w:0.122},{tq:'usCOMT',w:0.095},{tq:'usUSO',w:0.051},{tq:'usBNO',w:0.044},{tq:'usSLV',w:0.024},{tq:'usCPER',w:0.053}],
-  '163208': 'usXLE',
+  '163208': [{tq:'usXLE',w:0.5},{tq:'hkHSCEI',w:0.5}],             // 全球油气：US油气ETF + HK能源/公用
   '501018': [{tq:'usUSO',w:0.6},{tq:'usBNO',w:0.4}],
   '161129': 'usUSO',
   '160723': 'usUSO',
@@ -235,6 +235,43 @@ function getHoldingTqCodes(daily) {
 }
 
 // 状态跃迁报警：KV 持久化，key=alert:{code}，value="above"|"below"
+
+// ── CME 期货映射（A股时段美市休市，期货仍 23h 交易） ──────────
+// 用 Yahoo Finance regularMarketChangePercent，该字段在合约内计算
+// 自动规避换月跳价：换月后新合约以当日开盘为基准，不出现隔日大跳
+const FUTURES_MAP = {
+  'NQ%3DF': ['usQQQ', 'usIXIC', 'usXLK', 'usSMH'],  // 纳指100期货 → QQQ/XLK/SMH
+  'ES%3DF': ['usINX'],                                  // 标普500期货 → INX
+};
+
+/**
+ * 从 Yahoo Finance 拉取 CME 期货实时涨跌幅
+ * 返回 { usQQQ: chgPct, usINX: chgPct, ... }，失败时返回 {}
+ * 注：仅 Worker 端可调用（浏览器有 CORS 限制）
+ */
+async function fetchYahooFutures() {
+  const overrides = {};
+  await Promise.all(Object.entries(FUTURES_MAP).map(async ([sym, tqCodes]) => {
+    try {
+      const url = `https://query1.finance.yahoo.com/v8/finance/chart/${sym}?interval=1m&range=1d`;
+      const resp = await fetch(url, {
+        headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json' },
+        cf: { cacheTtl: 60 },
+      });
+      if (!resp.ok) return;
+      const data = await resp.json();
+      const meta = data?.chart?.result?.[0]?.meta;
+      if (!meta) return;
+      const chgPct = meta.regularMarketChangePercent;
+      if (chgPct == null || !isFinite(chgPct)) return;
+      for (const tq of tqCodes) overrides[tq] = chgPct;
+      console.log(`[futures] ${sym} → ${chgPct.toFixed(3)}% → [${tqCodes.join(',')}]`);
+    } catch (e) {
+      console.warn(`[futures] ${sym} 拉取失败:`, e.message);
+    }
+  }));
+  return overrides;
+}
 
 // ══════════════════════════════════════════════════════
 //  数据获取函数（Worker 环境，使用 fetch()，非浏览器）
@@ -534,10 +571,11 @@ async function fetchAllData(env = {}) {
   const daily = await loadFundDaily(env);
 
   // 再并行拉取行情（fetchTencent 需要 daily 来批量加持仓代码）
-  const [tqData, emIdx, sinaIdx] = await Promise.all([
+  const [tqData, emIdx, sinaIdx, futuresOverrides] = await Promise.all([
     fetchTencent(daily),
     fetchEastmoney(),
     fetchSina(),
+    fetchYahooFutures(),
   ]);
 
   const stockChg = tqData.stockChg || {};
@@ -568,6 +606,9 @@ async function fetchAllData(env = {}) {
   Object.entries(sinaIdx).forEach(([code, chg]) => {
     if (!code.startsWith('_')) idxChg[code] = chg;
   });
+
+  // CME 期货覆盖（A股时段实时，优先级高于腾讯T-1数据）
+  Object.entries(futuresOverrides).forEach(([tq, chg]) => { idxChg[tq] = chg; });
 
   // 降级兜底
   if (idxChg['hkHSMI'] == null || idxChg['hkHSMI'] === 0) {
