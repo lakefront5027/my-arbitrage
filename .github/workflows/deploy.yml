@@ -19,7 +19,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          command: pages deploy . --project-name=my-arbitrage --commit-dirty=true
+          command: pages deploy . --project-name=my-arbitrage --commit-dirty
 
   deploy-worker:
     name: Deploy Cloudflare Worker
@@ -31,4 +31,4 @@ jobs:
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          wranglerVersion: '3'
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
