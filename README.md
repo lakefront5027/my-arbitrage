@@ -37,3 +37,5 @@ Real-time LOF Arbitrage Radar System built with Cloudflare Workers and Vanilla J
 | `deploy.yml` | 每次推送到 main 分支 |
 
 > 完整架构说明、估值算法、开发规范见 `CLAUDE.md`。
+
+<img width="1437" height="769" alt="Screenshot 2026-03-22 at 22 17 55" src="https://github.com/user-attachments/assets/45985ae8-92ef-4ef8-b12c-904ab812507a" />
