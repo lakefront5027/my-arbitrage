@@ -4,81 +4,101 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-LOF套利雷达 is a browser-based real-time arbitrage monitoring tool for Chinese QDII Listed Open-ended Funds (LOFs). It detects premium/discount arbitrage opportunities by comparing real-time market prices against estimated intraday NAVs derived from benchmark index movements.
+LOF套利雷达 is a **cloud-native** real-time arbitrage monitoring system for Chinese QDII Listed Open-ended Funds (LOFs). It detects premium/discount arbitrage opportunities by comparing real-time market prices against intraday NAVs estimated from live benchmark indices.
 
-## Running the Application
+The system runs entirely on Cloudflare infrastructure (Worker + Pages), backed by a GitHub Actions data pipeline. **There is no traditional server.** The Cloudflare Worker is the backend logic engine; index.html is a thin display client that consumes the Worker's output.
 
-No build step required — open HTML files directly in a browser:
+---
 
-- **Real-time monitoring**: Open `lof_arb_monitor_v33.html`
-- **Backtesting**: Open `lof_backtest_v33.html`
-
-No package.json, no npm, no compilation.
-
-## Architecture
-
-### Core Valuation Formula
+## Three-Tier Architecture
 
 ```
-Intraday NAV = Official NAV (T-1) × (1 + Benchmark Daily Change%)
-Premium/Discount % = (Market Price − Intraday NAV) / Intraday NAV × 100%
+┌─────────────────────────────────────────────────────────────────────┐
+│  TIER 1 — Data Layer (GitHub Actions)                               │
+│  触发：每日 00:05 北京时间 (UTC 16:05)，交易日                        │
+│                                                                     │
+│  sync_fund_data.py                                                  │
+│    • 抓取 47 只基金 T-1 净值（fundgz + lsjz 双路，pingzhong 兜底）    │
+│    • 抓取前十大持仓（东方财富 jjcc API）                               │
+│    • 抓取 FX 结算汇率（Sina）                                         │
+│    • 计算 drift 历史（30日滚动）及 drift_5d 修正因子                   │
+│    • 写入 data/fund_daily.json → git commit → git push               │
+│    • 连续失败 ≥3 次 → RuntimeError，Actions 红叉强制报警               │
+└───────────────────────────┬─────────────────────────────────────────┘
+                            │  data/fund_daily.json
+                            │  (Cloudflare Pages 静态托管，版本控制)
+                            ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│  TIER 2 — Logic Layer (Cloudflare Worker: worker-full.js)           │
+│  触发：每分钟 cron + 前端 HTTP 请求                                   │
+│                                                                     │
+│  核心职责（逻辑中枢）：                                               │
+│    • 实时抓取：腾讯行情 / 东方财富指数 / 新浪汇率 / Yahoo CME期货       │
+│    • 读取 fund_daily.json（30分钟内存缓存）                           │
+│    • 执行全量估值计算：bench加权 → FX修正 → 持仓动态 → T-2链式 → Drift │
+│    • 强制时间戳校验（staleness_policy）                               │
+│    • 溢价报警状态机（_alertState，防重推）                             │
+│    • 输出 /api/snapshot（聚合快照 JSON）                              │
+└───────────────────────────┬─────────────────────────────────────────┘
+                            │  /api/snapshot（干净数据，已完成所有计算）
+                            ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│  TIER 3 — Presentation Layer (index.html)                           │
+│  纯展示客户端，Vanilla JS，无框架，无构建                              │
+│                                                                     │
+│  主路径（正常）：                                                     │
+│    Worker /api/snapshot → 直接渲染，无本地计算                        │
+│                                                                     │
+│  降级路径（Worker 不可达时）：                                         │
+│    本地直连腾讯/东方财富/新浪 + 读 fund_daily.json → 本地重算           │
+│    注意：降级路径是应急措施，不是正常流程，逻辑与 Worker 保持一致        │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
-### Data Sources (all via JSONP or fetch)
+**主路径下，index.html 不做任何估值计算**。它只消费 Worker 喂回的干净数据（premium%、nav、driftStatus 等已计算完毕的字段）并渲染。
 
-| Source | Purpose |
-|--------|---------|
-| `qt.gtimg.cn` | Real-time fund prices + 40+ benchmark indices (primary) |
-| `fundgz.1234567.com.cn/js/{code}.js` | Official T-1 NAV (primary) |
-| `pingzhongdata.com` | T-1 NAV fallback |
-| `push2.eastmoney.com/api/qt/stock/get` | Mainland index fallback |
-
-NAV sources form a fallback chain: `fundgz → pingzhongdata → lsjz historical`. Similarly, some HK indices fall back: `hkHSMI → hkHSSI → hkHSI`.
-
-### Fund-to-Benchmark Mapping
-
-47 QDII LOF funds (4 categories: US Equities, Commodities, Hong Kong, A-Share Sector) are each mapped to one or more benchmark indices in `lof_arb_monitor_v33.html`. Some funds use **composite benchmarks** with weighted averages (e.g., 80% QQQ + 10% HSTECH + 10% Bond index). This mapping table is hardcoded and is the most critical domain-specific data in the codebase.
-
-### State Management
-
-- `rows[]` — array holding per-fund state (price, NAV, premium%, signals)
-- `idxChg{}` — cache of index daily change values, keyed by index symbol
-- UI updates are triggered after all parallel fetches resolve
-
-### Async Pattern
-
-All API calls use `Promise.all()` with JSONP dynamic script injection. Each request has a 6–8 second timeout. Failed sources are silently skipped (graceful degradation).
+---
 
 ## Key Files
 
 | File | Role |
 |------|------|
-| `index.html` | 主监控页面（前端，自包含） |
-| `worker-full.js` | Cloudflare Worker（计算引擎 + HTTP 代理） |
-| `data/fund_daily.json` | 每日数据文件（NAV / 持仓 / 汇率 / drift 历史），由 Action 维护 |
-| `.github/scripts/sync_fund_data.py` | GitHub Action 同步脚本 |
-| `.github/workflows/daily-data-sync.yml` | Action 工作流（00:05 北京时间触发） |
+| `worker-full.js` | **逻辑中枢**：实时行情抓取 + 全量估值计算 + 报警，是系统的后端 |
+| `index.html` | 展示层：消费 Worker snapshot，降级时本地重算（逻辑与 Worker 一致） |
+| `data/fund_daily.json` | **唯一活数据来源**：NAV / 持仓 / 汇率 / drift 历史，Action 每日写入 |
+| `data/fund_manifest.json` | **数据契约**：定义 fund_daily.json 的 schema、字段规范和 staleness_policy |
+| `.github/scripts/sync_fund_data.py` | 数据层同步脚本，唯一有权写入 fund_daily.json 的程序 |
+| `.github/workflows/daily-data-sync.yml` | Action 工作流（UTC 16:05 定时触发） |
+| `.github/workflows/deploy.yml` | 推送时自动部署 Pages + Worker |
+| `wrangler.toml` | Worker 配置：name=lof-arb-radar, crons, observability |
+
+---
+
+## Data Contract
+
+`data/fund_manifest.json` 定义了 `fund_daily.json` 必须遵守的 schema 和时效策略：
+
+```json
+"staleness_policy": {
+  "nav_max_lag_days": 3,
+  "chain_estimation_allowed_lag_days": 2,
+  "chain_estimation_requires_fresh_fetch_within_hours": 36,
+  "drift_max_lag_days": 2,
+  "drift_min_n": 3
+}
+```
+
+Worker 在执行任何计算前，**必须**先对照此策略校验数据时效。
+
+---
 
 ## Storage Architecture & KV Policy
 
-### Three-Layer Architecture
+### Source of Truth（唯一活数据来源）
 
-```
-GitHub Actions (后勤层)          Worker (计算层)           index.html (展示层)
-─────────────────────           ──────────────           ──────────────────
-sync_fund_data.py               worker-full.js            browser
-  • 抓取 NAV / 持仓 / 汇率          • 纯计算引擎                • 读 Worker snapshot
-  • 计算 drift & 嵌入 history       • 读 fund_daily.json        • 本地直连备用
-  • git commit → data/*.json       • 不写任何持久化存储
-```
+**`data/fund_daily.json`**，与代码共版本管理，由 GitHub Actions 独占写入权。
 
-### Source of Truth（唯一事实来源）
-
-**GitHub 仓库内的 JSON 文件**，与代码共版本管理：
-
-| 文件 | 内容 |
-|------|------|
-| `data/fund_daily.json` | 净值、持仓、汇率、drift 历史（30日列式数组）、drift_5d 修正因子 |
+`fund_manifest.json` 定义 schema 契约（静态，人工维护），`fund_daily.json` 是运行时数据（动态，Action 写入）。
 
 ### Cloudflare KV 使用规范（强制）
 
@@ -100,6 +120,8 @@ sync_fund_data.py               worker-full.js            browser
 > 背景：2026-03 KV 写入配额达 90% 预警，根因是误将 drift 历史序列写入 KV。
 > 修复方案：将 30 日 drift 历史嵌入 `fund_daily.json` 每基金对象的 `history` 字段。
 > 此后 Worker 对 KV 的依赖已**完全移除**。
+
+---
 
 ## 数据质量与时间戳规范（技术宪法）
 
@@ -237,7 +259,8 @@ const STALENESS = {
 
 ## Important Conventions
 
-- The version suffix (e.g., `v33`) appears in all filenames; increment consistently when releasing a new version.
-- Fund codes, benchmark mappings, fee structures, and subscription quotas are all hardcoded in the HTML. There is no external config file — updates require editing the HTML directly.
-- JSONP callbacks use dynamically generated function names to avoid collisions across parallel requests.
-- The app is designed for Safari/Chrome on macOS; no mobile layout.
+- Fund codes, benchmark mappings, fee structures, and subscription quotas are hardcoded in `worker-full.js` (`FUNDS` / `BENCH` constants) and mirrored in `index.html` for the fallback path. Updates require editing both files.
+- The降级 fallback path in `index.html` must stay logically identical to `worker-full.js`. Any calculation change must be applied to both.
+- BENCH composite entries use `[{tq, w}, ...]` format; missing components are excluded from the denominator (not treated as zero).
+- CME futures (NQ=F → usQQQ/usIXIC/usXLK/usSMH, ES=F → usINX) override Tencent T-1 close prices during A-share trading hours. This is Worker-side only (server-to-server, no CORS issue).
+- HK index fallback chain: `hkHSMI → hkHSSI → hkHSI`, `hkHSSI → hkHSI`, `hkHSCI → hkHSI`.
