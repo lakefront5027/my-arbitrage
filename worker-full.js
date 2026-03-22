@@ -724,6 +724,25 @@ async function fetchAllData(env = {}) {
     if (d) indices[i.tq] = d.chg;
   });
 
+  // ── 数据源状态快照 ─────────────────────────────────
+  // 记录本次各路 fetch 是否有效，以及哪些 bench 指数缺失
+  const benchCodesNeeded = new Set();
+  FUNDS.forEach(f => {
+    const b = BENCH[f.code];
+    if (!b) return;
+    if (Array.isArray(b)) b.forEach(x => benchCodesNeeded.add(x.tq));
+    else benchCodesNeeded.add(b);
+  });
+  const idxMissing = [...benchCodesNeeded].filter(c => idxChg[c] == null);
+
+  const fetchStatus = {
+    tencent:   Object.keys(tqData.funds).length > 0 || Object.keys(tqData.indices).length > 0,
+    eastmoney: Object.keys(emIdx).length > 0,
+    sina:      sinaIdx._fxUsdCnh != null,
+    yahoo:     Object.keys(futuresOverrides).length > 0,
+    idxMissing,  // bench 用到但未能取到的指数代码列表
+  };
+
   return {
     funds,
     indices,
@@ -735,6 +754,7 @@ async function fetchAllData(env = {}) {
       chg_usd:    fxChgUsd  || null,
       chg_hkd:    fxChgHkd  || null,
     },
+    fetchStatus,
     ts: Date.now(),
   };
 }
