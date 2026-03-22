@@ -396,9 +396,8 @@ function fetchTencent(daily = null) {
         const price = parseFloat(p[3]), prev = parseFloat(p[4]);
         if (price > 0) r.indices[tq] = { chg: prev > 0 ? (price - prev) / prev * 100 : 0 };
       });
-      // 解析持仓个股涨跌幅（Plan A：仅 HK + A股）
+      // 解析持仓个股涨跌幅（HK + A股 = 盘中实时；US = T-1 昨收涨跌，仅供展示）
       holdingTqs.forEach(tq => {
-        if (tq.startsWith('us')) return; // US 在 A 股时段无盘中价
         const v = window['v_' + tq];
         if (!v || v.length < 5) return;
         const p = v.split('~');
@@ -1306,12 +1305,15 @@ function buildHoldingsHtml(code, fund) {
     const barW = maxRatio > 0 ? Math.round(ratio / maxRatio * 100) : 0;
     const name = h.name || h.code || '—';
     const codeStr = h.code ? `<span class="text-muted/50">${h.code}</span>` : '';
-    // 持仓个股实时涨跌幅（仅 HK/A 股）
+    // 持仓个股涨跌幅：HK/A = 盘中实时，US = T-1 昨收（灰色标注）
     const tq = holdingToTqCode(h.code);
-    const chg = (tq && !tq.startsWith('us')) ? _lastStockChg[tq] : null;
+    const isUs = tq && tq.startsWith('us');
+    const chg = tq ? _lastStockChg[tq] : null;
     const chgHtml = chg != null
-      ? `<span class="font-mono text-[9px] ${chg > 0 ? 'text-green-400/70' : chg < 0 ? 'text-red-400/70' : 'text-muted/50'} flex-shrink-0 w-14 text-right">${chg >= 0 ? '+' : ''}${chg.toFixed(2)}%</span>`
-      : '<span class="w-14"></span>';
+      ? isUs
+        ? `<span class="font-mono text-[9px] text-muted/50 flex-shrink-0 w-16 text-right">${chg >= 0 ? '+' : ''}${chg.toFixed(2)}% <span class="text-[8px] text-muted/30">T-1</span></span>`
+        : `<span class="font-mono text-[9px] ${chg > 0 ? 'text-green-400/70' : chg < 0 ? 'text-red-400/70' : 'text-muted/50'} flex-shrink-0 w-16 text-right">${chg >= 0 ? '+' : ''}${chg.toFixed(2)}%</span>`
+      : '<span class="w-16"></span>';
     return `<tr class="border-b border-border/30 last:border-0">
       <td class="py-1.5 px-2 w-4 font-mono text-[9px] text-muted/40">${i + 1}</td>
       <td class="py-1.5 px-1">
