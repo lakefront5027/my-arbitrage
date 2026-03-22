@@ -27,9 +27,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy worker-full.js
-        uses: cloudflare/wrangler-action@v3
+      - uses: actions/setup-node@v4
         with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          wranglerVersion: '3.101.0'
+          node-version: '20'
+
+      - name: Install Wrangler
+        run: npm install -g wrangler@3.101.0
+
+      - name: Deploy worker-full.js
+        run: wrangler deploy 2>&1
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
