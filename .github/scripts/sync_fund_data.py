@@ -775,8 +775,15 @@ def sync():
         fund = data[code]
         name = fund.get('name', code)
 
-        # ── 净值：fundgz → lsjz → pingzhong 三路兜底 ──
-        nav_result = fetch_fundgz(code) or fetch_lsjz(code) or fetch_pingzhong(code)
+        # ── 净值：取三路中日期最新的结果 ──────────────────
+        # fundgz 有时返回旧数据（如 QDII 基金 jzrq 滞后），lsjz 可能更新
+        # 策略：先拿 fundgz 和 lsjz 两路，取 nav_date 较新者；再兜底 pingzhong
+        _r_gz = fetch_fundgz(code)
+        _r_lsjz = fetch_lsjz(code)
+        if _r_gz and _r_lsjz:
+            nav_result = _r_lsjz if (_r_lsjz['nav_date'] > _r_gz['nav_date']) else _r_gz
+        else:
+            nav_result = _r_gz or _r_lsjz or fetch_pingzhong(code)
         if nav_result:
             old_date = fund.get('nav_date') or ''
             new_date = nav_result.get('nav_date') or ''

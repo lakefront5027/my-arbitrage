@@ -642,12 +642,26 @@ async function fetchAllData(env = {}) {
     const fxAdj          = adjBenchChg - benchChg;             // 汇率净贡献%
     const dynNavReturn   = calcDynamicNavReturn(f.code, idxChg, stockChg, fxChgUsd, fxChgHkd, daily);
     const holdingCoverage = calcHoldingCoverage(f.code, stockChg, daily);
-    const base = officialNav || prevClose;
+
     // 偏差校准：drift_5d 由 GitHub Action 每日写入 fund_daily.json
-    const fundDaily = daily && daily[f.code];
-    const drift5d = fundDaily ? (fundDaily.drift_5d || 0) : 0;
-    const driftN  = fundDaily ? (fundDaily.drift_n  || 0) : 0;
-    const alpha   = Math.max(-0.02, Math.min(0.02, drift5d)); // 硬限 ±2%
+    const fundDaily      = daily && daily[f.code];
+    const drift5d        = fundDaily ? (fundDaily.drift_5d || 0) : 0;
+    const driftN         = fundDaily ? (fundDaily.drift_n  || 0) : 0;
+    const alpha          = Math.max(-0.02, Math.min(0.02, drift5d)); // 硬限 ±2%
+
+    // T-2 检测：计算 nav_date 距今自然日数，≥2 表示滞后超过1个交易日
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const navLag   = navDate
+      ? Math.round((new Date(todayStr) - new Date(navDate)) / 86400000)
+      : 99;
+
+    // T-2 链式修正：若有 est_nav_yesterday（Action 每日计算的链式估值），用它作为基准
+    // est_nav_yesterday = official_nav_T2 × T1_bench_chg，再叠加今日盘中涨跌
+    // 这样最终 nav = official_nav_T2 × T1_bench × today_bench（正确链式）
+    const estNavYesterday = fundDaily ? (fundDaily.est_nav_yesterday || null) : null;
+    const useChained      = estNavYesterday && navLag >= 2;
+    const base            = useChained ? estNavYesterday : (officialNav || prevClose);
+
     let nav = null, premium = null;
     if (base > 0 && price != null) {
       nav = base * (1 + dynNavReturn / 100) * (1 + alpha);
@@ -664,6 +678,7 @@ async function fetchAllData(env = {}) {
       nav,
       officialNav,
       navDate,
+      navLag,
       premium,
       benchChg,
       fxAdj,
