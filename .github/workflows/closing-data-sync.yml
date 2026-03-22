@@ -1,0 +1,33 @@
+name: Closing Index Sync
+
+on:
+  schedule:
+    - cron: '5 7 * * 1-5'   # UTC 07:05 = 北京 15:05，周一至周五
+  workflow_dispatch:          # 支持手动触发补采
+
+jobs:
+  sync-closing:
+    name: Sync Closing Index Snapshot
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Fetch closing index values
+        run: python .github/scripts/sync_closing_idx.py
+
+      - name: Commit and push idx_closing.json
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/idx_closing.json
+          git diff --staged --quiet || (
+            git commit -m "chore: closing index snapshot $(date -u +%Y-%m-%d)" &&
+            git push
+          )

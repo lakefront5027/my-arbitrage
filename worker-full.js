@@ -40,6 +40,25 @@ let _dailyCache = null;
 let _dailyCacheTs = 0;
 const DAILY_CACHE_TTL = 30 * 60 * 1000; // 30 分钟
 
+let _closingCache = null;
+let _closingCacheTs = 0;
+
+async function loadIdxClosing(env) {
+  const now = Date.now();
+  if (_closingCache && now - _closingCacheTs < DAILY_CACHE_TTL) return _closingCache;
+  const baseUrl = (env && env.FUND_DAILY_URL) || CONFIG.FUND_DAILY_URL;
+  const url = baseUrl.replace('fund_daily.json', 'idx_closing.json');
+  try {
+    const resp = await fetch(url, { cf: { cacheTtl: 1800 } });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    _closingCache = await resp.json();
+    _closingCacheTs = now;
+  } catch (e) {
+    console.warn('[closing] loadIdxClosing 失败:', e.message);
+  }
+  return _closingCache;
+}
+
 async function loadFundDaily(env) {
   const now = Date.now();
   if (_dailyCache && now - _dailyCacheTs < DAILY_CACHE_TTL) return _dailyCache;
@@ -614,8 +633,11 @@ function calcHoldingCoverage(code, stockChg, daily) {
  * 聚合全量数据，计算溢价率，返回统一 JSON
  */
 async function fetchAllData(env = {}) {
-  // 先加载 daily（30 分钟内存缓存，通常即时返回）
-  const daily = await loadFundDaily(env);
+  // 先加载 daily + closing（30 分钟内存缓存，通常即时返回）
+  const [daily, closingData] = await Promise.all([
+    loadFundDaily(env),
+    loadIdxClosing(env),
+  ]);
 
   // 再并行拉取行情（fetchTencent 需要 daily 来批量加持仓代码）
   const [tqData, emIdx, sinaIdx, futuresOverrides] = await Promise.all([
@@ -678,6 +700,28 @@ async function fetchAllData(env = {}) {
     if (idxChg['hkHSI'] != null) idxChg['hkHSCI'] = idxChg['hkHSI'];
   }
 
+  // 收盘快照 fallback：补充非交易时段 null 的指数代码
+  // 数据来自 data/idx_closing.json（closing-data-sync.yml 每日 15:05 写入）
+  // 遵守 staleness_policy：sync_at 超过 36 小时视为过期，不回填
+  const staleIdxCodes = new Set();
+  if (closingData) {
+    const MAX_STALE_MS = 36 * 3600 * 1000;
+    const nowMs = Date.now();
+    for (const [code, entry] of Object.entries(closingData)) {
+      if (code.startsWith('_')) continue;
+      if (idxChg[code] != null) continue;          // 实时数据已有，不覆盖
+      if (!entry || entry.chg == null || !entry.sync_at) continue;
+      const age = nowMs - new Date(entry.sync_at).getTime();
+      if (age > MAX_STALE_MS) continue;            // 数据过期，不回填
+      if (!idxSanityOk(code, entry.chg)) continue; // 合理性校验
+      idxChg[code] = entry.chg;
+      staleIdxCodes.add(code);
+    }
+    if (staleIdxCodes.size > 0) {
+      console.log('[closing] 收盘快照回填:', [...staleIdxCodes].join(','));
+    }
+  }
+
   // 计算每只基金
   const funds = FUNDS.map(f => {
     const tq = tqData.funds[f.code];
@@ -698,6 +742,10 @@ async function fetchAllData(env = {}) {
     const fxAdj          = (adjBenchChg != null && benchChg != null) ? adjBenchChg - benchChg : null;
     const dynNavReturn   = calcDynamicNavReturn(f.code, idxChg, stockChg, fxChgUsd, fxChgHkd, daily);
     const benchOk        = benchChg != null;                   // false → 指数未抓到，估值不可信
+    const benchDef_      = BENCH[f.code];
+    const benchStale     = benchDef_                           // true → 指数来自收盘快照（非实时）
+      ? (Array.isArray(benchDef_) ? benchDef_.some(b => staleIdxCodes.has(b.tq)) : staleIdxCodes.has(benchDef_))
+      : false;
     const fxOk           = calcFxOk(f.code, fxChgUsd, fxChgHkd); // false → 汇率缺失，估值未计入即时汇率
     const holdingCoverage = calcHoldingCoverage(f.code, stockChg, daily);
 
@@ -750,6 +798,7 @@ async function fetchAllData(env = {}) {
       premium,
       benchChg,
       benchOk,
+      benchStale,
       fxOk,
       fxAdj,
       holdingCoverage,
@@ -792,6 +841,8 @@ async function fetchAllData(env = {}) {
     yahoo:     Object.keys(futuresOverrides).length > 0,
     fxOk:      fxChgUsd != null && fxChgHkd != null,  // 汇率数据是否完整
     idxMissing,  // bench 用到但未能取到的指数代码列表
+    closingFallback: staleIdxCodes.size > 0,          // 是否有指数来自收盘快照
+    staleIdxCodes: [...staleIdxCodes],                 // 具体哪些指数来自收盘快照
   };
 
   return {

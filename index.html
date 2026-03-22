@@ -649,8 +649,11 @@ const WORKER_URL = 'https://lof-arb-radar.3031315027ghb.workers.dev';
 // 相对路径，在 CF Pages / GitHub Pages 上均可访问
 // history 已内嵌于每个基金对象，无需独立文件，零额外请求。
 const FUND_DAILY_PATH = './data/fund_daily.json';
+const IDX_CLOSING_PATH = './data/idx_closing.json';
 let _fundDaily = null;          // { code: { nav, nav_date, holdings, history, ... } }
 let _fundDailyLoaded = false;
+let _idxClosing = null;
+let _idxClosingTs = 0;
 
 async function loadFundDaily() {
   if (_fundDailyLoaded) return _fundDaily;
@@ -675,6 +678,16 @@ async function loadFundDaily() {
     }
   } catch (_) {}
   return _fundDaily;
+}
+
+async function loadIdxClosing() {
+  const now = Date.now();
+  if (_idxClosing && now - _idxClosingTs < 30 * 60 * 1000) return _idxClosing;
+  try {
+    const r = await fetch(IDX_CLOSING_PATH);
+    if (r.ok) { _idxClosing = await r.json(); _idxClosingTs = now; }
+  } catch (_) {}
+  return _idxClosing;
 }
 
 // ── 通过 Worker 代理新浪财经（JSONP跨域） ─────────────
@@ -785,7 +798,7 @@ async function doRefresh() {
       lastTs = snap.ts || Date.now();
     } else {
       // 🥈 备用链路：先加载 daily（缓存已热则瞬返），再并行拉取行情
-      const daily = await loadFundDaily();
+      const [daily, closingData] = await Promise.all([loadFundDaily(), loadIdxClosing()]);
       const [tqData, emIdx, sinaIdx] = await Promise.all([
         fetchTencent(daily), fetchEastmoney(), fetchSina(),
       ]);
@@ -819,6 +832,20 @@ async function doRefresh() {
       if (!idxChg['hkHSMI']) idxChg['hkHSMI'] = idxChg['hkHSSI'] ?? idxChg['hkHSI'] ?? null;
       if (!idxChg['hkHSSI']) idxChg['hkHSSI'] = idxChg['hkHSI'] ?? null;
       if (!idxChg['hkHSCI']) idxChg['hkHSCI'] = idxChg['hkHSI'] ?? null;
+      // 收盘快照兜底：仅在实时未取到时用，36小时时效
+      const staleIdxCodes = new Set();
+      if (closingData) {
+        const MAX_STALE_MS = 36 * 3600 * 1000;
+        for (const [code, entry] of Object.entries(closingData)) {
+          if (code.startsWith('_')) continue;
+          if (idxChg[code] != null) continue;
+          if (!entry || entry.chg == null || !entry.sync_at) continue;
+          if (Date.now() - new Date(entry.sync_at).getTime() > MAX_STALE_MS) continue;
+          if (!idxSanityOk(code, entry.chg)) continue;
+          idxChg[code] = entry.chg;
+          staleIdxCodes.add(code);
+        }
+      }
       funds = FUNDS.map(f => {
         const tq = tqData.funds[f.code];
         const navInfo = navMap[f.code];
@@ -833,6 +860,10 @@ async function doRefresh() {
         const fxAdj          = (adjBenchChg != null && benchChg != null) ? adjBenchChg - benchChg : null;
         const dynNavReturn   = calcDynamicNavReturn(f.code, idxChg, stockChg, fxChgUsd, fxChgHkd, daily);
         const benchOk        = benchChg != null;
+        const benchDef_      = BENCH[f.code];
+        const benchStale     = benchDef_
+          ? (Array.isArray(benchDef_) ? benchDef_.some(b => staleIdxCodes.has(b.tq)) : staleIdxCodes.has(benchDef_))
+          : false;
         const fxOk           = calcFxOk(f.code, fxChgUsd, fxChgHkd);
         const holdingCoverage = calcHoldingCoverage(f.code, stockChg, daily);
         // 偏差校准：Hard Enforcement — 宁可无补偿，不可乱补偿
@@ -862,7 +893,7 @@ async function doRefresh() {
           premium = (price - nav) / nav * 100;
         }
         const holdingsDate = fundDaily ? (fundDaily.holdings_date || null) : null;
-        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, estNavYesterday: useChained ? estNavYesterday : null, navDate, navLag, useChained, premium, benchChg, benchOk, fxOk, fxAdj, holdingCoverage, holdingsDate, drift5d, driftN, driftStatus, quota: f.quota, fee: f.fee, rfee: f.rfee, vol, _src: 'L' };
+        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, estNavYesterday: useChained ? estNavYesterday : null, navDate, navLag, useChained, premium, benchChg, benchOk, benchStale, fxOk, fxAdj, holdingCoverage, holdingsDate, drift5d, driftN, driftStatus, quota: f.quota, fee: f.fee, rfee: f.rfee, vol, _src: 'L' };
       });
       indices = {};
       TICKER_IDX.forEach(i => {
@@ -1020,7 +1051,7 @@ function renderTable() {
       </td>
       <td class="py-2 px-2 font-mono text-xs text-right text-primary">${priceStr}</td>
       <td class="py-2 px-2 text-right">
-        <div class="font-mono text-sm font-medium ${premCls}">${premStr}${f.fxOk === false ? '<span title="汇率接口失效，当前估值未计入即时汇率变动" class="ml-1 text-yellow-400/50 text-[10px] cursor-help">⚠</span>' : ''}</div>
+        <div class="font-mono text-sm font-medium ${premCls}">${premStr}${f.fxOk === false ? '<span title="汇率接口失效，当前估值未计入即时汇率变动" class="ml-1 text-yellow-400/50 text-[10px] cursor-help">⚠</span>' : ''}${f.benchStale ? '<span title="指数来自收盘快照，非实时数据" class="ml-1 text-gray-500 text-[9px] cursor-help">(收)</span>' : ''}</div>
         <div class="font-mono text-[8px] ${f.driftStatus === 'ACTIVE' ? 'text-green-400/40' : 'text-muted/30'}">${f.driftStatus === 'ACTIVE' ? '[Drift Calibrated]' : '[Drift Offline]'}</div>
       </td>
       <td class="py-2 px-2 font-mono text-xs text-right ${chgCls}">${chgStr}</td>
@@ -1079,7 +1110,7 @@ function renderCards() {
             </div>
           </div>
           <div class="text-right flex-shrink-0 ml-3">
-            <div class="font-mono text-xl font-semibold ${premCls}">${premStr}${f.fxOk === false ? '<span title="汇率接口失效，当前估值未计入即时汇率变动" class="ml-1 text-yellow-400/50 text-[10px] cursor-help">⚠</span>' : ''}</div>
+            <div class="font-mono text-xl font-semibold ${premCls}">${premStr}${f.fxOk === false ? '<span title="汇率接口失效，当前估值未计入即时汇率变动" class="ml-1 text-yellow-400/50 text-[10px] cursor-help">⚠</span>' : ''}${f.benchStale ? '<span title="指数来自收盘快照，非实时数据" class="ml-1 text-gray-500 text-[9px] cursor-help">(收)</span>' : ''}</div>
             <div class="font-mono text-[9px] text-muted mt-0.5">溢折价率</div>
             <div class="font-mono text-[8px] ${f.driftStatus === 'ACTIVE' ? 'text-green-400/40' : 'text-muted/30'} mt-0.5">${f.driftStatus === 'ACTIVE' ? '[Drift Calibrated]' : '[Drift Offline]'}</div>
           </div>
@@ -1198,7 +1229,7 @@ function openModal(code) {
     </div>
 
     <div class="text-center py-4 border border-border rounded-lg mb-4" style="background:#0d0d0d">
-      <div class="font-mono text-4xl font-semibold ${premCls} ${isAlert ? 'pulse-alert' : ''}">${premStr}${f.fxOk === false ? '<span title="汇率接口失效，当前估值未计入即时汇率变动" class="ml-1 text-yellow-400/50 text-[10px] cursor-help">⚠</span>' : ''}</div>
+      <div class="font-mono text-4xl font-semibold ${premCls} ${isAlert ? 'pulse-alert' : ''}">${premStr}${f.fxOk === false ? '<span title="汇率接口失效，当前估值未计入即时汇率变动" class="ml-1 text-yellow-400/50 text-[10px] cursor-help">⚠</span>' : ''}${f.benchStale ? '<span title="指数来自收盘快照，非实时数据" class="ml-1 text-gray-500 text-[10px] cursor-help">(收)</span>' : ''}</div>
       <div class="font-mono text-[10px] text-muted mt-1">溢折价率</div>
     </div>
 
