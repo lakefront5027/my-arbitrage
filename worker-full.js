@@ -638,6 +638,14 @@ async function handleRequest(request, env = {}) {
     return new Response(null, { headers: corsHeaders(origin) });
   }
 
+  // GET /api/ping — 存活探针（100ms 超时判断，立即响应）
+  if (path === '/api/ping') {
+    return new Response(JSON.stringify({ ok: 1, ts: Date.now() }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...corsHeaders(origin) },
+    });
+  }
+
   // GET /api/nav — 所有基金 T-1 净值（只读 fund_daily.json，不做实时抓取）
   if (path === '/api/nav') {
     try {

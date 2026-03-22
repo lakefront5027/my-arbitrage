@@ -319,13 +319,29 @@ const EM_CODES = {
   'hkHSCI':'124.HSCI',
 };
 
-// ── 主链路：Worker 聚合快照（3s 超时，失败自动降级） ───
-function fetchSnapshot() {
+// ── 主链路：先 ping（100ms），存活再拉 snapshot（3s 超时） ──
+async function fetchSnapshot() {
+  // ① 轻量探针：100ms 超时，快速判断 Worker 是否可达
+  const pingOk = await (async () => {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 100);
+    try {
+      const r = await fetch(WORKER_URL + '/api/ping', { signal: ctrl.signal });
+      clearTimeout(t);
+      return r.ok;
+    } catch (_) { clearTimeout(t); return false; }
+  })();
+  if (!pingOk) throw new Error('Worker 不可达');
+
+  // ② 确认存活后拉取完整快照（3s 超时）
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), 3000);
-  return fetch(WORKER_URL + '/api/snapshot', { signal: ctrl.signal })
-    .then(r => { clearTimeout(timer); if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
-    .catch(e => { clearTimeout(timer); throw e; });
+  try {
+    const r = await fetch(WORKER_URL + '/api/snapshot', { signal: ctrl.signal });
+    clearTimeout(timer);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json();
+  } catch (e) { clearTimeout(timer); throw e; }
 }
 
 // ── 直连抓取：腾讯行情（script注入 JSONP） ────────────
@@ -731,9 +747,20 @@ async function doRefresh() {
     renderTickers(indices);
     checkAlerts();
     const time = new Date(lastTs).toLocaleTimeString('zh-CN', {hour12:false});
-    const src = snap ? '☁W' : '⚡L';
-    const srcFull = snap ? '☁️ Worker' : '⚡ 直连';
-    setSt(`✓ ${time} [${srcFull}] — ${funds.length}只基金已更新`, false);
+    // 判断数据质量：本地直连时美股价格为上一收盘（A股时段美市休市）
+    const hasPrice = funds.some(f => f.price != null);
+    let srcLabel, qualityNote;
+    if (snap) {
+      srcLabel   = '☁️ Worker';
+      qualityNote = '全量实时';
+    } else if (hasPrice) {
+      srcLabel   = '⚡ 直连';
+      qualityNote = '港/A实时 · 美股T-1';
+    } else {
+      srcLabel   = '⚠️ 离线';
+      qualityNote = '仅T-1净值';
+    }
+    setSt(`✓ ${time} [${srcLabel}] ${qualityNote} — ${funds.length}只基金`, false);
   } catch (e) {
     setSt(`✗ 获取失败: ${e.message}`, false);
     console.error(e);
