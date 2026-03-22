@@ -829,7 +829,7 @@ async function doRefresh() {
           premium = (price - nav) / nav * 100;
         }
         const holdingsDate = fundDaily ? (fundDaily.holdings_date || null) : null;
-        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, navDate, navLag, premium, benchChg, fxAdj, holdingCoverage, holdingsDate, drift5d, driftN, driftStatus, quota: f.quota, fee: f.fee, rfee: f.rfee, vol, _src: 'L' };
+        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, estNavYesterday: useChained ? estNavYesterday : null, navDate, navLag, useChained, premium, benchChg, fxAdj, holdingCoverage, holdingsDate, drift5d, driftN, driftStatus, quota: f.quota, fee: f.fee, rfee: f.rfee, vol, _src: 'L' };
       });
       indices = {};
       TICKER_IDX.forEach(i => {
@@ -949,7 +949,9 @@ function renderTable() {
       : isPrem ? 'text-premium' : 'text-discount';
     const premStr = p != null ? (p >= 0 ? '+' : '') + p.toFixed(2) + '%' : '—';
     const navStr = f.nav != null ? f.nav.toFixed(4) : '—';
-    const officialNavStr = f.officialNav != null ? f.officialNav.toFixed(4) : '—';
+    const t1NavVal = f.useChained
+      ? (f.estNavYesterday != null ? f.estNavYesterday.toFixed(4) : '—')
+      : (f.officialNav != null ? f.officialNav.toFixed(4) : '—');
     const priceStr = f.price != null ? f.price.toFixed(4) : '—';
     const chgStr = f.chg != null ? (f.chg >= 0 ? '+' : '') + f.chg.toFixed(2) + '%' : '—';
     const chgCls = f.chg > 0 ? 'text-green-400' : f.chg < 0 ? 'text-red-400' : 'text-muted';
@@ -980,7 +982,9 @@ function renderTable() {
         <span class="font-mono text-[9px] px-1.5 py-0.5 rounded ${catTag}">${catLabel}</span>
       </td>
       <td class="py-2 px-2 font-mono text-xs text-right text-primary">${navStr}</td>
-      <td class="py-2 px-2 font-mono text-xs text-right text-primary/70">${officialNavStr}</td>
+      <td class="py-2 px-2 font-mono text-xs text-right ${f.useChained ? 'text-yellow-400/70' : 'text-primary/70'}">
+        ${t1NavVal}${f.useChained ? '<span class="text-[8px] text-yellow-400/50 ml-0.5">est</span>' : ''}
+      </td>
       <td class="py-2 px-2 font-mono text-xs text-right text-primary">${priceStr}</td>
       <td class="py-2 px-2 text-right">
         <div class="font-mono text-sm font-medium ${premCls}">${premStr}</div>
@@ -1170,7 +1174,7 @@ function openModal(code) {
         ['场内价格', f.price != null ? f.price.toFixed(4) : '—', 'text-primary'],
         ['盘中估值', f.nav != null ? f.nav.toFixed(4) : '—', 'text-primary'],
         ['T-1净值', f.officialNav != null ? f.officialNav.toFixed(4) : '—', 'text-muted'],
-        ['净值日期', f.navDate ? (f.navDate + (f.navLag >= 2 ? ` ⚠️T-${f.navLag}d` : '')) : '—', f.navLag >= 2 ? 'text-yellow-400/80' : 'text-muted'],
+        ['净值日期', f.navDate ? (f.navDate + (f.navLag >= 2 ? ` ⚠️T-${f.navLag}` : '')) : '—', f.navLag >= 2 ? 'text-yellow-400/80' : 'text-muted'],
         ['今日涨跌', f.chg != null ? (f.chg >= 0 ? '+' : '') + f.chg.toFixed(2) + '%' : '—', f.chg > 0 ? 'text-green-400' : f.chg < 0 ? 'text-red-400' : 'text-muted'],
         ['指数涨幅', f.benchChg != null ? (f.benchChg >= 0 ? '+' : '') + f.benchChg.toFixed(2) + '%' : '—', f.benchChg > 0 ? 'text-green-400' : f.benchChg < 0 ? 'text-red-400' : 'text-muted'],
       ].map(([label, val, cls]) => `

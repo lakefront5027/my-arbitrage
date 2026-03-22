@@ -693,6 +693,8 @@ async function fetchAllData(env = {}) {
       benchChg,
       fxAdj,
       holdingCoverage,
+      useChained,
+      estNavYesterday: useChained ? estNavYesterday : null,
       holdingsDate: fundDaily ? (fundDaily.holdings_date || null) : null,
       drift5d,
       driftN,
