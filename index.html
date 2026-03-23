@@ -440,6 +440,91 @@ function fetchEastmoney() {
   });
 }
 
+/**
+ * 异步补丁：Worker snapshot 正常返回，但其中部分 EM 专属指数缺失
+ * （典型场景：VPN 用户→ Cloudflare 路由到境外 PoP → EM push2 被封）。
+ * 浏览器本地直连 EM（国内用户 EM CORS 可访问），单独补充缺失数据并重算受影响基金。
+ */
+async function asyncPatchFromEM(snap) {
+  const missing = snap.fetchStatus?.idxMissing;
+  if (!missing || missing.length === 0) return;
+
+  // 过滤出 EM 可提供的缺失指数
+  const emPatchable = missing.filter(c => EM_CODES[c]);
+  if (emPatchable.length === 0) return;
+
+  console.log('[asyncPatch] Worker idxMissing:', emPatchable, '— 浏览器直连 EM 补丁');
+
+  // 直连 EM（不经 Worker，浏览器直接 fetch，有 CORS 头）
+  const patchedEM = await fetchEastmoney().catch(() => ({}));
+  const patchedIdx = {};
+  emPatchable.forEach(c => {
+    if (patchedEM[c] != null && idxSanityOk(c, patchedEM[c])) {
+      patchedIdx[c] = patchedEM[c];
+    }
+  });
+  if (Object.keys(patchedIdx).length === 0) {
+    console.log('[asyncPatch] 浏览器直连 EM 也返回空，放弃补丁');
+    return;
+  }
+
+  // 加载 daily（有缓存则瞬返，无缓存则拉取；用于 holdings/drift 计算）
+  const daily = await loadFundDaily().catch(() => null);
+  const fxChgUsd = snap.fx?.chg_usd ?? null;
+  const fxChgHkd = snap.fx?.chg_hkd ?? null;
+  // 直连模式下持仓个股涨跌幅可能未加载，降级用空对象（bench 残差覆盖）
+  const stockChg = _lastStockChg || {};
+
+  let patchCount = 0;
+  funds = funds.map(f => {
+    if (f.benchOk) return f;  // 已有有效基准，无需补丁
+
+    // 判断此基金的 bench 是否有补丁数据覆盖
+    const benchDef = BENCH[f.code];
+    if (!benchDef) return f;
+    const hasPatch = Array.isArray(benchDef)
+      ? benchDef.some(b => patchedIdx[b.tq] != null)
+      : patchedIdx[benchDef] != null;
+    if (!hasPatch) return f;
+
+    const benchChg    = calcBenchChg(f.code, patchedIdx);
+    if (benchChg == null) return f;
+    const adjBenchChg = calcAdjustedBenchChg(f.code, patchedIdx, fxChgUsd, fxChgHkd);
+    const dynNavReturn = calcDynamicNavReturn(f.code, patchedIdx, stockChg, fxChgUsd, fxChgHkd, daily);
+    if (dynNavReturn == null) return f;
+
+    const fundDaily       = daily && daily[f.code];
+    const drift5d         = fundDaily?.drift_5d          || 0;
+    const driftN          = fundDaily?.drift_n           || 0;
+    const driftComputedAt = fundDaily?.drift_computed_at || null;
+    const driftLagDays    = driftComputedAt
+      ? Math.round((Date.now() - new Date(driftComputedAt).getTime()) / 86400000) : 99;
+    const driftActive = drift5d !== 0 && driftN >= 3 && driftLagDays <= 2;
+    const alpha = driftActive ? Math.max(-0.02, Math.min(0.02, drift5d)) : 0;
+
+    const base = f.useChained ? f.estNavYesterday : f.officialNav;
+    if (!base || base <= 0 || f.price == null) return f;
+
+    const nav     = base * (1 + dynNavReturn / 100) * (1 + alpha);
+    const premium = (f.price - nav) / nav * 100;
+    patchCount++;
+    return {
+      ...f,
+      benchChg, adjBenchChg,
+      benchOk: true,
+      nav, premium,
+      driftStatus: driftActive ? 'ACTIVE' : 'SUSPENDED',
+      _src: 'W+P',   // Worker 快照 + 浏览器本地补丁
+    };
+  });
+
+  if (patchCount > 0) {
+    console.log(`[asyncPatch] ✓ 补丁 ${patchCount} 只基金，re-render`);
+    renderAll();
+    checkAlerts();
+  }
+}
+
 // NAV 日级缓存（由 fund_daily.json 填充，每天只加载一次）
 let _navCache = null;
 let _navCacheDate = '';
@@ -834,6 +919,11 @@ async function doRefresh() {
       funds = snap.funds;
       indices = snap.indices || {};
       lastTs = snap.ts || Date.now();
+      // 单点异步补丁：若 Worker 快照中有 EM 专属指数缺失（典型：境外 PoP 封锁 EM），
+      // 浏览器直连 EM 补齐缺失数据并重算受影响基金，不阻塞主链路渲染。
+      if (snap.fetchStatus?.idxMissing?.length > 0) {
+        asyncPatchFromEM(snap).catch(e => console.warn('[asyncPatch]', e.message));
+      }
     } else {
       // 🥈 备用链路：先加载 daily（缓存已热则瞬返），再并行拉取行情
       const [daily, closingData] = await Promise.all([loadFundDaily(), loadIdxClosing()]);
@@ -955,8 +1045,9 @@ async function doRefresh() {
     const hasPrice = funds.some(f => f.price != null);
     let srcLabel, qualityNote;
     if (snap) {
+      const patchNote = snap.fetchStatus?.idxMissing?.length > 0 ? ' · 本地补丁' : '';
       srcLabel   = '☁️ Worker';
-      qualityNote = '全量实时';
+      qualityNote = '全量实时' + patchNote;
     } else if (hasPrice) {
       srcLabel   = '⚡ 直连';
       qualityNote = '港/A实时 · 美股T-1';

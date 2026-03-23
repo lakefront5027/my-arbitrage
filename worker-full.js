@@ -692,12 +692,22 @@ async function fetchAllData(env = {}) {
   setTradingDates(daily && daily._meta && daily._meta.trading_dates);
 
   // 再并行拉取行情（fetchTencent 需要 daily 来批量加持仓代码）
-  const [tqData, emIdx, sinaIdx, futuresOverrides] = await Promise.all([
+  // allSettled 断点隔离：任何单路失败不阻塞其他数据源；各 fetch 函数内部也有 try/catch
+  const [tqRes, emRes, sinaRes, futRes] = await Promise.allSettled([
     fetchTencent(daily),
     fetchEastmoney(),
     fetchSina(),
     fetchYahooFutures(),
   ]);
+  const tqData           = tqRes.status   === 'fulfilled' ? tqRes.value   : { funds: {}, indices: {}, stockChg: {} };
+  const emIdx            = emRes.status   === 'fulfilled' ? emRes.value   : {};
+  const sinaIdx          = sinaRes.status === 'fulfilled' ? sinaRes.value : {};
+  const futuresOverrides = futRes.status  === 'fulfilled' ? futRes.value  : {};
+  // 记录哪些源整体失败（区别于"源正常但数据为空"）
+  if (tqRes.status  === 'rejected') console.error('[fetch] 腾讯整体失败:', tqRes.reason);
+  if (emRes.status  === 'rejected') console.error('[fetch] 东财整体失败:', emRes.reason);
+  if (sinaRes.status === 'rejected') console.warn ('[fetch] 新浪整体失败:', sinaRes.reason);
+  if (futRes.status  === 'rejected') console.warn ('[fetch] Yahoo整体失败:', futRes.reason);
 
   const stockChg = tqData.stockChg || {};
 
