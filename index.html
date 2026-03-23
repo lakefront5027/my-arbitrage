@@ -60,7 +60,7 @@ tailwind.config = {
 <!-- ══════════════════════════════════════════════════
      HEADER
 ══════════════════════════════════════════════════ -->
-<header class="sticky top-0 z-50 border-b border-border" style="background:#0d0d0d">
+<header class="border-b border-border" style="background:#0d0d0d">
   <div class="flex items-stretch justify-between px-4 md:px-6">
     <!-- Logo -->
     <div class="flex items-center gap-3 py-3">
@@ -166,7 +166,7 @@ tailwind.config = {
   <!-- Desktop Table -->
   <div class="hidden md:block">
     <table class="w-full border-collapse text-sm">
-      <thead class="sticky z-10" style="top:78px">
+      <thead class="sticky top-0 z-10">
         <tr class="border-b border-border text-left" style="background:#0d0d0d">
           <th class="font-mono text-[10px] text-gray-400 py-2 px-3 tracking-wider cursor-pointer" onclick="setSort('name')">
             名称 <span id="sort-name" class="sort-arrow">↕</span>
