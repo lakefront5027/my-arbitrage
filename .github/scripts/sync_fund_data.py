@@ -744,12 +744,13 @@ def fetch_fx_settlement_rates() -> dict:
     通过 Sina 抓取 USD/CNH 和 HKD/CNH 现价，作为 T-1 结算汇率存入 fund_daily.json._fx。
     Action 在北京 00:05 运行，FX 市场 24/5 开放，所得汇率近似于昨日 15:00 结算价。
     """
-    url  = 'https://hq.sinajs.cn/list=fx_susdcnh,fx_shkcnh'
+    # fx_shkdcnh = 正确的港元代码；fx_shkcnh 为无效代码（返回空串），已修正
+    url  = 'https://hq.sinajs.cn/list=fx_susdcnh,fx_shkdcnh'
     text = fetch_url(url, referer='https://finance.sina.com.cn')
     if not text:
         return {}
     result = {}
-    for sina_code, key in [('fx_susdcnh', 'usd_cnh'), ('fx_shkcnh', 'hkd_cnh')]:
+    for sina_code, key in [('fx_susdcnh', 'usd_cnh'), ('fx_shkdcnh', 'hkd_cnh')]:
         m = re.search(rf'hq_str_{sina_code}="([^"]+)"', text)
         if m:
             parts = m.group(1).split(',')
