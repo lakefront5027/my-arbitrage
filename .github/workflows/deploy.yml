@@ -22,7 +22,9 @@ jobs:
         run: npm install -g wrangler@3.101.0
 
       - name: Deploy to Cloudflare Pages
-        run: wrangler pages deploy . --project-name=my-arbitrage --commit-dirty 2>&1
+        run: |
+          MSG=$(git log -1 --format="%h %s" | LC_ALL=C tr -cd '[:print:]' | cut -c1-72)
+          wrangler pages deploy . --project-name=my-arbitrage --commit-dirty --commit-message="${MSG:-deploy}" 2>&1
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
