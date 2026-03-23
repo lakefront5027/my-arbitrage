@@ -115,7 +115,7 @@ tailwind.config = {
 <main class="max-w-screen-2xl mx-auto px-3 md:px-6 py-4">
 
   <!-- Stats bar -->
-  <div class="grid grid-cols-4 gap-2 mb-4">
+  <div class="grid grid-cols-4 gap-2 mb-2">
     <div class="bg-surface border border-border rounded p-3">
       <div class="font-mono text-[9px] text-gray-400 tracking-widest mb-1">基金总数</div>
       <div id="s0" class="font-mono text-2xl font-semibold text-primary">47</div>
@@ -131,6 +131,22 @@ tailwind.config = {
     <div class="bg-surface border border-border rounded p-3">
       <div class="font-mono text-[9px] text-gray-400 tracking-widest mb-1">最大折价</div>
       <div id="s3" class="font-mono text-2xl font-semibold text-discount">—</div>
+    </div>
+  </div>
+
+  <!-- Compensation status bar -->
+  <div class="flex gap-2 mb-4 font-mono text-[10px]">
+    <div class="bg-surface border border-border rounded px-3 py-1.5 flex items-center gap-2">
+      <span class="text-gray-500 tracking-wider">汇率</span>
+      <span id="cs-fx" class="text-gray-600">—</span>
+    </div>
+    <div class="bg-surface border border-border rounded px-3 py-1.5 flex items-center gap-2">
+      <span class="text-gray-500 tracking-wider">Drift 校准</span>
+      <span id="cs-drift" class="text-gray-600">—</span>
+    </div>
+    <div class="bg-surface border border-border rounded px-3 py-1.5 flex items-center gap-2">
+      <span class="text-gray-500 tracking-wider">链式补偿</span>
+      <span id="cs-chain" class="text-gray-600">—</span>
     </div>
   </div>
 
@@ -1129,6 +1145,44 @@ function renderStats() {
     ? '+' + Math.max(...premVals).toFixed(2) + '%' : '—';
   document.getElementById('s3').textContent = discVals.length
     ? Math.min(...discVals).toFixed(2) + '%' : '—';
+
+  // 补偿模块状态徽章
+  const total = funds.length;
+  const fxDown = total > 0 && funds.some(f => f.fxOk === false);
+  const driftCount = funds.filter(f => f.driftStatus === 'ACTIVE').length;
+  const chainCount = funds.filter(f => f.useChained).length;
+
+  const csFx = document.getElementById('cs-fx');
+  if (csFx) {
+    csFx.textContent = total === 0 ? '—' : fxDown ? '✗ 缺失' : '✓ 正常';
+    csFx.className = total === 0 ? 'text-gray-600' : fxDown ? 'text-amber-400' : 'text-green-400/80';
+  }
+  const csDrift = document.getElementById('cs-drift');
+  if (csDrift) {
+    csDrift.textContent = total === 0 ? '—' : `${driftCount} / ${total}`;
+    csDrift.className = driftCount === 0 ? 'text-amber-400/80'
+      : driftCount < Math.ceil(total * 0.5) ? 'text-yellow-400/80'
+      : 'text-green-400/80';
+  }
+  const csChain = document.getElementById('cs-chain');
+  if (csChain) {
+    const needsChain  = funds.filter(f => f.navLag >= 2).length;   // 应该跑链式的基金数
+    const failedChain = funds.filter(f => f.navLag >= 2 && !f.useChained).length; // 应跑但未跑
+    let chainText, chainCls;
+    if (total === 0) {
+      chainText = '—'; chainCls = 'text-gray-600';
+    } else if (needsChain === 0) {
+      chainText = '不需要'; chainCls = 'text-gray-500';        // 所有净值都是最新的，正常
+    } else if (failedChain > 0 && chainCount === 0) {
+      chainText = `${failedChain} 只失效`; chainCls = 'text-amber-400'; // 全部应跑但锚点缺失
+    } else if (failedChain > 0) {
+      chainText = `${chainCount} 只启用 / ${failedChain} 只失效`; chainCls = 'text-amber-400';
+    } else {
+      chainText = `${chainCount} 只启用`; chainCls = 'text-yellow-400/80'; // 正常补偿中
+    }
+    csChain.textContent = chainText;
+    csChain.className = chainCls;
+  }
 }
 
 // ── 过滤+排序 ────────────────────────────────────────
@@ -1211,7 +1265,7 @@ function renderTable() {
       <td class="py-2 px-2 font-mono text-xs text-right text-primary">${priceStr}</td>
       <td class="py-2 px-2 text-right">
         <div class="font-mono text-sm font-medium ${premCls}">${premStr}${f.fxOk === false ? '<span title="汇率接口失效，当前估值未计入即时汇率变动" class="ml-1 text-yellow-400/50 text-[10px] cursor-help">⚠</span>' : ''}${f.benchStale ? '<span title="指数来自收盘快照，非实时数据" class="ml-1 text-gray-500 text-[9px] cursor-help">(收)</span>' : ''}</div>
-        <div class="font-mono text-[8px] ${f.driftStatus === 'ACTIVE' ? 'text-green-400/40' : 'text-muted/30'}">${f.driftStatus === 'ACTIVE' ? '[Drift Calibrated]' : '[Drift Offline]'}</div>
+        <div class="font-mono text-[9px] ${f.driftStatus === 'ACTIVE' ? 'text-green-400/70' : 'text-gray-600'}">${f.driftStatus === 'ACTIVE' ? '[Drift ✓]' : '[Drift —]'}</div>
       </td>
       <td class="py-2 px-2 font-mono text-xs text-right ${chgCls}">${chgStr}</td>
       <td class="py-2 px-2 font-mono text-xs text-right ${benchCls}">${benchStr}</td>
@@ -1271,7 +1325,7 @@ function renderCards() {
           <div class="text-right flex-shrink-0 ml-3">
             <div class="font-mono text-xl font-semibold ${premCls}">${premStr}${f.fxOk === false ? '<span title="汇率接口失效，当前估值未计入即时汇率变动" class="ml-1 text-yellow-400/50 text-[10px] cursor-help">⚠</span>' : ''}${f.benchStale ? '<span title="指数来自收盘快照，非实时数据" class="ml-1 text-gray-500 text-[9px] cursor-help">(收)</span>' : ''}</div>
             <div class="font-mono text-[9px] text-muted mt-0.5">溢折价率</div>
-            <div class="font-mono text-[8px] ${f.driftStatus === 'ACTIVE' ? 'text-green-400/40' : 'text-muted/30'} mt-0.5">${f.driftStatus === 'ACTIVE' ? '[Drift Calibrated]' : '[Drift Offline]'}</div>
+            <div class="font-mono text-[9px] ${f.driftStatus === 'ACTIVE' ? 'text-green-400/70' : 'text-gray-600'} mt-0.5">${f.driftStatus === 'ACTIVE' ? '[Drift ✓]' : '[Drift —]'}</div>
           </div>
         </div>
         <div class="grid grid-cols-3 gap-2 text-center border-t border-border/40 pt-2">

@@ -647,6 +647,25 @@ dynNavReturn = (coveredReturn + adjBenchChg/100 × (1 − coveredW)) × 100
 
 `holdingCoverage = coveredW / totalW`（港股基金通常 >80%，美股基金 = 0）
 
+### 跨市场 LOF 官方净值语义
+
+**T 日官方净值的构成**：
+
+```
+T 日净值 = A 股部分（T 日 15:00 收盘）
+         + 美股部分（T 日美股收盘，北京时间 T+1 凌晨 4–5 点）
+         合并后的净资产 ÷ 总份额
+```
+
+关键含义：
+- 基金公司在美股收盘后（北京 T+1 凌晨 4–5 点）才能完成 T 日净值计算
+- 基金公司通常在北京时间 T+1 06:00–07:00 前后将 T 日净值推送至数据源
+- 因此 Action 定时 **北京 07:00（UTC 23:00）** 运行，正好在净值稳定可用之后抓取
+
+这也解释了链式补偿的必要性：A 股盘中（T 日 09:30–15:00），基金公司尚未公布 T 日净值（因为 T 日美股还未收盘），所以 Worker 能拿到的最新官方净值是 T-1 日的，`navLag = 1`；如果遇到非交易日或数据延迟，`navLag ≥ 2` 时链式补偿介入。
+
+---
+
 ### T-2 链式净值补偿
 
 ```
@@ -687,6 +706,34 @@ Hard Enforcement：
 driftActive = (drift5d ≠ 0) && (drift_n ≥ 3) && (driftLagDays ≤ 2)
 alpha = driftActive ? clamp(drift_5d, −2%, +2%) : 0
 ```
+
+### 补偿模块状态监控（Stats Bar）
+
+`index.html` Stats Bar 下方有一行「补偿状态栏」，实时聚合三个补偿模块的运行状况：
+
+| 徽章 | 判断依据 | 颜色含义 |
+|------|---------|---------|
+| **汇率** | `calcFxOk(code, fxChgUsd, fxChgHkd)` | 绿=✓正常 / 橙=✗缺失（跨市场基金未得到FX数据） |
+| **Drift 校准** | `driftStatus === 'ACTIVE'` 计数 | 绿=多数激活 / 黄=少于半数 / 橙=全部挂起 |
+| **链式补偿** | `navLag` + `useChained` 三态 | 见下表 |
+
+**链式补偿三态**（是本监控的核心设计，区分「不需要」与「静默失效」）：
+
+| 显示 | 条件 | 颜色 | 含义 |
+|------|------|------|------|
+| `不需要` | 所有基金 `navLag < 2` | 灰 | 净值都是最新的，链式无需介入（正常） |
+| `N 只启用` | `navLag ≥ 2` 且 `useChained = true` | 黄 | 链式补偿正常运行，estNavYesterday 参与了溢价率计算 |
+| `N 只失效` | `navLag ≥ 2` 但 `useChained = false` | 橙 | **静默失效**：净值滞后但锚点缺失或 fund_daily.json 超过 36h 未更新，需检查 Action 日志 |
+
+**关键参数释义：**
+
+- `navLag`：今日距最新官方净值日期的**交易日数**（非自然日）。`navLag=1` = 正常（昨天净值）；`navLag≥2` = 需要链式补偿
+- `useChained`：三重条件同时满足时为 `true`：`estNavYesterday != null`（锚点存在）AND `navLag >= 2`（确实滞后）AND `fetchAgeH <= 36`（fund_daily.json 够新）
+- `failedChain`：`navLag >= 2 && !useChained` 的基金数——应跑链式但未跑，是需要介入排查的信号
+
+**`fxOk` 的语义**：仅对需要汇率的基金（bench 含 `us*` 或 `hk*`）才会返回 `false`；纯 A 股基金始终返回 `true`（不需要 FX，不算失败）。
+
+---
 
 ### 溢折价报警
 
