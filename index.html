@@ -78,13 +78,13 @@ tailwind.config = {
     <!-- Controls -->
     <div class="flex items-center gap-2 py-2 pl-3 border-l border-border flex-shrink-0">
       <div id="clock" class="font-mono text-xs text-muted hidden md:block"></div>
-      <select id="rfsel" class="font-mono text-xs bg-surface border border-border rounded px-2 py-1.5 text-muted focus:outline-none cursor-pointer">
+      <select id="rfsel" class="font-mono text-xs bg-surface border border-border rounded px-2 py-1.5 text-gray-300 focus:outline-none cursor-pointer">
         <option value="5000">5s</option>
         <option value="10000">10s</option>
         <option value="15000" selected>15s</option>
         <option value="30000">30s</option>
       </select>
-      <button id="refreshBtn" onclick="manualRefresh()" class="font-mono text-xs px-3 py-1.5 border border-border rounded text-muted hover:text-primary hover:border-border-2 transition-colors">
+      <button id="refreshBtn" onclick="manualRefresh()" class="font-mono text-xs px-3 py-1.5 border border-border rounded text-gray-300 hover:text-primary hover:border-border-2 transition-colors">
         ↺ 刷新
       </button>
     </div>
@@ -166,43 +166,43 @@ tailwind.config = {
   <!-- Desktop Table -->
   <div class="hidden md:block overflow-x-auto">
     <table class="w-full border-collapse text-sm">
-      <thead>
+      <thead class="sticky top-0 z-10">
         <tr class="border-b border-border text-left" style="background:#0d0d0d">
-          <th class="font-mono text-[10px] text-muted py-2 px-3 tracking-wider cursor-pointer" onclick="setSort('name')">
+          <th class="font-mono text-[10px] text-gray-400 py-2 px-3 tracking-wider cursor-pointer" onclick="setSort('name')">
             名称 <span id="sort-name" class="sort-arrow">↕</span>
           </th>
-          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider cursor-pointer" onclick="setSort('code')">
+          <th class="font-mono text-[10px] text-gray-400 py-2 px-2 tracking-wider cursor-pointer" onclick="setSort('code')">
             代码 <span id="sort-code" class="sort-arrow">↕</span>
           </th>
-          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider cursor-pointer" onclick="setSort('cat')">
+          <th class="font-mono text-[10px] text-gray-400 py-2 px-2 tracking-wider cursor-pointer" onclick="setSort('cat')">
             类别 <span id="sort-cat" class="sort-arrow">↕</span>
           </th>
-          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider cursor-pointer text-right" onclick="setSort('nav')">
+          <th class="font-mono text-[10px] text-gray-400 py-2 px-2 tracking-wider cursor-pointer text-right" onclick="setSort('nav')">
             盘中估值 <span id="sort-nav" class="sort-arrow">↕</span>
           </th>
-          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider cursor-pointer text-right" onclick="setSort('officialNav')">
+          <th class="font-mono text-[10px] text-gray-400 py-2 px-2 tracking-wider cursor-pointer text-right" onclick="setSort('officialNav')">
             T-1净值 <span id="sort-officialNav" class="sort-arrow">↕</span>
           </th>
-          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider cursor-pointer text-right" onclick="setSort('price')">
+          <th class="font-mono text-[10px] text-gray-400 py-2 px-2 tracking-wider cursor-pointer text-right" onclick="setSort('price')">
             场内价格 <span id="sort-price" class="sort-arrow">↕</span>
           </th>
-          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider cursor-pointer text-right" onclick="setSort('premium')">
+          <th class="font-mono text-[10px] text-gray-400 py-2 px-2 tracking-wider cursor-pointer text-right" onclick="setSort('premium')">
             溢折价率 <span id="sort-premium" class="sort-arrow sort-active">↓</span>
           </th>
-          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider cursor-pointer text-right" onclick="setSort('chg')">
+          <th class="font-mono text-[10px] text-gray-400 py-2 px-2 tracking-wider cursor-pointer text-right" onclick="setSort('chg')">
             今日涨跌 <span id="sort-chg" class="sort-arrow">↕</span>
           </th>
-          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider cursor-pointer text-right" onclick="setSort('benchChg')">
+          <th class="font-mono text-[10px] text-gray-400 py-2 px-2 tracking-wider cursor-pointer text-right" onclick="setSort('benchChg')">
             指数涨幅 <span id="sort-benchChg" class="sort-arrow">↕</span>
           </th>
-          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider">套利信号</th>
-          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider">操作方向</th>
-          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider">申购限额</th>
-          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider text-right">费率</th>
-          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider text-right" onclick="setSort('shares')">
+          <th class="font-mono text-[10px] text-gray-400 py-2 px-2 tracking-wider">对标指数</th>
+          <th class="font-mono text-[10px] text-gray-400 py-2 px-2 tracking-wider">套利信号</th>
+          <th class="font-mono text-[10px] text-gray-400 py-2 px-2 tracking-wider">申购限额</th>
+          <th class="font-mono text-[10px] text-gray-400 py-2 px-2 tracking-wider text-right">费率</th>
+          <th class="font-mono text-[10px] text-gray-400 py-2 px-2 tracking-wider text-right" onclick="setSort('shares')">
             总份额(亿) <span id="sort-shares" class="sort-arrow">↕</span>
           </th>
-          <th class="font-mono text-[10px] text-muted py-2 px-2 tracking-wider text-center">来源</th>
+          <th class="font-mono text-[10px] text-gray-400 py-2 px-2 tracking-wider text-center">来源</th>
         </tr>
       </thead>
       <tbody id="tbody">
@@ -312,6 +312,31 @@ const BENCH = {
   '161226':'sinaAG0','161217':'sz399961',  '161715':'sz399979',
   '161725':'sz399987','161032':'sz399998',
 };
+
+const BENCH_NAMES = {
+  'usXBI':'XBI生科','usINDA':'INDA印度','usQQQ':'QQQ纳指','usINX':'S&P500',
+  'usAGG':'AGG债券','usRWR':'RWR地产','usSMH':'SMH半导体','usGLD':'GLD黄金',
+  'usXLY':'XLY消费','usRSPH':'RSPH医疗','usXLK':'XLK科技','usUSO':'USO原油',
+  'usBNO':'BNO布油','usXOP':'XOP油气','usIXC':'IXC能源','usSGOL':'SGOL黄金',
+  'usIAU':'IAU黄金','usAAAU':'AAAU黄金','usSLV':'SLV白银','usCPER':'CPER铜',
+  'usBCI':'BCI商品','usCOMT':'COMT商品',
+  'hkHSTECH':'恒生科技','hkHSMI':'恒生中企','hkHSSI':'国企指数','hkHSCI':'恒生综合',
+  'hkHSCEI':'国企指数','hkHSI':'恒生指数',
+  'sh518880':'黄金ETF','sh000985':'中证全指','sh000300':'沪深300',
+  'csi930917':'港股通科技','csi930914':'港股通消费','csi930792':'港股通',
+  'sz399961':'中证上游','sz399979':'大宗商品','sz399987':'中证白酒','sz399998':'中证煤炭',
+  'sinaAG0':'白银主力',
+};
+function benchColLabel(f) {
+  const bench = BENCH[f.code];
+  if (!bench) return '—';
+  if (typeof bench === 'string') return BENCH_NAMES[bench] || bench.replace(/^(us|hk|sh|sz|sina|csi)/i, '');
+  if (Array.isArray(bench)) {
+    if (bench.length <= 2) return bench.map(b => BENCH_NAMES[b.tq] || b.tq.replace(/^(us|hk|sh|sz|sina|csi)/i, '')).join('+');
+    return `复合${bench.length}项`;
+  }
+  return '—';
+}
 
 // 东方财富专属指数代码（腾讯不支持）
 // 注意：sinaAG0 (113.AG0) EM 返回 rc=100/data:null，EM 不支持该代码，已移除。
@@ -1081,7 +1106,7 @@ function renderTickers(idxData) {
     const chgCls = chg == null ? 'text-muted' : chg >= 0 ? 'text-green-400' : 'text-red-400';
     return `
       <div class="flex-shrink-0 ${isMobile ? 'min-w-[60px]' : 'min-w-[72px]'}">
-        <div class="font-mono text-[8px] text-muted/70 tracking-widest">${i.label}</div>
+        <div class="font-mono text-[8px] text-gray-400 tracking-widest">${i.label}</div>
         <div class="font-mono ${isMobile ? 'text-[11px]' : 'text-[13px]'} font-medium text-primary mt-0.5">—</div>
         <div class="font-mono text-[10px] mt-0.5 ${chgCls}">${chgStr}</div>
       </div>`;
@@ -1161,17 +1186,14 @@ function renderTable() {
     const catTag = {us:'tag-us',hk:'tag-hk',cm:'tag-cm',cn:'tag-cn'}[f.cat] || '';
     const catLabel = {us:'美股',hk:'港股',cm:'商品',cn:'A股'}[f.cat] || f.cat;
     let signal = '<span class="text-muted">—</span>';
-    let action = '<span class="text-muted text-xs">—</span>';
     if (isAlert && isPrem) {
       signal = '<span class="text-premium text-xs font-mono">▼ 卖出套利</span>';
-      action = '<span class="text-premium text-xs">卖场内/申场外</span>';
     } else if (isAlert && !isPrem) {
       signal = '<span class="text-discount text-xs font-mono">▲ 买入套利</span>';
-      action = '<span class="text-discount text-xs">买场内/赎场外</span>';
     } else if (p != null && Math.abs(p) >= thr * 0.65) {
       signal = '<span class="text-muted text-xs font-mono">⊙ 观察</span>';
-      action = '<span class="text-muted text-xs">接近阈值</span>';
     }
+    const benchLabel = benchColLabel(f);
     const quotaCls = f.quota === '暂停' ? 'text-red-400' : f.quota === '开放' ? 'text-green-400' : 'text-yellow-400';
     const sharesInfo = _fundDaily && _fundDaily[f.code];
     const sharesStr = sharesInfo && sharesInfo.shares != null ? sharesInfo.shares.toFixed(2) : '—';
@@ -1183,8 +1205,8 @@ function renderTable() {
         <span class="font-mono text-[9px] px-1.5 py-0.5 rounded ${catTag}">${catLabel}</span>
       </td>
       <td class="py-2 px-2 font-mono text-xs text-right text-primary">${navStr}</td>
-      <td class="py-2 px-2 font-mono text-xs text-right ${f.useChained ? 'text-yellow-400/70' : 'text-primary/70'}">
-        ${t1NavVal}${f.useChained ? '<span class="text-[8px] text-yellow-400/50 ml-0.5">est</span>' : ''}
+      <td class="py-2 px-2 font-mono text-xs text-right ${f.useChained ? 'text-yellow-400/80' : 'text-primary/70'}">
+        ${t1NavVal}${f.useChained ? '<span class="text-[9px] text-yellow-400/80 ml-0.5">est</span>' : ''}
       </td>
       <td class="py-2 px-2 font-mono text-xs text-right text-primary">${priceStr}</td>
       <td class="py-2 px-2 text-right">
@@ -1193,8 +1215,8 @@ function renderTable() {
       </td>
       <td class="py-2 px-2 font-mono text-xs text-right ${chgCls}">${chgStr}</td>
       <td class="py-2 px-2 font-mono text-xs text-right ${benchCls}">${benchStr}</td>
+      <td class="py-2 px-2 font-mono text-[9px] text-muted/80 whitespace-nowrap">${benchLabel}</td>
       <td class="py-2 px-2">${signal}</td>
-      <td class="py-2 px-2">${action}</td>
       <td class="py-2 px-2 font-mono text-[10px] ${quotaCls}">${f.quota}</td>
       <td class="py-2 px-2 font-mono text-[10px] text-muted text-right">${f.fee}</td>
       <td class="py-2 px-2 font-mono text-xs text-right text-primary/70">${sharesStr}</td>
@@ -1374,7 +1396,7 @@ function openModal(code) {
       ${[
         ['场内价格', f.price != null ? f.price.toFixed(4) : '—', 'text-primary'],
         ['盘中估值', f.nav != null ? f.nav.toFixed(4) : '—', 'text-primary'],
-        ['T-1净值', f.officialNav != null ? f.officialNav.toFixed(4) : '—', 'text-muted'],
+        ['T-1净值', f.officialNav != null ? f.officialNav.toFixed(4) : '—', 'text-primary/80'],
         ['净值日期', f.navDate ? (f.navDate + (f.navLag >= 2 ? ` ⚠️T-${f.navLag}` : '')) : '—', f.navLag >= 2 ? 'text-yellow-400/80' : 'text-muted'],
         ['今日涨跌', f.chg != null ? (f.chg >= 0 ? '+' : '') + f.chg.toFixed(2) + '%' : '—', f.chg > 0 ? 'text-green-400' : f.chg < 0 ? 'text-red-400' : 'text-muted'],
         ['指数涨幅', f.benchChg != null ? (f.benchChg >= 0 ? '+' : '') + f.benchChg.toFixed(2) + '%' : '—', f.benchChg > 0 ? 'text-green-400' : f.benchChg < 0 ? 'text-red-400' : 'text-muted'],
