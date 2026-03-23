@@ -285,12 +285,10 @@ function getAllTqCodes() {
     else set.add(b);
   });
   TICKER_IDX.forEach(i => set.add(i.tq));
-  // 新浪/东财专属，不走腾讯
-  // sz399961/sz399979：腾讯实时可访问，不排除（EM fill-only 兜底）
-  // sinaAG0 腾讯不识别，替换为 nf_AG0（白银主力期货，解析后映射回 sinaAG0）
+  // 新浪/东财专属，不走腾讯；sz399961/sz399979 腾讯实时可访问，不排除
+  // sinaAG0：腾讯不支持 nf_AG0，由新浪 Worker 代理获取，收盘快照兜底
   ['sinaAG0','csi930917','csi930914','csi930792','sh000985',
    'hkHSSI','hkHSMI','hkHSCI'].forEach(c => set.delete(c));
-  set.add('nf_AG0');
   return [...set];
 }
 
@@ -448,13 +446,6 @@ async function fetchTencent(daily = null) {
       }
     }
 
-    // 白银期货：nf_AG0 → sinaAG0（腾讯兜底；Sina 可用时在后续 merge 中覆盖）
-    const rawAG0 = lineMap['nf_AG0'];
-    if (rawAG0 && rawAG0.length > 5) {
-      const p = rawAG0.split('~');
-      const price = parseFloat(p[3]), prev = parseFloat(p[4]);
-      if (price > 0 && prev > 0) result.indices['sinaAG0'] = { price, chg: (price - prev) / prev * 100 };
-    }
 
     // 持仓个股涨跌幅（Plan A：仅 HK + A股；US 跳过，归入 bench 残差）
     const stockChg = {};
@@ -543,11 +534,11 @@ async function fetchSina() {
     const text = new TextDecoder('gbk').decode(buf);
     const out = {};
 
-    // 期货：nf_AG0（白银主连）p[5]=现价，p[10]=前结算价
+    // 期货：nf_AG0（白银主连）字段：[0]=名称,[1]=时间,[2]=开,[3]=高,[4]=低,[5]=0,[6]=现价,[10]=昨结算
     const mAG = text.match(/hq_str_nf_AG0="([^"]+)"/);
     if (mAG) {
       const p = mAG[1].split(',');
-      const cur = parseFloat(p[5]), prev = parseFloat(p[10]);
+      const cur = parseFloat(p[6]), prev = parseFloat(p[10]);
       if (cur > 0 && prev > 0) out.sinaAG0 = (cur - prev) / prev * 100;
     }
 

@@ -82,7 +82,8 @@ def fetch_sina_ag0() -> float | None:
         return None
     try:
         parts = m.group(1).split(',')
-        cur  = float(parts[5])
+        # 字段: [0]=名称,[1]=时间,[2]=开,[3]=高,[4]=低,[5]=0,[6]=现价,[10]=昨结算
+        cur  = float(parts[6])
         prev = float(parts[10])
         if cur > 0 and prev > 0:
             return round((cur - prev) / prev * 100, 4)
