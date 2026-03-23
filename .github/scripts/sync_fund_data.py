@@ -81,6 +81,9 @@ _YAHOO_CODES = {
     'usXBI':  'XBI',   'usXLK':  'XLK',   'usXLY':  'XLY',
     'usSMH':  'SMH',   'usINDA': 'INDA',  'usAGG':  'AGG',
     'usINX':  '^GSPC',
+    # HK 指数 — EM push2 对 ^HSI/^HSCE 返回 rc=100，改走 Yahoo
+    'hkHSI':   '^HSI',
+    'hkHSCEI': '^HSCE',
 }
 
 # 腾讯行情代码别名：our_key → tencent_code
@@ -443,6 +446,26 @@ def fetch_bench_chg_batch(data: dict) -> dict:
                 print(f'  [bench] Yahoo parse error: {e}', file=sys.stderr)
     print(f'  [bench] Yahoo: '
           f'{sum(1 for k in yahoo_keys if k in chg_map)}/{len(yahoo_keys)} 成功')
+
+    # ── idx_closing.json fallback（sz399961 / sz399979 / sinaAG0）──
+    # 这三个指数 EM/Tencent/Yahoo 均无法从 Actions 环境抓取；
+    # sync_closing_idx.py 每日 15:05 写入的收盘快照是唯一来源。
+    closing_path = os.path.join(REPO_ROOT, 'data', 'idx_closing.json')
+    still_missing = {k for k in tq_needed if k not in chg_map}
+    if still_missing and os.path.exists(closing_path):
+        try:
+            with open(closing_path, encoding='utf-8') as f:
+                closing = json.load(f)
+            filled = []
+            for key in still_missing:
+                entry = closing.get(key)
+                if entry and entry.get('chg') is not None:
+                    chg_map[key] = entry['chg']
+                    filled.append(key)
+            if filled:
+                print(f'  [bench] closing fallback 填补: {filled}')
+        except Exception as e:
+            print(f'  [bench] closing fallback 读取失败: {e}', file=sys.stderr)
 
     return chg_map
 
