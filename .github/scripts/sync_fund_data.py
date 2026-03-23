@@ -61,9 +61,9 @@ _EM_CODES = {
     'sz399961':  '0.399961',   # 中证资源与环境（收盘后用快照，此处仅 Action 使用）
     'sz399979':  '0.399979',   # 中证大宗商品股票
     # HK 指数
-    'hkHSI':     '116.HSI',    # 恒生指数
-    'hkHSTECH':  '116.HSTECH', # 恒生科技
-    'hkHSCEI':   '116.HSCEI',  # 国企指数
+    'hkHSI':     '124.HSI',    # 恒生指数
+    'hkHSTECH':  '124.HSTECH', # 恒生科技
+    'hkHSCEI':   '124.HSCEI',  # 国企指数
     'hkHSSI':    '124.HSSI',
     'hkHSMI':    '124.HSMI',
     'hkHSCI':    '124.HSCI',
@@ -412,7 +412,9 @@ def fetch_bench_chg_batch(data: dict) -> dict:
                 dat = d.get('data') or {}
                 f170 = dat.get('f170')
                 # null ≠ 0：f170=null 表示未取到，不写入（不覆盖为 0）
-                if dat.get('f43', 0) > 0 and f170 is not None:
+                # f43（现价）对计算型指数（如399961）可能为0，不用此字段过滤
+                # 只判断 f170 是否有效（null≠0）
+                if f170 is not None:
                     chg_map[tq_key] = f170 / 100
             except Exception:
                 pass
