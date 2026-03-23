@@ -375,29 +375,49 @@ idxChg[code] = null（未抓到）
 - `idxSanityOk()` 使用相同的阈值和 `COMMODITY_IDX` 集合
 - null 传播链路与 Worker 相同
 
-> 背景：2026-03 发现 3 只 A 股 LOF（161217/161715/161226）基准指数持续显示 0%，
-> 根因：`sz399961`/`sz399979` 腾讯/新浪均不支持，遗漏加入东财；`f170||0` 将 null 误置 0%。
-> 修复方案：P0-P3 系统性数据校验改造。
+**指数数据源分层（已验证，不可改变）：**
 
-#### 5.6 汇率缺失：降级计算 + 透明标注
+| 指数 | 主数据源 | 兜底来源 | 说明 |
+|------|---------|---------|------|
+| `sz399961` / `sz399979` | 腾讯（盘中实时） | EM fill-only | EM 对这两个指数盘中返回 f170=0，腾讯提供正确实时值；EM 仅作填空备份 |
+| `sinaAG0` | 新浪 nf_AG0（Worker 代理） | EM 113.AG0 | Worker 优先；直连模式 EM 兜底 |
+| `csi93xxxx` / `sh000985` | 东财 EM（唯一来源） | 收盘快照 | 腾讯不支持 |
+| `hkHSSI` / `hkHSMI` / `hkHSCI` | 东财 EM | hkHSI 降级链 | 腾讯不支持 |
 
-当实时汇率接口（新浪/Yahoo）不可达时：
+**合并优先级（严格执行）：**
+```
+腾讯（盘中实时）→ EM（fill-only，不覆盖已有值）→ 新浪（可覆盖，优先级最高）
+```
 
-**计算行为（不阻断）：**
+> 历史：2026-03 发现 161217/161715/161226 基准持续显示 0%。
+> 根因 1：`sz399961`/`sz399979` 遗漏加入东财，后移入 EM_CODES；但 EM 对此类计算型指数盘中返回 f170=0。
+> 根因 2：EM 合并策略为覆盖（overwrite），导致 EM 的 0 覆盖腾讯的正确值。
+> 修复：`sz399961`/`sz399979` 从腾讯排除列表移除，EM 改为 fill-only 策略。
+
+#### 5.6 汇率数据规范（关键约束）
+
+**Sina FX 代码（已验证，严禁改动）：**
+
+| 变量 | Sina 代码 | 字段索引 | 说明 |
+|------|----------|---------|------|
+| `_fxUsdCnh` | `fx_susdcnh` | `[1]` | USD/CNH 离岸人民币现价 |
+| `_fxHkdCnh` | `fx_shkdcnh` | `[1]` | HKD/CNH 离岸港元现价（**注意：`fx_shkcnh` 是无效代码，返回空串**）|
+
+> Bug 历史：`fx_shkcnh` 被使用了相当长时间，导致 `_fxHkdCnh` 始终 null，所有港股 LOF
+> 的汇率修正从未生效，fxOk 始终 false，用户看到的⚠️全是误报。2026-03 修复为 `fx_shkdcnh`。
+
+**FX 来源约束（架构固定）：**
+
+- FX 数据**只能来自 Sina**（`hq.sinajs.cn`）
+- Sina 强制校验 `Referer: https://finance.sina.com.cn/`，浏览器 JSONP/fetch 均无法直连
+- `qt.gtimg.cn`（腾讯）经过测试**完全不支持任何 FX 代码**，返回 `v_pv_none_match`
+- 因此 FX 数据**必须由 Worker 代理抓取**；直连模式下 FX = null 是系统固有限制，非 Bug
+
+**当汇率不可达时（直连模式）：**
 - `fxChgUsd = null` / `fxChgHkd = null`
-- `calcAdjustedBenchChg()` 遇到 null 汇率时退化为 `fxChg = 0`（即假设汇率无变动）
-- 估值计算继续，但结果精度下降（等同于忽略当日汇率波动）
-
-**标记行为（强制）：**
-- 每只基金输出 `fxOk: boolean`（由 `calcFxOk()` 计算）
-  - `fxOk = false`：该基金的 BENCH 包含 us* 但 fxChgUsd 缺失，或包含 hk* 但 fxChgHkd 缺失
-- `/api/snapshot` 的 `fetchStatus.fxOk` 全局汇总：`fxChgUsd != null && fxChgHkd != null`
-
-**UI 表现（三处）：**
-- 表格行、卡片视图、详情弹窗的溢折价率旁显示 `⚠`（文字尺寸约 10px）
-- 悬浮提示：`"汇率接口失效，当前估值未计入即时汇率变动"`
-
-**设计原则：宁可给出带误差的估值，也比完全不可用更有参考价值；但必须明确告知用户精度下降。**
+- `calcAdjustedBenchChg()` 退化为 `fxChg = 0`（假设汇率无变动，精度下降）
+- 每只基金输出 `fxOk: boolean`；UI 在溢折价旁显示 `⚠`
+- **设计原则：带误差的估值比完全不可用更有价值；但必须明确标注精度下降。**
 
 #### 5.7 集合竞价噪音过滤（原则，暂不实现代码）
 
@@ -487,6 +507,73 @@ if (closingData && !isBjTradingHours()) {
 - **窗口内（近90个交易日）**：`isTradingDay()` 精确到节假日级别
 - **窗口外**：降级为周末判断，不影响 `navLag`（只看近期历史）
 - `chinesecalendar` 包每年需更新版本以覆盖新年度节假日（dependabot 可自动处理）
+
+---
+
+## 容错与自愈机制
+
+### 🛰️ 数据流架构 (v2.0 强力解耦版)
+
+| 组件 | 核心职责 | 容错策略 |
+| :--- | :--- | :--- |
+| **Worker Agent** | 并行抓取 (AllSettled)，Header 伪装穿透 | 失败时返回 null + missing 标记，不中断链路 |
+| **Frontend Core** | 优先渲染 Worker 完整包 | 监控数据空位，触发 `asyncPatchFromEM` |
+| **Direct Mode** | 绕过 Worker，腾讯 JSONP + 东财 fetch 直连 | FX 降级为 null（新浪无法直连），⚠️ 标注精度下降 |
+
+**维护注记**：修改数据源时，优先检查 `worker-full.js` 的并行抓取列表，确保 `Promise.allSettled` 的解构顺序与请求顺序严格对应。
+
+### 并发隔离：Promise.allSettled
+
+Worker 内部四路数据抓取（腾讯 / 东财 / 新浪 / Yahoo）采用 `Promise.allSettled` 并行执行：
+
+```js
+const [tqRes, emRes, sinaRes, futRes] = await Promise.allSettled([
+  fetchTencent(daily), fetchEastmoney(), fetchSina(), fetchYahooFutures(),
+]);
+// 各路独立解包，rejected 时用空对象兜底，不阻塞整体
+const tqData = tqRes.status === 'fulfilled' ? tqRes.value : { funds:{}, indices:{}, stockChg:{} };
+```
+
+任何单一源超时/失败（包括被封 IP）**严禁阻塞**其他源数据。`fetchStatus.idxMissing` 在每次 snapshot 中声明缺失的 bench 指数列表，供前端定位断点并触发异步补丁。
+
+### 双路径自愈：Worker Agent + 前端 Async Patch
+
+典型故障场景：**VPN 用户 → Cloudflare 路由至境外 PoP → 东财 push2 被封 → EM 专属指数缺失**
+
+```
+路径 A（Worker）：Chrome 124 UA + Referer 伪装，硬磕数据源屏蔽
+                  失败时在 snapshot.fetchStatus.idxMissing 中声明空位
+
+路径 B（前端补丁）：asyncPatchFromEM() 检测到 idxMissing 后，
+                   利用浏览器本地 IP（国内用户可直连 EM），
+                   异步 fetch EM CORS 接口，单点补齐缺失指数，重算受影响基金
+```
+
+**`asyncPatchFromEM` 约束：**
+- **非阻塞**：主链路 render 完成后后台异步触发，不延迟首屏
+- **精确补丁**：只重算 `benchOk=false` 且 bench 被补丁覆盖的基金
+- **标记来源**：补丁基金 `_src = 'W+P'`，状态栏注记"全量实时 · 本地补丁"
+- **安全降级**：浏览器也取不到 EM 数据时静默放弃，不覆盖现有结果
+
+### Worker 请求头伪装规范
+
+所有向第三方数据源发出的 fetch，**必须**携带完整浏览器特征头（已在各 fetch 函数中实现）：
+
+| 数据源 | Referer | UA | 备注 |
+|-------|---------|-----|------|
+| 东财 push2 | `https://quote.eastmoney.com/` | Chrome 124 | Accept: application/json |
+| 新浪 hq | `https://finance.sina.com.cn/` | Chrome 124 | Accept-Language: zh-CN |
+| 腾讯 qtimg | `https://gu.qq.com` | Chrome 124 | Accept: \*/\* |
+
+### 直连模式能力边界（已测试，固化为规范）
+
+| 能力 | 直连模式 | 原因 |
+|------|---------|------|
+| 腾讯行情（价格/A股/HK指数） | ✅ 可用 | JSONP，无 CORS 限制 |
+| 东财 EM 指数 | ✅ 可用 | fetch，push2 有 CORS 头 |
+| 新浪 FX（USD/CNH, HKD/CNH） | ❌ 不可用 | Referer 校验；腾讯经测试不提供任何 FX 代码 |
+| 白银 AG0（sinaAG0） | ⚠️ EM 兜底 | Sina 不可直连，EM `113.AG0` 可提供但非实时 |
+| FX ⚠️ 警告 | 必然出现 | 直连 FX=null 是固有限制，正确行为，非 Bug |
 
 ---
 
