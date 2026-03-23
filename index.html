@@ -115,7 +115,7 @@ tailwind.config = {
 <main class="max-w-screen-2xl mx-auto px-3 md:px-6 py-4">
 
   <!-- Stats bar -->
-  <div class="grid grid-cols-4 gap-2 mb-2">
+  <div class="grid grid-cols-5 gap-2 mb-4">
     <div class="bg-surface border border-border rounded p-3">
       <div class="font-mono text-[9px] text-gray-400 tracking-widest mb-1">基金总数</div>
       <div id="s0" class="font-mono text-2xl font-semibold text-primary">47</div>
@@ -132,21 +132,23 @@ tailwind.config = {
       <div class="font-mono text-[9px] text-gray-400 tracking-widest mb-1">最大折价</div>
       <div id="s3" class="font-mono text-2xl font-semibold text-discount">—</div>
     </div>
-  </div>
-
-  <!-- Compensation status bar -->
-  <div class="flex gap-2 mb-4 font-mono text-[10px]">
-    <div class="bg-surface border border-border rounded px-3 py-1.5 flex items-center gap-2">
-      <span class="text-gray-500 tracking-wider">汇率</span>
-      <span id="cs-fx" class="text-gray-600">—</span>
-    </div>
-    <div class="bg-surface border border-border rounded px-3 py-1.5 flex items-center gap-2">
-      <span class="text-gray-500 tracking-wider">Drift 校准</span>
-      <span id="cs-drift" class="text-gray-600">—</span>
-    </div>
-    <div class="bg-surface border border-border rounded px-3 py-1.5 flex items-center gap-2">
-      <span class="text-gray-500 tracking-wider">链式补偿</span>
-      <span id="cs-chain" class="text-gray-600">—</span>
+    <!-- 补偿系统状态卡 -->
+    <div class="bg-surface border border-border rounded p-3 flex flex-col justify-between">
+      <div class="font-mono text-[9px] text-gray-400 tracking-widest mb-2">补偿系统</div>
+      <div class="flex flex-col gap-1.5 font-mono text-[10px]">
+        <div class="flex items-center justify-between">
+          <span class="text-gray-500">汇率</span>
+          <span id="cs-fx" class="text-gray-600">—</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-gray-500">Drift</span>
+          <span id="cs-drift" class="text-gray-600">—</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-gray-500">链式</span>
+          <span id="cs-chain" class="text-gray-600">—</span>
+        </div>
+      </div>
     </div>
   </div>
 
