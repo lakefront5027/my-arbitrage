@@ -77,7 +77,7 @@ tailwind.config = {
 
     <!-- Controls -->
     <div class="flex items-center gap-2 py-2 pl-3 border-l border-border flex-shrink-0">
-      <div id="clock" class="font-mono text-xs text-muted hidden md:block"></div>
+      <div id="clock" class="font-mono text-xs text-gray-400 hidden md:block"></div>
       <select id="rfsel" class="font-mono text-xs bg-surface border border-border rounded px-2 py-1.5 text-gray-300 focus:outline-none cursor-pointer">
         <option value="5000">5s</option>
         <option value="10000">10s</option>
@@ -117,19 +117,19 @@ tailwind.config = {
   <!-- Stats bar -->
   <div class="grid grid-cols-4 gap-2 mb-4">
     <div class="bg-surface border border-border rounded p-3">
-      <div class="font-mono text-[9px] text-muted tracking-widest mb-1">基金总数</div>
+      <div class="font-mono text-[9px] text-gray-400 tracking-widest mb-1">基金总数</div>
       <div id="s0" class="font-mono text-2xl font-semibold text-primary">47</div>
     </div>
     <div class="bg-surface border border-border rounded p-3">
-      <div class="font-mono text-[9px] text-muted tracking-widest mb-1">预警数</div>
+      <div class="font-mono text-[9px] text-gray-400 tracking-widest mb-1">预警数</div>
       <div id="s1" class="font-mono text-2xl font-semibold text-alert">—</div>
     </div>
     <div class="bg-surface border border-border rounded p-3">
-      <div class="font-mono text-[9px] text-muted tracking-widest mb-1">最大溢价</div>
+      <div class="font-mono text-[9px] text-gray-400 tracking-widest mb-1">最大溢价</div>
       <div id="s2" class="font-mono text-2xl font-semibold text-premium">—</div>
     </div>
     <div class="bg-surface border border-border rounded p-3">
-      <div class="font-mono text-[9px] text-muted tracking-widest mb-1">最大折价</div>
+      <div class="font-mono text-[9px] text-gray-400 tracking-widest mb-1">最大折价</div>
       <div id="s3" class="font-mono text-2xl font-semibold text-discount">—</div>
     </div>
   </div>
@@ -138,7 +138,7 @@ tailwind.config = {
   <div class="flex flex-wrap items-center gap-2 md:gap-4 mb-4">
     <!-- Threshold -->
     <div class="flex items-center gap-2">
-      <span class="font-mono text-[10px] text-muted">预警阈值</span>
+      <span class="font-mono text-[10px] text-gray-400">预警阈值</span>
       <input id="thrInput" type="number" value="1.5" min="0.1" max="10" step="0.1"
         class="font-mono text-sm w-16 text-center bg-surface border border-border rounded px-2 py-1 text-premium focus:outline-none focus:border-premium"
         oninput="renderAll()">
@@ -148,18 +148,18 @@ tailwind.config = {
     <!-- Tab filters -->
     <div class="flex bg-surface border border-border rounded overflow-hidden">
       <button onclick="setTab('all')" id="tab-all" class="tab-btn active font-mono text-[11px] px-3 py-1.5 text-primary border-r border-border">全部</button>
-      <button onclick="setTab('al')" id="tab-al" class="tab-btn font-mono text-[11px] px-3 py-1.5 text-muted border-r border-border">套利机会</button>
-      <button onclick="setTab('p')" id="tab-p" class="tab-btn font-mono text-[11px] px-3 py-1.5 text-muted border-r border-border">溢价</button>
-      <button onclick="setTab('d')" id="tab-d" class="tab-btn font-mono text-[11px] px-3 py-1.5 text-muted">折价</button>
+      <button onclick="setTab('al')" id="tab-al" class="tab-btn font-mono text-[11px] px-3 py-1.5 text-gray-400 border-r border-border">套利机会</button>
+      <button onclick="setTab('p')" id="tab-p" class="tab-btn font-mono text-[11px] px-3 py-1.5 text-gray-400 border-r border-border">溢价</button>
+      <button onclick="setTab('d')" id="tab-d" class="tab-btn font-mono text-[11px] px-3 py-1.5 text-gray-400">折价</button>
     </div>
 
     <!-- Category filters -->
     <div class="flex bg-surface border border-border rounded overflow-hidden">
       <button onclick="setCat('all')" id="cat-all" class="cat-btn active font-mono text-[11px] px-3 py-1.5 text-primary border-r border-border">全部</button>
-      <button onclick="setCat('us')" id="cat-us" class="cat-btn font-mono text-[11px] px-3 py-1.5 text-muted border-r border-border">美股</button>
-      <button onclick="setCat('hk')" id="cat-hk" class="cat-btn font-mono text-[11px] px-3 py-1.5 text-muted border-r border-border">港股</button>
-      <button onclick="setCat('cm')" id="cat-cm" class="cat-btn font-mono text-[11px] px-3 py-1.5 text-muted border-r border-border">商品</button>
-      <button onclick="setCat('cn')" id="cat-cn" class="cat-btn font-mono text-[11px] px-3 py-1.5 text-muted">A股</button>
+      <button onclick="setCat('us')" id="cat-us" class="cat-btn font-mono text-[11px] px-3 py-1.5 text-gray-400 border-r border-border">美股</button>
+      <button onclick="setCat('hk')" id="cat-hk" class="cat-btn font-mono text-[11px] px-3 py-1.5 text-gray-400 border-r border-border">港股</button>
+      <button onclick="setCat('cm')" id="cat-cm" class="cat-btn font-mono text-[11px] px-3 py-1.5 text-gray-400 border-r border-border">商品</button>
+      <button onclick="setCat('cn')" id="cat-cn" class="cat-btn font-mono text-[11px] px-3 py-1.5 text-gray-400">A股</button>
     </div>
   </div>
 
@@ -1215,7 +1215,7 @@ function renderTable() {
       </td>
       <td class="py-2 px-2 font-mono text-xs text-right ${chgCls}">${chgStr}</td>
       <td class="py-2 px-2 font-mono text-xs text-right ${benchCls}">${benchStr}</td>
-      <td class="py-2 px-2 font-mono text-[9px] text-muted/80 whitespace-nowrap">${benchLabel}</td>
+      <td class="py-2 px-2 font-mono text-[9px] text-gray-400 whitespace-nowrap">${benchLabel}</td>
       <td class="py-2 px-2">${signal}</td>
       <td class="py-2 px-2 font-mono text-[10px] ${quotaCls}">${f.quota}</td>
       <td class="py-2 px-2 font-mono text-[10px] text-muted text-right">${f.fee}</td>
@@ -1322,20 +1322,20 @@ function setSort(col) {
 function setTab(tab) {
   curTab = tab;
   document.querySelectorAll('.tab-btn').forEach(b => {
-    b.className = b.className.replace('text-primary', 'text-muted');
+    b.className = b.className.replace('text-primary', 'text-gray-400');
   });
   const btn = document.getElementById('tab-' + tab);
-  if (btn) btn.className = btn.className.replace('text-muted', 'text-primary');
+  if (btn) btn.className = btn.className.replace('text-gray-400', 'text-primary');
   renderAll();
 }
 
 function setCat(cat) {
   curCat = cat;
   document.querySelectorAll('.cat-btn').forEach(b => {
-    b.className = b.className.replace('text-primary', 'text-muted');
+    b.className = b.className.replace('text-primary', 'text-gray-400');
   });
   const btn = document.getElementById('cat-' + cat);
-  if (btn) btn.className = btn.className.replace('text-muted', 'text-primary');
+  if (btn) btn.className = btn.className.replace('text-gray-400', 'text-primary');
   renderAll();
 }
 
