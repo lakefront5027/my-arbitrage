@@ -45,18 +45,47 @@ DRIFT_MIN_SAMPLES = 3      # drift_5d 最少有效样本数
 
 # EM 指数代码映射（同 worker-full.js EM_CODES）
 # 注意：sinaAG0 (113.AG0) EM 返回 rc=100/data:null，已确认无效，不列入此表
+# GitHub Actions 运行于境外服务器，Tencent qt.gtimg.cn 大概率被封；
+# 扩展 EM 覆盖全部 A 股/港股指数，US 代码由 Yahoo Finance 单独抓取。
 _EM_CODES = {
+    # CSI 指数（仅 EM 有）
     'csi930917': '2.930917',
     'csi930914': '2.930914',
     'csi930792': '2.930792',
-    'sh000985':  '1.000985',
+    # A 股主流指数
+    'sh000300':  '1.000300',   # 沪深300
+    'sh000985':  '1.000985',   # 中证全指
+    'sh518880':  '1.518880',   # 华安黄金 ETF（基准代理）
+    'sz399987':  '0.399987',   # 中证800
+    'sz399998':  '0.399998',   # 中证100
+    'sz399961':  '0.399961',   # 中证资源与环境（收盘后用快照，此处仅 Action 使用）
+    'sz399979':  '0.399979',   # 中证大宗商品股票
+    # HK 指数
+    'hkHSI':     '116.HSI',    # 恒生指数
+    'hkHSTECH':  '116.HSTECH', # 恒生科技
+    'hkHSCEI':   '116.HSCEI',  # 国企指数
     'hkHSSI':    '124.HSSI',
     'hkHSMI':    '124.HSMI',
     'hkHSCI':    '124.HSCI',
 }
 
+# Yahoo Finance 代码映射：our_key → Yahoo symbol
+# 用于 GitHub Actions 抓取美股 ETF/指数前一交易日收盘涨跌幅
+_YAHOO_CODES = {
+    'usQQQ':  'QQQ',   'usUSO':  'USO',   'usBNO':  'BNO',
+    'usGLD':  'GLD',   'usGLDM': 'GLDM',  'usIAU':  'IAU',
+    'usSGOL': 'SGOL',  'usAAAU': 'AAAU',  'usSLV':  'SLV',
+    'usCPER': 'CPER',  'usBCI':  'BCI',   'usCOMT': 'COMT',
+    'usXLE':  'XLE',   'usXOP':  'XOP',   'usIXC':  'IXC',
+    'usKWEB': 'KWEB',  'usRSPH': 'RSPH',  'usRWR':  'RWR',
+    'usXBI':  'XBI',   'usXLK':  'XLK',   'usXLY':  'XLY',
+    'usSMH':  'SMH',   'usINDA': 'INDA',  'usAGG':  'AGG',
+    'usINX':  '^GSPC',
+}
+
 # 腾讯行情代码别名：our_key → tencent_code
 # sinaAG0 在腾讯的代码是 nf_AG0（新浪期货代码格式，腾讯支持）
+# 注意：Tencent 在 GitHub Actions 境外服务器通常不可达，此别名主要供本地测试用
 _TQ_ALIASES = {
     'sinaAG0': 'nf_AG0',
 }
@@ -380,13 +409,38 @@ def fetch_bench_chg_batch(data: dict) -> dict:
         if text:
             try:
                 d = json.loads(text)
-                if d.get('data') and d['data'].get('f43', 0) > 0:
-                    chg_map[tq_key] = (d['data'].get('f170') or 0) / 100
+                dat = d.get('data') or {}
+                f170 = dat.get('f170')
+                # null ≠ 0：f170=null 表示未取到，不写入（不覆盖为 0）
+                if dat.get('f43', 0) > 0 and f170 is not None:
+                    chg_map[tq_key] = f170 / 100
             except Exception:
                 pass
         time.sleep(0.05)
     print(f'  [bench] EM: '
           f'{sum(1 for k in em_keys if k in chg_map)}/{len(em_keys)} 成功')
+
+    # ── Yahoo Finance（US ETF/指数）──────────────────────
+    yahoo_keys = {k for k in tq_needed if k in _YAHOO_CODES and k not in chg_map}
+    if yahoo_keys:
+        symbols = ','.join(_YAHOO_CODES[k] for k in yahoo_keys)
+        url = (f'https://query1.finance.yahoo.com/v7/finance/quote'
+               f'?symbols={symbols}&fields=regularMarketChangePercent')
+        text = fetch_url(url, referer='https://finance.yahoo.com')
+        if text:
+            try:
+                result = json.loads(text)
+                quotes = (result.get('quoteResponse') or {}).get('result') or []
+                yahoo_rev = {v: k for k, v in _YAHOO_CODES.items()}  # symbol→our_key
+                for q in quotes:
+                    sym = q.get('symbol', '')
+                    chg = q.get('regularMarketChangePercent')
+                    if chg is not None and sym in yahoo_rev:
+                        chg_map[yahoo_rev[sym]] = chg
+            except Exception as e:
+                print(f'  [bench] Yahoo parse error: {e}', file=sys.stderr)
+    print(f'  [bench] Yahoo: '
+          f'{sum(1 for k in yahoo_keys if k in chg_map)}/{len(yahoo_keys)} 成功')
 
     return chg_map
 
@@ -928,12 +982,13 @@ def sync():
     # ── trading_dates：滚动保留最近 N 个交易日（供 Worker 计算 navLag） ──
     today_local = datetime.now(timezone.utc).date()  # Action 运行时为 UTC 次日凌晨，nav_date 才是真实交易日
     # 用 data_date（本次净值对应的交易日）而非 Action 运行日期，更准确
+    # 用 or [] 兜底：历史 JSON 可能写入 null，.get() 遇到存在的 null 键不用默认值
+    prev_dates = (data.get('_meta') or {}).get('trading_dates') or []
     if data_date and is_trading_day(date.fromisoformat(data_date)):
-        prev_dates = (data.get('_meta') or {}).get('trading_dates', [])
         trading_dates = list(dict.fromkeys(prev_dates + [data_date]))  # 去重保序
         trading_dates = sorted(trading_dates)[-TRADING_DATES_WINDOW:]
     else:
-        trading_dates = (data.get('_meta') or {}).get('trading_dates', [])
+        trading_dates = prev_dates
 
     data['_meta'] = {
         'sync_time':     now_utc,

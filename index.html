@@ -1265,7 +1265,6 @@ function renderTable() {
       <td class="py-2 px-2 font-mono text-xs text-right text-primary">${priceStr}</td>
       <td class="py-2 px-2 text-right">
         <div class="font-mono text-sm font-medium ${premCls}">${premStr}${f.fxOk === false ? '<span title="汇率接口失效，当前估值未计入即时汇率变动" class="ml-1 text-yellow-400/50 text-[10px] cursor-help">⚠</span>' : ''}${f.benchStale ? '<span title="指数来自收盘快照，非实时数据" class="ml-1 text-gray-500 text-[9px] cursor-help">(收)</span>' : ''}</div>
-        <div class="font-mono text-[9px] ${f.driftStatus === 'ACTIVE' ? 'text-green-400/70' : 'text-gray-600'}">${f.driftStatus === 'ACTIVE' ? '[Drift ✓]' : '[Drift —]'}</div>
       </td>
       <td class="py-2 px-2 font-mono text-xs text-right ${chgCls}">${chgStr}</td>
       <td class="py-2 px-2 font-mono text-xs text-right ${benchCls}">${benchStr}</td>
@@ -1325,7 +1324,6 @@ function renderCards() {
           <div class="text-right flex-shrink-0 ml-3">
             <div class="font-mono text-xl font-semibold ${premCls}">${premStr}${f.fxOk === false ? '<span title="汇率接口失效，当前估值未计入即时汇率变动" class="ml-1 text-yellow-400/50 text-[10px] cursor-help">⚠</span>' : ''}${f.benchStale ? '<span title="指数来自收盘快照，非实时数据" class="ml-1 text-gray-500 text-[9px] cursor-help">(收)</span>' : ''}</div>
             <div class="font-mono text-[9px] text-muted mt-0.5">溢折价率</div>
-            <div class="font-mono text-[9px] ${f.driftStatus === 'ACTIVE' ? 'text-green-400/70' : 'text-gray-600'} mt-0.5">${f.driftStatus === 'ACTIVE' ? '[Drift ✓]' : '[Drift —]'}</div>
           </div>
         </div>
         <div class="grid grid-cols-3 gap-2 text-center border-t border-border/40 pt-2">
