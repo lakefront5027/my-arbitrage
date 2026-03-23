@@ -1229,9 +1229,24 @@ function renderTable() {
       : isPrem ? 'text-premium' : 'text-discount';
     const premStr = p != null ? (p >= 0 ? '+' : '') + p.toFixed(2) + '%' : (f.benchOk === false ? '指数缺失' : '—');
     const navStr = f.nav != null ? f.nav.toFixed(4) : '—';
+    // T-1 净值三态
+    const chainFailed = f.navLag >= 2 && !f.useChained;
     const t1NavVal = f.useChained
       ? (f.estNavYesterday != null ? f.estNavYesterday.toFixed(4) : '—')
       : (f.officialNav != null ? f.officialNav.toFixed(4) : '—');
+    const t1NavCls = f.useChained ? 'text-yellow-400/80'
+      : chainFailed ? 'text-amber-500/80' : 'text-primary/70';
+    const t1NavTag = f.useChained
+      ? '<span class="text-[9px] text-yellow-400/70 ml-0.5">est</span>'
+      : chainFailed
+        ? `<span title="净值滞后 ${f.navLag} 个交易日，链式补偿未生效，溢价率精度下降" class="text-[9px] text-amber-500/70 ml-0.5 cursor-help">T-${f.navLag}</span>`
+        : '';
+    // 溢价率补偿状态标签（公共，表格/卡片/弹窗复用）
+    const premBadges =
+      (f.fxOk === false ? '<span title="汇率缺失，估值未计入即时汇率变动" class="ml-1 text-yellow-400/60 text-[10px] cursor-help">⚠</span>' : '') +
+      (f.benchStale ? '<span title="指数来自收盘快照，非实时数据" class="ml-1 text-gray-500 text-[9px] cursor-help">(收)</span>' : '') +
+      (chainFailed ? `<span title="净值滞后 ${f.navLag} 个交易日，链式补偿未生效" class="ml-1 text-amber-500/60 text-[9px] cursor-help">(旧)</span>` : '') +
+      (f.driftStatus !== 'ACTIVE' ? '<span title="Drift 校准未激活，估值无偏差修正" class="ml-1 text-gray-600 text-[9px] cursor-help">[D—]</span>' : '');
     const priceStr = f.price != null ? f.price.toFixed(4) : '—';
     const chgStr = f.chg != null ? (f.chg >= 0 ? '+' : '') + f.chg.toFixed(2) + '%' : '—';
     const chgCls = f.chg > 0 ? 'text-green-400' : f.chg < 0 ? 'text-red-400' : 'text-muted';
@@ -1259,12 +1274,12 @@ function renderTable() {
         <span class="font-mono text-[9px] px-1.5 py-0.5 rounded ${catTag}">${catLabel}</span>
       </td>
       <td class="py-2 px-2 font-mono text-xs text-right text-primary">${navStr}</td>
-      <td class="py-2 px-2 font-mono text-xs text-right ${f.useChained ? 'text-yellow-400/80' : 'text-primary/70'}">
-        ${t1NavVal}${f.useChained ? '<span class="text-[9px] text-yellow-400/80 ml-0.5">est</span>' : ''}
+      <td class="py-2 px-2 font-mono text-xs text-right ${t1NavCls}">
+        ${t1NavVal}${t1NavTag}
       </td>
       <td class="py-2 px-2 font-mono text-xs text-right text-primary">${priceStr}</td>
       <td class="py-2 px-2 text-right">
-        <div class="font-mono text-sm font-medium ${premCls}">${premStr}${f.fxOk === false ? '<span title="汇率接口失效，当前估值未计入即时汇率变动" class="ml-1 text-yellow-400/50 text-[10px] cursor-help">⚠</span>' : ''}${f.benchStale ? '<span title="指数来自收盘快照，非实时数据" class="ml-1 text-gray-500 text-[9px] cursor-help">(收)</span>' : ''}</div>
+        <div class="font-mono text-sm font-medium ${premCls}">${premStr}${premBadges}</div>
       </td>
       <td class="py-2 px-2 font-mono text-xs text-right ${chgCls}">${chgStr}</td>
       <td class="py-2 px-2 font-mono text-xs text-right ${benchCls}">${benchStr}</td>
@@ -1304,6 +1319,12 @@ function renderCards() {
     const priceStr = f.price != null ? f.price.toFixed(4) : '—';
     const benchStr = f.benchChg != null ? (f.benchChg >= 0 ? '+' : '') + f.benchChg.toFixed(2) + '%' : '—';
     const benchCls = f.benchChg > 0 ? 'text-green-400' : f.benchChg < 0 ? 'text-red-400' : 'text-muted';
+    const chainFailed = f.navLag >= 2 && !f.useChained;
+    const premBadges =
+      (f.fxOk === false ? '<span title="汇率缺失，估值未计入即时汇率变动" class="ml-1 text-yellow-400/60 text-[10px] cursor-help">⚠</span>' : '') +
+      (f.benchStale ? '<span title="指数来自收盘快照，非实时数据" class="ml-1 text-gray-500 text-[9px] cursor-help">(收)</span>' : '') +
+      (chainFailed ? `<span title="净值滞后 ${f.navLag} 个交易日，链式补偿未生效" class="ml-1 text-amber-500/60 text-[9px] cursor-help">(旧)</span>` : '') +
+      (f.driftStatus !== 'ACTIVE' ? '<span title="Drift 校准未激活，估值无偏差修正" class="ml-1 text-gray-600 text-[9px] cursor-help">[D—]</span>' : '');
     let signalHtml = '';
     if (isAlert) {
       signalHtml = isPrem
@@ -1322,7 +1343,7 @@ function renderCards() {
             </div>
           </div>
           <div class="text-right flex-shrink-0 ml-3">
-            <div class="font-mono text-xl font-semibold ${premCls}">${premStr}${f.fxOk === false ? '<span title="汇率接口失效，当前估值未计入即时汇率变动" class="ml-1 text-yellow-400/50 text-[10px] cursor-help">⚠</span>' : ''}${f.benchStale ? '<span title="指数来自收盘快照，非实时数据" class="ml-1 text-gray-500 text-[9px] cursor-help">(收)</span>' : ''}</div>
+            <div class="font-mono text-xl font-semibold ${premCls}">${premStr}${premBadges}</div>
             <div class="font-mono text-[9px] text-muted mt-0.5">溢折价率</div>
           </div>
         </div>
@@ -1440,7 +1461,12 @@ function openModal(code) {
     </div>
 
     <div class="text-center py-4 border border-border rounded-lg mb-4" style="background:#0d0d0d">
-      <div class="font-mono text-4xl font-semibold ${premCls} ${isAlert ? 'pulse-alert' : ''}">${premStr}${f.fxOk === false ? '<span title="汇率接口失效，当前估值未计入即时汇率变动" class="ml-1 text-yellow-400/50 text-[10px] cursor-help">⚠</span>' : ''}${f.benchStale ? '<span title="指数来自收盘快照，非实时数据" class="ml-1 text-gray-500 text-[10px] cursor-help">(收)</span>' : ''}</div>
+      <div class="font-mono text-4xl font-semibold ${premCls} ${isAlert ? 'pulse-alert' : ''}">${premStr}${
+        (f.fxOk === false ? '<span title="汇率缺失，估值未计入即时汇率变动" class="ml-1 text-yellow-400/60 text-[11px] cursor-help">⚠</span>' : '') +
+        (f.benchStale ? '<span title="指数来自收盘快照，非实时数据" class="ml-1 text-gray-500 text-[10px] cursor-help">(收)</span>' : '') +
+        (f.navLag >= 2 && !f.useChained ? `<span title="净值滞后 ${f.navLag} 个交易日，链式补偿未生效" class="ml-1 text-amber-500/70 text-[10px] cursor-help">(旧)</span>` : '') +
+        (f.driftStatus !== 'ACTIVE' ? '<span title="Drift 校准未激活，估值无偏差修正" class="ml-1 text-gray-600 text-[10px] cursor-help">[D—]</span>' : '')
+      }</div>
       <div class="font-mono text-[10px] text-muted mt-1">溢折价率</div>
     </div>
 
