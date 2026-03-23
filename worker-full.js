@@ -519,7 +519,7 @@ async function fetchEastmoney() {
 async function fetchSina() {
   try {
     // fx_shkdcnh = 正确的港元兑离岸人民币代码（fx_shkcnh 为无效代码，返回空串）
-    const list = 'nf_AG0,sz399987,sz399998,fx_susdcnh,fx_shkdcnh';
+    const list = 'nf_AG0,sz399961,sz399979,sz399987,sz399998,fx_susdcnh,fx_shkdcnh';
     const url = `https://hq.sinajs.cn/list=${list}`;
     const resp = await fetch(url, {
       headers: {
@@ -542,8 +542,9 @@ async function fetchSina() {
       if (cur > 0 && prev > 0) out.sinaAG0 = (cur - prev) / prev * 100;
     }
 
-    // A股指数：p[3]=现价，p[2]=昨收（sz399961/sz399979 由 EM_CODES 提供，不在此列）
-    for (const code of ['sz399987', 'sz399998']) {
+    // A股指数：p[3]=现价，p[2]=昨收
+    // sz399961/sz399979：腾讯盘中冻结在09:00，Sina 覆盖策略保证实时值正确
+    for (const code of ['sz399961', 'sz399979', 'sz399987', 'sz399998']) {
       const re = new RegExp(`hq_str_${code}="([^"]+)"`);
       const m = text.match(re);
       if (m) {
