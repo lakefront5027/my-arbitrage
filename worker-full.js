@@ -185,6 +185,8 @@ const BENCH = {
 // NO_GSZ_FUNDS 已移除 — NAV 统一由 GitHub Action 写入 fund_daily.json
 
 // ── 东方财富代码映射（腾讯不支持或盘中返回0的指数的兜底数据源）────────────
+// 注意：sinaAG0 (113.AG0) EM 返回 rc=100/data:null，已确认 EM 不支持该代码；
+//       sinaAG0 只能由新浪 nf_AG0 提供，收盘后由 idx_closing.json 兜底。
 const EM_CODES = {
   'csi930917': '2.930917',
   'csi930914': '2.930914',
@@ -193,9 +195,9 @@ const EM_CODES = {
   'hkHSSI':    '124.HSSI',
   'hkHSMI':    '124.HSMI',
   'hkHSCI':    '124.HSCI',
-  'sinaAG0':   '113.AG0',   // 上期所白银主力合约（东财 secid）
-  'sz399961':  '0.399961',  // 中证资源与环境（EM 兜底：腾讯盘中应有值，EM 采用填空策略）
-  'sz399979':  '0.399979',  // 中证大宗商品股票（EM 兜底：腾讯盘中应有值，EM 采用填空策略）
+  // sz399961/sz399979：腾讯已纳入实时拉取；EM 仅在腾讯返回 null 时填空（fill-only 策略）
+  'sz399961':  '0.399961',  // 中证资源与环境（161217）
+  'sz399979':  '0.399979',  // 中证大宗商品股票（161715）
 };
 
 // ── 商品类指数/期货（单日允许更大波动，±30% 阈值）────────
@@ -284,8 +286,11 @@ function getAllTqCodes() {
   });
   TICKER_IDX.forEach(i => set.add(i.tq));
   // 新浪/东财专属，不走腾讯
-  ['sinaAG0','csi930917','csi930914','csi930792','sh000985','hkHSSI','hkHSMI','hkHSCI',
-   'sz399961','sz399979'].forEach(c => set.delete(c));
+  // sz399961/sz399979：腾讯实时可访问，不排除（EM fill-only 兜底）
+  // sinaAG0 腾讯不识别，替换为 nf_AG0（白银主力期货，解析后映射回 sinaAG0）
+  ['sinaAG0','csi930917','csi930914','csi930792','sh000985',
+   'hkHSSI','hkHSMI','hkHSCI'].forEach(c => set.delete(c));
+  set.add('nf_AG0');
   return [...set];
 }
 
@@ -424,7 +429,8 @@ async function fetchTencent(daily = null) {
     });
     TICKER_IDX.forEach(i => allIdxCodes.add(i.tq));
     // 排除新浪/东财专属，不在腾讯请求中
-    // sz399961/sz399979 为A股指数，腾讯可访问，已移出排除列表（盘中EM返回f170=0，腾讯提供实时值）
+    // sz399961/sz399979：腾讯可访问，实时数据由腾讯提供（EM fill-only 兜底）
+    // sinaAG0：仅新浪 nf_AG0 有效，腾讯无此代码
     ['sinaAG0','csi930917','csi930914','csi930792','sh000985',
      'hkHSSI','hkHSMI','hkHSCI'].forEach(c => allIdxCodes.delete(c));
 
@@ -440,6 +446,14 @@ async function fetchTencent(daily = null) {
           chg: prev > 0 ? (price - prev) / prev * 100 : 0,
         };
       }
+    }
+
+    // 白银期货：nf_AG0 → sinaAG0（腾讯兜底；Sina 可用时在后续 merge 中覆盖）
+    const rawAG0 = lineMap['nf_AG0'];
+    if (rawAG0 && rawAG0.length > 5) {
+      const p = rawAG0.split('~');
+      const price = parseFloat(p[3]), prev = parseFloat(p[4]);
+      if (price > 0 && prev > 0) result.indices['sinaAG0'] = { price, chg: (price - prev) / prev * 100 };
     }
 
     // 持仓个股涨跌幅（Plan A：仅 HK + A股；US 跳过，归入 bench 残差）
@@ -506,8 +520,9 @@ async function fetchEastmoney() {
 }
 
 /**
- * 新浪财经：拉取白银AG0 + A股指数 sz399987/sz399998 + 实时汇率
- * sz399961/sz399979 已移至 EM_CODES（新浪 merge 顺序在 EM 之后，会覆盖 EM 的正确值）
+ * 新浪财经：拉取白银AG0（nf_AG0）+ A股指数 sz399987/sz399998 + 实时汇率
+ * sinaAG0 唯一来源：新浪 nf_AG0（EM 113.AG0 不支持，返回 rc=100/data:null）
+ * sz399961/sz399979：腾讯实时拉取，EM fill-only 兜底；新浪无对应 API
  * 返回 { sinaAG0: chg, sz399987: chg, sz399998: chg, _fxUsdCnh, _fxHkdCnh }
  */
 async function fetchSina() {

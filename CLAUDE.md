@@ -380,7 +380,7 @@ idxChg[code] = null（未抓到）
 | 指数 | 主数据源 | 兜底来源 | 说明 |
 |------|---------|---------|------|
 | `sz399961` / `sz399979` | 腾讯（盘中实时） | EM fill-only | EM 对这两个指数盘中返回 f170=0，腾讯提供正确实时值；EM 仅作填空备份 |
-| `sinaAG0` | 新浪 nf_AG0（Worker 代理） | EM 113.AG0 | Worker 优先；直连模式 EM 兜底 |
+| `sinaAG0` | 新浪 nf_AG0（Worker 代理） | 腾讯 nf_AG0（fill-only 兜底） → 收盘快照 | **EM 113.AG0 无效**（rc=100/data:null，已从 EM_CODES 移除）；腾讯支持 nf_AG0，映射为 sinaAG0 |
 | `csi93xxxx` / `sh000985` | 东财 EM（唯一来源） | 收盘快照 | 腾讯不支持 |
 | `hkHSSI` / `hkHSMI` / `hkHSCI` | 东财 EM | hkHSI 降级链 | 腾讯不支持 |
 
@@ -390,9 +390,8 @@ idxChg[code] = null（未抓到）
 ```
 
 > 历史：2026-03 发现 161217/161715/161226 基准持续显示 0%。
-> 根因 1：`sz399961`/`sz399979` 遗漏加入东财，后移入 EM_CODES；但 EM 对此类计算型指数盘中返回 f170=0。
-> 根因 2：EM 合并策略为覆盖（overwrite），导致 EM 的 0 覆盖腾讯的正确值。
-> 修复：`sz399961`/`sz399979` 从腾讯排除列表移除，EM 改为 fill-only 策略。
+> 根因 1：`sz399961`/`sz399979` 遗漏加入东财；后移入 EM_CODES 但 EM 对计算型指数盘中返回 f170=0，EM 合并（overwrite）导致 0 覆盖正确值。修复：EM 改为 fill-only，`sz399961`/`sz399979` 由腾讯实时提供，EM 仅在腾讯返回 null 时填空。
+> 根因 2：`sinaAG0: '113.AG0'` 在 EM_CODES 中是死项（EM 返回 rc=100/data:null），已确认并移除。161226 在交易时段唯一来源为新浪 nf_AG0（Worker 通过代理访问），直连模式无来源，显示"指数缺失"属正常。
 
 #### 5.6 汇率数据规范（关键约束）
 
@@ -572,7 +571,7 @@ const tqData = tqRes.status === 'fulfilled' ? tqRes.value : { funds:{}, indices:
 | 腾讯行情（价格/A股/HK指数） | ✅ 可用 | JSONP，无 CORS 限制 |
 | 东财 EM 指数 | ✅ 可用 | fetch，push2 有 CORS 头 |
 | 新浪 FX（USD/CNH, HKD/CNH） | ❌ 不可用 | Referer 校验；腾讯经测试不提供任何 FX 代码 |
-| 白银 AG0（sinaAG0） | ⚠️ EM 兜底 | Sina 不可直连，EM `113.AG0` 可提供但非实时 |
+| 白银 AG0（sinaAG0） | ✅ 腾讯 nf_AG0 兜底 | 腾讯 `nf_AG0` 可直连（JSONP），解析后映射为 `sinaAG0`；EM `113.AG0` **无效** |
 | FX ⚠️ 警告 | 必然出现 | 直连 FX=null 是固有限制，正确行为，非 Bug |
 
 ---

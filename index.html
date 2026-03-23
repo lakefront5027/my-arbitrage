@@ -314,10 +314,12 @@ const BENCH = {
 };
 
 // 东方财富专属指数代码（腾讯不支持）
+// 注意：sinaAG0 (113.AG0) EM 返回 rc=100/data:null，EM 不支持该代码，已移除。
+//       sz399961/sz399979：fill-only 兜底，仅在腾讯返回 null 时生效。
 const EM_CODES = {
   'csi930917':'2.930917', 'csi930914':'2.930914', 'csi930792':'2.930792',
   'sh000985':'1.000985',  'hkHSSI':'124.HSSI',    'hkHSMI':'124.HSMI',
-  'hkHSCI':'124.HSCI',    'sinaAG0':'113.AG0',
+  'hkHSCI':'124.HSCI',
   'sz399961':'0.399961',  'sz399979':'0.399979',
 };
 
@@ -366,9 +368,10 @@ function getAllTqCodes() {
     else set.add(b);
   });
   TICKER_IDX.forEach(i => set.add(i.tq));
-  // 东方财富专属，不走腾讯
-  // 排除新浪/东财专属，不走腾讯；sz399961/sz399979 为A股指数，腾讯可直接访问，保留在请求中
+  // 东方财富专属，不走腾讯；sz399961/sz399979 A股指数，保留腾讯请求
+  // sinaAG0 腾讯不识别，替换为 nf_AG0（白银主力，解析后映射回 sinaAG0）
   ['sinaAG0','csi930917','csi930914','csi930792','sh000985','hkHSSI','hkHSMI','hkHSCI'].forEach(c => set.delete(c));
+  set.add('nf_AG0');
   return [...set];
 }
 
@@ -408,6 +411,13 @@ function fetchTencent(daily = null) {
         const price = parseFloat(p[3]), prev = parseFloat(p[4]);
         if (price > 0) r.indices[tq] = { chg: prev > 0 ? (price - prev) / prev * 100 : 0 };
       });
+      // 白银期货：nf_AG0 → sinaAG0（直连模式兜底；Worker 模式下 Sina 会覆盖）
+      const vAG0 = window['v_nf_AG0'];
+      if (vAG0 && vAG0.length > 5) {
+        const p = vAG0.split('~');
+        const price = parseFloat(p[3]), prev = parseFloat(p[4]);
+        if (price > 0 && prev > 0) r.indices['sinaAG0'] = { chg: (price - prev) / prev * 100 };
+      }
       // 解析持仓个股涨跌幅（HK + A股 = 盘中实时；US = T-1 昨收涨跌，仅供展示）
       holdingTqs.forEach(tq => {
         const v = window['v_' + tq];
