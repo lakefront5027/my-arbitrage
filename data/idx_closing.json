@@ -1,8 +1,15 @@
 {
+  "sinaAG0": {
+    "chg": -11.6747,
+    "date": "2026-03-23",
+    "sync_at": "2026-03-23T08:06:47Z"
+  },
   "_meta": {
-    "sync_at": null,
-    "trading_date": null,
-    "failed": [],
-    "note": "populated by closing-data-sync.yml at 15:05 Beijing on trading days"
+    "sync_at": "2026-03-23T08:06:47Z",
+    "trading_date": "2026-03-23",
+    "failed": [
+      "sz399961",
+      "sz399979"
+    ]
   }
 }
