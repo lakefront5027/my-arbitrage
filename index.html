@@ -114,9 +114,24 @@ tailwind.config = {
 ══════════════════════════════════════════════════ -->
 <main class="max-w-screen-2xl mx-auto px-3 md:px-6 py-4">
 
-  <!-- Stats: hidden s0-s3 anchors kept for JS compatibility -->
-  <div class="hidden">
-    <span id="s0"></span><span id="s1"></span><span id="s2"></span><span id="s3"></span>
+  <!-- Stats bar -->
+  <div class="grid grid-cols-4 gap-2 mb-4">
+    <div class="bg-surface border border-border rounded p-3">
+      <div class="font-mono text-[9px] text-muted tracking-widest mb-1">基金总数</div>
+      <div id="s0" class="font-mono text-2xl font-semibold text-primary">47</div>
+    </div>
+    <div class="bg-surface border border-border rounded p-3">
+      <div class="font-mono text-[9px] text-muted tracking-widest mb-1">预警数</div>
+      <div id="s1" class="font-mono text-2xl font-semibold text-alert">—</div>
+    </div>
+    <div class="bg-surface border border-border rounded p-3">
+      <div class="font-mono text-[9px] text-muted tracking-widest mb-1">最大溢价</div>
+      <div id="s2" class="font-mono text-2xl font-semibold text-premium">—</div>
+    </div>
+    <div class="bg-surface border border-border rounded p-3">
+      <div class="font-mono text-[9px] text-muted tracking-widest mb-1">最大折价</div>
+      <div id="s3" class="font-mono text-2xl font-semibold text-discount">—</div>
+    </div>
   </div>
 
   <!-- Controls row -->
@@ -149,9 +164,9 @@ tailwind.config = {
   </div>
 
   <!-- Desktop Table -->
-  <div class="hidden md:block overflow-auto" style="max-height: calc(100vh - 130px)">
+  <div class="hidden md:block" style="overflow-x:auto;overflow-y:clip">
     <table class="w-full border-collapse text-sm">
-      <thead class="sticky top-0 z-10">
+      <thead class="sticky z-10" style="top:78px">
         <tr class="border-b border-border text-left" style="background:#0d0d0d">
           <th class="font-mono text-[10px] text-gray-400 py-2 px-3 tracking-wider cursor-pointer" onclick="setSort('name')">
             名称 <span id="sort-name" class="sort-arrow">↕</span>
