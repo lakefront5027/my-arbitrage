@@ -2,8 +2,10 @@ name: Daily Fund Data Sync
 
 on:
   schedule:
-    # 16:05 UTC = 00:05 北京时间（次日凌晨），每天运行
-    - cron: '5 16 * * *'
+    # 23:00 UTC = 07:00 北京时间，每天运行
+    # 此时美股已收盘 3h+，港股已收盘 15h+，A股已收盘 16h+
+    # 确保 USO/BNO/QQQ 等美股 ETF 拿到前一交易日准确收盘涨跌幅
+    - cron: '0 23 * * *'
   workflow_dispatch:   # 支持手动触发
 
 jobs:
