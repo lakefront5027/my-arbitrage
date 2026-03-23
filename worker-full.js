@@ -184,7 +184,7 @@ const BENCH = {
 
 // NO_GSZ_FUNDS 已移除 — NAV 统一由 GitHub Action 写入 fund_daily.json
 
-// ── 东方财富代码映射（腾讯不支持的指数） ────────────
+// ── 东方财富代码映射（腾讯不支持或盘中返回0的指数的兜底数据源）────────────
 const EM_CODES = {
   'csi930917': '2.930917',
   'csi930914': '2.930914',
@@ -194,8 +194,8 @@ const EM_CODES = {
   'hkHSMI':    '124.HSMI',
   'hkHSCI':    '124.HSCI',
   'sinaAG0':   '113.AG0',   // 上期所白银主力合约（东财 secid）
-  'sz399961':  '0.399961',  // 中证资源与环境（腾讯/新浪均不支持）
-  'sz399979':  '0.399979',  // 中证大宗商品股票（腾讯/新浪均不支持）
+  'sz399961':  '0.399961',  // 中证资源与环境（EM 兜底：腾讯盘中应有值，EM 采用填空策略）
+  'sz399979':  '0.399979',  // 中证大宗商品股票（EM 兜底：腾讯盘中应有值，EM 采用填空策略）
 };
 
 // ── 商品类指数/期货（单日允许更大波动，±30% 阈值）────────
@@ -424,8 +424,9 @@ async function fetchTencent(daily = null) {
     });
     TICKER_IDX.forEach(i => allIdxCodes.add(i.tq));
     // 排除新浪/东财专属，不在腾讯请求中
+    // sz399961/sz399979 为A股指数，腾讯可访问，已移出排除列表（盘中EM返回f170=0，腾讯提供实时值）
     ['sinaAG0','csi930917','csi930914','csi930792','sh000985',
-     'hkHSSI','hkHSMI','hkHSCI','sz399961','sz399979'].forEach(c => allIdxCodes.delete(c));
+     'hkHSSI','hkHSMI','hkHSCI'].forEach(c => allIdxCodes.delete(c));
 
     for (const tqCode of allIdxCodes) {
       const raw = lineMap[tqCode];
@@ -731,7 +732,9 @@ async function fetchAllData(env = {}) {
     }
   }
   Object.entries(tqData.indices).forEach(([code, d]) => setIdx(code, d.chg));
-  Object.entries(emIdx).forEach(([code, chg]) => setIdx(code, chg));
+  // EM 填空策略：仅填充腾讯未抓到的指数，不覆盖腾讯已有的实时值
+  Object.entries(emIdx).forEach(([code, chg]) => { if (idxChg[code] == null) setIdx(code, chg); });
+  // Sina 覆盖策略：Sina 优先级最高（nf_AG0 更实时），允许覆盖 EM 的值
   Object.entries(sinaIdx).forEach(([code, chg]) => {
     if (!code.startsWith('_')) setIdx(code, chg);
   });
