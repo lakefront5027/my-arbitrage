@@ -478,7 +478,13 @@ async function fetchEastmoney() {
     Object.entries(EM_CODES).map(async ([key, secid]) => {
       try {
         const url = `https://push2.eastmoney.com/api/qt/stock/get?secid=${secid}&fields=f43,f169,f170`;
-        const resp = await fetch(url);
+        const resp = await fetch(url, {
+          headers: {
+            'Referer':    'https://quote.eastmoney.com/',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+            'Accept':     'application/json, text/plain, */*',
+          },
+        });
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const d = await resp.json();
         // 不依赖 f43：CSI 计算型指数 f43 可能为 null/0，但 f170 仍有效
@@ -506,12 +512,15 @@ async function fetchEastmoney() {
  */
 async function fetchSina() {
   try {
-    const list = 'nf_AG0,sz399987,sz399998,fx_susdcnh,fx_shkcnh';
+    // fx_shkdcnh = 正确的港元兑离岸人民币代码（fx_shkcnh 为无效代码，返回空串）
+    const list = 'nf_AG0,sz399987,sz399998,fx_susdcnh,fx_shkdcnh';
     const url = `https://hq.sinajs.cn/list=${list}`;
     const resp = await fetch(url, {
       headers: {
-        'Referer': 'https://finance.sina.com.cn',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Referer':          'https://finance.sina.com.cn/',
+        'User-Agent':       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        'Accept':           '*/*',
+        'Accept-Language':  'zh-CN,zh;q=0.9',
       }
     });
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
@@ -539,8 +548,8 @@ async function fetchSina() {
     }
 
     // FX 现价（绝对值，非涨跌幅）供 calcAdjustedBenchChg 使用
-    // fx_susdcnh = USD/CNH 离岸人民币，fx_shkcnh = HKD/CNH
-    for (const [sinaCode, outKey] of [['fx_susdcnh', '_fxUsdCnh'], ['fx_shkcnh', '_fxHkdCnh']]) {
+    // fx_susdcnh = USD/CNH 离岸人民币；fx_shkdcnh = HKD/CNH（注意：fx_shkcnh 为无效代码）
+    for (const [sinaCode, outKey] of [['fx_susdcnh', '_fxUsdCnh'], ['fx_shkdcnh', '_fxHkdCnh']]) {
       const re = new RegExp(`hq_str_${sinaCode}="([^"]+)"`);
       const m = text.match(re);
       if (m) {
