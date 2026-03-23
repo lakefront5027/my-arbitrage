@@ -445,15 +445,18 @@ function fetchTencent(daily = null) {
     }, 10000);
     s.onload = () => {
       if (done) return; done = true; clearTimeout(t);
-      const r = { funds: {}, indices: {}, stockChg: {} };
-      // 解析基金行情
+      const r = { funds: {}, indices: {}, stockChg: {}, aShareDate: null };
+      // 解析基金行情，同时从第一个有效条目提取 A 股交易日期
       FUNDS.forEach(f => {
         const v = window['v_' + f.tq];
         if (!v || v.length < 10) return;
         const p = v.split('~');
         const price = parseFloat(p[3]), prev = parseFloat(p[4]);
         const vol = parseFloat(p[37]) || 0;
-        if (price > 0) r.funds[f.code] = { price, prevClose: prev, chg: prev > 0 ? (price - prev) / prev * 100 : 0, vol };
+        if (price > 0) {
+          r.funds[f.code] = { price, prevClose: prev, chg: prev > 0 ? (price - prev) / prev * 100 : 0, vol };
+          if (!r.aShareDate) r.aShareDate = parseTencentDate(p);
+        }
       });
       // 解析指数行情
       const idxSet = new Set();
@@ -468,7 +471,10 @@ function fetchTencent(daily = null) {
         if (!v || v.length < 5) return;
         const p = v.split('~');
         const price = parseFloat(p[3]), prev = parseFloat(p[4]);
-        if (price > 0) r.indices[tq] = { chg: prev > 0 ? (price - prev) / prev * 100 : 0 };
+        if (price > 0) {
+          r.indices[tq] = { chg: prev > 0 ? (price - prev) / prev * 100 : 0 };
+          if (!r.aShareDate) r.aShareDate = parseTencentDate(p);
+        }
       });
       // 解析持仓个股涨跌幅（HK + A股 = 盘中实时；US = T-1 昨收涨跌，仅供展示）
       holdingTqs.forEach(tq => {
@@ -802,6 +808,32 @@ let _fundDailyLoaded = false;
 let _idxClosing = null;
 let _idxClosingTs = 0;
 
+// ── 时间驱动协议辅助函数（与 worker-full.js 保持完全一致） ──────
+
+function parseTencentDate(fields) {
+  for (const idx of [30, 29, 28, 31]) {
+    const s = fields[idx];
+    if (!s) continue;
+    const m = String(s).match(/^(2\d{3})(0[1-9]|1[0-2])([0-2]\d|3[01])/);
+    if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+  }
+  return null;
+}
+
+function resolveNavBasis(navDate, benchDate, useChained, fxDate, isCrossBorder) {
+  if (!benchDate) {
+    return { type: 'T-1_ESTIMATED', aligned: false, reason: 'NO_BENCH_DATE' };
+  }
+  if (navDate && navDate >= benchDate) {
+    return { type: 'T0_OFFICIAL', aligned: true, navDate, benchDate };
+  }
+  const type = useChained ? 'T-2_CHAINED' : 'T-1_ESTIMATED';
+  if (isCrossBorder && fxDate && fxDate !== benchDate) {
+    return { type, aligned: false, reason: 'FX_DATE_MISMATCH', navDate, benchDate, fxDate };
+  }
+  return { type, aligned: true, navDate, benchDate };
+}
+
 // ── 交易日工具函数（与 worker-full.js 保持一致） ──────
 let _tradingDates = null;  // Set<string>
 
@@ -1074,22 +1106,39 @@ async function doRefresh() {
         const alpha        = driftActive ? Math.max(-0.02, Math.min(0.02, drift5d)) : 0;
         const driftStatus  = driftActive ? 'ACTIVE' : 'SUSPENDED';
 
-        // T-2 检测与链式修正（同 Worker 逻辑）
-        const todayStr = new Date().toISOString().slice(0, 10);
-        const navLag   = navDate ? tradingDayLag(navDate, todayStr) : 99;
+        // ── 时间驱动协议（与 worker-full.js 逻辑完全一致）──
+        const isCrossBorder = f.cat === 'us' || f.cat === 'hk';
+        // benchDate 从数据源时间戳获取：降级模式无 Yahoo usDate，US 基金退化为 aShareDate 近似
+        let benchDate = null;
+        if (benchStale && closingData) {
+          const benchCode = Array.isArray(BENCH[f.code]) ? BENCH[f.code][0].tq : BENCH[f.code];
+          const entry = closingData[benchCode];
+          if (entry && entry.date) benchDate = entry.date;
+        } else {
+          benchDate = tqData.aShareDate;  // 降级路径无 Yahoo，统一用 A 股时间戳
+        }
+
+        const navLag = (navDate && benchDate) ? tradingDayLag(navDate, benchDate) : 99;
         const estNavYesterday = fundDaily ? (fundDaily.est_nav_yesterday || null) : null;
         const navFetchTime    = fundDaily ? (fundDaily.nav_fetch_time || null) : null;
         const fetchAgeH       = navFetchTime ? (Date.now() - new Date(navFetchTime).getTime()) / 3600000 : 999;
         const useChained = estNavYesterday && navLag >= 2 && fetchAgeH <= 36;
         const base = useChained ? estNavYesterday : (officialNav || prevClose);
 
+        // 降级模式下 fxDate 不可用（Sina 无法直连），不做 FX 日期校验
+        const navBasis = resolveNavBasis(navDate, benchDate, useChained, null, false);
+
         let nav = null, premium = null;
-        if (base > 0 && price != null && dynNavReturn != null) {  // dynNavReturn null = 指数缺失
-          nav = base * (1 + dynNavReturn / 100) * (1 + alpha);
-          premium = (price - nav) / nav * 100;
+        if (base > 0 && price != null) {
+          if (navBasis.type === 'T0_OFFICIAL') {
+            nav = base;
+          } else if (dynNavReturn != null) {
+            nav = base * (1 + dynNavReturn / 100) * (1 + alpha);
+          }
+          if (nav != null) premium = (price - nav) / nav * 100;
         }
         const holdingsDate = fundDaily ? (fundDaily.holdings_date || null) : null;
-        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, estNavYesterday: useChained ? estNavYesterday : null, navDate, navLag, useChained, premium, benchChg, benchOk, benchStale, fxOk, fxAdj, holdingCoverage, holdingsDate, drift5d, driftN, driftStatus, quota: f.quota, fee: f.fee, rfee: f.rfee, vol, _src: 'L' };
+        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, estNavYesterday: useChained ? estNavYesterday : null, navDate, navLag, useChained, navBasis, premium, benchChg, benchOk, benchStale, fxOk, fxAdj, holdingCoverage, holdingsDate, drift5d, driftN, driftStatus, quota: f.quota, fee: f.fee, rfee: f.rfee, vol, _src: 'L' };
       });
       indices = {};
       TICKER_IDX.forEach(i => {
@@ -1261,10 +1310,21 @@ function renderTable() {
         ? `<span title="净值滞后 ${f.navLag} 个交易日，链式补偿未生效，溢价率精度下降" class="text-[9px] text-amber-500/70 ml-0.5 cursor-help">T-${f.navLag}</span>`
         : '';
     // 溢价率补偿状态标签（公共，表格/卡片/弹窗复用）
+    // navBasis 时间戳标注：T0_OFFICIAL = 今日官方净值，T-1_ESTIMATED = 估算，T-2_CHAINED = 链式
+    const nb = f.navBasis;
+    const navBasisTag = (() => {
+      if (!nb) return '';
+      const d = nb.navDate ? nb.navDate.slice(5) : '';  // "MM-DD"
+      if (nb.type === 'T0_OFFICIAL')   return `<span title="今日官方净值直接比价（${nb.navDate}）" class="ml-1 text-gray-400 text-[9px] cursor-help">[官]</span>`;
+      if (nb.type === 'T-2_CHAINED')   return `<span title="T-2 链式补偿估算（基于 ${d}）" class="ml-1 text-yellow-400/60 text-[9px] cursor-help">[链 ${d}]</span>`;
+      if (!nb.aligned) return `<span title="时间戳对齐异常：${nb.reason || '?'}" class="ml-1 text-red-400/70 text-[9px] cursor-help">⚠日期</span>`;
+      return `<span title="T-1 估算（基于 ${d}）" class="ml-1 text-gray-500 text-[9px] cursor-help">[估 ${d}]</span>`;
+    })();
     const premBadges =
       (f.fxOk === false ? '<span title="汇率缺失，估值未计入即时汇率变动" class="ml-1 text-yellow-400/60 text-[10px] cursor-help">⚠</span>' : '') +
       (f.benchStale ? '<span title="指数来自收盘快照，非实时数据" class="ml-1 text-gray-500 text-[9px] cursor-help">(收)</span>' : '') +
       (chainFailed ? `<span title="净值滞后 ${f.navLag} 个交易日，链式补偿未生效" class="ml-1 text-amber-500/60 text-[9px] cursor-help">(旧)</span>` : '') +
+      navBasisTag +
       (f.driftStatus !== 'ACTIVE' ? '<span title="Drift 校准未激活，估值无偏差修正" class="ml-1 text-gray-600 text-[9px] cursor-help">[D—]</span>' : '');
     const priceStr = f.price != null ? f.price.toFixed(4) : '—';
     const chgStr = f.chg != null ? (f.chg >= 0 ? '+' : '') + f.chg.toFixed(2) + '%' : '—';
@@ -1340,10 +1400,20 @@ function renderCards() {
     const benchStr = f.benchChg != null ? (f.benchChg >= 0 ? '+' : '') + f.benchChg.toFixed(2) + '%' : '—';
     const benchCls = f.benchChg > 0 ? 'text-green-400' : f.benchChg < 0 ? 'text-red-400' : 'text-muted';
     const chainFailed = f.navLag >= 2 && !f.useChained;
+    const nb2 = f.navBasis;
+    const navBasisTag2 = (() => {
+      if (!nb2) return '';
+      const d = nb2.navDate ? nb2.navDate.slice(5) : '';
+      if (nb2.type === 'T0_OFFICIAL') return `<span title="今日官方净值直接比价（${nb2.navDate}）" class="ml-1 text-gray-400 text-[9px] cursor-help">[官]</span>`;
+      if (nb2.type === 'T-2_CHAINED') return `<span title="T-2 链式补偿估算（基于 ${d}）" class="ml-1 text-yellow-400/60 text-[9px] cursor-help">[链 ${d}]</span>`;
+      if (!nb2.aligned) return `<span title="时间戳对齐异常：${nb2.reason || '?'}" class="ml-1 text-red-400/70 text-[9px] cursor-help">⚠日期</span>`;
+      return `<span title="T-1 估算（基于 ${d}）" class="ml-1 text-gray-500 text-[9px] cursor-help">[估 ${d}]</span>`;
+    })();
     const premBadges =
       (f.fxOk === false ? '<span title="汇率缺失，估值未计入即时汇率变动" class="ml-1 text-yellow-400/60 text-[10px] cursor-help">⚠</span>' : '') +
       (f.benchStale ? '<span title="指数来自收盘快照，非实时数据" class="ml-1 text-gray-500 text-[9px] cursor-help">(收)</span>' : '') +
       (chainFailed ? `<span title="净值滞后 ${f.navLag} 个交易日，链式补偿未生效" class="ml-1 text-amber-500/60 text-[9px] cursor-help">(旧)</span>` : '') +
+      navBasisTag2 +
       (f.driftStatus !== 'ACTIVE' ? '<span title="Drift 校准未激活，估值无偏差修正" class="ml-1 text-gray-600 text-[9px] cursor-help">[D—]</span>' : '');
     let signalHtml = '';
     if (isAlert) {
@@ -1486,6 +1556,7 @@ function openModal(code) {
         (f.fxOk === false ? '<span title="汇率缺失，估值未计入即时汇率变动" class="ml-1 text-yellow-400/60 text-[11px] cursor-help">⚠</span>' : '') +
         (f.benchStale ? '<span title="指数来自收盘快照，非实时数据" class="ml-1 text-gray-500 text-[10px] cursor-help">(收)</span>' : '') +
         (f.navLag >= 2 && !f.useChained ? `<span title="净值滞后 ${f.navLag} 个交易日，链式补偿未生效" class="ml-1 text-amber-500/70 text-[10px] cursor-help">(旧)</span>` : '') +
+        (() => { const nb3 = f.navBasis; if (!nb3) return ''; const d = nb3.navDate ? nb3.navDate.slice(5) : ''; if (nb3.type === 'T0_OFFICIAL') return `<span title="今日官方净值直接比价（${nb3.navDate}）" class="ml-1 text-gray-400 text-[10px] cursor-help">[官]</span>`; if (nb3.type === 'T-2_CHAINED') return `<span title="T-2 链式补偿（基于 ${d}）" class="ml-1 text-yellow-400/60 text-[10px] cursor-help">[链 ${d}]</span>`; if (!nb3.aligned) return `<span title="时间戳对齐异常：${nb3.reason||'?'}" class="ml-1 text-red-400/70 text-[10px] cursor-help">⚠日期</span>`; return `<span title="T-1 估算（基于 ${d}）" class="ml-1 text-gray-500 text-[10px] cursor-help">[估 ${d}]</span>`; })() +
         (f.driftStatus !== 'ACTIVE' ? '<span title="Drift 校准未激活，估值无偏差修正" class="ml-1 text-gray-600 text-[10px] cursor-help">[D—]</span>' : '')
       }</div>
       <div class="font-mono text-[10px] text-muted mt-1">溢折价率</div>

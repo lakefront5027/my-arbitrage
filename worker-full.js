@@ -259,6 +259,44 @@ function isBjTradingHours() {
   return isTradingDay(bjDate) && mins >= 555 && mins < 900;  // 09:15–15:00
 }
 
+/**
+ * 从腾讯行情字段数组中解析 A 股交易日期。
+ * 字段 p[30] 通常为 "YYYYMMDDHHMMSS"；p[29] 有时为纯日期 "YYYYMMDD"。
+ * 不使用服务器时钟，日期来自数据本身。
+ */
+function parseTencentDate(fields) {
+  for (const idx of [30, 29, 28, 31]) {
+    const s = fields[idx];
+    if (!s) continue;
+    const m = String(s).match(/^(2\d{3})(0[1-9]|1[0-2])([0-2]\d|3[01])/);
+    if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+  }
+  return null;
+}
+
+/**
+ * 根据 navDate 与 benchDate 的时间对齐关系，确定估值路径与置信度。
+ * - T0_OFFICIAL  : navDate >= benchDate，今日官方净值已发布，直接使用
+ * - T-1_ESTIMATED: navDate = benchDate−1，正常盘中估算
+ * - T-2_CHAINED  : navDate < benchDate−1，链式补偿
+ * - aligned=false: 日期不对齐（benchDate 未知 / QDII 汇率日期错位）
+ */
+function resolveNavBasis(navDate, benchDate, useChained, fxDate, isCrossBorder) {
+  if (!benchDate) {
+    return { type: 'T-1_ESTIMATED', aligned: false, reason: 'NO_BENCH_DATE' };
+  }
+  // navDate >= benchDate：当日官方净值已包含 benchDate 的市场变动，不应再叠加
+  if (navDate && navDate >= benchDate) {
+    return { type: 'T0_OFFICIAL', aligned: true, navDate, benchDate };
+  }
+  const type = useChained ? 'T-2_CHAINED' : 'T-1_ESTIMATED';
+  // QDII 双日期校验：汇率归属日与基准指数归属日必须一致
+  if (isCrossBorder && fxDate && fxDate !== benchDate) {
+    return { type, aligned: false, reason: 'FX_DATE_MISMATCH', navDate, benchDate, fxDate };
+  }
+  return { type, aligned: true, navDate, benchDate };
+}
+
 /** 合理性校验：指数单日涨跌幅是否在合理范围内（过滤解析脏数据） */
 function idxSanityOk(tqCode, chg) {
   if (chg == null || !isFinite(chg)) return false;
@@ -342,6 +380,7 @@ const FUTURES_MAP = {
  */
 async function fetchYahooFutures() {
   const overrides = {};
+  let _usDate = null;
   await Promise.all(Object.entries(FUTURES_MAP).map(async ([sym, tqCodes]) => {
     try {
       const url = `https://query1.finance.yahoo.com/v8/finance/chart/${sym}?interval=1m&range=1d`;
@@ -355,12 +394,20 @@ async function fetchYahooFutures() {
       if (!meta) return;
       const chgPct = meta.regularMarketChangePercent;
       if (chgPct == null || !isFinite(chgPct)) return;
+      // 从 regularMarketTime（Unix 秒）提取美股交易日期
+      // 使用 UTC-5（EST）换算，保守估计：避免夏令时边界误差
+      // 注意：这里用的是数据源时间戳，不是服务器时钟
+      if (!_usDate && meta.regularMarketTime) {
+        const d = new Date((meta.regularMarketTime - 5 * 3600) * 1000);
+        _usDate = d.toISOString().slice(0, 10);
+      }
       for (const tq of tqCodes) overrides[tq] = chgPct;
       console.log(`[futures] ${sym} → ${chgPct.toFixed(3)}% → [${tqCodes.join(',')}]`);
     } catch (e) {
       console.warn(`[futures] ${sym} 拉取失败:`, e.message);
     }
   }));
+  overrides._usDate = _usDate;  // 随结果透传，在 fetchAllData 中提取后删除
   return overrides;
 }
 
@@ -390,7 +437,7 @@ async function fetchTencent(daily = null) {
     const buf = await resp.arrayBuffer();
     const text = new TextDecoder('gbk').decode(buf);
 
-    const result = { funds: {}, indices: {} };
+    const result = { funds: {}, indices: {}, stockChg: {}, aShareDate: null };
 
     // 解析每行 var v_CODE="...";
     const lines = text.split('\n');
@@ -416,6 +463,8 @@ async function fetchTencent(daily = null) {
           chg: prev > 0 ? (price - prev) / prev * 100 : 0,
           vol,
         };
+        // 从第一个有效条目提取 A 股/港股交易日期（字段 p[30] = YYYYMMDDHHMMSS）
+        if (!result.aShareDate) result.aShareDate = parseTencentDate(p);
       }
     }
 
@@ -562,6 +611,11 @@ async function fetchSina() {
       if (m) {
         const rate = parseFloat(m[1].split(',')[1]);
         if (rate > 0) out[outKey] = rate;
+        // 提取汇率数据归属日期（新浪 FX 响应含 "YYYY-MM-DD HH:MM:SS" 格式时间戳）
+        if (!out._fxDate) {
+          const dm = m[1].match(/(\d{4}-\d{2}-\d{2}) \d{2}:\d{2}:\d{2}/);
+          if (dm) out._fxDate = dm[1];
+        }
       }
     }
 
@@ -715,10 +769,21 @@ async function fetchAllData(env = {}) {
     fetchSina(),
     fetchYahooFutures(),
   ]);
-  const tqData           = tqRes.status   === 'fulfilled' ? tqRes.value   : { funds: {}, indices: {}, stockChg: {} };
+  const tqData           = tqRes.status   === 'fulfilled' ? tqRes.value   : { funds: {}, indices: {}, stockChg: {}, aShareDate: null };
   const emIdx            = emRes.status   === 'fulfilled' ? emRes.value   : {};
   const sinaIdx          = sinaRes.status === 'fulfilled' ? sinaRes.value : {};
   const futuresOverrides = futRes.status  === 'fulfilled' ? futRes.value  : {};
+
+  // 构建 marketContext：所有日期从数据源时间戳提取，不依赖服务器 new Date()
+  // aShareDate = 腾讯行情时间戳（A股/港股同属 UTC+8，共用此字段）
+  // usDate     = Yahoo regularMarketTime 转换（UTC-5 保守估算美股交易日）
+  // fxDate     = 新浪 FX 响应内嵌时间字符串
+  const marketContext = {
+    aShareDate: tqData.aShareDate                          || null,
+    usDate:     (futuresOverrides._usDate)                 || null,
+    fxDate:     (sinaIdx._fxDate)                         || null,
+  };
+  delete futuresOverrides._usDate;  // 清理临时键，不污染 idxChg
   // 记录哪些源整体失败（区别于"源正常但数据为空"）
   if (tqRes.status  === 'rejected') console.error('[fetch] 腾讯整体失败:', tqRes.reason);
   if (emRes.status  === 'rejected') console.error('[fetch] 东财整体失败:', emRes.reason);
@@ -843,25 +908,52 @@ async function fetchAllData(env = {}) {
     const alpha        = driftActive ? Math.max(-0.02, Math.min(0.02, drift5d)) : 0;
     const driftStatus  = driftActive ? 'ACTIVE' : 'SUSPENDED';
 
-    // T-2 检测：计算 nav_date 距今交易日数，≥2 表示滞后超过1个交易日
-    // 使用交易日而非日历日，避免周一 navLag=3 误触发链式补偿
-    const todayStr = new Date().toISOString().slice(0, 10);
-    const navLag   = navDate ? tradingDayLag(navDate, todayStr) : 99;
+    // ── 时间驱动协议：benchDate 从数据源时间戳获取，不使用服务器时钟 ──
+    // 规则：
+    //   A股/港股 → marketContext.aShareDate（来自腾讯 field[30]）
+    //   美股     → marketContext.usDate（来自 Yahoo regularMarketTime，UTC-5）
+    //   收盘快照 → idx_closing.json 的 entry.date 字段
+    const isCrossBorder = f.cat === 'us' || f.cat === 'hk';
+    let benchDate = null;
+    if (benchStale && closingData) {
+      // 收盘快照路径：从快照自身的 date 字段取，而非任何时钟
+      const benchCode = Array.isArray(benchDef_) ? benchDef_[0].tq : benchDef_;
+      const entry = closingData[benchCode];
+      if (entry && entry.date) benchDate = entry.date;
+    } else if (f.cat === 'us') {
+      benchDate = marketContext.usDate;
+    } else {
+      benchDate = marketContext.aShareDate;  // A股 / 港股同属 UTC+8
+    }
+
+    // navLag：nav_date 距 benchDate 的交易日数（替代原 tradingDayLag(navDate, todayStr)）
+    const navLag = (navDate && benchDate) ? tradingDayLag(navDate, benchDate) : 99;
 
     // T-2 链式修正：前提是 nav_fetch_time 足够新（≤36h）才可信
-    // 若 fetch_time 陈旧，说明数据源本身有问题，不应盲目信任链式推算
     const estNavYesterday = fundDaily ? (fundDaily.est_nav_yesterday || null) : null;
-    const navFetchTime    = fundDaily ? (fundDaily.nav_fetch_time || null) : null;
+    const navFetchTime    = fundDaily ? (fundDaily.nav_fetch_time    || null) : null;
     const fetchAgeH       = navFetchTime
       ? (Date.now() - new Date(navFetchTime).getTime()) / 3600000
       : 999;
     const useChained = estNavYesterday && navLag >= 2 && fetchAgeH <= 36;
     const base       = useChained ? estNavYesterday : (officialNav || prevClose);
 
+    // navBasis：时间对齐状态 + 估值路径（供 UI 显示基准时间标注和置信度）
+    const navBasis = resolveNavBasis(
+      navDate, benchDate, useChained,
+      marketContext.fxDate, isCrossBorder
+    );
+
     let nav = null, premium = null;
-    if (base > 0 && price != null && dynNavReturn != null) {  // dynNavReturn null = 指数缺失
-      nav = base * (1 + dynNavReturn / 100) * (1 + alpha);
-      premium = (price - nav) / nav * 100;
+    if (base > 0 && price != null) {
+      if (navBasis.type === 'T0_OFFICIAL') {
+        // 当日官方净值已发布（navDate >= benchDate）：直接使用，不重复叠加今日涨跌
+        nav = base;
+      } else if (dynNavReturn != null) {
+        // T-1 或 T-2 估算：base 属于过去某交易日，乘以 benchDate 当日涨跌幅
+        nav = base * (1 + dynNavReturn / 100) * (1 + alpha);
+      }
+      if (nav != null) premium = (price - nav) / nav * 100;
     }
 
     return {
@@ -884,6 +976,7 @@ async function fetchAllData(env = {}) {
       holdingCoverage,
       useChained,
       estNavYesterday: useChained ? estNavYesterday : null,
+      navBasis,
       holdingsDate: fundDaily ? (fundDaily.holdings_date || null) : null,
       drift5d,
       driftN,
@@ -937,6 +1030,7 @@ async function fetchAllData(env = {}) {
       chg_hkd:    fxChgHkd  || null,
     },
     fetchStatus,
+    marketContext,   // 数据源归属日期，供 UI 调试和时间戳标注使用
     ts: Date.now(),
   };
 }
