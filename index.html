@@ -1195,6 +1195,20 @@ async function doRefresh() {
           staleIdxCodes.add(code);
         }
       }
+      // EM国内指数（csi930xxx）：浏览器无法添加Referer，直连EM始终失败
+      // 交易时段内也允许使用收盘快照（唯一可靠来源），UI显示"(收)"标注
+      if (closingData) {
+        const MAX_STALE_MS_CSI = 36 * 3600 * 1000;
+        for (const code of ['csi930917', 'csi930914', 'csi930792']) {
+          if (idxChg[code] != null) continue;  // sinaIdx代理已填入则跳过
+          const entry = closingData[code];
+          if (!entry || entry.chg == null || !entry.sync_at) continue;
+          if (Date.now() - new Date(entry.sync_at).getTime() > MAX_STALE_MS_CSI) continue;
+          if (!idxSanityOk(code, entry.chg)) continue;
+          idxChg[code] = entry.chg;
+          staleIdxCodes.add(code);
+        }
+      }
       // 最终兜底：sinaAG0 实时抓取全部失败时，允许使用收盘快照（含交易时段），标注 (收)
       if (idxChg['sinaAG0'] == null && closingData && closingData['sinaAG0']) {
         const _ag0 = closingData['sinaAG0'];
