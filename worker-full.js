@@ -422,8 +422,9 @@ function getHoldingTqCodes(daily) {
 // ── CME 期货映射（A股时段美市休市，期货仍交易） ──────────────
 // 股指期货：_usDate 从此提取，使用 regularMarketChangePercent（以当日开盘为基准）
 const EQUITY_FUTURES = {
-  'NQ%3DF': ['usQQQ', 'usIXIC', 'usXLK', 'usSMH'],  // 纳指100期货
-  'ES%3DF': ['usINX'],                                  // 标普500期货
+  'NQ%3DF': ['usQQQ', 'usIXIC', 'usXLK', 'usSMH'],                    // 纳指100期货
+  'ES%3DF': ['usINX', 'usXLY', 'usRSPH', 'usRWR', 'usXBI'],           // 标普500期货 → INX + 消费/医疗/REIT/生物科技板块（中置信代理）
+  'ZN%3DF': ['usAGG'],                                                   // CBOT 10年期国债期货 → 美元债 AGG
 };
 
 // 商品期货：结算时间（金 13:30 ET / 原油 14:30 ET）早于 ETF 收盘（16:00 ET）1.5-2.5h
