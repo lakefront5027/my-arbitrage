@@ -275,6 +275,32 @@ function parseTencentDate(fields) {
 }
 
 /**
+ * AssetEntity — 系统内所有净值数据的统一载体（时间宪法要求）
+ * 所有计算函数的参数和返回值必须使用此类型，严禁传递裸数字。
+ * @typedef {{ value: number, date: string, sync_at?: string, src?: string }} AssetEntity
+ */
+
+/**
+ * computeNav — 原子化估值断路器（时间宪法核心执行点）
+ *
+ * 硬断言：base.date 必须是 benchDate 的严格前一个交易日，否则熔断返回 null。
+ * 这是"日期对不上，计算不发生"的物理隔离点——不是判断，是熔断。
+ *
+ * @param {AssetEntity|null} base       - 估值基准（官方净值或链式锚点），必须携带日期
+ * @param {string|null}      benchDate  - 行情所属交易日，从数据源时间戳提取
+ * @param {number|null}      dynNavReturn - 动态净值收益率（%），null = 指数缺失
+ * @param {number}           alpha      - Drift 修正因子（0 = 禁用）
+ * @returns {AssetEntity|null}           - 估算净值对象，date = benchDate；熔断时返回 null
+ */
+function computeNav(base, benchDate, dynNavReturn, alpha) {
+  if (!base || !base.date || !benchDate) return null;
+  if (dynNavReturn == null) return null;
+  // 硬断言：base 必须恰好是 benchDate 的前一个交易日
+  if (tradingDayLag(base.date, benchDate) !== 1) return null;
+  return { value: base.value * (1 + dynNavReturn / 100) * (1 + alpha), date: benchDate, src: 'estimated' };
+}
+
+/**
  * 根据 navDate 与 benchDate 的时间对齐关系，确定估值路径与置信度。
  * - T0_OFFICIAL  : navDate >= benchDate，今日官方净值已发布，直接使用
  * - T-1_ESTIMATED: navDate = benchDate−1，正常盘中估算
@@ -799,12 +825,17 @@ async function fetchAllData(env = {}) {
 
   const stockChg = tqData.stockChg || {};
 
-  // 从 fund_daily.json 提取 navMap
+  // 从 fund_daily.json 提取 navMap（AssetEntity 三元组，不解体）
   const navMap = {};
   if (daily) {
     for (const [code, fund] of Object.entries(daily)) {
       if (!code.startsWith('_') && fund.nav > 0) {
-        navMap[code] = { nav: fund.nav, date: fund.nav_date || '' };
+        navMap[code] = {
+          value:   fund.nav,
+          date:    fund.nav_date       || '',
+          sync_at: fund.nav_fetch_time || '',
+          src:     'official',
+        };
       }
     }
   }
@@ -878,9 +909,8 @@ async function fetchAllData(env = {}) {
   // 计算每只基金
   const funds = FUNDS.map(f => {
     const tq = tqData.funds[f.code];
-    const navInfo = navMap[f.code];
-    const officialNav = navInfo ? navInfo.nav : null;
-    const navDate = navInfo ? navInfo.date : '';
+    const officialNav = navMap[f.code] || null;          // AssetEntity | null
+    const navDate     = officialNav ? officialNav.date : '';
 
     let price = null, chg = null, vol = 0, prevClose = null;
     if (tq) {
@@ -915,7 +945,8 @@ async function fetchAllData(env = {}) {
       const entry = closingData[benchCode];
       if (entry && entry.date) benchDate = entry.date;
     } else if (f.cat === 'us') {
-      benchDate = marketContext.usDate;
+      // Yahoo 失败时降级为 A 股日期近似（navBasis 会标注 aligned=false）
+      benchDate = marketContext.usDate || marketContext.aShareDate || null;
     } else {
       benchDate = marketContext.aShareDate;  // A股 / 港股同属 UTC+8
     }
@@ -936,20 +967,27 @@ async function fetchAllData(env = {}) {
     const alpha        = driftActive ? Math.max(-0.02, Math.min(0.02, drift5d)) : 0;
     const driftStatus  = driftActive ? 'ACTIVE' : 'SUSPENDED';
 
-    // navLag：nav_date 距 benchDate 的交易日数（替代原 tradingDayLag(navDate, todayStr)）
+    // navLag：nav_date 距 benchDate 的交易日数（单位：交易日）
     const navLag = (navDate && benchDate) ? tradingDayLag(navDate, benchDate) : 99;
 
-    // T-2 链式修正：前提是 fund_daily.json 在上一个交易日内有同步
+    // T-2 链式修正：构建 estNavEntity (AssetEntity)，携带日期
     // syncLagDays = tradingDayLag(syncDateBj, benchDate)：
     //   0 = 当日已同步（Action 07:00 跑完，Worker 09:30 消费）
     //   1 = 前一交易日同步（正常情况，含周末跨越）
     //   ≥2 = Action 已连续缺席 ≥1 个交易日，锚点不可信，禁用链式
-    const estNavYesterday = fundDaily ? (fundDaily.est_nav_yesterday || null) : null;
-    const syncLagDays     = (syncDateBj && benchDate)
+    const estNavYesterdayVal = fundDaily?.est_nav_yesterday || null;
+    const estNavDate         = fundDaily?.est_nav_date      || null;
+    const estNavEntity = (estNavYesterdayVal && estNavDate)
+      ? { value: estNavYesterdayVal, date: estNavDate, src: 'chain' }
+      : null;
+    const syncLagDays  = (syncDateBj && benchDate)
       ? tradingDayLag(syncDateBj, benchDate)
       : 99;
-    const useChained = estNavYesterday && navLag >= 2 && syncLagDays <= 1;
-    const base       = useChained ? estNavYesterday : (officialNav || prevClose);
+    const useChained = !!(estNavEntity && navLag >= 2 && syncLagDays <= 1);
+
+    // base：参与估算的净值基准（AssetEntity，携带日期，作为 computeNav 的前置锁输入）
+    // prevClose 无净值日期，不可进入日期锁定计算，故不再作为 base 候选
+    const base = useChained ? estNavEntity : officialNav;  // AssetEntity | null
 
     // navBasis：时间对齐状态 + 估值路径（供 UI 显示基准时间标注和置信度）
     const navBasis = resolveNavBasis(
@@ -957,16 +995,18 @@ async function fetchAllData(env = {}) {
       marketContext.fxDate, isCrossBorder
     );
 
+    // ── 估值计算（物理隔离：日期不对齐则熔断，绝不静默降级） ──
     let nav = null, premium = null;
-    if (base > 0 && price != null) {
-      if (navBasis.type === 'T0_OFFICIAL') {
-        // 当日官方净值已发布（navDate >= benchDate）：直接使用，不重复叠加今日涨跌
-        nav = base;
-      } else if (dynNavReturn != null) {
-        // T-1 或 T-2 估算：base 属于过去某交易日，乘以 benchDate 当日涨跌幅
-        nav = base * (1 + dynNavReturn / 100) * (1 + alpha);
+    if (price != null) {
+      if (navBasis.type === 'T0_OFFICIAL' && base) {
+        // 当日官方净值已发布（navDate >= benchDate）：直接包装，不叠加今日涨跌
+        nav = { value: base.value, date: base.date, src: 'official_t0' };
+      } else {
+        // computeNav 内部断言 tradingDayLag(base.date, benchDate) === 1
+        // 不满足（base 跨多个交易日、base 为 null、benchDate 为 null）→ 返回 null
+        nav = computeNav(base, benchDate, dynNavReturn, alpha);
       }
-      if (nav != null) premium = (price - nav) / nav * 100;
+      if (nav != null) premium = (price - nav.value) / nav.value * 100;
     }
 
     return {
@@ -976,9 +1016,9 @@ async function fetchAllData(env = {}) {
       price,
       prevClose,
       chg,
-      nav,
-      officialNav,
-      navDate,
+      nav,                                            // AssetEntity | null（估算净值，date=benchDate）
+      officialNav,                                    // AssetEntity | null（官方净值，date=navDate）
+      navDate,                                        // string（官方净值日期，冗余保留供 navLag 显示）
       navLag,
       premium,
       benchChg,
@@ -988,7 +1028,7 @@ async function fetchAllData(env = {}) {
       fxAdj,
       holdingCoverage,
       useChained,
-      estNavYesterday: useChained ? estNavYesterday : null,
+      estNavYesterday: useChained ? estNavEntity : null,  // AssetEntity | null（链式锚点）
       navBasis,
       holdingsDate: fundDaily ? (fundDaily.holdings_date || null) : null,
       drift5d,
@@ -1169,7 +1209,7 @@ async function handleRequest(request, env = {}) {
       if (daily) {
         for (const [code, fund] of Object.entries(daily)) {
           if (!code.startsWith('_') && fund.nav > 0) {
-            navMap[code] = { nav: fund.nav, date: fund.nav_date || '', src: fund.nav_src || 'daily' };
+            navMap[code] = { value: fund.nav, date: fund.nav_date || '', sync_at: fund.nav_fetch_time || '', src: fund.nav_src || 'official' };
           }
         }
       }

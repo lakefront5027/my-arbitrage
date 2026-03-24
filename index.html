@@ -567,11 +567,19 @@ async function asyncPatchFromEM(snap) {
     const driftActive = f.driftStatus === 'ACTIVE';
     const alpha = driftActive ? Math.max(-0.02, Math.min(0.02, drift5d)) : 0;
 
+    // base 已是 AssetEntity（Worker 快照中 estNavYesterday / officialNav 均已对象化）
     const base = f.useChained ? f.estNavYesterday : f.officialNav;
-    if (!base || base <= 0 || f.price == null) return f;
+    if (!base || base.value <= 0 || f.price == null) return f;
 
-    const nav     = base * (1 + dynNavReturn / 100) * (1 + alpha);
-    const premium = (f.price - nav) / nav * 100;
+    const benchDate = f.navBasis?.benchDate || null;
+    let nav = null;
+    if (f.navBasis?.type === 'T0_OFFICIAL') {
+      nav = { value: base.value, date: base.date, src: 'official_t0' };
+    } else {
+      nav = computeNav(base, benchDate, dynNavReturn, alpha);
+    }
+    if (!nav) return f;
+    const premium = (f.price - nav.value) / nav.value * 100;
     patchCount++;
     return {
       ...f,
@@ -598,13 +606,13 @@ async function loadNavsBackground() {
   const today = new Date().toLocaleDateString('zh-CN');
   if (_navCache && _navCacheDate === today) return;
 
-  // 主路：fund_daily.json（GitHub Action 每日 00:05 北京时间写入）
+  // 主路：fund_daily.json（GitHub Action 每日写入）
   const daily = await loadFundDaily();
   const map = {};
   if (daily) {
     for (const [code, fund] of Object.entries(daily)) {
       if (!code.startsWith('_') && fund.nav > 0) {
-        map[code] = { nav: fund.nav, date: fund.nav_date || '', src: fund.nav_src || 'daily' };
+        map[code] = { value: fund.nav, date: fund.nav_date || '', sync_at: fund.nav_fetch_time || '', src: 'official' };
       }
     }
   }
@@ -641,7 +649,7 @@ async function runFgzFallback(codes) {
         try {
           const nav = parseFloat(d.dwjz || d.gsz || 0);
           const date = (d.jzrq || d.gztime || '').substring(0, 10);
-          if (nav > 0 && nav <= 50 && _navCache) _navCache[code] = { nav, date, src: 'fgz_fb' };
+          if (nav > 0 && nav <= 50 && _navCache) _navCache[code] = { value: nav, date, src: 'fgz_fb' };
         } catch (_) {}
         resolve();
       };
@@ -829,6 +837,22 @@ function resolveNavBasis(navDate, benchDate, useChained, fxDate, isCrossBorder) 
     return { type, aligned: false, reason: 'FX_DATE_MISMATCH', navDate, benchDate, fxDate };
   }
   return { type, aligned: true, navDate, benchDate };
+}
+
+/**
+ * computeNav — 原子化估值断路器（与 worker-full.js 完全一致，降级路径强制对齐）
+ * base.date 必须是 benchDate 的严格前一个交易日，否则熔断返回 null。
+ * @param {AssetEntity|null} base
+ * @param {string|null}      benchDate
+ * @param {number|null}      dynNavReturn
+ * @param {number}           alpha
+ * @returns {AssetEntity|null}
+ */
+function computeNav(base, benchDate, dynNavReturn, alpha) {
+  if (!base || !base.date || !benchDate) return null;
+  if (dynNavReturn == null) return null;
+  if (tradingDayLag(base.date, benchDate) !== 1) return null;
+  return { value: base.value * (1 + dynNavReturn / 100) * (1 + alpha), date: benchDate, src: 'estimated' };
 }
 
 // ── 交易日工具函数（与 worker-full.js 保持一致） ──────
@@ -1035,7 +1059,7 @@ async function doRefresh() {
         const map = {};
         for (const [code, fund] of Object.entries(daily)) {
           if (!code.startsWith('_') && fund.nav > 0)
-            map[code] = { nav: fund.nav, date: fund.nav_date || '', src: fund.nav_src || 'daily' };
+            map[code] = { value: fund.nav, date: fund.nav_date || '', sync_at: fund.nav_fetch_time || '', src: 'official' };
         }
         _navCache = map;
         _navCacheDate = new Date().toLocaleDateString('zh-CN');
@@ -1077,9 +1101,8 @@ async function doRefresh() {
       }
       funds = FUNDS.map(f => {
         const tq = tqData.funds[f.code];
-        const navInfo = navMap[f.code];
-        const officialNav = navInfo ? navInfo.nav : null;
-        const navDate = navInfo ? navInfo.date : '';
+        const officialNav = navMap[f.code] || null;          // AssetEntity | null
+        const navDate     = officialNav ? officialNav.date : '';
         const price = tq ? tq.price : null;
         const chg = tq ? tq.chg : null;
         const vol = tq ? tq.vol : 0;
@@ -1122,27 +1145,34 @@ async function doRefresh() {
         const alpha        = driftActive ? Math.max(-0.02, Math.min(0.02, drift5d)) : 0;
         const driftStatus  = driftActive ? 'ACTIVE' : 'SUSPENDED';
 
-        const navLag      = (navDate && benchDate) ? tradingDayLag(navDate, benchDate) : 99;
-        const estNavYesterday = fundDaily ? (fundDaily.est_nav_yesterday || null) : null;
+        const navLag = (navDate && benchDate) ? tradingDayLag(navDate, benchDate) : 99;
+        // 构建 estNavEntity (AssetEntity)，携带链式锚点日期
+        const estNavYesterdayVal = fundDaily?.est_nav_yesterday || null;
+        const estNavDate         = fundDaily?.est_nav_date      || null;
+        const estNavEntity = (estNavYesterdayVal && estNavDate)
+          ? { value: estNavYesterdayVal, date: estNavDate, src: 'chain' }
+          : null;
         // syncLagDays：fund_daily.json 同步日距 benchDate 的交易日数，替代 fetchAgeH <= 36
         const syncLagDays = (syncDateBj && benchDate) ? tradingDayLag(syncDateBj, benchDate) : 99;
-        const useChained  = estNavYesterday && navLag >= 2 && syncLagDays <= 1;
-        const base = useChained ? estNavYesterday : (officialNav || prevClose);
+        const useChained  = !!(estNavEntity && navLag >= 2 && syncLagDays <= 1);
+
+        // base：AssetEntity（携带日期），prevClose 无净值日期不参与计算
+        const base = useChained ? estNavEntity : officialNav;
 
         // 降级模式下 fxDate 不可用（Sina 无法直连），不做 FX 日期校验
         const navBasis = resolveNavBasis(navDate, benchDate, useChained, null, false);
 
         let nav = null, premium = null;
-        if (base > 0 && price != null) {
-          if (navBasis.type === 'T0_OFFICIAL') {
-            nav = base;
-          } else if (dynNavReturn != null) {
-            nav = base * (1 + dynNavReturn / 100) * (1 + alpha);
+        if (price != null) {
+          if (navBasis.type === 'T0_OFFICIAL' && base) {
+            nav = { value: base.value, date: base.date, src: 'official_t0' };
+          } else {
+            nav = computeNav(base, benchDate, dynNavReturn, alpha);
           }
-          if (nav != null) premium = (price - nav) / nav * 100;
+          if (nav != null) premium = (price - nav.value) / nav.value * 100;
         }
         const holdingsDate = fundDaily ? (fundDaily.holdings_date || null) : null;
-        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, estNavYesterday: useChained ? estNavYesterday : null, navDate, navLag, useChained, navBasis, premium, benchChg, benchOk, benchStale, fxOk, fxAdj, holdingCoverage, holdingsDate, drift5d, driftN, driftStatus, quota: f.quota, fee: f.fee, rfee: f.rfee, vol, _src: 'L' };
+        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, estNavYesterday: useChained ? estNavEntity : null, navDate, navLag, useChained, navBasis, premium, benchChg, benchOk, benchStale, fxOk, fxAdj, holdingCoverage, holdingsDate, drift5d, driftN, driftStatus, quota: f.quota, fee: f.fee, rfee: f.rfee, vol, _src: 'L' };
       });
       indices = {};
       TICKER_IDX.forEach(i => {
@@ -1300,12 +1330,12 @@ function renderTable() {
       : isAlert ? (isPrem ? 'text-premium font-semibold pulse-alert' : 'text-discount font-semibold pulse-alert')
       : isPrem ? 'text-premium' : 'text-discount';
     const premStr = p != null ? (p >= 0 ? '+' : '') + p.toFixed(2) + '%' : (f.benchOk === false ? '指数缺失' : '—');
-    const navStr = f.nav != null ? f.nav.toFixed(4) : '—';
+    const navStr = f.nav != null ? f.nav.value.toFixed(4) : '—';
     // T-1 净值三态
     const chainFailed = f.navLag >= 2 && !f.useChained;
     const t1NavVal = f.useChained
-      ? (f.estNavYesterday != null ? f.estNavYesterday.toFixed(4) : '—')
-      : (f.officialNav != null ? f.officialNav.toFixed(4) : '—');
+      ? (f.estNavYesterday != null ? f.estNavYesterday.value.toFixed(4) : '—')
+      : (f.officialNav != null ? f.officialNav.value.toFixed(4) : '—');
     const t1NavCls = f.useChained ? 'text-yellow-400/80'
       : chainFailed ? 'text-amber-500/80' : 'text-primary/70';
     const t1NavTag = f.useChained
@@ -1399,7 +1429,7 @@ function renderCards() {
       : isPrem ? 'text-premium' : 'text-discount';
     const catLabel = {us:'美股',hk:'港股',cm:'商品',cn:'A股'}[f.cat] || f.cat;
     const catTag = {us:'tag-us',hk:'tag-hk',cm:'tag-cm',cn:'tag-cn'}[f.cat] || '';
-    const navStr = f.nav != null ? f.nav.toFixed(4) : '—';
+    const navStr = f.nav != null ? f.nav.value.toFixed(4) : '—';
     const priceStr = f.price != null ? f.price.toFixed(4) : '—';
     const benchStr = f.benchChg != null ? (f.benchChg >= 0 ? '+' : '') + f.benchChg.toFixed(2) + '%' : '—';
     const benchCls = f.benchChg > 0 ? 'text-green-400' : f.benchChg < 0 ? 'text-red-400' : 'text-muted';
@@ -1569,8 +1599,8 @@ function openModal(code) {
     <div class="grid grid-cols-2 gap-2 mb-4">
       ${[
         ['场内价格', f.price != null ? f.price.toFixed(4) : '—', 'text-primary'],
-        ['盘中估值', f.nav != null ? f.nav.toFixed(4) : '—', 'text-primary'],
-        ['T-1净值', f.officialNav != null ? f.officialNav.toFixed(4) : '—', 'text-primary/80'],
+        ['盘中估值', f.nav != null ? f.nav.value.toFixed(4) : '—', 'text-primary'],
+        ['T-1净值', f.officialNav != null ? f.officialNav.value.toFixed(4) : '—', 'text-primary/80'],
         ['净值日期', f.navDate ? (f.navDate + (f.navLag >= 2 ? ` ⚠️T-${f.navLag}` : '')) : '—', f.navLag >= 2 ? 'text-yellow-400/80' : 'text-muted'],
         ['今日涨跌', f.chg != null ? (f.chg >= 0 ? '+' : '') + f.chg.toFixed(2) + '%' : '—', f.chg > 0 ? 'text-green-400' : f.chg < 0 ? 'text-red-400' : 'text-muted'],
         ['指数涨幅', f.benchChg != null ? (f.benchChg >= 0 ? '+' : '') + f.benchChg.toFixed(2) + '%' : '—', f.benchChg > 0 ? 'text-green-400' : f.benchChg < 0 ? 'text-red-400' : 'text-muted'],
