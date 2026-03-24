@@ -595,9 +595,14 @@ async function fetchEastmoney() {
         });
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const d = await resp.json();
-        // 不依赖 f43：CSI 计算型指数 f43 可能为 null/0，但 f170 仍有效
-        if (d.data && d.data.f170 != null) {
-          return [key, d.data.f170 / 100];
+        if (!d.data) return null;
+        // f170 = 涨跌幅×100；部分计算型指数（如 csi930917/914/792）盘中 f170=null
+        // → 用 f43（现价）/ f169（涨跌额）反推，与 sync_closing_idx.py 逻辑一致
+        if (d.data.f170 != null) return [key, d.data.f170 / 100];
+        const f43 = d.data.f43, f169 = d.data.f169;
+        if (f43 != null && f169 != null && f43 !== 0) {
+          const base = f43 - f169;
+          if (base > 0) return [key, f169 / base * 100];
         }
         return null;
       } catch (e) {

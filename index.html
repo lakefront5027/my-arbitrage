@@ -611,10 +611,15 @@ async function asyncPatchFromEM(snap) {
       : patchedIdx[benchDef] != null;
     if (!hasPatch) return f;
 
-    const benchChg    = calcBenchChg(f.code, patchedIdx);
+    const benchDate = f.navBasis?.benchDate || null;
+    // 补丁数据为实时 EM 数据，视为与 benchDate 对齐（dataDate = benchDate）
+    const patchIdxDate = {};
+    Object.keys(patchedIdx).forEach(c => { patchIdxDate[c] = benchDate; });
+
+    const benchChg    = calcBenchChg(f.code, patchedIdx, patchIdxDate, benchDate);
     if (benchChg == null) return f;
-    const adjBenchChg = calcAdjustedBenchChg(f.code, patchedIdx, fxChgUsd, fxChgHkd);
-    const dynNavReturn = calcDynamicNavReturn(f.code, patchedIdx, stockChg, fxChgUsd, fxChgHkd, daily);
+    const adjBenchChg = calcAdjustedBenchChg(f.code, patchedIdx, patchIdxDate, benchDate, fxChgUsd, fxChgHkd);
+    const dynNavReturn = calcDynamicNavReturn(f.code, patchedIdx, patchIdxDate, benchDate, stockChg, fxChgUsd, fxChgHkd, daily);
     if (dynNavReturn == null) return f;
 
     const fundDaily = daily && daily[f.code];
@@ -627,7 +632,6 @@ async function asyncPatchFromEM(snap) {
     const base = f.useChained ? f.estNavYesterday : f.officialNav;
     if (!base || base.value <= 0 || f.price == null) return f;
 
-    const benchDate = f.navBasis?.benchDate || null;
     let nav = null;
     if (f.navBasis?.type === 'T0_OFFICIAL') {
       nav = { value: base.value, date: base.date, src: 'official_t0' };
