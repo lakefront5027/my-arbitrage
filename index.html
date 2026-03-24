@@ -115,7 +115,7 @@ tailwind.config = {
 <main class="max-w-screen-2xl mx-auto px-3 md:px-6 py-4">
 
   <!-- Stats bar -->
-  <div class="grid grid-cols-5 gap-2 mb-4">
+  <div class="grid grid-cols-2 md:grid-cols-5 gap-2 mb-4">
     <div class="bg-surface border border-border rounded p-3">
       <div class="font-mono text-[9px] text-gray-400 tracking-widest mb-1">基金总数</div>
       <div id="s0" class="font-mono text-2xl font-semibold text-primary">47</div>
@@ -132,10 +132,10 @@ tailwind.config = {
       <div class="font-mono text-[9px] text-gray-400 tracking-widest mb-1">最大折价</div>
       <div id="s3" class="font-mono text-2xl font-semibold text-discount">—</div>
     </div>
-    <!-- 补偿系统状态卡 -->
-    <div class="bg-surface border border-border rounded p-3 flex flex-col justify-between">
+    <!-- 补偿系统状态卡：移动端独占一行，桌面端与上方四卡同行 -->
+    <div class="col-span-2 md:col-span-1 bg-surface border border-border rounded p-3">
       <div class="font-mono text-[9px] text-gray-400 tracking-widest mb-2">补偿系统</div>
-      <div class="flex flex-col gap-1.5 font-mono text-[10px]">
+      <div class="grid grid-cols-3 md:flex md:flex-col gap-1.5 md:gap-1.5 font-mono text-[10px]">
         <div class="flex items-center justify-between">
           <span class="text-gray-500">汇率</span>
           <span id="cs-fx" class="text-gray-600">—</span>
@@ -429,8 +429,9 @@ function getAllTqCodes() {
   });
   TICKER_IDX.forEach(i => set.add(i.tq));
   // 东方财富专属，不走腾讯；sz399961/sz399979 A股指数，保留腾讯请求
-  // sinaAG0：腾讯不支持 nf_AG0，Worker 模式由新浪代理，直连模式无来源
+  // sinaAG0 的腾讯代码是 nf_AG0（期货前缀），需单独加入请求并在解析时映射
   ['sinaAG0','csi930917','csi930914','csi930792','sh000985','hkHSSI','hkHSMI','hkHSCI'].forEach(c => set.delete(c));
+  set.add('nf_AG0');  // 白银主连：腾讯期货代码，解析后映射为 sinaAG0
   return [...set];
 }
 
@@ -476,6 +477,15 @@ function fetchTencent(daily = null) {
           if (!r.aShareDate) r.aShareDate = parseTencentDate(p);
         }
       });
+      // nf_AG0 → sinaAG0：白银主连期货，腾讯用 nf_ 前缀，解析格式同普通指数（p[3]=现价, p[4]=昨结算）
+      const vAG0 = window['v_nf_AG0'];
+      if (vAG0 && vAG0.length > 5) {
+        const p = vAG0.split('~');
+        const price = parseFloat(p[3]), prev = parseFloat(p[4]);
+        if (price > 0 && prev > 0) {
+          r.indices['sinaAG0'] = { chg: (price - prev) / prev * 100 };
+        }
+      }
       // 解析持仓个股涨跌幅（HK + A股 = 盘中实时；US = T-1 昨收涨跌，仅供展示）
       holdingTqs.forEach(tq => {
         const v = window['v_' + tq];
@@ -498,7 +508,17 @@ function fetchEastmoney() {
     Object.entries(EM_CODES).map(([key, secid]) =>
       fetch(`https://push2.eastmoney.com/api/qt/stock/get?secid=${secid}&fields=f43,f169,f170&_=${Date.now()}`)
         .then(r => r.json())
-        .then(d => (d.data && d.data.f170 != null) ? [key, d.data.f170 / 100] : null)
+        .then(d => {
+          if (!d.data) return null;
+          // f170 = 涨跌幅（×100，即百分比×100）
+          if (d.data.f170 != null) return [key, d.data.f170 / 100];
+          // f170 为 null 时（部分计算型指数盘中不提供），用 f43（现价×100）和 f169（涨跌额×100）反推
+          if (d.data.f43 != null && d.data.f169 != null && d.data.f43 !== 0) {
+            const base = d.data.f43 - d.data.f169;  // 昨收×100
+            if (base > 0) return [key, d.data.f169 / base * 100];
+          }
+          return null;
+        })
         .catch(() => null)
     )
   ).then(results => {
