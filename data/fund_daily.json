@@ -64,33 +64,37 @@
         "ratio": 1.21
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-19",
+        "03-20",
         "03-20",
         "03-20"
       ],
       "nav": [
         1.6808,
         1.6524,
+        1.6524,
         1.6524
       ],
       "est": [
         null,
         1.653045,
-        1.625114
+        1.625114,
+        null
       ],
       "drift": [
         null,
         -0.00039,
-        0.01679
+        0.01679,
+        null
       ]
     },
-    "est_nav_yesterday": 1.625114,
+    "est_nav_yesterday": 1.671491,
     "est_nav_date": "2026-03-23"
   },
   "164906": {
@@ -158,33 +162,37 @@
         "ratio": 3.61
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-19",
+        "03-20",
         "03-20",
         "03-20"
       ],
       "nav": [
         1.0584,
         1.04,
+        1.04,
         1.04
       ],
       "est": [
         null,
         1.02711,
-        1.009254
+        1.009254,
+        null
       ],
       "drift": [
         null,
         0.01255,
-        0.030464
+        0.030464,
+        null
       ]
     },
-    "est_nav_yesterday": 1.009254,
+    "est_nav_yesterday": 1.047736,
     "est_nav_date": "2026-03-23"
   },
   "501312": {
@@ -214,31 +222,35 @@
     "nav_src": "lsjz",
     "shares": 4.03,
     "holdings": null,
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
         "03-19",
+        "03-20",
         "03-20",
         "03-20"
       ],
       "nav": [
         1.9156,
         1.8683,
+        1.8683,
         1.8683
       ],
       "est": [
         null,
         1.875489,
-        1.826963
+        1.826963,
+        null
       ],
       "drift": [
         null,
         -0.003833,
-        0.022626
+        0.022626,
+        null
       ]
     },
-    "est_nav_yesterday": 1.826963,
+    "est_nav_yesterday": 1.887448,
     "est_nav_date": "2026-03-23"
   },
   "164824": {
@@ -255,31 +267,35 @@
     "nav_src": "lsjz",
     "shares": 18.25,
     "holdings": null,
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
         "03-19",
+        "03-20",
         "03-20",
         "03-20"
       ],
       "nav": [
         1.2762,
         1.2561,
+        1.2561,
         1.2561
       ],
       "est": [
         null,
         1.251224,
-        1.231517
+        1.231517,
+        null
       ],
       "drift": [
         null,
         0.003897,
-        0.019962
+        0.019962,
+        null
       ]
     },
-    "est_nav_yesterday": 1.231517,
+    "est_nav_yesterday": 1.284139,
     "est_nav_date": "2026-03-23"
   },
   "160644": {
@@ -291,8 +307,8 @@
     "fee": "1.50%",
     "rfee": "1.50%",
     "bench": "usKWEB",
-    "nav": 1.6343,
-    "nav_date": "2026-03-19",
+    "nav": 1.5865,
+    "nav_date": "2026-03-20",
     "nav_src": "lsjz",
     "shares": 1.28,
     "holdings": [
@@ -347,33 +363,37 @@
         "ratio": 3.36
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-19",
         "03-19",
-        "03-19"
+        "03-19",
+        "03-20"
       ],
       "nav": [
         1.6343,
         1.6343,
-        1.6343
+        1.6343,
+        1.5865
       ],
       "est": [
         null,
         1.585984,
-        1.585984
+        1.585984,
+        null
       ],
       "drift": [
         null,
         0.030464,
-        0.030464
+        0.030464,
+        null
       ]
     },
-    "est_nav_yesterday": 1.585984,
+    "est_nav_yesterday": 1.598302,
     "est_nav_date": "2026-03-23"
   },
   "162415": {
@@ -441,33 +461,37 @@
         "ratio": 1.68
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-19",
+        "03-20",
         "03-20",
         "03-20"
       ],
       "nav": [
         2.75,
         2.701,
+        2.701,
         2.701
       ],
       "est": [
         null,
         2.700866,
-        2.652741
+        2.652741,
+        null
       ],
       "drift": [
         null,
         5e-05,
-        0.018192
+        0.018192,
+        null
       ]
     },
-    "est_nav_yesterday": 2.652741,
+    "est_nav_yesterday": 2.766314,
     "est_nav_date": "2026-03-23"
   },
   "161126": {
@@ -535,33 +559,37 @@
         "ratio": 1.64
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-19",
+        "03-20",
         "03-20",
         "03-20"
       ],
       "nav": [
         1.8025,
         1.7855,
+        1.7855,
         1.7855
       ],
       "est": [
         null,
         1.786443,
-        1.769595
+        1.769595,
+        null
       ],
       "drift": [
         null,
         -0.000528,
-        0.008988
+        0.008988,
+        null
       ]
     },
-    "est_nav_yesterday": 1.769595,
+    "est_nav_yesterday": 1.792051,
     "est_nav_date": "2026-03-23"
   },
   "161128": {
@@ -629,33 +657,37 @@
         "ratio": 1.2
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-19",
+        "03-20",
         "03-20",
         "03-20"
       ],
       "nav": [
         5.3593,
         5.2441,
+        5.2441,
         5.2441
       ],
       "est": [
         null,
         5.237735,
-        5.125148
+        5.125148,
+        null
       ],
       "drift": [
         null,
         0.001215,
-        0.023209
+        0.023209,
+        null
       ]
     },
-    "est_nav_yesterday": 5.125148,
+    "est_nav_yesterday": 5.315124,
     "est_nav_date": "2026-03-23"
   },
   "161125": {
@@ -723,33 +755,37 @@
         "ratio": 1.33
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-19",
+        "03-20",
         "03-20",
         "03-20"
       ],
       "nav": [
         2.7777,
         2.7355,
+        2.7355,
         2.7355
       ],
       "est": [
         null,
         2.735651,
-        2.69409
+        2.69409,
+        null
       ],
       "drift": [
         null,
         -5.5e-05,
-        0.015371
+        0.015371,
+        null
       ]
     },
-    "est_nav_yesterday": 2.69409,
+    "est_nav_yesterday": 2.76683,
     "est_nav_date": "2026-03-23"
   },
   "161130": {
@@ -766,31 +802,35 @@
     "nav_src": "lsjz",
     "shares": 4.07,
     "holdings": null,
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
         "03-19",
+        "03-20",
         "03-20",
         "03-20"
       ],
       "nav": [
         3.7564,
         3.6858,
+        3.6858,
         3.6858
       ],
       "est": [
         null,
         3.686975,
-        3.61768
+        3.61768,
+        null
       ],
       "drift": [
         null,
         -0.000319,
-        0.01883
+        0.01883,
+        null
       ]
     },
-    "est_nav_yesterday": 3.61768,
+    "est_nav_yesterday": 3.72809,
     "est_nav_date": "2026-03-23"
   },
   "501300": {
@@ -802,36 +842,40 @@
     "fee": "0.80%",
     "rfee": "1.50%",
     "bench": "usAGG",
-    "nav": 0.9561,
-    "nav_date": "2026-03-19",
+    "nav": 0.9502,
+    "nav_date": "2026-03-20",
     "nav_src": "lsjz",
     "shares": 22.43,
     "holdings": null,
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
         "03-19",
         "03-19",
-        "03-19"
+        "03-19",
+        "03-20"
       ],
       "nav": [
         0.9561,
         0.9561,
-        0.9561
+        0.9561,
+        0.9502
       ],
       "est": [
         null,
         0.948124,
-        0.948124
+        0.948124,
+        null
       ],
       "drift": [
         null,
         0.008412,
-        0.008412
+        0.008412,
+        null
       ]
     },
-    "est_nav_yesterday": 0.948124,
+    "est_nav_yesterday": 0.953763,
     "est_nav_date": "2026-03-23"
   },
   "160140": {
@@ -899,33 +943,37 @@
         "ratio": 2.18
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-19",
+        "03-20",
         "03-20",
         "03-20"
       ],
       "nav": [
         1.339,
         1.297,
+        1.297,
         1.297
       ],
       "est": [
         null,
         1.295198,
-        1.254572
+        1.254572,
+        null
       ],
       "drift": [
         null,
         0.001391,
-        0.033819
+        0.033819,
+        null
       ]
     },
-    "est_nav_yesterday": 1.254572,
+    "est_nav_yesterday": 1.307676,
     "est_nav_date": "2026-03-23"
   },
   "501225": {
@@ -942,31 +990,35 @@
     "nav_src": "lsjz",
     "shares": 2.27,
     "holdings": null,
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
         "03-19",
+        "03-20",
         "03-20",
         "03-20"
       ],
       "nav": [
         2.1602,
         2.1123,
+        2.1123,
         2.1123
       ],
       "est": [
         null,
         2.104516,
-        2.05785
+        2.05785,
+        null
       ],
       "drift": [
         null,
         0.003699,
-        0.02646
+        0.02646,
+        null
       ]
     },
-    "est_nav_yesterday": 2.05785,
+    "est_nav_yesterday": 2.148645,
     "est_nav_date": "2026-03-23"
   },
   "160216": {
@@ -1012,31 +1064,35 @@
     "nav_src": "lsjz",
     "shares": 15.4,
     "holdings": null,
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
         "03-19",
+        "03-20",
         "03-20",
         "03-20"
       ],
       "nav": [
         0.767,
         0.764,
+        0.764,
         0.764
       ],
       "est": [
         null,
         0.747333,
-        0.74441
+        0.74441,
+        null
       ],
       "drift": [
         null,
         0.022302,
-        0.026316
+        0.026316,
+        null
       ]
     },
-    "est_nav_yesterday": 0.74441,
+    "est_nav_yesterday": 0.749882,
     "est_nav_date": "2026-03-23"
   },
   "161116": {
@@ -1053,31 +1109,35 @@
     "nav_src": "lsjz",
     "shares": 2.71,
     "holdings": null,
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
         "03-19",
+        "03-20",
         "03-20",
         "03-20"
       ],
       "nav": [
         1.7444,
         1.7033,
+        1.7033,
         1.7033
       ],
       "est": [
         null,
         1.576065,
-        1.538932
+        1.538932,
+        null
       ],
       "drift": [
         null,
         0.08073,
-        0.106807
+        0.106807,
+        null
       ]
     },
-    "est_nav_yesterday": 1.538932,
+    "est_nav_yesterday": 1.752696,
     "est_nav_date": "2026-03-23"
   },
   "164701": {
@@ -1094,31 +1154,35 @@
     "nav_src": "lsjz",
     "shares": 6.81,
     "holdings": null,
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
         "03-19",
+        "03-20",
         "03-20",
         "03-20"
       ],
       "nav": [
         1.858,
         1.8,
+        1.8,
         1.8
       ],
       "est": [
         null,
         1.801224,
-        1.744997
+        1.744997,
+        null
       ],
       "drift": [
         null,
         -0.00068,
-        0.03152
+        0.03152,
+        null
       ]
     },
-    "est_nav_yesterday": 1.744997,
+    "est_nav_yesterday": 1.75933,
     "est_nav_date": "2026-03-23"
   },
   "165513": {
@@ -1135,31 +1199,35 @@
     "nav_src": "lsjz",
     "shares": 4.52,
     "holdings": null,
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
         "03-19",
+        "03-20",
         "03-20",
         "03-20"
       ],
       "nav": [
         1.1181,
         1.089,
+        1.089,
         1.089
       ],
       "est": [
         null,
         1.083934,
-        1.055723
+        1.055723,
+        null
       ],
       "drift": [
         null,
         0.004674,
-        0.031521
+        0.031521,
+        null
       ]
     },
-    "est_nav_yesterday": 1.055723,
+    "est_nav_yesterday": 1.064395,
     "est_nav_date": "2026-03-23"
   },
   "160719": {
@@ -1176,31 +1244,35 @@
     "nav_src": "lsjz",
     "shares": 2.24,
     "holdings": null,
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
         "03-19",
+        "03-20",
         "03-20",
         "03-20"
       ],
       "nav": [
         2.101,
         2.066,
+        2.066,
         2.066
       ],
       "est": [
         null,
         1.898253,
-        1.866631
+        1.866631,
+        null
       ],
       "drift": [
         null,
         0.088369,
-        0.106807
+        0.106807,
+        null
       ]
     },
-    "est_nav_yesterday": 1.866631,
+    "est_nav_yesterday": 2.125914,
     "est_nav_date": "2026-03-23"
   },
   "161815": {
@@ -1258,31 +1330,35 @@
     "nav_src": "lsjz",
     "shares": 2.85,
     "holdings": null,
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
         "03-19",
+        "03-20",
         "03-20",
         "03-20"
       ],
       "nav": [
         1.186,
         1.167,
+        1.167,
         1.167
       ],
       "est": [
         null,
         1.164461,
-        1.145806
+        1.145806,
+        null
       ],
       "drift": [
         null,
         0.00218,
-        0.018497
+        0.018497,
+        null
       ]
     },
-    "est_nav_yesterday": 1.145806,
+    "est_nav_yesterday": 1.132896,
     "est_nav_date": "2026-03-23"
   },
   "163208": {
@@ -1350,33 +1426,37 @@
         "ratio": 0.72
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-19",
+        "03-20",
         "03-20",
         "03-20"
       ],
       "nav": [
         1.353,
         1.36,
+        1.36,
         1.36
       ],
       "est": [
         null,
         1.35186,
-        1.358854
+        1.358854,
+        null
       ],
       "drift": [
         null,
         0.006021,
-        0.000843
+        0.000843,
+        null
       ]
     },
-    "est_nav_yesterday": 1.358854,
+    "est_nav_yesterday": 1.376388,
     "est_nav_date": "2026-03-23"
   },
   "501018": {
@@ -1402,31 +1482,35 @@
     "nav_src": "lsjz",
     "shares": 8.85,
     "holdings": null,
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
         "03-19",
         "03-19",
+        "03-20",
         "03-20"
       ],
       "nav": [
         1.789,
         1.789,
+        1.8048,
         1.8048
       ],
       "est": [
         null,
         1.851133,
-        1.851133
+        1.851133,
+        null
       ],
       "drift": [
         null,
         -0.033565,
-        -0.02503
+        -0.02503,
+        null
       ]
     },
-    "est_nav_yesterday": 1.867481,
+    "est_nav_yesterday": 1.63911,
     "est_nav_date": "2026-03-23"
   },
   "161129": {
@@ -1443,31 +1527,35 @@
     "nav_src": "lsjz",
     "shares": 4.35,
     "holdings": null,
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
         "03-19",
+        "03-20",
         "03-20",
         "03-20"
       ],
       "nav": [
         1.7047,
         1.7075,
+        1.7075,
         1.7075
       ],
       "est": [
         null,
         1.763818,
-        1.766715
+        1.766715,
+        null
       ],
       "drift": [
         null,
         -0.03193,
-        -0.033517
+        -0.033517,
+        null
       ]
     },
-    "est_nav_yesterday": 1.766715,
+    "est_nav_yesterday": 1.55465,
     "est_nav_date": "2026-03-23"
   },
   "160723": {
@@ -1479,36 +1567,40 @@
     "fee": "1.20%",
     "rfee": "1.50%",
     "bench": "usUSO",
-    "nav": 2.0645,
-    "nav_date": "2026-03-19",
+    "nav": 2.0771,
+    "nav_date": "2026-03-20",
     "nav_src": "lsjz",
     "shares": 3.5,
     "holdings": null,
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
         "03-19",
         "03-19",
-        "03-19"
+        "03-19",
+        "03-20"
       ],
       "nav": [
         2.0645,
         2.0645,
-        2.0645
+        2.0645,
+        2.0771
       ],
       "est": [
         null,
         2.136096,
-        2.136096
+        2.136096,
+        null
       ],
       "drift": [
         null,
         -0.033517,
-        -0.033517
+        -0.033517,
+        null
       ]
     },
-    "est_nav_yesterday": 2.136096,
+    "est_nav_yesterday": 1.891165,
     "est_nav_date": "2026-03-23"
   },
   "162719": {
@@ -1576,33 +1668,37 @@
         "ratio": 3.74
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-19",
+        "03-20",
         "03-20",
         "03-20"
       ],
       "nav": [
         2.8354,
         2.834,
+        2.834,
         2.834
       ],
       "est": [
         null,
         2.869093,
-        2.867676
+        2.867676,
+        null
       ],
       "drift": [
         null,
         -0.012231,
-        -0.011743
+        -0.011743,
+        null
       ]
     },
-    "est_nav_yesterday": 2.867676,
+    "est_nav_yesterday": 2.80926,
     "est_nav_date": "2026-03-23"
   },
   "162411": {
@@ -1670,33 +1766,37 @@
         "ratio": 2.47
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-19",
+        "03-20",
         "03-20",
         "03-20"
       ],
       "nav": [
         0.9366,
         0.9451,
+        0.9451,
         0.9451
       ],
       "est": [
         null,
         0.94773,
-        0.956331
+        0.956331,
+        null
       ],
       "drift": [
         null,
         -0.002775,
-        -0.011744
+        -0.011744,
+        null
       ]
     },
-    "est_nav_yesterday": 0.956331,
+    "est_nav_yesterday": 0.93685,
     "est_nav_date": "2026-03-23"
   },
   "160416": {
@@ -1764,33 +1864,37 @@
         "ratio": 1.78
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-19",
+        "03-20",
         "03-20",
         "03-20"
       ],
       "nav": [
         2.175,
         2.1641,
+        2.1641,
         2.1641
       ],
       "est": [
         null,
         2.161404,
-        2.150572
+        2.150572,
+        null
       ],
       "drift": [
         null,
         0.001247,
-        0.00629
+        0.00629,
+        null
       ]
     },
-    "est_nav_yesterday": 2.150572,
+    "est_nav_yesterday": 2.174213,
     "est_nav_date": "2026-03-23"
   },
   "501303": {
@@ -1804,7 +1908,7 @@
     "bench": "hkHSMI",
     "nav": 1.0065,
     "nav_date": "2026-03-23",
-    "nav_src": "lsjz",
+    "nav_src": "fundgz",
     "shares": 0.43,
     "holdings": [
       {
@@ -1858,34 +1962,41 @@
         "ratio": 1.31
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-20",
+        "03-23",
         "03-23",
         "03-23"
       ],
       "nav": [
         1.0417,
         1.0065,
+        1.0065,
         1.0065
       ],
       "est": [
         null,
         1.001074,
-        0.967246
+        0.967246,
+        1.016062
       ],
       "drift": [
         null,
         0.00542,
-        0.040583
+        0.040583,
+        -0.009411
       ]
     },
-    "est_nav_yesterday": 0.967246,
-    "est_nav_date": "2026-03-23"
+    "est_nav_yesterday": 1.016062,
+    "est_nav_date": "2026-03-23",
+    "drift_5d": 0.012197,
+    "drift_n": 3,
+    "drift_computed_at": "2026-03-24T02:30:34+00:00"
   },
   "161124": {
     "code": "161124",
@@ -1898,7 +2009,7 @@
     "bench": "hkHSSI",
     "nav": 1.0609,
     "nav_date": "2026-03-23",
-    "nav_src": "lsjz",
+    "nav_src": "fundgz",
     "shares": 0.44,
     "holdings": [
       {
@@ -1952,34 +2063,41 @@
         "ratio": 1.14
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-20",
+        "03-23",
         "03-23",
         "03-23"
       ],
       "nav": [
         1.0927,
         1.0609,
+        1.0609,
         1.0609
       ],
       "est": [
         null,
         1.056313,
-        1.025572
+        1.025572,
+        1.070979
       ],
       "drift": [
         null,
         0.004342,
-        0.034447
+        0.034447,
+        -0.009411
       ]
     },
-    "est_nav_yesterday": 1.025572,
-    "est_nav_date": "2026-03-23"
+    "est_nav_yesterday": 1.070979,
+    "est_nav_date": "2026-03-23",
+    "drift_5d": 0.009793,
+    "drift_n": 3,
+    "drift_computed_at": "2026-03-24T02:30:34+00:00"
   },
   "160322": {
     "code": "160322",
@@ -1992,7 +2110,7 @@
     "bench": "hkHSCI",
     "nav": 1.1123,
     "nav_date": "2026-03-23",
-    "nav_src": "lsjz",
+    "nav_src": "fundgz",
     "shares": 1.13,
     "holdings": [
       {
@@ -2046,34 +2164,41 @@
         "ratio": 2.94
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-20",
+        "03-23",
         "03-23",
         "03-23"
       ],
       "nav": [
         1.1427,
         1.1123,
+        1.1123,
         1.1123
       ],
       "est": [
         null,
         1.102706,
-        1.07337
+        1.07337,
+        1.126315
       ],
       "drift": [
         null,
         0.0087,
-        0.036269
+        0.036269,
+        -0.012443
       ]
     },
-    "est_nav_yesterday": 1.07337,
-    "est_nav_date": "2026-03-23"
+    "est_nav_yesterday": 1.126315,
+    "est_nav_date": "2026-03-23",
+    "drift_5d": 0.010842,
+    "drift_n": 3,
+    "drift_computed_at": "2026-03-24T02:30:34+00:00"
   },
   "501021": {
     "code": "501021",
@@ -2093,8 +2218,8 @@
         "w": 0.5
       }
     ],
-    "nav": 1.4041,
-    "nav_date": "2026-03-20",
+    "nav": 1.3575,
+    "nav_date": "2026-03-23",
     "nav_src": "lsjz",
     "shares": 2.34,
     "holdings": [
@@ -2149,34 +2274,41 @@
         "ratio": 1.76
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-20",
         "03-20",
-        "03-20"
+        "03-20",
+        "03-23"
       ],
       "nav": [
         1.4041,
         1.4041,
-        1.4041
+        1.4041,
+        1.3575
       ],
       "est": [
         null,
         1.353342,
-        1.353342
+        1.353342,
+        1.417439
       ],
       "drift": [
         null,
         0.037506,
-        0.037506
+        0.037506,
+        -0.042287
       ]
     },
-    "est_nav_yesterday": 1.353342,
-    "est_nav_date": "2026-03-23"
+    "est_nav_yesterday": 1.370396,
+    "est_nav_date": "2026-03-23",
+    "drift_5d": 0.010908,
+    "drift_n": 3,
+    "drift_computed_at": "2026-03-24T02:30:34+00:00"
   },
   "501310": {
     "code": "501310",
@@ -2252,34 +2384,41 @@
         "ratio": 2.34
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-20",
+        "03-23",
         "03-23",
         "03-23"
       ],
       "nav": [
         1.3608,
         1.319,
+        1.319,
         1.319
       ],
       "est": [
         null,
         1.316438,
-        1.276001
+        1.276001,
+        1.323616
       ],
       "drift": [
         null,
         0.001946,
-        0.033698
+        0.033698,
+        -0.003487
       ]
     },
-    "est_nav_yesterday": 1.276001,
-    "est_nav_date": "2026-03-23"
+    "est_nav_yesterday": 1.323616,
+    "est_nav_date": "2026-03-23",
+    "drift_5d": 0.010719,
+    "drift_n": 3,
+    "drift_computed_at": "2026-03-24T02:30:34+00:00"
   },
   "501302": {
     "code": "501302",
@@ -2290,30 +2429,34 @@
     "fee": "1.20%",
     "rfee": "0.60%",
     "bench": "hkHSI",
-    "nav": 1.1621,
-    "nav_date": "2026-03-20",
+    "nav": 1.1258,
+    "nav_date": "2026-03-23",
     "nav_src": "fundgz",
     "shares": 2.07,
     "holdings": null,
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
         "03-20",
         "03-20",
-        "03-20"
+        "03-20",
+        "03-23"
       ],
       "nav": [
         1.1621,
         1.1621,
-        1.1621
+        1.1621,
+        1.1258
       ],
       "est": [
+        null,
         null,
         null,
         null
       ],
       "drift": [
+        null,
         null,
         null,
         null
@@ -2329,8 +2472,8 @@
     "fee": "1.00%",
     "rfee": "0.68%",
     "bench": "csi930917",
-    "nav": 1.3015,
-    "nav_date": "2026-03-20",
+    "nav": 1.2727,
+    "nav_date": "2026-03-23",
     "nav_src": "fundgz",
     "shares": 0.43,
     "holdings": [
@@ -2385,34 +2528,41 @@
         "ratio": 1.14
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-20",
         "03-20",
-        "03-20"
+        "03-20",
+        "03-23"
       ],
       "nav": [
         1.3015,
         1.3015,
-        1.3015
+        1.3015,
+        1.2727
       ],
       "est": [
         null,
         1.271956,
-        1.271956
+        1.271956,
+        1.311131
       ],
       "drift": [
         null,
         0.023227,
-        0.023227
+        0.023227,
+        -0.029311
       ]
     },
-    "est_nav_yesterday": 1.271956,
-    "est_nav_date": "2026-03-23"
+    "est_nav_yesterday": 1.282118,
+    "est_nav_date": "2026-03-23",
+    "drift_5d": 0.005714,
+    "drift_n": 3,
+    "drift_computed_at": "2026-03-24T02:30:34+00:00"
   },
   "501306": {
     "code": "501306",
@@ -2423,8 +2573,8 @@
     "fee": "0.00%",
     "rfee": "0.60%",
     "bench": "csi930914",
-    "nav": 1.2758,
-    "nav_date": "2026-03-20",
+    "nav": 1.2476,
+    "nav_date": "2026-03-23",
     "nav_src": "fundgz",
     "shares": 5.46,
     "holdings": [
@@ -2479,34 +2629,41 @@
         "ratio": 2.31
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2024-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-20",
         "03-20",
-        "03-20"
+        "03-20",
+        "03-23"
       ],
       "nav": [
         1.2758,
         1.2758,
-        1.2758
+        1.2758,
+        1.2476
       ],
       "est": [
         null,
         1.242629,
-        1.242629
+        1.242629,
+        1.284986
       ],
       "drift": [
         null,
         0.026694,
-        0.026694
+        0.026694,
+        -0.029094
       ]
     },
-    "est_nav_yesterday": 1.242629,
-    "est_nav_date": "2026-03-23"
+    "est_nav_yesterday": 1.256583,
+    "est_nav_date": "2026-03-23",
+    "drift_5d": 0.008098,
+    "drift_n": 3,
+    "drift_computed_at": "2026-03-24T02:30:34+00:00"
   },
   "160717": {
     "code": "160717",
@@ -2517,8 +2674,8 @@
     "fee": "1.20%",
     "rfee": "0.95%",
     "bench": "hkHSCEI",
-    "nav": 0.7411,
-    "nav_date": "2026-03-20",
+    "nav": 0.7208,
+    "nav_date": "2026-03-23",
     "nav_src": "fundgz",
     "shares": 3.1,
     "holdings": [
@@ -2573,27 +2730,31 @@
         "ratio": 2.82
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-20",
         "03-20",
-        "03-20"
+        "03-20",
+        "03-23"
       ],
       "nav": [
         0.7411,
         0.7411,
-        0.7411
+        0.7411,
+        0.7208
       ],
       "est": [
+        null,
         null,
         null,
         null
       ],
       "drift": [
+        null,
         null,
         null,
         null
@@ -2609,8 +2770,8 @@
     "fee": "1.20%",
     "rfee": "0.90%",
     "bench": "hkHSTECH",
-    "nav": 0.9913,
-    "nav_date": "2026-03-20",
+    "nav": 0.9642,
+    "nav_date": "2026-03-23",
     "nav_src": "fundgz",
     "shares": 11.91,
     "holdings": [
@@ -2665,33 +2826,37 @@
         "ratio": 2.18
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-20",
         "03-20",
-        "03-20"
+        "03-20",
+        "03-23"
       ],
       "nav": [
         0.9913,
         0.9913,
-        0.9913
+        0.9913,
+        0.9642
       ],
       "est": [
         null,
         null,
-        0.958785
+        0.958785,
+        0.996554
       ],
       "drift": [
         null,
         null,
-        0.033913
+        0.033913,
+        -0.032466
       ]
     },
-    "est_nav_yesterday": 0.958785,
+    "est_nav_yesterday": 0.96931,
     "est_nav_date": "2026-03-23"
   },
   "501301": {
@@ -2703,8 +2868,8 @@
     "fee": "1.20%",
     "rfee": "0.90%",
     "bench": "hkHSCEI",
-    "nav": 1.2605,
-    "nav_date": "2026-03-20",
+    "nav": 1.2289,
+    "nav_date": "2026-03-23",
     "nav_src": "fundgz",
     "shares": 0.97,
     "holdings": [
@@ -2759,27 +2924,31 @@
         "ratio": 2.95
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-20",
         "03-20",
-        "03-20"
+        "03-20",
+        "03-23"
       ],
       "nav": [
         1.2605,
         1.2605,
-        1.2605
+        1.2605,
+        1.2289
       ],
       "est": [
+        null,
         null,
         null,
         null
       ],
       "drift": [
+        null,
         null,
         null,
         null
@@ -2797,7 +2966,7 @@
     "bench": "hkHSI",
     "nav": 1.1044,
     "nav_date": "2026-03-23",
-    "nav_src": "lsjz",
+    "nav_src": "fundgz",
     "shares": 2.81,
     "holdings": [
       {
@@ -2851,27 +3020,31 @@
         "ratio": 2.88
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-20",
+        "03-23",
         "03-23",
         "03-23"
       ],
       "nav": [
         1.1403,
         1.1044,
+        1.1044,
         1.1044
       ],
       "est": [
         null,
         null,
+        null,
         null
       ],
       "drift": [
+        null,
         null,
         null,
         null
@@ -2889,7 +3062,7 @@
     "bench": "hkHSCEI",
     "nav": 0.7366,
     "nav_date": "2026-03-23",
-    "nav_src": "lsjz",
+    "nav_src": "fundgz",
     "shares": 2.74,
     "holdings": [
       {
@@ -2943,27 +3116,31 @@
         "ratio": 2.8
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-20",
         "03-20",
+        "03-23",
         "03-23"
       ],
       "nav": [
         0.7583,
         0.7583,
+        0.7366,
         0.7366
       ],
       "est": [
         null,
         null,
+        null,
         null
       ],
       "drift": [
+        null,
         null,
         null,
         null
@@ -2979,8 +3156,8 @@
     "fee": "1.20%",
     "rfee": "0.60%",
     "bench": "csi930914",
-    "nav": 1.3199,
-    "nav_date": "2026-03-20",
+    "nav": 1.2908,
+    "nav_date": "2026-03-23",
     "nav_src": "fundgz",
     "shares": 4.72,
     "holdings": [
@@ -3035,34 +3212,41 @@
         "ratio": 2.31
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2024-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-20",
         "03-20",
-        "03-20"
+        "03-20",
+        "03-23"
       ],
       "nav": [
         1.3199,
         1.3199,
-        1.3199
+        1.3199,
+        1.2908
       ],
       "est": [
         null,
         1.285583,
-        1.285583
+        1.285583,
+        1.329403
       ],
       "drift": [
         null,
         0.026694,
-        0.026694
+        0.026694,
+        -0.029038
       ]
     },
-    "est_nav_yesterday": 1.285583,
-    "est_nav_date": "2026-03-23"
+    "est_nav_yesterday": 1.300094,
+    "est_nav_date": "2026-03-23",
+    "drift_5d": 0.008117,
+    "drift_n": 3,
+    "drift_computed_at": "2026-03-24T02:30:34+00:00"
   },
   "160924": {
     "code": "160924",
@@ -3075,7 +3259,7 @@
     "bench": "hkHSI",
     "nav": 0.9794,
     "nav_date": "2026-03-23",
-    "nav_src": "lsjz",
+    "nav_src": "fundgz",
     "shares": 1.24,
     "holdings": [
       {
@@ -3129,27 +3313,31 @@
         "ratio": 2.52
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-20",
+        "03-23",
         "03-23",
         "03-23"
       ],
       "nav": [
         1.0115,
         0.9794,
+        0.9794,
         0.9794
       ],
       "est": [
         null,
         null,
+        null,
         null
       ],
       "drift": [
+        null,
         null,
         null,
         null
@@ -3165,8 +3353,8 @@
     "fee": "1.20%",
     "rfee": "0.90%",
     "bench": "csi930792",
-    "nav": 1.624,
-    "nav_date": "2026-03-20",
+    "nav": 1.5744,
+    "nav_date": "2026-03-23",
     "nav_src": "fundgz",
     "shares": 5.47,
     "holdings": [
@@ -3221,34 +3409,41 @@
         "ratio": 4.06
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-20",
         "03-20",
-        "03-20"
+        "03-20",
+        "03-23"
       ],
       "nav": [
         1.624,
         1.624,
-        1.624
+        1.624,
+        1.5744
       ],
       "est": [
         null,
         1.568297,
-        1.568297
+        1.568297,
+        1.645924
       ],
       "drift": [
         null,
         0.035518,
-        0.035518
+        0.035518,
+        -0.043455
       ]
     },
-    "est_nav_yesterday": 1.568297,
-    "est_nav_date": "2026-03-23"
+    "est_nav_yesterday": 1.595654,
+    "est_nav_date": "2026-03-23",
+    "drift_5d": 0.009194,
+    "drift_n": 3,
+    "drift_computed_at": "2026-03-24T02:30:34+00:00"
   },
   "161226": {
     "code": "161226",
@@ -3259,35 +3454,41 @@
     "fee": "1.50%",
     "rfee": "0.50%",
     "bench": "sinaAG0",
-    "nav": 1.9754,
-    "nav_date": "2026-03-20",
+    "nav": 1.8832,
+    "nav_date": "2026-03-23",
     "nav_src": "lsjz",
     "shares": 51.41,
     "holdings": null,
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
         "03-20",
         "03-20",
-        "03-20"
+        "03-20",
+        "03-23"
       ],
       "nav": [
         1.9754,
         1.9754,
-        1.9754
+        1.9754,
+        1.8832
       ],
       "est": [
         null,
         null,
-        null
+        null,
+        1.744778
       ],
       "drift": [
         null,
         null,
-        null
+        null,
+        0.079335
       ]
-    }
+    },
+    "est_nav_yesterday": 1.663342,
+    "est_nav_date": "2026-03-23"
   },
   "161217": {
     "code": "161217",
@@ -3298,8 +3499,8 @@
     "fee": "1.50%",
     "rfee": "0.50%",
     "bench": "sz399961",
-    "nav": 2.2938,
-    "nav_date": "2026-03-20",
+    "nav": 2.2292,
+    "nav_date": "2026-03-23",
     "nav_src": "fundgz",
     "shares": 1.49,
     "holdings": [
@@ -3354,27 +3555,31 @@
         "ratio": 2.27
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-20",
         "03-20",
-        "03-20"
+        "03-20",
+        "03-23"
       ],
       "nav": [
         2.2938,
         2.2938,
-        2.2938
+        2.2938,
+        2.2292
       ],
       "est": [
+        null,
         null,
         null,
         null
       ],
       "drift": [
+        null,
         null,
         null,
         null
@@ -3392,7 +3597,7 @@
     "bench": "sz399979",
     "nav": 2.3036,
     "nav_date": "2026-03-23",
-    "nav_src": "lsjz",
+    "nav_src": "fundgz",
     "shares": 1.45,
     "holdings": [
       {
@@ -3446,27 +3651,31 @@
         "ratio": 1.04
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-20",
+        "03-23",
         "03-23",
         "03-23"
       ],
       "nav": [
         2.3689,
         2.3036,
+        2.3036,
         2.3036
       ],
       "est": [
         null,
         null,
+        null,
         null
       ],
       "drift": [
+        null,
         null,
         null,
         null
@@ -3484,7 +3693,7 @@
     "bench": "sz399987",
     "nav": 0.6325,
     "nav_date": "2026-03-23",
-    "nav_src": "lsjz",
+    "nav_src": "fundgz",
     "shares": 401.42,
     "holdings": [
       {
@@ -3538,34 +3747,41 @@
         "ratio": 2.06
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-20",
         "03-20",
+        "03-23",
         "03-23"
       ],
       "nav": [
         0.6519,
         0.6519,
+        0.6325,
         0.6325
       ],
       "est": [
         null,
         0.630127,
-        0.630127
+        0.630127,
+        0.636801
       ],
       "drift": [
         null,
         0.034553,
-        0.003766
+        0.003766,
+        -0.006754
       ]
     },
-    "est_nav_yesterday": 0.611374,
-    "est_nav_date": "2026-03-23"
+    "est_nav_yesterday": 0.636801,
+    "est_nav_date": "2026-03-23",
+    "drift_5d": 0.010522,
+    "drift_n": 3,
+    "drift_computed_at": "2026-03-24T02:30:34+00:00"
   },
   "161032": {
     "code": "161032",
@@ -3578,7 +3794,7 @@
     "bench": "sz399998",
     "nav": 2.349,
     "nav_date": "2026-03-23",
-    "nav_src": "lsjz",
+    "nav_src": "fundgz",
     "shares": 3.06,
     "holdings": [
       {
@@ -3632,37 +3848,44 @@
         "ratio": 3.8
       }
     ],
-    "nav_fetch_time": "2026-03-23T11:54:09+00:00",
+    "nav_fetch_time": "2026-03-24T02:18:52+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-23T11:54:09+00:00",
+    "holdings_fetch_time": "2026-03-24T02:18:52+00:00",
     "history": {
       "date": [
         "03-20",
+        "03-23",
         "03-23",
         "03-23"
       ],
       "nav": [
         2.333,
         2.349,
+        2.349,
         2.349
       ],
       "est": [
         null,
         2.350498,
-        2.366618
+        2.366618,
+        2.325275
       ],
       "drift": [
         null,
         -0.000637,
-        -0.007444
+        -0.007444,
+        0.010203
       ]
     },
-    "est_nav_yesterday": 2.366618,
-    "est_nav_date": "2026-03-23"
+    "est_nav_yesterday": 2.325275,
+    "est_nav_date": "2026-03-23",
+    "drift_5d": 0.000707,
+    "drift_n": 3,
+    "drift_computed_at": "2026-03-24T02:30:34+00:00"
   },
   "_meta": {
-    "sync_time": "2026-03-23T12:01:48+00:00",
+    "sync_time": "2026-03-24T02:31:22+00:00",
     "data_date": "2026-03-23",
     "nav_ok": 47,
     "nav_kept": 0,
@@ -3673,8 +3896,8 @@
     ]
   },
   "_fx": {
-    "usd_cnh_t1": 6.8943,
-    "hkd_cnh_t1": 0.8804,
-    "date": "2026-03-23"
+    "usd_cnh_t1": 6.8977,
+    "hkd_cnh_t1": 0.8807,
+    "date": "2026-03-24"
   }
 }
