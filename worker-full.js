@@ -212,26 +212,37 @@ const COMMODITY_IDX = new Set([
 ]);
 
 // ── 交易日工具函数 ────────────────────────────────────
-// trading_dates 由 sync_fund_data.py 每日写入 fund_daily.json._meta，覆盖当年全量交易日（Q4 附加次年）。
-// 历史窗口内：精确判断（有记录=交易日，无记录=节假日/周末）
-// 历史窗口外：降级为周末判断（不影响 navLag，navLag 只看近期历史）
+/**
+ * trading_dates — 唯一职责：精确测量 navLag（交易日数）
+ *
+ * 由 sync_fund_data.py 每日写入 fund_daily.json._meta，覆盖当年全量交易日（Q4 附加次年）。
+ * 全年日历已加载时，isTradingDay 做纯 Set 查找，精确感知法定节假日与补班日，无降级路径。
+ *
+ * 三层优先级：
+ *   1. 查表命中         → 确定是交易日（日历预测）
+ *   2. 表内未命中       → 确定是非交易日（节假日/补班休市）
+ *   3. 超出表上界       → 周末判断兜底（异常保护：日历残缺/跨年写入前极短暂窗口）
+ *      理论上全年日历不存在此场景；Worker 盘中 benchDate 来自行情时间戳，与日历互为验证
+ *   0. Set 未加载       → 周末判断（Worker 冷启动极短暂窗口）
+ */
 
-let _tradingDates = null;  // Set<string>，由 fetchAllData 注入
+let _tradingDates = null;       // Set<string>，由 fetchAllData 注入
+let _latestTradingDate = null;  // 日历上界，setTradingDates 时计算，避免 isTradingDay 热路径重复排序
 
 function setTradingDates(arr) {
-  _tradingDates = new Set(arr || []);
+  const sorted = [...(arr || [])].sort();
+  _tradingDates = new Set(sorted);
+  _latestTradingDate = sorted.length > 0 ? sorted[sorted.length - 1] : null;
 }
 
-/** 判断某日是否为交易日（dateStr: 'YYYY-MM-DD'） */
 function isTradingDay(dateStr) {
   if (_tradingDates && _tradingDates.size > 0) {
-    // 全年日历已加载：精确查找，含节假日感知
-    return _tradingDates.has(dateStr);
+    if (_tradingDates.has(dateStr)) return true;                                  // 优先级 1
+    if (_latestTradingDate && dateStr <= _latestTradingDate) return false;        // 优先级 2
+    // 优先级 3：超出表上界，周末兜底（异常保护）
   }
-  // fund_daily.json 尚未加载：降级周末判断（启动阶段极短暂窗口）
-  const d = new Date(dateStr + 'T00:00:00Z');
-  const dow = d.getUTCDay();
-  return dow !== 0 && dow !== 6;
+  const d = new Date(dateStr + 'T00:00:00Z');                                     // 优先级 0/3
+  return d.getUTCDay() !== 0 && d.getUTCDay() !== 6;
 }
 
 /** 计算两日期间（左开右闭）的交易日数，用于 navLag */

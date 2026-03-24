@@ -856,21 +856,24 @@ function computeNav(base, benchDate, dynNavReturn, alpha) {
 }
 
 // ── 交易日工具函数（与 worker-full.js 保持一致） ──────
-let _tradingDates = null;  // Set<string>
+// trading_dates 唯一职责：精确测量 navLag。三层优先级见 worker-full.js 注释。
+let _tradingDates = null;       // Set<string>
+let _latestTradingDate = null;  // 日历上界，setTradingDates 时计算
 
 function setTradingDates(arr) {
-  _tradingDates = new Set(arr || []);
+  const sorted = [...(arr || [])].sort();
+  _tradingDates = new Set(sorted);
+  _latestTradingDate = sorted.length > 0 ? sorted[sorted.length - 1] : null;
 }
 
 function isTradingDay(dateStr) {
   if (_tradingDates && _tradingDates.size > 0) {
-    // 全年日历已加载：精确查找，含节假日感知
-    return _tradingDates.has(dateStr);
+    if (_tradingDates.has(dateStr)) return true;                            // 优先级 1
+    if (_latestTradingDate && dateStr <= _latestTradingDate) return false;  // 优先级 2
+    // 优先级 3：超出表上界，周末兜底（异常保护）
   }
-  // fund_daily.json 尚未加载：降级周末判断（启动阶段极短暂窗口）
-  const d = new Date(dateStr + 'T00:00:00Z');
-  const dow = d.getUTCDay();
-  return dow !== 0 && dow !== 6;
+  const d = new Date(dateStr + 'T00:00:00Z');                               // 优先级 0/3
+  return d.getUTCDay() !== 0 && d.getUTCDay() !== 6;
 }
 
 function tradingDayLag(fromDateStr, toDateStr) {
