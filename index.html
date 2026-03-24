@@ -523,22 +523,36 @@ function fetchSinaAG0Direct() {
         if (raw) {
           const p = raw.split(',');
           const cur = parseFloat(p[6]), prev = parseFloat(p[10]);
-          if (cur > 0 && prev > 0) { s.remove(); resolve((cur - prev) / prev * 100); return; }
+          if (cur > 0 && prev > 0) {
+            const chg = (cur - prev) / prev * 100;
+            console.log('[sinaAG0] 直连 Sina 成功:', chg.toFixed(2) + '%');
+            s.remove(); resolve(chg); return;
+          }
         }
-      } catch(e) {}
+        console.warn('[sinaAG0] 直连 Sina: 脚本加载但数据解析失败, raw=', window['hq_str_nf_AG0']);
+      } catch(e) { console.warn('[sinaAG0] 直连解析异常:', e); }
       s.remove(); resolve(null);
     };
-    s.onerror = () => { clearTimeout(t); if (!done) { done = true; s.remove(); resolve(null); } };
+    s.onerror = () => {
+      clearTimeout(t);
+      if (!done) { done = true; console.warn('[sinaAG0] 直连 Sina: onerror（可能被 Referer 拦截或网络错误）'); s.remove(); resolve(null); }
+    };
     s.src = `https://hq.sinajs.cn/list=nf_AG0&_=${Date.now()}`;
     document.head.appendChild(s);
   });
 }
 
 // ── 直连抓取：东方财富指数（fetch，有CORS头） ─────────
+// 每个请求独立 AbortController（8s超时），防止单条挂起拖累整批
 function fetchEastmoney() {
   return Promise.all(
-    Object.entries(EM_CODES).map(([key, secid]) =>
-      fetch(`https://push2.eastmoney.com/api/qt/stock/get?secid=${secid}&fields=f43,f169,f170&_=${Date.now()}`)
+    Object.entries(EM_CODES).map(([key, secid]) => {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 8000);
+      return fetch(
+        `https://push2.eastmoney.com/api/qt/stock/get?secid=${secid}&fields=f43,f169,f170&_=${Date.now()}`,
+        { signal: ctrl.signal }
+      )
         .then(r => r.json())
         .then(d => {
           if (!d.data) return null;
@@ -552,7 +566,8 @@ function fetchEastmoney() {
           return null;
         })
         .catch(() => null)
-    )
+        .finally(() => clearTimeout(timer));
+    })
   ).then(results => {
     const out = {};
     results.forEach(r => { if (r) out[r[0]] = r[1]; });
@@ -1165,8 +1180,10 @@ async function doRefresh() {
             idxSanityOk('sinaAG0', _ag0.chg)) {
           idxChg['sinaAG0'] = _ag0.chg;
           staleIdxCodes.add('sinaAG0');
+          console.log('[sinaAG0] 使用收盘快照兜底:', _ag0.chg.toFixed(2) + '%', '(', _ag0.date, ')');
         }
       }
+      if (idxChg['sinaAG0'] == null) console.warn('[sinaAG0] 所有来源均失败，161226 将显示指数缺失');
       funds = FUNDS.map(f => {
         const tq = tqData.funds[f.code];
         const officialNav = navMap[f.code] || null;          // AssetEntity | null

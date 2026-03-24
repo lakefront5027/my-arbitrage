@@ -29,9 +29,12 @@ OUT_PATH   = os.path.join(REPO_ROOT, 'data', 'idx_closing.json')
 # key = Worker/BENCH 内使用的代码，value = 东方财富 push2 secid
 # 新增收盘后失效的指数：在此加一行，Worker fallback 自动生效
 CLOSING_IDX = {
-    'sz399961': '0.399961',  # 中证资源与环境（161217 国投上游资源LOF）
-    'sz399979': '0.399979',  # 中证大宗商品股票（161715 招商大宗商品LOF）
-    'sinaAG0':  '113.AG0',   # 上期所白银主力（161226 国投白银LOF）
+    'sz399961':   '0.399961',  # 中证资源与环境（161217 国投上游资源LOF）
+    'sz399979':   '0.399979',  # 中证大宗商品股票（161715 招商大宗商品LOF）
+    'sinaAG0':    '113.AG0',   # 上期所白银主力（161226 国投白银LOF）
+    'csi930917':  '2.930917',  # 港股通科技（501307 银河高股息LOF）
+    'csi930914':  '2.930914',  # 港股通消费（501306/501305 港股高股息LOF）
+    'csi930792':  '2.930792',  # 港股通（501025 香港银行LOF）
 }
 
 
@@ -56,16 +59,24 @@ def fetch_url(url: str, timeout: int = 12, extra_headers: dict = None) -> str | 
 def fetch_em_chg(secid: str) -> float | None:
     """东方财富 push2 API：返回涨跌幅（百分比，如 -0.52）"""
     url = (f'https://push2.eastmoney.com/api/qt/stock/get'
-           f'?secid={secid}&fields=f43,f170')
+           f'?secid={secid}&fields=f43,f169,f170')
     raw = fetch_url(url)
     if not raw:
         return None
     try:
         d = json.loads(raw)
-        f170 = (d.get('data') or {}).get('f170')
-        if f170 is None:
-            return None
-        return round(f170 / 100, 4)
+        data = d.get('data') or {}
+        f170 = data.get('f170')
+        if f170 is not None:
+            return round(f170 / 100, 4)
+        # f170 为 null 时（部分计算型指数盘中不提供），用 f43/f169 反推
+        f43  = data.get('f43')
+        f169 = data.get('f169')
+        if f43 and f169 is not None and f43 != 0:
+            base = f43 - f169
+            if base > 0:
+                return round(f169 / base * 100, 4)
+        return None
     except Exception as e:
         print(f'[WARN] parse EM {secid}: {e}')
         return None
