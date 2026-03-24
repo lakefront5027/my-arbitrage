@@ -419,49 +419,115 @@ function getHoldingTqCodes(daily) {
 
 // 状态跃迁报警：KV 持久化，key=alert:{code}，value="above"|"below"
 
-// ── CME 期货映射（A股时段美市休市，期货仍 23h 交易） ──────────
-// 用 Yahoo Finance regularMarketChangePercent，该字段在合约内计算
-// 自动规避换月跳价：换月后新合约以当日开盘为基准，不出现隔日大跳
-const FUTURES_MAP = {
-  'NQ%3DF': ['usQQQ', 'usIXIC', 'usXLK', 'usSMH'],  // 纳指100期货 → QQQ/XLK/SMH
-  'ES%3DF': ['usINX'],                                  // 标普500期货 → INX
+// ── CME 期货映射（A股时段美市休市，期货仍交易） ──────────────
+// 股指期货：_usDate 从此提取，使用 regularMarketChangePercent（以当日开盘为基准）
+const EQUITY_FUTURES = {
+  'NQ%3DF': ['usQQQ', 'usIXIC', 'usXLK', 'usSMH'],  // 纳指100期货
+  'ES%3DF': ['usINX'],                                  // 标普500期货
+};
+
+// 商品期货：结算时间（金 13:30 ET / 原油 14:30 ET）早于 ETF 收盘（16:00 ET）1.5-2.5h
+// Action 抓取 16:00 ET 参考价存入 _commodity_refs，Worker 用 (现价/参考价-1) 替代 regularMarketChangePercent
+// 降级：_commodity_refs 缺失或过期时回退到 regularMarketChangePercent，并置 _commodityRefStale=true
+const COMMODITY_FUTURES = {
+  'GC%3DF': { codes: ['usGLD', 'usGLDM', 'usIAU', 'usSGOL', 'usAAAU'], ref: 'gc' },  // COMEX 黄金
+  'SI%3DF': { codes: ['usSLV'],                                           ref: 'si' },  // COMEX 白银
+  'CL%3DF': { codes: ['usUSO', 'usIXC', 'usXOP', 'usXLE'],               ref: 'cl' },  // WTI 原油
+  'BZ%3DF': { codes: ['usBNO'],                                           ref: 'bz' },  // 布伦特原油
+  'HG%3DF': { codes: ['usCPER'],                                          ref: 'hg' },  // COMEX 铜
 };
 
 /**
- * 从 Yahoo Finance 拉取 CME 期货实时涨跌幅
- * 返回 { usQQQ: chgPct, usINX: chgPct, ... }，失败时返回 {}
+ * 将 Unix 秒时间戳转换为美东时区（EDT/EST，自动感知夏令时）的日期字符串 YYYY-MM-DD
+ * 使用 Intl.DateTimeFormat 而非硬编码 UTC-5，正确处理 EDT（UTC-4）和 EST（UTC-5）切换
+ */
+function toEasternDate(unixSec) {
+  return new Date(unixSec * 1000)
+    .toLocaleDateString('sv-SE', { timeZone: 'America/New_York' });
+}
+
+/**
+ * 从 Yahoo Finance 拉取股指+商品期货实时涨跌幅
+ * - 股指期货：使用 regularMarketChangePercent（自基准规避换月跳价）
+ * - 商品期货：优先使用 (现价 / _commodity_refs[ref] - 1)（16:00 ET 参考价，更精准）
+ *   降级：_commodity_refs 缺失/过期时用 regularMarketChangePercent，并置 _commodityRefStale=true
+ * 返回 { usQQQ: chgPct, usGLD: chgPct, ..., _usDate, _commodityRefStale }
  * 注：仅 Worker 端可调用（浏览器有 CORS 限制）
  */
-async function fetchYahooFutures() {
+async function fetchYahooFutures(daily = null) {
   const overrides = {};
   let _usDate = null;
-  await Promise.all(Object.entries(FUTURES_MAP).map(async ([sym, tqCodes]) => {
-    try {
-      const url = `https://query1.finance.yahoo.com/v8/finance/chart/${sym}?interval=1m&range=1d`;
-      const resp = await fetch(url, {
-        headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json' },
-        cf: { cacheTtl: 60 },
-      });
-      if (!resp.ok) return;
-      const data = await resp.json();
-      const meta = data?.chart?.result?.[0]?.meta;
-      if (!meta) return;
-      const chgPct = meta.regularMarketChangePercent;
-      if (chgPct == null || !isFinite(chgPct)) return;
-      // 从 regularMarketTime（Unix 秒）提取美股交易日期
-      // 使用 UTC-5（EST）换算，保守估计：避免夏令时边界误差
-      // 注意：这里用的是数据源时间戳，不是服务器时钟
-      if (!_usDate && meta.regularMarketTime) {
-        const d = new Date((meta.regularMarketTime - 5 * 3600) * 1000);
-        _usDate = d.toISOString().slice(0, 10);
-      }
-      for (const tq of tqCodes) overrides[tq] = chgPct;
-      console.log(`[futures] ${sym} → ${chgPct.toFixed(3)}% → [${tqCodes.join(',')}]`);
-    } catch (e) {
-      console.warn(`[futures] ${sym} 拉取失败:`, e.message);
-    }
+  let _commodityRefStale = false;
+
+  // 读取 Action 写入的商品期货参考价（16:00 ET 快照）
+  const commodityRefs     = daily?._commodity_refs || null;
+  const commodityRefsTime = commodityRefs?.sync_at ? new Date(commodityRefs.sync_at).getTime() : 0;
+  // 超过 48 小时则视为过期（含长周末，48h > 2×24h 确保跨节假日安全）
+  const refsStale = !commodityRefs || (Date.now() - commodityRefsTime > 48 * 3600 * 1000);
+
+  // 股指期货请求列表
+  const equityEntries = Object.entries(EQUITY_FUTURES);
+  // 商品期货请求列表
+  const commodityEntries = Object.entries(COMMODITY_FUTURES);
+  const allSyms = [...equityEntries.map(([s]) => s), ...commodityEntries.map(([s]) => s)];
+
+  const results = await Promise.allSettled(allSyms.map(async sym => {
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${sym}?interval=1m&range=1d`;
+    const resp = await fetch(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json' },
+      cf: { cacheTtl: 60 },
+    });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const d = await resp.json();
+    const meta = d?.chart?.result?.[0]?.meta;
+    if (!meta) throw new Error('no meta');
+    return { sym, meta };
   }));
-  overrides._usDate = _usDate;  // 随结果透传，在 fetchAllData 中提取后删除
+
+  // 处理股指期货
+  for (let i = 0; i < equityEntries.length; i++) {
+    const [sym, tqCodes] = equityEntries[i];
+    const r = results[i];
+    if (r.status !== 'fulfilled') { console.warn(`[futures] ${sym} 失败:`, r.reason?.message); continue; }
+    const { meta } = r.value;
+    const chgPct = meta.regularMarketChangePercent;
+    if (chgPct == null || !isFinite(chgPct)) continue;
+    // _usDate 仅从股指期货提取（有明确的日盘收盘时间语义）
+    if (!_usDate && meta.regularMarketTime) {
+      _usDate = toEasternDate(meta.regularMarketTime);
+    }
+    for (const tq of tqCodes) overrides[tq] = chgPct;
+    console.log(`[futures/eq] ${sym} → ${chgPct.toFixed(3)}% → [${tqCodes.join(',')}]`);
+  }
+
+  // 处理商品期货
+  for (let i = 0; i < commodityEntries.length; i++) {
+    const [sym, { codes, ref }] = commodityEntries[i];
+    const r = results[equityEntries.length + i];
+    if (r.status !== 'fulfilled') { console.warn(`[futures] ${sym} 失败:`, r.reason?.message); continue; }
+    const { meta } = r.value;
+    const currentPrice = meta.regularMarketPrice;
+    if (currentPrice == null || !isFinite(currentPrice) || currentPrice <= 0) continue;
+
+    let chgPct;
+    const refPrice = !refsStale ? commodityRefs?.[ref] : null;
+    if (refPrice && refPrice > 0) {
+      // 精准模式：(现价 / 16:00 ET 参考价) - 1，与 ETF NAV 计算基准对齐
+      chgPct = (currentPrice / refPrice - 1) * 100;
+      console.log(`[futures/co] ${sym} ${ref}=${refPrice}→${currentPrice} chg=${chgPct.toFixed(3)}%`);
+    } else {
+      // 降级模式：使用结算价涨跌幅（精度受限，COMEX 结算 vs 16:00 ET 约1.5-2.5h 偏差）
+      chgPct = meta.regularMarketChangePercent;
+      if (chgPct == null || !isFinite(chgPct)) continue;
+      _commodityRefStale = true;
+      console.warn(`[futures/co] ${sym} 降级至结算价基准 chg=${chgPct.toFixed(3)}%`);
+    }
+
+    for (const tq of codes) overrides[tq] = chgPct;
+  }
+
+  overrides._usDate = _usDate;                    // 随结果透传，fetchAllData 中提取后删除
+  overrides._commodityRefStale = _commodityRefStale;  // 同上
   return overrides;
 }
 
@@ -847,7 +913,7 @@ async function fetchAllData(env = {}) {
     fetchTencent(daily),
     fetchEastmoney(),
     fetchSina(),
-    fetchYahooFutures(),
+    fetchYahooFutures(daily),
   ]);
   const tqData           = tqRes.status   === 'fulfilled' ? tqRes.value   : { funds: {}, indices: {}, stockChg: {}, aShareDate: null };
   const emIdx            = emRes.status   === 'fulfilled' ? emRes.value   : {};
@@ -856,14 +922,16 @@ async function fetchAllData(env = {}) {
 
   // 构建 marketContext：所有日期从数据源时间戳提取，不依赖服务器 new Date()
   // aShareDate = 腾讯行情时间戳（A股/港股同属 UTC+8，共用此字段）
-  // usDate     = Yahoo regularMarketTime 转换（UTC-5 保守估算美股交易日）
+  // usDate     = Yahoo regularMarketTime 转换（DST感知，toEasternDate）
   // fxDate     = 新浪 FX 响应内嵌时间字符串
   const marketContext = {
     aShareDate: tqData.aShareDate                          || null,
     usDate:     (futuresOverrides._usDate)                 || null,
     fxDate:     (sinaIdx._fxDate)                         || null,
   };
-  delete futuresOverrides._usDate;  // 清理临时键，不污染 idxChg
+  const commodityRefStale = futuresOverrides._commodityRefStale || false;
+  delete futuresOverrides._usDate;              // 清理临时键，不污染 idxChg
+  delete futuresOverrides._commodityRefStale;   // 同上
   // 记录哪些源整体失败（区别于"源正常但数据为空"）
   if (tqRes.status  === 'rejected') console.error('[fetch] 腾讯整体失败:', tqRes.reason);
   if (emRes.status  === 'rejected') console.error('[fetch] 东财整体失败:', emRes.reason);
@@ -1141,8 +1209,9 @@ async function fetchAllData(env = {}) {
     yahoo:     Object.keys(futuresOverrides).length > 0,
     fxOk:      fxChgUsd != null && fxChgHkd != null,  // 汇率数据是否完整
     idxMissing,  // bench 用到但未能取到的指数代码列表
-    closingFallback: staleIdxCodes.size > 0,          // 是否有指数来自收盘快照
-    staleIdxCodes: [...staleIdxCodes],                 // 具体哪些指数来自收盘快照
+    closingFallback: staleIdxCodes.size > 0,           // 是否有指数来自收盘快照
+    staleIdxCodes: [...staleIdxCodes],                  // 具体哪些指数来自收盘快照
+    commodityRefStale,                                  // 商品期货降级：用结算价基准而非 16:00 ET 参考价
   };
 
   return {

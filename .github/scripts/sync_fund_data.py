@@ -33,6 +33,12 @@ except ImportError:
     def is_trading_day(d: date) -> bool:
         return d.weekday() < 5
 
+try:
+    from zoneinfo import ZoneInfo
+    _ET = ZoneInfo('America/New_York')
+except ImportError:
+    _ET = None  # Python < 3.9 降级，16:00 ET 用固定偏移近似
+
 def gen_trading_dates_for_year(year: int) -> list:
     """生成指定年份所有交易日（YYYY-MM-DD 字符串列表）"""
     result, d = [], date(year, 1, 1)
@@ -98,6 +104,19 @@ _YAHOO_CODES = {
 # 注意：Tencent 在 GitHub Actions 境外服务器通常不可达，此别名主要供本地测试用
 _TQ_ALIASES = {
     'sinaAG0': 'nf_AG0',
+}
+
+# 商品期货参考价：ref_key → Yahoo Finance 编码符号
+# 每个交易日 Action 运行时抓取 16:00 ET 的历史 5 分钟 K 线价格，
+# 存入 fund_daily.json._commodity_refs，Worker 用 (现价/参考价 - 1) 替代 regularMarketChangePercent
+# 背景：COMEX/NYMEX 结算时间（金 13:30 ET / 原油 14:30 ET）早于 ETF 16:00 ET 收盘 1.5-2.5h，
+#       直接用结算价涨跌幅估算 ETF 日内变动存在系统性偏差；16:00 ET 快照更准确
+_COMMODITY_FUTURES = {
+    'gc': 'GC%3DF',   # COMEX 黄金  → usGLD/usGLDM/usIAU/usSGOL/usAAAU
+    'si': 'SI%3DF',   # COMEX 白银  → usSLV
+    'cl': 'CL%3DF',   # NYMEX WTI 原油 → usUSO/usIXC/usXOP/usXLE
+    'bz': 'BZ%3DF',   # ICE 布伦特原油  → usBNO
+    'hg': 'HG%3DF',   # COMEX 铜    → usCPER
 }
 
 
@@ -989,6 +1008,101 @@ def fetch_fx_settlement_rates() -> dict:
     return result
 
 
+# ══════════════════════════════════════════════════════
+#  商品期货参考价抓取（16:00 ET 快照）
+# ══════════════════════════════════════════════════════
+
+def _et_16_unix(run_utc: datetime) -> int:
+    """计算当天（美东时间）16:00 ET 对应的 Unix 时间戳（整秒）。
+    自动处理 EDT（UTC-4）/ EST（UTC-5）夏令时切换，无需硬编码。
+    如果 ZoneInfo 不可用（Python < 3.9），降级为 UTC-5 固定偏移近似。
+    """
+    if _ET:
+        from datetime import datetime as _dt
+        # 先转换到美东时区，取日期，再构造当天 16:00 ET，再转 UTC Unix 时间戳
+        run_et = run_utc.astimezone(_ET)
+        et_16 = _dt(run_et.year, run_et.month, run_et.day, 16, 0, 0, tzinfo=_ET)
+        return int(et_16.timestamp())
+    else:
+        # 降级：用 UTC-5（EST）固定偏移；夏令时期间偏差 1h，可接受（15 分钟窗口内仍能找到 K 线）
+        run_date_est = (run_utc - timedelta(hours=5)).date()
+        # 16:00 EST = 21:00 UTC
+        et_16_utc = datetime(run_date_est.year, run_date_est.month, run_date_est.day,
+                             21, 0, 0, tzinfo=timezone.utc)
+        return int(et_16_utc.timestamp())
+
+
+def fetch_commodity_ref_price(sym_encoded: str, target_unix: int) -> float | None:
+    """从 Yahoo Finance 5 分钟 K 线历史，找 16:00 ET 最近的收盘价。
+    target_unix：16:00 ET 的 Unix 时间戳（整秒）
+    最大允许偏差：15 分钟（若最近 K 线超出此范围则视为数据缺失）
+    """
+    url = (f'https://query1.finance.yahoo.com/v8/finance/chart/{sym_encoded}'
+           f'?interval=5m&range=1d&includePrePost=false')
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+               'Accept': 'application/json'}
+    raw = fetch_url(url, timeout=15)
+    if not raw:
+        return None
+    try:
+        d = json.loads(raw)
+        result = d.get('chart', {}).get('result', [])
+        if not result:
+            return None
+        ts_list   = result[0].get('timestamp', [])
+        closes    = result[0].get('indicators', {}).get('quote', [{}])[0].get('close', [])
+        if not ts_list or not closes:
+            return None
+        # 找到距离 target_unix 最近的时间戳索引
+        best_idx, best_diff = 0, abs(ts_list[0] - target_unix)
+        for i, t in enumerate(ts_list):
+            diff = abs(t - target_unix)
+            if diff < best_diff:
+                best_diff, best_idx = diff, i
+        if best_diff > 15 * 60:
+            print(f'[WARN] {sym_encoded}: 16:00 ET 偏差 {best_diff//60}min，超过15min，跳过')
+            return None
+        price = closes[best_idx]
+        if price is None or not (price > 0):
+            return None
+        return round(float(price), 4)
+    except Exception as e:
+        print(f'[WARN] fetch_commodity_ref_price {sym_encoded}: {e}')
+        return None
+
+
+def fetch_commodity_refs(t1_date: str, fx_rates: dict) -> dict | None:
+    """抓取所有商品期货 16:00 ET 的参考价格，并附上 USD/CNH 汇率双重锚定。
+    返回写入 fund_daily.json._commodity_refs 的字典；全部失败时返回 None。
+    """
+    run_utc   = datetime.now(timezone.utc)
+    target_ts = _et_16_unix(run_utc)
+    # 将目标时间格式化供日志确认
+    ref_et_time = datetime.fromtimestamp(target_ts, tz=timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+    print(f'  目标快照时间：{ref_et_time}（16:00 ET）')
+
+    refs: dict = {}
+    for ref_key, sym_encoded in _COMMODITY_FUTURES.items():
+        price = fetch_commodity_ref_price(sym_encoded, target_ts)
+        if price is not None:
+            refs[ref_key] = price
+            print(f'  [OK]  {ref_key} ({sym_encoded}): {price}')
+        else:
+            print(f'  [WARN] {ref_key} ({sym_encoded}): 获取失败，Worker 将降级至结算价基准')
+
+    if not refs:
+        return None  # 全部失败，不写入；Worker 保留上次数据并降级
+
+    # 附加 USD/CNH 汇率（与期货价格同步锚定，Worker 用于 FX 修正一致性）
+    usd_cnh = fx_rates.get('usd_cnh') or fx_rates.get('usd_cnh_t1')
+    if usd_cnh:
+        refs['usd_cnh'] = round(float(usd_cnh), 4)
+
+    refs['ref_et_time'] = ref_et_time
+    refs['sync_at']     = run_utc.strftime('%Y-%m-%dT%H:%M:%SZ')
+    return refs
+
+
 def sync():
     with open(JSON_PATH, 'r', encoding='utf-8') as f:
         data: dict = json.load(f)
@@ -1092,6 +1206,18 @@ def sync():
     bench_chg_map, bench_date_map = fetch_bench_chg_batch(data, t1_date)
     update_drift(data, bench_chg_map, bench_date_map, now_utc_drift)
     update_chain_anchors(data, bench_chg_map, bench_date_map, t1_date)
+
+    # ── 商品期货参考价（16:00 ET 快照，Worker 用于精准估值） ──
+    print('\n--- 商品期货参考价 (16:00 ET) ---')
+    commodity_refs = fetch_commodity_refs(t1_date, fx_rates or {})
+    if commodity_refs:
+        data['_commodity_refs'] = commodity_refs
+        ok_count = sum(1 for k in commodity_refs if k not in ('ref_et_time', 'usd_cnh', 'sync_at'))
+        print(f'  写入 _commodity_refs: {ok_count}/{len(_COMMODITY_FUTURES)} 合约成功  '
+              f'ref_et_time={commodity_refs.get("ref_et_time")}')
+    else:
+        print('  [WARN] 全部商品期货参考价获取失败，保留上次数据（Worker 将降级至结算价基准）',
+              file=sys.stderr)
 
     # ── 写 _meta ──────────────────────────────────────
     now_utc = datetime.now(timezone.utc).isoformat(timespec='seconds')

@@ -1335,9 +1335,10 @@ async function doRefresh() {
     const hasPrice = funds.some(f => f.price != null);
     let srcLabel, qualityNote;
     if (snap) {
-      const patchNote = snap.fetchStatus?.idxMissing?.length > 0 ? ' · 本地补丁' : '';
+      const patchNote      = snap.fetchStatus?.idxMissing?.length > 0 ? ' · 本地补丁' : '';
+      const commodityNote  = snap.fetchStatus?.commodityRefStale ? ' · 商品降级⚠' : '';
       srcLabel   = '☁️ Worker';
-      qualityNote = '全量实时' + patchNote;
+      qualityNote = '全量实时' + patchNote + commodityNote;
     } else if (hasPrice) {
       srcLabel   = '⚡ 直连';
       qualityNote = '港/A实时 · 美股T-1';
