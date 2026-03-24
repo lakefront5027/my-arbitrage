@@ -1341,14 +1341,18 @@ async function handleRequest(request, env = {}) {
     }
   }
 
-  // GET /api/sina?callback=xxx — 新浪代理（JSONP模式，返回解析后的涨跌幅）
+  // GET /api/sina?callback=xxx — 新浪 + EM 代理（JSONP模式，返回解析后的涨跌幅）
   // GET /api/sina        — 普通JSON模式
+  // 直连模式浏览器无法添加 Referer，EM 国内指数（csi930917 等）需 Worker 代理转发
   if (path === '/api/sina') {
     const callback = url.searchParams.get('callback');
     try {
-      const sinaData = await fetchSina();
+      const [sinaData, emData] = await Promise.all([fetchSina(), fetchEastmoney()]);
+      // 合并：Sina 优先级最高；EM 仅填充 Sina 未提供的代码（不含 _ 前缀的元字段）
+      const merged = { ...emData };
+      Object.entries(sinaData).forEach(([k, v]) => { merged[k] = v; });
       if (callback) {
-        const body = `${callback}(${JSON.stringify(sinaData)});`;
+        const body = `${callback}(${JSON.stringify(merged)});`;
         return new Response(body, {
           status: 200,
           headers: {
@@ -1358,7 +1362,7 @@ async function handleRequest(request, env = {}) {
           },
         });
       }
-      return jsonResp(sinaData, 200, origin);
+      return jsonResp(merged, 200, origin);
     } catch (e) {
       if (callback) {
         return new Response(`${callback}({});`, {
