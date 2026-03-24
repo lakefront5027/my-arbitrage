@@ -225,9 +225,11 @@ function setTradingDates(arr) {
 /** 判断某日是否为交易日（dateStr: 'YYYY-MM-DD'） */
 function isTradingDay(dateStr) {
   if (_tradingDates && _tradingDates.size > 0) {
-    // 在窗口内：有记录=交易日，无记录=非交易日
     const sorted = [..._tradingDates].sort();
-    if (dateStr >= sorted[0]) return _tradingDates.has(dateStr);
+    const latest = sorted[sorted.length - 1];
+    // 在已知窗口内：有记录=交易日，无记录=非交易日（节假日/周末）
+    // 超出窗口上界（今日盘中 benchDate 尚未写入）：降级周末判断
+    if (dateStr <= latest) return _tradingDates.has(dateStr);
   }
   // 窗口外或未加载：降级周末判断
   const d = new Date(dateStr + 'T00:00:00Z');
