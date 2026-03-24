@@ -24,6 +24,8 @@ The system runs entirely on Cloudflare infrastructure (Worker + Pages), backed b
 │    • 抓取 FX 结算汇率（Sina）                                         │
 │    • 计算 drift 历史（30日滚动）及 drift_5d 修正因子                   │
 │    • 写入 est_nav_yesterday 链式补偿锚点（update_chain_anchors）       │
+│    • 抓取商品期货 16:00 ET 参考价（GC/SI/CL/BZ/HG），写入               │
+│      _commodity_refs（Worker 精准估值基准，替代结算价）                 │
 │    • 写入 data/fund_daily.json → git commit → git push               │
 │    • 连续失败 ≥3 次 → RuntimeError，Actions 红叉强制报警               │
 │    • 接口失败自动重试 2 次（间隔 3s）                                  │
@@ -401,11 +403,17 @@ idxChg[code] = null（未抓到）
   "eastmoney": false,
   "sina": true,
   "yahoo": true,
-  "idxMissing": ["sz399961", "sinaAG0"]
+  "fxOk": true,
+  "idxMissing": ["sz399961", "sinaAG0"],
+  "closingFallback": true,
+  "staleIdxCodes": ["sz399961"],
+  "commodityRefStale": false
 }
 ```
 
-`idxMissing` 列出所有 BENCH 用到但未能取到的指数代码，无需看 Worker 日志即可定位数据链断点。
+- `idxMissing`：BENCH 用到但未能取到的指数代码
+- `closingFallback`/`staleIdxCodes`：有无指数来自收盘快照
+- `commodityRefStale`：商品期货是否降级为结算价基准（`_commodity_refs` 缺失/过期时为 `true`），UI 显示 `· 商品降级⚠`
 
 #### 5.5 fallback 路径强制对齐
 
@@ -420,7 +428,7 @@ idxChg[code] = null（未抓到）
 |------|---------|---------|------|
 | `sz399961` / `sz399979` | 腾讯（盘中实时） | EM fill-only | EM 对这两个指数盘中返回 f170=0，腾讯提供正确实时值；EM 仅作填空备份 |
 | `sinaAG0` | 新浪 nf_AG0（Worker 代理） | 浏览器直连 Sina no-referrer → 收盘快照 | **EM 113.AG0 无效**（rc=100/data:null）；**腾讯不支持 nf_AG0**（已确认，`v_nf_AG0` 无数据）；浏览器直连用 `<script referrerpolicy="no-referrer">` |
-| `csi93xxxx` / `sh000985` | 东财 EM（唯一来源） | 收盘快照 | 腾讯不支持 |
+| `csi930917/914/792` | 东财 EM（Worker 代理） | **直连模式：`closingData` 无条件兜底** | 腾讯不支持；EM push2 需 `Referer: https://quote.eastmoney.com/`，浏览器无法伪造 → 直连始终失败；index.html 对这三个代码在直连时无条件使用 `closingData`（交易时段内也允许，唯一可靠来源），UI 显示 `(收)` |
 | `hkHSSI` / `hkHSMI` / `hkHSCI` | 东财 EM | hkHSI 降级链 | 腾讯不支持 |
 
 **合并优先级（严格执行）：**
@@ -836,6 +844,7 @@ const tqData = tqRes.status === 'fulfilled' ? tqRes.value : { funds:{}, indices:
 | 东财 EM 指数 | ✅ 可用 | fetch，push2 有 CORS 头 |
 | 新浪 FX（USD/CNH, HKD/CNH） | ✅ 通过 Worker `/api/sina` 获取 | 直连模式并行调 `fetchSina()`（`/api/sina` 独立端点，snapshot 失败≠Worker 宕机）；Worker 真正宕机时 FX=null，⚠️ 降级 |
 | 白银 AG0（sinaAG0） | ✅ 主路：Worker `/api/sina`；备路：浏览器 no-referrer JSONP | 直连模式并行调 `fetchSina()` + `fetchSinaAG0Direct()`；腾讯**不支持** nf_AG0（已确认移除）；Worker 宕机时退回浏览器直连 Sina |
+| Yahoo 期货（NQ=F/ES=F/GC=F 等） | ❌ Worker 专属 | Yahoo 无 CORS 头，浏览器直连被拒；直连模式下所有美股/商品基金 bench 为腾讯 T-1 收盘值 |
 | FX ⚠️ 警告 | 仅 Worker 真正宕机时出现 | Worker `/api/sina` 可达则 FX 正常；宕机时 FX=null，⚠️ 标注精度下降 |
 
 ---
@@ -1074,9 +1083,78 @@ signal = "sell" | "buy" | "hold"
 | `api.fund.eastmoney.com/f10/jjcc` | 前十大持仓 | Action |
 | `qt.gtimg.cn` | 实时价格 + 40+ 指数 | Worker / Page |
 | `push2.eastmoney.com` | 大陆指数（备） | Worker / Page |
-| `query1.finance.yahoo.com` | CME 期货实时（NQ=F / ES=F）| Worker |
+| `query1.finance.yahoo.com` | 股指期货实时（NQ=F / ES=F）+ 商品期货实时（GC=F / SI=F / CL=F / BZ=F / HG=F）| Worker |
 | `hq.sinajs.cn` | 实时汇率（USD/CNH、HKD/CNH）| Worker / Page |
 | `fundgz.1234567.com.cn` | 净值应急补位 JSONP | Page（应急） |
+
+---
+
+## 商品期货实时估值（2026-03 新增）
+
+### 背景与问题
+
+COMEX/NYMEX 商品期货结算时间早于美股 ETF 收盘（16:00 ET）：
+- COMEX 黄金（GC=F）：13:30 ET 结算
+- NYMEX 原油（CL=F）：14:30 ET 结算
+
+T-1 基金净值以 **16:00 ET 价格**为计算基准，而 Yahoo `regularMarketChangePercent` 以结算价为参考点，导致 1.5–2.5h 的系统性偏差，在行情剧烈波动时对 NAV 估值影响显著。
+
+### 解决方案：16:00 ET 参考价快照
+
+**Action（`sync_fund_data.py`）** 在北京 07:00（UTC 23:00）运行时，美股已收盘 3h+，16:00 ET 对 Action 而言是历史数据。通过 Yahoo 5 分钟 K 线（`interval=5m&range=1d`）取最近 K 线价格作为参考锚点，写入 `fund_daily.json._commodity_refs`。
+
+**Worker** 用 `(regularMarketPrice / refs[ref] - 1) × 100` 替代 `regularMarketChangePercent`，使估值基准与 ETF NAV 计算一致。
+
+### _commodity_refs 数据结构
+
+```json
+{
+  "gc": 3050.20,
+  "si": 33.12,
+  "cl": 68.45,
+  "bz": 72.30,
+  "hg": 4.85,
+  "usd_cnh": 7.235,
+  "ref_et_time": "2026-03-24T20:00:00Z",
+  "sync_at": "2026-03-24T23:05:00Z"
+}
+```
+
+- `gc/si/cl/bz/hg`：各合约在 16:00 ET（UTC 20:00 EDT / 21:00 EST）的价格快照
+- `usd_cnh`：与期货价格同步抓取的 USD/CNH 汇率（FX 双重锚定，同一时刻快照）
+- `ref_et_time`：16:00 ET 对应的 UTC 时间戳（DST-aware，`ZoneInfo('America/New_York')`）
+- `sync_at`：Action 写入时刻
+
+### 期货映射
+
+| Worker 常量 | 合约 | 对应 us* 代码 |
+|------------|------|------------|
+| `EQUITY_FUTURES` | NQ=F → `usQQQ/usIXIC/usXLK/usSMH` | 股指，`_usDate` 从此提取 |
+| `EQUITY_FUTURES` | ES=F → `usINX` | 股指 |
+| `COMMODITY_FUTURES` | GC=F（COMEX 黄金）→ `usGLD/usGLDM/usIAU/usSGOL/usAAAU` | 商品，`_usDate` **不**从此提取 |
+| `COMMODITY_FUTURES` | SI=F（COMEX 白银）→ `usSLV` | 商品 |
+| `COMMODITY_FUTURES` | CL=F（NYMEX WTI）→ `usUSO/usIXC/usXOP/usXLE` | 商品 |
+| `COMMODITY_FUTURES` | BZ=F（ICE 布伦特）→ `usBNO` | 商品 |
+| `COMMODITY_FUTURES` | HG=F（COMEX 铜）→ `usCPER` | 商品 |
+
+**`_usDate` 仅从股指期货提取**（NQ=F/ES=F 有明确日盘收盘时间语义）。商品期货 24h 近连续交易，其 `regularMarketTime` 语义不同，不作为 `_usDate` 来源。
+
+### DST（夏令时）处理
+
+| 位置 | 实现 |
+|------|------|
+| Python（Action） | `ZoneInfo('America/New_York')`，自动感知 EDT/EST 切换；Python < 3.9 降级为 UTC-5 固定偏移近似 |
+| JavaScript（Worker） | `toEasternDate(unixSec)`：`new Date().toLocaleDateString('sv-SE', { timeZone: 'America/New_York' })`，替代原 `(ts - 5×3600)` 硬编码 |
+
+### 降级逻辑（`commodityRefStale`）
+
+| 情况 | Worker 行为 | UI 标注 |
+|------|-----------|--------|
+| `_commodity_refs` 存在且 < 48h | 精准模式：`(现价/参考价 - 1)` | 无额外提示 |
+| `_commodity_refs` 缺失或 > 48h | 降级：`regularMarketChangePercent`（结算价基准） | `· 商品降级⚠`（黄色，状态栏） |
+
+48h 窗口确保长周末（最多跨 72h）也能安全覆盖：周五存入的 refs 在下周一使用时 < 48h。
+> 注意：若长假超过 48h，降级为结算价基准，UI 显示警告。可将阈值调整为 `3 * 24 * 3600 * 1000` 以覆盖三日长周末（如元旦）。
 
 ---
 
