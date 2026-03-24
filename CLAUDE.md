@@ -695,40 +695,79 @@ if run_utc.month >= 10:
     trading_dates += gen_trading_dates_for_year(run_utc.year + 1)
 ```
 
+### trading_dates 的唯一职责
+
+**精确测量 `navLag`**（交易日数）。
+
+`navLag = tradingDayLag(navDate, benchDate)` 需要知道两个日期之间哪些天真正开市。
+全年日历覆盖法定节假日与补班日，确保：
+
+- 节假日调休（如清明补班周日）：不会漏计
+- 节假日休市（如清明调休周五）：不会多计
+- 任何 `navLag` 错误都会直接导致链式补偿误判或 `computeNav` 熔断
+
+**典型案例（2026 清明调休）**：
+
+```
+2026-03-21（周五）= 调休休市（非交易日）
+2026-03-23（周日）= 补班开市（交易日）
+2026-03-24（周一）= 正常交易日
+
+navLag(2026-03-20, 2026-03-24) = 2（03-23 + 03-24）→ 链式补偿启动 ✓
+navLag(2026-03-23, 2026-03-24) = 1                  → 正常 T-1 估算 ✓
+```
+
+若用日历天数或简单周末判断，03-21 会被误判为交易日，navLag 偏大，链式逻辑错误。
+
 **Worker / index.html** 读取 `trading_dates` 后注入本地工具函数：
 
 | 函数 | 用途 |
 |------|------|
-| `setTradingDates(arr)` | 注入全年日历（fetchAllData 时调用） |
-| `isTradingDay(dateStr)` | 纯 Set 查找，含节假日精确感知；仅在 Set 未加载时降级周末判断 |
-| `tradingDayLag(from, to)` | 计算两日期间的交易日数，替代原日历天数 |
-| `isBjTradingHours()` | 判断当前是否在交易时段，用于快照守卫 |
+| `setTradingDates(arr)` | 注入全年日历，同时缓存 `_latestTradingDate`（避免热路径重复排序） |
+| `isTradingDay(dateStr)` | 三层优先级（见下） |
+| `tradingDayLag(from, to)` | 计算两日期间的交易日数，供 navLag / syncLagDays / driftLagDays 使用 |
+| `isBjTradingHours()` | 判断当前是否在交易时段，用于收盘快照守卫 |
 
-`isTradingDay` 的降级路径（周末判断）仅在 `fund_daily.json` 尚未加载的极短暂启动窗口生效，正常运行中不会触发。
-
-**`navLag` 语义**：
+### isTradingDay 三层优先级
 
 ```
-navLag = 交易日数（周一周五净值 → navLag=1，正确）
-         ≠ 日历天数（周一周五净值 → navLag=3，旧实现误触发链式估值）
+优先级 1：_tradingDates.has(dateStr) = true  → 确定是交易日（日历预测）
+优先级 2：dateStr <= _latestTradingDate       → 确定是非交易日（节假日/调休休市）
+优先级 3：超出日历上界                        → 周末判断兜底（异常保护）
+优先级 0：Set 未加载                          → 周末判断（冷启动极短暂窗口）
 ```
 
-`staleness_policy` 的阈值（`nav_max_lag_days: 3`、`chain_estimation_allowed_lag_days: 2`）单位为交易日。
+**正常情况下只走优先级 1 和 2**：全年日历覆盖所有 2026 日期（Q4 时附加次年），不存在"超出上界"场景。
 
-### 非计划停市的隐式补偿
+优先级 3 是**异常保护**，对应两种极端情况：
+- `chinese_calendar` 包版本滞后，次年日历尚未附加时
+- `fund_daily.json` 写入异常，`trading_dates` 残缺时（如 Action 连续失败后重启）
 
-全年预载日历预测"今天应该开市"，但无法预知非计划停市（台风、熔断）。
-**补偿机制已内置于时间宪法**：`benchDate` 来自数据源时间戳，而非系统时钟。
-非计划停市时，交易所行情冻结，腾讯/EM 接口停止更新 → `benchDate` 自动保持在停市前最后交易日
-→ `tradingDayLag` 计算正确，系统展示停市前最后快照，无需日历层做任何修正。
+### 日历与实时行情的互为验证
 
-> 极端边角：停市公告在开盘后发出，短暂窗口内数据带有当日时间戳但成交量极少，
-> 估值可能略有误差，但数据有时间戳可溯源，属市场本身不确定性，非系统设计缺陷。
+```
+日历（预测）：「2026-03-24 是交易日」
+Worker（实证）：benchDate = '2026-03-24'（来自腾讯行情时间戳）
+两者吻合 → navLag 计算正确 → 估值链路正常
+```
+
+非计划停市时（台风/熔断），行情冻结 → `benchDate` 自动退回上一真实交易日 → 日历与 benchDate 自然对齐，无需任何额外处理。
+
+> 极端边角：停市公告在开盘后发出，短暂窗口内数据携带当日时间戳。估值略有误差，有时间戳可溯源，属市场本身不确定性。
+
+### `navLag` 语义
+
+```
+navLag = 交易日数（周一，周五净值 → navLag=1，正确）
+         ≠ 日历天数（周一，周五净值 → navLag=3，错误，会误触发链式估值）
+```
+
+`staleness_policy` 阈值（`nav_max_lag_days: 3`、`chain_estimation_allowed_lag_days: 2`）单位为交易日。
 
 ### 年度维护
 
 - `chinese_calendar` 包每年需更新版本以覆盖新年度节假日
-- 更新后次日 Action 运行即自动重写全年日历，无需手动操作
+- 更新后次日 Action 自动重写全年日历，**无需手动操作**
 - dependabot 可自动提 PR 更新版本
 
 ---
