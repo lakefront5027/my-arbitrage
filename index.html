@@ -729,19 +729,32 @@ function calcFxOk(code, fxChgUsd, fxChgHkd) {
   return true;
 }
 
-function calcBenchChg(code, idxChg) {
+/**
+ * 时间戳前置校验：idxChg 数据日期与 benchDate 不符时的处理
+ *   us* → 视为 0（美股未开盘，今日无新数据，假设无额外变化）
+ *   其他 → 视为 null（A/HK 交易时段理应有当日数据，缺失属异常）
+ */
+function resolveIdxChg(rawChg, code, idxDate, benchDate) {
+  if (rawChg == null) return null;
+  const dataDate = idxDate && idxDate[code];
+  if (!dataDate || !benchDate || dataDate === benchDate) return rawChg;
+  if (code.startsWith('us')) return 0;
+  return null;
+}
+
+function calcBenchChg(code, idxChg, idxDate, benchDate) {
   const b = BENCH[code];
   if (!b) return null;
   let result;
   if (Array.isArray(b)) {
     let chg = 0, w = 0;
     b.forEach(x => {
-      const v = idxChg[x.tq];
+      const v = resolveIdxChg(idxChg[x.tq], x.tq, idxDate, benchDate);
       if (v != null) { chg += v * x.w; w += x.w; }  // 缺失分量不计入分母
     });
     result = w > 0 ? chg / w : null;  // 全部缺失 → null，不是 0
   } else {
-    result = idxChg[b] ?? null;  // 未抓到 → null，与真实 0% 区分
+    result = resolveIdxChg(idxChg[b], b, idxDate, benchDate) ?? null;
   }
   // 加权结果合理性校验：复合 bench 超过 ±20% 视为脏数据
   if (result != null && Math.abs(result) > 20) return null;
@@ -750,7 +763,7 @@ function calcBenchChg(code, idxChg) {
 
 // FX 修正版：对每个 bench 分量叠加汇率变化
 // us* → USD/CNH；hk* → HKD/CNH；sh/sz/csi/sina* → 0（CNY计价）
-function calcAdjustedBenchChg(code, idxChg, fxChgUsd, fxChgHkd) {
+function calcAdjustedBenchChg(code, idxChg, idxDate, benchDate, fxChgUsd, fxChgHkd) {
   function fxFor(tqCode) {
     if (tqCode.startsWith('us')) return fxChgUsd || 0;
     if (tqCode.startsWith('hk')) return fxChgHkd || 0;
@@ -761,14 +774,14 @@ function calcAdjustedBenchChg(code, idxChg, fxChgUsd, fxChgHkd) {
   if (Array.isArray(b)) {
     let ret = 0, w = 0;
     b.forEach(x => {
-      const ic = idxChg[x.tq];
+      const ic = resolveIdxChg(idxChg[x.tq], x.tq, idxDate, benchDate);
       if (ic == null) return;  // 缺失分量跳过，与 calcBenchChg 对齐
       ret += ((1 + ic / 100) * (1 + fxFor(x.tq) / 100) - 1) * x.w;
       w += x.w;
     });
     return w > 0 ? ret / w * 100 : null;  // 全部缺失 → null
   }
-  const ic = idxChg[b];
+  const ic = resolveIdxChg(idxChg[b], b, idxDate, benchDate);
   if (ic == null) return null;
   return ((1 + ic / 100) * (1 + fxFor(b) / 100) - 1) * 100;
 }
@@ -800,10 +813,10 @@ function getHoldingTqCodes(daily) {
 /**
  * 动态持仓加权估值（Plan A：US 跳过，归入 bench 残差）
  */
-function calcDynamicNavReturn(code, idxChg, stockChg, fxChgUsd, fxChgHkd, daily) {
+function calcDynamicNavReturn(code, idxChg, idxDate, benchDate, stockChg, fxChgUsd, fxChgHkd, daily) {
   const holdings = daily && daily[code] && daily[code].holdings;
   if (!holdings || !holdings.length)
-    return calcAdjustedBenchChg(code, idxChg, fxChgUsd, fxChgHkd);
+    return calcAdjustedBenchChg(code, idxChg, idxDate, benchDate, fxChgUsd, fxChgHkd);
   let coveredReturn = 0, coveredW = 0;
   for (const h of holdings) {
     const tq = holdingToTqCode(h.code);
@@ -815,7 +828,7 @@ function calcDynamicNavReturn(code, idxChg, stockChg, fxChgUsd, fxChgHkd, daily)
     coveredReturn += ((1 + chg / 100) * (1 + fx / 100) - 1) * w;
     coveredW += w;
   }
-  const adjBench = calcAdjustedBenchChg(code, idxChg, fxChgUsd, fxChgHkd);
+  const adjBench = calcAdjustedBenchChg(code, idxChg, idxDate, benchDate, fxChgUsd, fxChgHkd);
   if (adjBench == null && coveredW < 1.0) return null;  // 残差无法填补 → 不计算
   const benchReturn = (adjBench ?? 0) / 100;
   return (coveredReturn + benchReturn * (1 - coveredW)) * 100;
@@ -1190,6 +1203,20 @@ async function doRefresh() {
         }
       }
       if (idxChg['sinaAG0'] == null) console.warn('[sinaAG0] 所有来源均失败，161226 将显示指数缺失');
+
+      // 标注每条 idxChg 数据的市场日期（时间戳前置锁校验用）
+      // 降级路径无 Yahoo，us* 来自腾讯 T-1 收盘 → prevTradingDay(aShareDate)
+      const idxDate = {};
+      for (const code of Object.keys(idxChg)) {
+        if (staleIdxCodes.has(code)) {
+          idxDate[code] = closingData?.[code]?.date || null;
+        } else if (code.startsWith('us')) {
+          idxDate[code] = prevTradingDay(tqData.aShareDate);
+        } else {
+          idxDate[code] = tqData.aShareDate;
+        }
+      }
+
       funds = FUNDS.map(f => {
         const tq = tqData.funds[f.code];
         const officialNav = navMap[f.code] || null;          // AssetEntity | null
@@ -1198,20 +1225,11 @@ async function doRefresh() {
         const chg = tq ? tq.chg : null;
         const vol = tq ? tq.vol : 0;
         const prevClose = tq ? tq.prevClose : null;
-        const benchChg       = calcBenchChg(f.code, idxChg);
-        const adjBenchChg    = calcAdjustedBenchChg(f.code, idxChg, fxChgUsd, fxChgHkd);
-        const fxAdj          = (adjBenchChg != null && benchChg != null) ? adjBenchChg - benchChg : null;
-        const dynNavReturn   = calcDynamicNavReturn(f.code, idxChg, stockChg, fxChgUsd, fxChgHkd, daily);
-        const benchOk        = benchChg != null;
+
         const benchDef_      = BENCH[f.code];
         const benchStale     = benchDef_
           ? (Array.isArray(benchDef_) ? benchDef_.some(b => staleIdxCodes.has(b.tq)) : staleIdxCodes.has(benchDef_))
           : false;
-        const fxOk           = calcFxOk(f.code, fxChgUsd, fxChgHkd);
-        const holdingCoverage = calcHoldingCoverage(f.code, stockChg, daily);
-        const fundDaily = daily && daily[f.code];
-        const drift5d   = fundDaily ? (fundDaily.drift_5d          || 0)   : 0;
-        const driftN    = fundDaily ? (fundDaily.drift_n           || 0)   : 0;
 
         // ── 时间驱动协议（与 worker-full.js 逻辑完全一致）──
         const isCrossBorder = f.cat === 'us' || f.cat === 'hk';
@@ -1224,6 +1242,20 @@ async function doRefresh() {
         } else {
           benchDate = tqData.aShareDate;  // 降级路径无 Yahoo，统一用 A 股时间戳
         }
+
+        // ── idxChg 时间戳校验后的有效值（benchDate 确定后才能计算）──
+        // resolveIdxChg 内部：us* 滞后数据 → 0（今日无新数据，假设无额外变化）
+        //                     A/HK 滞后数据 → null（异常，不参与计算）
+        const benchChg       = calcBenchChg(f.code, idxChg, idxDate, benchDate);
+        const adjBenchChg    = calcAdjustedBenchChg(f.code, idxChg, idxDate, benchDate, fxChgUsd, fxChgHkd);
+        const fxAdj          = (adjBenchChg != null && benchChg != null) ? adjBenchChg - benchChg : null;
+        const dynNavReturn   = calcDynamicNavReturn(f.code, idxChg, idxDate, benchDate, stockChg, fxChgUsd, fxChgHkd, daily);
+        const benchOk        = benchChg != null;
+        const fxOk           = calcFxOk(f.code, fxChgUsd, fxChgHkd);
+        const holdingCoverage = calcHoldingCoverage(f.code, stockChg, daily);
+        const fundDaily = daily && daily[f.code];
+        const drift5d   = fundDaily ? (fundDaily.drift_5d          || 0)   : 0;
+        const driftN    = fundDaily ? (fundDaily.drift_n           || 0)   : 0;
 
         // 偏差校准：Hard Enforcement — 宁可无补偿，不可乱补偿
         // driftLagDays 用交易日数（与 Worker 一致），避免周末误判 Drift SUSPENDED
@@ -1259,29 +1291,10 @@ async function doRefresh() {
           if (navBasis.type === 'T0_OFFICIAL' && base) {
             nav = { value: base.value, date: base.date, src: 'official_t0' };
           } else {
-            // ── 幂等计算锁（防 US bench 双重计数，直连模式） ──
-            // 直连模式无 Yahoo，benchDate = aShareDate，Tencent US 数据 = T-1 前收
-            // = 与 Action est_nav_yesterday 所用 bench_chg 相同日期。
-            // realtimeIndexDate = prevTradingDay(benchDate)（近似，A 股日历推算）
-            // 兼容旧数据（无 est_nav_index_date）：直连模式 US 链式补偿一律归零。
-            const realtimeIndexDate = prevTradingDay(benchDate);
-            const consumedDate = base?.index_date;
-            const isUsDoubleCount = useChained && f.cat === 'us' && (
-              consumedDate
-                ? consumedDate === realtimeIndexDate   // 精确匹配
-                : true                                 // 降级：旧数据无字段，直连 US 链式一律归零
-            );
-            let effectiveDynNavReturn = dynNavReturn;
-            if (isUsDoubleCount) {
-              const bd = BENCH[f.code];
-              const maskedChg = Object.assign({}, idxChg);
-              (Array.isArray(bd) ? bd.map(b => b.tq) : [bd])
-                .filter(c => c && c.startsWith('us'))
-                .forEach(c => { maskedChg[c] = 0; });
-              effectiveDynNavReturn = calcDynamicNavReturn(f.code, maskedChg, stockChg, fxChgUsd, fxChgHkd, daily);
-              console.log(`[circuit] ${f.code} US双重计数锁 base.date=${base?.date} consumed=${consumedDate} realtime=${realtimeIndexDate} → US分量归零`);
-            }
-            nav = computeNav(base, benchDate, effectiveDynNavReturn, alpha);
+            // dynNavReturn 已经过 resolveIdxChg 时间戳校验：
+            // us* 滞后数据（降级路径 Tencent 返 T-1）→ 0（假设今日无额外变化）
+            // 双重计数自然消除，无需额外断路器
+            nav = computeNav(base, benchDate, dynNavReturn, alpha);
           }
           if (nav != null) premium = (price - nav.value) / nav.value * 100;
         }

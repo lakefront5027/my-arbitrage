@@ -689,14 +689,28 @@ async function fetchSina() {
 /**
  * 根据 idxChg 和 BENCH 计算基准涨跌幅
  */
-function calcBenchChg(code, idxChg) {
+/**
+ * 按时间戳校验解析指数涨跌幅
+ * dataDate ≠ benchDate 时：
+ *   us* → 视为 0（美股未开盘，今日无新数据，假设无额外变化）
+ *   其他 → 视为 null（A/HK 交易时段理应有当日数据，缺失属异常）
+ */
+function resolveIdxChg(rawChg, code, idxDate, benchDate) {
+  if (rawChg == null) return null;
+  const dataDate = idxDate && idxDate[code];
+  if (!dataDate || !benchDate || dataDate === benchDate) return rawChg;
+  if (code.startsWith('us')) return 0;
+  return null;
+}
+
+function calcBenchChg(code, idxChg, idxDate, benchDate) {
   const benchDef = BENCH[code];
   if (!benchDef) return null;
   let result;
   if (Array.isArray(benchDef)) {
     let benchChg = 0, totalW = 0;
     benchDef.forEach(b => {
-      const chg = idxChg[b.tq];
+      const chg = resolveIdxChg(idxChg[b.tq], b.tq, idxDate, benchDate);
       if (chg != null) {           // 缺失分量不计入分母，避免拉低结果
         benchChg += chg * b.w;
         totalW += b.w;
@@ -704,7 +718,7 @@ function calcBenchChg(code, idxChg) {
     });
     result = totalW > 0 ? benchChg / totalW : null;  // 全部缺失 → null，不是 0
   } else {
-    result = idxChg[benchDef] ?? null;  // 未抓到 → null，与真实 0% 区分
+    result = resolveIdxChg(idxChg[benchDef], benchDef, idxDate, benchDate) ?? null;
   }
   // 加权结果合理性校验：复合 bench 超过 ±20% 视为脏数据
   if (result != null && Math.abs(result) > 20) {
@@ -720,7 +734,7 @@ function calcBenchChg(code, idxChg) {
  * us* → USD/CNH；hk* → HKD/CNH；sh/sz/csi/sina* → 无 FX
  * fxChgUsd / fxChgHkd 为空时自动降级为纯指数估值
  */
-function calcAdjustedBenchChg(code, idxChg, fxChgUsd, fxChgHkd) {
+function calcAdjustedBenchChg(code, idxChg, idxDate, benchDate, fxChgUsd, fxChgHkd) {
   function fxForCode(tqCode) {
     if (tqCode.startsWith('us')) return fxChgUsd || 0;
     if (tqCode.startsWith('hk')) return fxChgHkd || 0;
@@ -731,7 +745,7 @@ function calcAdjustedBenchChg(code, idxChg, fxChgUsd, fxChgHkd) {
   if (Array.isArray(benchDef)) {
     let navReturn = 0, totalW = 0;
     benchDef.forEach(b => {
-      const ic = idxChg[b.tq];
+      const ic = resolveIdxChg(idxChg[b.tq], b.tq, idxDate, benchDate);
       if (ic == null) return;      // 与 calcBenchChg 对齐：缺失分量跳过，不补 0
       const fx = fxForCode(b.tq);
       navReturn += ((1 + ic / 100) * (1 + fx / 100) - 1) * b.w;
@@ -739,7 +753,7 @@ function calcAdjustedBenchChg(code, idxChg, fxChgUsd, fxChgHkd) {
     });
     return totalW > 0 ? navReturn / totalW * 100 : null;  // 全部缺失 → null
   }
-  const ic = idxChg[benchDef];
+  const ic = resolveIdxChg(idxChg[benchDef], benchDef, idxDate, benchDate);
   if (ic == null) return null;
   const fx = fxForCode(benchDef);
   return ((1 + ic / 100) * (1 + fx / 100) - 1) * 100;
@@ -750,10 +764,10 @@ function calcAdjustedBenchChg(code, idxChg, fxChgUsd, fxChgHkd) {
  * HK + A 股持仓个股：逐笔加权 × FX 修正
  * 无价格的分量（含全部 US 股）：用 bench 残差填补
  */
-function calcDynamicNavReturn(code, idxChg, stockChg, fxChgUsd, fxChgHkd, daily) {
+function calcDynamicNavReturn(code, idxChg, idxDate, benchDate, stockChg, fxChgUsd, fxChgHkd, daily) {
   const holdings = daily && daily[code] && daily[code].holdings;
   if (!holdings || !holdings.length) {
-    return calcAdjustedBenchChg(code, idxChg, fxChgUsd, fxChgHkd);
+    return calcAdjustedBenchChg(code, idxChg, idxDate, benchDate, fxChgUsd, fxChgHkd);
   }
   let coveredReturn = 0, coveredW = 0;
   for (const h of holdings) {
@@ -766,7 +780,7 @@ function calcDynamicNavReturn(code, idxChg, stockChg, fxChgUsd, fxChgHkd, daily)
     coveredReturn += ((1 + chg / 100) * (1 + fx / 100) - 1) * w;
     coveredW += w;
   }
-  const adjBench = calcAdjustedBenchChg(code, idxChg, fxChgUsd, fxChgHkd);
+  const adjBench = calcAdjustedBenchChg(code, idxChg, idxDate, benchDate, fxChgUsd, fxChgHkd);
   if (adjBench == null && coveredW < 1.0) return null;  // 残差无法填补 → 不计算
   const benchReturn = (adjBench ?? 0) / 100;
   return (coveredReturn + benchReturn * (1 - coveredW)) * 100;
@@ -934,6 +948,25 @@ async function fetchAllData(env = {}) {
     }
   }
 
+  // 标注每条 idxChg 数据的市场日期（时间戳前置锁校验用）
+  // us* 来自腾讯 T-1 收盘（美股未开盘） → prevTradingDay；其他 → 当日
+  // Yahoo 期货覆盖的 us* 代码用 usDate（今日）→ resolveIdxChg 不会误判为滞后
+  const idxDate = {};
+  {
+    const futuresCodes = new Set(Object.keys(futuresOverrides));
+    for (const code of Object.keys(idxChg)) {
+      if (staleIdxCodes.has(code)) {
+        idxDate[code] = closingData[code]?.date || null;
+      } else if (futuresCodes.has(code)) {
+        idxDate[code] = marketContext.usDate || marketContext.aShareDate;
+      } else if (code.startsWith('us')) {
+        idxDate[code] = prevTradingDay(marketContext.aShareDate);
+      } else {
+        idxDate[code] = marketContext.aShareDate;
+      }
+    }
+  }
+
   // 计算每只基金
   const funds = FUNDS.map(f => {
     const tq = tqData.funds[f.code];
@@ -948,17 +981,10 @@ async function fetchAllData(env = {}) {
       prevClose = tq.prevClose;
     }
 
-    const benchChg       = calcBenchChg(f.code, idxChg);       // 纯指数涨幅（用于显示），null = 未抓到
-    const adjBenchChg    = calcAdjustedBenchChg(f.code, idxChg, fxChgUsd, fxChgHkd); // FX修正基准
-    const fxAdj          = (adjBenchChg != null && benchChg != null) ? adjBenchChg - benchChg : null;
-    const dynNavReturn   = calcDynamicNavReturn(f.code, idxChg, stockChg, fxChgUsd, fxChgHkd, daily);
-    const benchOk        = benchChg != null;                   // false → 指数未抓到，估值不可信
     const benchDef_      = BENCH[f.code];
     const benchStale     = benchDef_                           // true → 指数来自收盘快照（非实时）
       ? (Array.isArray(benchDef_) ? benchDef_.some(b => staleIdxCodes.has(b.tq)) : staleIdxCodes.has(benchDef_))
       : false;
-    const fxOk           = calcFxOk(f.code, fxChgUsd, fxChgHkd); // false → 汇率缺失，估值未计入即时汇率
-    const holdingCoverage = calcHoldingCoverage(f.code, stockChg, daily);
 
     // ── 时间驱动协议：benchDate 从数据源时间戳获取，不使用服务器时钟 ──
     // 规则：
@@ -978,6 +1004,17 @@ async function fetchAllData(env = {}) {
     } else {
       benchDate = marketContext.aShareDate;  // A股 / 港股同属 UTC+8
     }
+
+    // ── idxChg 时间戳校验后的有效值（benchDate 确定后才能计算）──
+    // resolveIdxChg 内部：us* 滞后数据 → 0（今日无新数据，假设无额外变化）
+    //                     A/HK 滞后数据 → null（异常，不参与计算）
+    const benchChg       = calcBenchChg(f.code, idxChg, idxDate, benchDate);
+    const adjBenchChg    = calcAdjustedBenchChg(f.code, idxChg, idxDate, benchDate, fxChgUsd, fxChgHkd);
+    const fxAdj          = (adjBenchChg != null && benchChg != null) ? adjBenchChg - benchChg : null;
+    const dynNavReturn   = calcDynamicNavReturn(f.code, idxChg, idxDate, benchDate, stockChg, fxChgUsd, fxChgHkd, daily);
+    const benchOk        = benchChg != null;
+    const fxOk           = calcFxOk(f.code, fxChgUsd, fxChgHkd);
+    const holdingCoverage = calcHoldingCoverage(f.code, stockChg, daily);
 
     // 偏差校准：Hard Enforcement — 宁可无补偿，不可乱补偿
     // 前置条件：drift_computed_at ≤2交易日 AND drift_n ≥3；否则 alpha=0（禁用补偿）
@@ -1033,33 +1070,10 @@ async function fetchAllData(env = {}) {
       } else {
         // computeNav 内部断言 tradingDayLag(base.date, benchDate) === 1
         // 不满足（base 跨多个交易日、base 为 null、benchDate 为 null）→ 返回 null
-        //
-        // ── 幂等计算锁（防 US bench 双重计数） ──
-        // est_nav_yesterday 已消费 index_date 当日的 US 涨跌幅；若实时行情也反映同一日期
-        // （Yahoo 不可用，Tencent 返回 T-1 前收），则 US 分量会被乘两次。
-        // realtimeIndexDate：当前实时 US 数据代表的指数交易日
-        //   - Yahoo 可用 → marketContext.usDate（精确，美股当日）
-        //   - Yahoo 不可用 → prevTradingDay(benchDate)（近似，A 股日历推算）
-        // 匹配则归零 US bench 分量，保留 HK/A 股实时分量。
-        // 兼容旧数据（无 est_nav_index_date）：降级为 !marketContext.usDate 判断。
-        const realtimeIndexDate = marketContext.usDate || prevTradingDay(benchDate);
-        const consumedDate = base?.index_date;
-        const isUsDoubleCount = useChained && f.cat === 'us' && (
-          consumedDate
-            ? consumedDate === realtimeIndexDate          // 精确匹配（有 index_date 字段）
-            : !marketContext.usDate                       // 降级：旧数据无字段，Yahoo 失败时保守归零
-        );
-        let effectiveDynNavReturn = dynNavReturn;
-        if (isUsDoubleCount) {
-          const bd = BENCH[f.code];
-          const maskedChg = Object.assign({}, idxChg);
-          (Array.isArray(bd) ? bd.map(b => b.tq) : [bd])
-            .filter(c => c && c.startsWith('us'))
-            .forEach(c => { maskedChg[c] = 0; });
-          effectiveDynNavReturn = calcDynamicNavReturn(f.code, maskedChg, stockChg, fxChgUsd, fxChgHkd, daily);
-          console.log(`[circuit] ${f.code} US双重计数锁 base.date=${base?.date} consumed=${consumedDate} realtime=${realtimeIndexDate} → US分量归零`);
-        }
-        nav = computeNav(base, benchDate, effectiveDynNavReturn, alpha);
+        // dynNavReturn 已经过 resolveIdxChg 时间戳校验：
+        //   us* 滞后数据（Yahoo 失败，Tencent 返 T-1）→ 0（假设今日无额外变化）
+        //   双重计数自然消除，无需额外断路器
+        nav = computeNav(base, benchDate, dynNavReturn, alpha);
       }
       if (nav != null) premium = (price - nav.value) / nav.value * 100;
     }
