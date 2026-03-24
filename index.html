@@ -61,7 +61,7 @@ tailwind.config = {
      HEADER
 ══════════════════════════════════════════════════ -->
 <header class="border-b border-border" style="background:#0d0d0d">
-  <div class="flex items-stretch justify-between px-4 md:px-6">
+  <div class="max-w-screen-2xl mx-auto flex items-stretch justify-between px-4 md:px-6">
     <!-- Logo -->
     <div class="flex items-center gap-3 py-3">
       <div>
@@ -1111,8 +1111,8 @@ async function doRefresh() {
       if (!idxChg['hkHSCI']) idxChg['hkHSCI'] = idxChg['hkHSI'] ?? null;
       // 收盘快照兜底：仅在实时未取到且非交易时段时用，36小时时效
       const staleIdxCodes = new Set();
+      const MAX_STALE_MS = 36 * 3600 * 1000;
       if (closingData && !isBjTradingHours()) {
-        const MAX_STALE_MS = 36 * 3600 * 1000;
         for (const [code, entry] of Object.entries(closingData)) {
           if (code.startsWith('_')) continue;
           if (idxChg[code] != null) continue;
@@ -1121,6 +1121,17 @@ async function doRefresh() {
           if (!idxSanityOk(code, entry.chg)) continue;
           idxChg[code] = entry.chg;
           staleIdxCodes.add(code);
+        }
+      }
+      // 直连模式专项：sinaAG0（白银）在直连模式下无实时来源（新浪需 Worker 代理），
+      // 允许在交易时段使用收盘快照（stale 标注），优于持续显示"指数缺失"
+      if (idxChg['sinaAG0'] == null && closingData && closingData['sinaAG0']) {
+        const _ag0 = closingData['sinaAG0'];
+        if (_ag0.chg != null && _ag0.sync_at &&
+            Date.now() - new Date(_ag0.sync_at).getTime() <= MAX_STALE_MS &&
+            idxSanityOk('sinaAG0', _ag0.chg)) {
+          idxChg['sinaAG0'] = _ag0.chg;
+          staleIdxCodes.add('sinaAG0');
         }
       }
       funds = FUNDS.map(f => {
@@ -1611,11 +1622,11 @@ function openModal(code) {
 
     <div class="text-center py-4 border border-border rounded-lg mb-4" style="background:#0d0d0d">
       <div class="font-mono text-4xl font-semibold ${premCls} ${isAlert ? 'pulse-alert' : ''}">${premStr}${
-        (f.fxOk === false ? '<span title="汇率缺失，估值未计入即时汇率变动" class="ml-1 text-yellow-400/60 text-[11px] cursor-help">⚠</span>' : '') +
-        (f.benchStale ? '<span title="指数来自收盘快照，非实时数据" class="ml-1 text-gray-500 text-[10px] cursor-help">(收)</span>' : '') +
-        (f.navLag >= 2 && !f.useChained ? `<span title="净值滞后 ${f.navLag} 个交易日，链式补偿未生效" class="ml-1 text-amber-500/70 text-[10px] cursor-help">(旧)</span>` : '') +
-        (() => { const nb3 = f.navBasis; if (!nb3) return ''; const d = nb3.navDate ? nb3.navDate.slice(5) : ''; if (nb3.type === 'T0_OFFICIAL') return `<span title="今日官方净值直接比价（${nb3.navDate}）" class="ml-1 text-gray-400 text-[10px] cursor-help">[官]</span>`; if (nb3.type === 'T-2_CHAINED') return `<span title="T-2 链式补偿（基于 ${d}）" class="ml-1 text-yellow-400/60 text-[10px] cursor-help">[链 ${d}]</span>`; if (!nb3.aligned) return `<span title="时间戳对齐异常：${nb3.reason||'?'}" class="ml-1 text-red-400/70 text-[10px] cursor-help">⚠日期</span>`; return `<span title="T-1 估算（基于 ${d}）" class="ml-1 text-gray-500 text-[10px] cursor-help">[估 ${d}]</span>`; })() +
-        (f.driftStatus !== 'ACTIVE' ? '<span title="Drift 校准未激活，估值无偏差修正" class="ml-1 text-gray-600 text-[10px] cursor-help">[D—]</span>' : '')
+        (f.fxOk === false ? '<span title="汇率缺失，估值未计入即时汇率变动" class="ml-1 text-yellow-400/80 text-[11px] cursor-help">⚠</span>' : '') +
+        (f.benchStale ? '<span title="指数来自收盘快照，非实时数据" class="ml-1 text-gray-400 text-[10px] cursor-help">(收)</span>' : '') +
+        (f.navLag >= 2 && !f.useChained ? `<span title="净值滞后 ${f.navLag} 个交易日，链式补偿未生效" class="ml-1 text-amber-400/90 text-[10px] cursor-help">(旧)</span>` : '') +
+        (() => { const nb3 = f.navBasis; if (!nb3) return ''; const d = nb3.navDate ? nb3.navDate.slice(5) : ''; if (nb3.type === 'T0_OFFICIAL') return `<span title="今日官方净值直接比价（${nb3.navDate}）" class="ml-1 text-gray-300 text-[10px] cursor-help">[官]</span>`; if (nb3.type === 'T-2_CHAINED') return `<span title="T-2 链式补偿（基于 ${d}）" class="ml-1 text-yellow-400/80 text-[10px] cursor-help">[链 ${d}]</span>`; if (!nb3.aligned) return `<span title="时间戳对齐异常：${nb3.reason||'?'}" class="ml-1 text-red-400/90 text-[10px] cursor-help">⚠日期</span>`; return `<span title="T-1 估算（基于 ${d}）" class="ml-1 text-gray-400 text-[10px] cursor-help">[估 ${d}]</span>`; })() +
+        (f.driftStatus !== 'ACTIVE' ? '<span title="Drift 校准未激活，估值无偏差修正" class="ml-1 text-gray-400 text-[10px] cursor-help">[D—]</span>' : '')
       }</div>
       <div class="font-mono text-[10px] text-muted mt-1">溢折价率</div>
     </div>
@@ -1649,7 +1660,7 @@ function openModal(code) {
         ? `<span class="font-mono text-[9px] ${f.drift5d > 0 ? 'text-green-400/60' : 'text-red-400/60'}">
              ${f.drift5d >= 0 ? '+' : ''}${(f.drift5d * 100).toFixed(2)}%（近 ${f.driftN} 日，<span class="text-green-400/50">[Drift Calibrated]</span>）
            </span>`
-        : `<span class="font-mono text-[9px] text-muted/40">[Drift Offline] — 数据过期或样本不足，已回退至原始估值</span>`}
+        : `<span class="font-mono text-[9px] text-muted/70">[Drift Offline] — 数据过期或样本不足，已回退至原始估值</span>`}
     </div>
 
 
@@ -1678,7 +1689,7 @@ function openModal(code) {
     <div id="driftChartWrap" class="border border-border rounded overflow-hidden mb-3">
       <div class="px-2 py-1.5 border-b border-border flex items-center justify-between" style="background:#0d0d0d">
         <span class="font-mono text-[9px] text-muted tracking-wider">30日误差趋势</span>
-        <span class="font-mono text-[9px] text-muted/40">日 drift = (实际净值 − 估值) / 估值</span>
+        <span class="font-mono text-[9px] text-muted/60">日 drift = (实际净值 − 估值) / 估值</span>
       </div>
       <div class="p-2" style="height:110px;position:relative">
         <canvas id="driftChart"></canvas>
@@ -1686,8 +1697,8 @@ function openModal(code) {
     </div>
 
     <div class="mt-2 pt-2 border-t border-border/30 flex items-center justify-between gap-2">
-      <span class="font-mono text-[9px] text-muted/50 leading-tight">${buildSyncTimeHtml()}</span>
-      <span class="font-mono text-[9px] text-muted/50 flex-shrink-0">来源: ${f._src === 'W' ? 'Worker' : '直连'}</span>
+      <span class="font-mono text-[9px] text-muted/70 leading-tight">${buildSyncTimeHtml()}</span>
+      <span class="font-mono text-[9px] text-muted/70 flex-shrink-0">来源: ${f._src === 'W' ? 'Worker' : '直连'}</span>
     </div>
   `;
   document.getElementById('modal').classList.remove('hidden');
@@ -1738,11 +1749,11 @@ function buildHoldingsHtml(code, fund) {
       <div class="flex items-center justify-between px-2 py-1.5 border-b border-border" style="background:#0d0d0d">
         <div class="flex items-center gap-2">
           <span class="font-mono text-[9px] text-muted tracking-wider">前十大持仓</span>
-          ${holdingsDate ? `<span class="font-mono text-[9px] text-muted/40">截止 ${holdingsDate}</span>` : ''}
+          ${holdingsDate ? `<span class="font-mono text-[9px] text-muted/70">截止 ${holdingsDate}</span>` : ''}
         </div>
         <div class="flex items-center gap-2">
-          ${coverage ? `<span class="font-mono text-[9px] text-blue-400/70">持仓覆盖 ${coverage}</span>` : ''}
-          ${benchLabel ? `<span class="font-mono text-[9px] text-muted/60">基准: ${benchLabel}</span>` : ''}
+          ${coverage ? `<span class="font-mono text-[9px] text-blue-400/90">持仓覆盖 ${coverage}</span>` : ''}
+          ${benchLabel ? `<span class="font-mono text-[9px] text-muted/80">基准: ${benchLabel}</span>` : ''}
         </div>
       </div>`;
 
@@ -1761,7 +1772,7 @@ function buildHoldingsHtml(code, fund) {
           <td class="py-1.5 px-2 w-4 font-mono text-[9px] text-blue-400/60">≈</td>
           <td class="py-1.5 px-1">
             <div class="font-mono text-[10px] text-primary/80 leading-tight">${sym}</div>
-            <div class="font-mono text-[9px] text-muted/40 leading-tight">对标指数</div>
+            <div class="font-mono text-[9px] text-muted/70 leading-tight">对标指数</div>
           </td>
           <td class="py-1.5 px-2 w-28">
             <div class="flex items-center gap-1.5">
@@ -1776,7 +1787,7 @@ function buildHoldingsHtml(code, fund) {
     }
     return header + (benchRows
       ? `<table class="w-full"><tbody>${benchRows}</tbody></table></div>`
-      : `<div class="px-3 py-4 text-center font-mono text-[10px] text-muted/40">暂无数据</div></div>`);
+      : `<div class="px-3 py-4 text-center font-mono text-[10px] text-muted/70">暂无数据</div></div>`);
   }
 
   const maxRatio = Math.max(...daily.holdings.map(h => h.ratio || 0));
@@ -1784,18 +1795,18 @@ function buildHoldingsHtml(code, fund) {
     const ratio = h.ratio != null ? h.ratio : 0;
     const barW = maxRatio > 0 ? Math.round(ratio / maxRatio * 100) : 0;
     const name = h.name || h.code || '—';
-    const codeStr = h.code ? `<span class="text-muted/50">${h.code}</span>` : '';
+    const codeStr = h.code ? `<span class="text-muted/80">${h.code}</span>` : '';
     // 持仓个股涨跌幅：HK/A = 盘中实时，US = T-1 昨收（灰色标注）
     const tq = holdingToTqCode(h.code);
     const isUs = tq && tq.startsWith('us');
     const chg = tq ? _lastStockChg[tq] : null;
     const chgHtml = chg != null
       ? isUs
-        ? `<span class="font-mono text-[9px] text-muted/50 flex-shrink-0 w-16 text-right">${chg >= 0 ? '+' : ''}${chg.toFixed(2)}% <span class="text-[8px] text-muted/30">T-1</span></span>`
-        : `<span class="font-mono text-[9px] ${chg > 0 ? 'text-green-400/70' : chg < 0 ? 'text-red-400/70' : 'text-muted/50'} flex-shrink-0 w-16 text-right">${chg >= 0 ? '+' : ''}${chg.toFixed(2)}%</span>`
+        ? `<span class="font-mono text-[9px] text-muted/70 flex-shrink-0 w-16 text-right">${chg >= 0 ? '+' : ''}${chg.toFixed(2)}% <span class="text-[8px] text-muted/50">T-1</span></span>`
+        : `<span class="font-mono text-[9px] ${chg > 0 ? 'text-green-400/80' : chg < 0 ? 'text-red-400/80' : 'text-muted/70'} flex-shrink-0 w-16 text-right">${chg >= 0 ? '+' : ''}${chg.toFixed(2)}%</span>`
       : '<span class="w-16"></span>';
     return `<tr class="border-b border-border/30 last:border-0">
-      <td class="py-1.5 px-2 w-4 font-mono text-[9px] text-muted/40">${i + 1}</td>
+      <td class="py-1.5 px-2 w-4 font-mono text-[9px] text-muted/60">${i + 1}</td>
       <td class="py-1.5 px-1">
         <div class="font-mono text-[10px] text-primary leading-tight">${name}</div>
         <div class="font-mono text-[9px] leading-tight mt-0.5">${codeStr}</div>
@@ -1826,7 +1837,7 @@ function buildHoldingsHtml(code, fund) {
   const totalEst = (fund && fund.nav && fund.officialNav) ? (fund.nav / fund.officialNav - 1) * 100 : null;
 
   const sfmt = v => `${v >= 0 ? '+' : ''}${v.toFixed(2)}%`;
-  const scol = v => v > 0 ? 'text-green-400/80' : v < 0 ? 'text-red-400/80' : 'text-muted/50';
+  const scol = v => v > 0 ? 'text-green-400/90' : v < 0 ? 'text-red-400/90' : 'text-muted/70';
   const maxAbs = Math.max(Math.abs(coveredContrib), Math.abs(benchResidual ?? 0), 0.01);
   const sbar = v => {
     const w = Math.round(Math.abs(v) / maxAbs * 100);
@@ -1837,17 +1848,17 @@ function buildHoldingsHtml(code, fund) {
   const summaryRows = (coveredW > 0 || benchResidual != null) ? `
     <tr class="border-t border-border/50">
       <td class="pt-2 pb-1 px-2"></td>
-      <td class="pt-2 pb-1 px-1 font-mono text-[9px] text-muted/50 whitespace-nowrap">持仓贡献</td>
+      <td class="pt-2 pb-1 px-1 font-mono text-[9px] text-muted/80 whitespace-nowrap">持仓贡献</td>
       <td class="pt-2 pb-1 px-2"><div class="flex items-center gap-1.5">${sbar(coveredContrib)}<span class="font-mono text-[9px] ${scol(coveredContrib)} w-16 text-right flex-shrink-0">${sfmt(coveredContrib)}</span></div></td>
     </tr>
     ${benchResidual != null ? `<tr>
       <td class="py-1 px-2"></td>
-      <td class="py-1 px-1 font-mono text-[9px] text-muted/50 whitespace-nowrap">Bench残差</td>
+      <td class="py-1 px-1 font-mono text-[9px] text-muted/80 whitespace-nowrap">Bench残差</td>
       <td class="py-1 px-2"><div class="flex items-center gap-1.5">${sbar(benchResidual)}<span class="font-mono text-[9px] ${scol(benchResidual)} w-16 text-right flex-shrink-0">${sfmt(benchResidual)}</span></div></td>
     </tr>` : ''}
     ${totalEst != null ? `<tr class="border-t border-border/30">
       <td class="pt-1.5 pb-2 px-2"></td>
-      <td class="pt-1.5 pb-2 px-1 font-mono text-[9px] text-muted/60 whitespace-nowrap">估值涨跌</td>
+      <td class="pt-1.5 pb-2 px-1 font-mono text-[9px] text-muted/80 whitespace-nowrap">估值涨跌</td>
       <td class="pt-1.5 pb-2 px-2 text-right font-mono text-[9px] ${scol(totalEst)} font-medium">${sfmt(totalEst)}</td>
     </tr>` : ''}
   ` : '';
