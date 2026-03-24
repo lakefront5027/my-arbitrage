@@ -226,13 +226,14 @@ const COMMODITY_IDX = new Set([
  *   0. Set 未加载       → 周末判断（Worker 冷启动极短暂窗口）
  */
 
-let _tradingDates = null;       // Set<string>，由 fetchAllData 注入
-let _latestTradingDate = null;  // 日历上界，setTradingDates 时计算，避免 isTradingDay 热路径重复排序
+let _tradingDates = null;        // Set<string>，由 fetchAllData 注入
+let _sortedTradingDates = [];    // Array<string>，供 prevTradingDay 二分查找
+let _latestTradingDate = null;   // 日历上界，setTradingDates 时计算，避免 isTradingDay 热路径重复排序
 
 function setTradingDates(arr) {
-  const sorted = [...(arr || [])].sort();
-  _tradingDates = new Set(sorted);
-  _latestTradingDate = sorted.length > 0 ? sorted[sorted.length - 1] : null;
+  _sortedTradingDates = [...(arr || [])].sort();
+  _tradingDates = new Set(_sortedTradingDates);
+  _latestTradingDate = _sortedTradingDates.length > 0 ? _sortedTradingDates[_sortedTradingDates.length - 1] : null;
 }
 
 function isTradingDay(dateStr) {
@@ -258,6 +259,23 @@ function tradingDayLag(fromDateStr, toDateStr) {
     cur.setUTCDate(cur.getUTCDate() + 1);
   }
   return count;
+}
+
+/** 返回严格早于 dateStr 的最近一个交易日（二分查找；日历未加载时退化为前1自然日） */
+function prevTradingDay(dateStr) {
+  if (!dateStr) return null;
+  if (_sortedTradingDates.length > 0) {
+    let lo = 0, hi = _sortedTradingDates.length - 1, res = null;
+    while (lo <= hi) {
+      const mid = (lo + hi) >> 1;
+      if (_sortedTradingDates[mid] < dateStr) { res = _sortedTradingDates[mid]; lo = mid + 1; }
+      else hi = mid - 1;
+    }
+    if (res) return res;
+  }
+  const d = new Date(dateStr + 'T00:00:00Z');
+  d.setUTCDate(d.getUTCDate() - 1);
+  return d.toISOString().slice(0, 10);
 }
 
 /** 当前是否处于北京时间交易时段（09:15–15:00，且当天是交易日） */
@@ -985,10 +1003,11 @@ async function fetchAllData(env = {}) {
     //   0 = 当日已同步（Action 07:00 跑完，Worker 09:30 消费）
     //   1 = 前一交易日同步（正常情况，含周末跨越）
     //   ≥2 = Action 已连续缺席 ≥1 个交易日，锚点不可信，禁用链式
-    const estNavYesterdayVal = fundDaily?.est_nav_yesterday || null;
-    const estNavDate         = fundDaily?.est_nav_date      || null;
+    const estNavYesterdayVal = fundDaily?.est_nav_yesterday   || null;
+    const estNavDate         = fundDaily?.est_nav_date        || null;
+    const estNavIndexDate    = fundDaily?.est_nav_index_date  || null;  // 历史公证：本次 est 消费的 bench 指数交易日
     const estNavEntity = (estNavYesterdayVal && estNavDate)
-      ? { value: estNavYesterdayVal, date: estNavDate, src: 'chain' }
+      ? { value: estNavYesterdayVal, date: estNavDate, src: 'chain', index_date: estNavIndexDate }
       : null;
     const syncLagDays  = (syncDateBj && benchDate)
       ? tradingDayLag(syncDateBj, benchDate)
@@ -1014,7 +1033,33 @@ async function fetchAllData(env = {}) {
       } else {
         // computeNav 内部断言 tradingDayLag(base.date, benchDate) === 1
         // 不满足（base 跨多个交易日、base 为 null、benchDate 为 null）→ 返回 null
-        nav = computeNav(base, benchDate, dynNavReturn, alpha);
+        //
+        // ── 幂等计算锁（防 US bench 双重计数） ──
+        // est_nav_yesterday 已消费 index_date 当日的 US 涨跌幅；若实时行情也反映同一日期
+        // （Yahoo 不可用，Tencent 返回 T-1 前收），则 US 分量会被乘两次。
+        // realtimeIndexDate：当前实时 US 数据代表的指数交易日
+        //   - Yahoo 可用 → marketContext.usDate（精确，美股当日）
+        //   - Yahoo 不可用 → prevTradingDay(benchDate)（近似，A 股日历推算）
+        // 匹配则归零 US bench 分量，保留 HK/A 股实时分量。
+        // 兼容旧数据（无 est_nav_index_date）：降级为 !marketContext.usDate 判断。
+        const realtimeIndexDate = marketContext.usDate || prevTradingDay(benchDate);
+        const consumedDate = base?.index_date;
+        const isUsDoubleCount = useChained && f.cat === 'us' && (
+          consumedDate
+            ? consumedDate === realtimeIndexDate          // 精确匹配（有 index_date 字段）
+            : !marketContext.usDate                       // 降级：旧数据无字段，Yahoo 失败时保守归零
+        );
+        let effectiveDynNavReturn = dynNavReturn;
+        if (isUsDoubleCount) {
+          const bd = BENCH[f.code];
+          const maskedChg = Object.assign({}, idxChg);
+          (Array.isArray(bd) ? bd.map(b => b.tq) : [bd])
+            .filter(c => c && c.startsWith('us'))
+            .forEach(c => { maskedChg[c] = 0; });
+          effectiveDynNavReturn = calcDynamicNavReturn(f.code, maskedChg, stockChg, fxChgUsd, fxChgHkd, daily);
+          console.log(`[circuit] ${f.code} US双重计数锁 base.date=${base?.date} consumed=${consumedDate} realtime=${realtimeIndexDate} → US分量归零`);
+        }
+        nav = computeNav(base, benchDate, effectiveDynNavReturn, alpha);
       }
       if (nav != null) premium = (price - nav.value) / nav.value * 100;
     }

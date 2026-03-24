@@ -689,13 +689,16 @@ def update_chain_anchors(data: dict, chg_map: dict, date_map: dict, t1_date: str
         if bench_chg is not None:
             # 用 date_map 中的实际交易日，而非 t1_date（nav 日期）
             bench_date = _get_bench_date(bench_def, date_map, t1_date)
-            fund['est_nav_yesterday'] = round(official_nav * (1 + bench_chg / 100), 6)
-            fund['est_nav_date']      = bench_date
+            fund['est_nav_yesterday']   = round(official_nav * (1 + bench_chg / 100), 6)
+            fund['est_nav_date']        = bench_date
+            # 历史公证人：记录本次估算消费的 bench 指数交易日（供 Worker 幂等计算锁使用）
+            fund['est_nav_index_date']  = bench_date
             updated += 1
         else:
             # bench 数据不可用，清除旧锚点防止 Worker 使用过期数据推算
-            fund.pop('est_nav_yesterday', None)
-            fund.pop('est_nav_date',      None)
+            fund.pop('est_nav_yesterday',  None)
+            fund.pop('est_nav_date',       None)
+            fund.pop('est_nav_index_date', None)
             cleared += 1
 
     print(f'  [chain] 锚点写入 {updated} 只，bench 缺失清除 {cleared} 只')
