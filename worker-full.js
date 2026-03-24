@@ -212,7 +212,7 @@ const COMMODITY_IDX = new Set([
 ]);
 
 // ── 交易日工具函数 ────────────────────────────────────
-// trading_dates 由 sync_fund_data.py 每日写入 fund_daily.json._meta，滚动保留90个交易日。
+// trading_dates 由 sync_fund_data.py 每日写入 fund_daily.json._meta，覆盖当年全量交易日（Q4 附加次年）。
 // 历史窗口内：精确判断（有记录=交易日，无记录=节假日/周末）
 // 历史窗口外：降级为周末判断（不影响 navLag，navLag 只看近期历史）
 
@@ -225,13 +225,10 @@ function setTradingDates(arr) {
 /** 判断某日是否为交易日（dateStr: 'YYYY-MM-DD'） */
 function isTradingDay(dateStr) {
   if (_tradingDates && _tradingDates.size > 0) {
-    const sorted = [..._tradingDates].sort();
-    const latest = sorted[sorted.length - 1];
-    // 在已知窗口内：有记录=交易日，无记录=非交易日（节假日/周末）
-    // 超出窗口上界（今日盘中 benchDate 尚未写入）：降级周末判断
-    if (dateStr <= latest) return _tradingDates.has(dateStr);
+    // 全年日历已加载：精确查找，含节假日感知
+    return _tradingDates.has(dateStr);
   }
-  // 窗口外或未加载：降级周末判断
+  // fund_daily.json 尚未加载：降级周末判断（启动阶段极短暂窗口）
   const d = new Date(dateStr + 'T00:00:00Z');
   const dow = d.getUTCDay();
   return dow !== 0 && dow !== 6;

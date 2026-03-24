@@ -669,36 +669,67 @@ if (closingData && !isBjTradingHours()) {
 1. `isBjTradingHours()` 需要判断今天是否交易日（区分法定节假日 vs. 普通周末）
 2. `navLag` 原先使用日历天数，导致周一 navLag=3（周五净值）误触发链式估值
 
-### 实现：方案一（`chinesecalendar` 包）+ 方案二（历史积累）组合
+### 实现：全年预载静态日历（2026-03 重构）
 
-**`sync_fund_data.py`** 每次成功同步后：
-- 用 `chinesecalendar.is_workday()` 验证 `data_date` 确实是交易日
-- 将其追加进 `fund_daily.json._meta.trading_dates`，滚动保留最近 **90个交易日**
+**设计原则**：Worker 需要"上帝视角"——不仅知道过去，也知道今天和未来是否交易日。
+旧方案（追加昨日，滚动保留90天）存在"标尺滞后游标"问题：
+今日盘中 benchDate 不在集合中 → `isTradingDay(benchDate)` 返回 false → `tradingDayLag = 0` → `computeNav` 熔断 → 全部基金估值为"—"。
+
+**`sync_fund_data.py`** 每次运行时重新生成（幂等）：
+- 用 `chinese_calendar.is_workday()` 生成**当年全量交易日历**
+- Q4（10月起）附加**次年日历**，避免跨年边界
+- 直接覆盖写入 `fund_daily.json._meta.trading_dates`
+
+```python
+def gen_trading_dates_for_year(year: int) -> list:
+    result, d = [], date(year, 1, 1)
+    while d.year == year:
+        if is_trading_day(d):
+            result.append(d.isoformat())
+        d += timedelta(days=1)
+    return result
+
+# 每次 Action 运行时：
+trading_dates = gen_trading_dates_for_year(run_utc.year)
+if run_utc.month >= 10:
+    trading_dates += gen_trading_dates_for_year(run_utc.year + 1)
+```
 
 **Worker / index.html** 读取 `trading_dates` 后注入本地工具函数：
 
 | 函数 | 用途 |
 |------|------|
-| `setTradingDates(arr)` | 注入历史集合（fetchAllData 时调用） |
-| `isTradingDay(dateStr)` | 窗口内精确判断，窗口外降级为周末判断 |
+| `setTradingDates(arr)` | 注入全年日历（fetchAllData 时调用） |
+| `isTradingDay(dateStr)` | 纯 Set 查找，含节假日精确感知；仅在 Set 未加载时降级周末判断 |
 | `tradingDayLag(from, to)` | 计算两日期间的交易日数，替代原日历天数 |
 | `isBjTradingHours()` | 判断当前是否在交易时段，用于快照守卫 |
 
-**`navLag` 语义变更**：
+`isTradingDay` 的降级路径（周末判断）仅在 `fund_daily.json` 尚未加载的极短暂启动窗口生效，正常运行中不会触发。
+
+**`navLag` 语义**：
 
 ```
-之前：navLag = 日历天数（周一周五净值 → navLag=3，误触发链式估值）
-之后：navLag = 交易日数（周一周五净值 → navLag=1，正确）
+navLag = 交易日数（周一周五净值 → navLag=1，正确）
+         ≠ 日历天数（周一周五净值 → navLag=3，旧实现误触发链式估值）
 ```
 
-`staleness_policy` 的阈值（`nav_max_lag_days: 3`、`chain_estimation_allowed_lag_days: 2`）单位
-同步改为交易日，语义更准确，数值不变。
+`staleness_policy` 的阈值（`nav_max_lag_days: 3`、`chain_estimation_allowed_lag_days: 2`）单位为交易日。
 
-### 精度说明
+### 非计划停市的隐式补偿
 
-- **窗口内（近90个交易日）**：`isTradingDay()` 精确到节假日级别
-- **窗口外**：降级为周末判断，不影响 `navLag`（只看近期历史）
-- `chinesecalendar` 包每年需更新版本以覆盖新年度节假日（dependabot 可自动处理）
+全年预载日历预测"今天应该开市"，但无法预知非计划停市（台风、熔断）。
+**补偿机制已内置于时间宪法**：`benchDate` 来自数据源时间戳，而非系统时钟。
+非计划停市时，交易所行情冻结，腾讯/EM 接口停止更新 → `benchDate` 自动保持在停市前最后交易日
+→ `tradingDayLag` 计算正确，系统展示停市前最后快照，无需日历层做任何修正。
+
+> 极端边角：停市公告在开盘后发出，短暂窗口内数据带有当日时间戳但成交量极少，
+> 估值可能略有误差，但数据有时间戳可溯源，属市场本身不确定性，非系统设计缺陷。
+
+### 年度维护
+
+- `chinese_calendar` 包每年需更新版本以覆盖新年度节假日
+- 更新后次日 Action 运行即自动重写全年日历，无需手动操作
+- dependabot 可自动提 PR 更新版本
 
 ---
 

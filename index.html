@@ -864,12 +864,10 @@ function setTradingDates(arr) {
 
 function isTradingDay(dateStr) {
   if (_tradingDates && _tradingDates.size > 0) {
-    const sorted = [..._tradingDates].sort();
-    const latest = sorted[sorted.length - 1];
-    // 在已知窗口内：有记录=交易日，无记录=非交易日（节假日/周末）
-    // 超出窗口上界（今日盘中 benchDate 尚未写入）：降级周末判断
-    if (dateStr <= latest) return _tradingDates.has(dateStr);
+    // 全年日历已加载：精确查找，含节假日感知
+    return _tradingDates.has(dateStr);
   }
+  // fund_daily.json 尚未加载：降级周末判断（启动阶段极短暂窗口）
   const d = new Date(dateStr + 'T00:00:00Z');
   const dow = d.getUTCDay();
   return dow !== 0 && dow !== 6;

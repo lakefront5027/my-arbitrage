@@ -22,7 +22,7 @@ import os
 import urllib.request
 import urllib.parse
 import urllib.error
-from datetime import datetime, timezone, date
+from datetime import datetime, timezone, date, timedelta
 
 try:
     from chinese_calendar import is_workday as _is_workday
@@ -33,7 +33,14 @@ except ImportError:
     def is_trading_day(d: date) -> bool:
         return d.weekday() < 5
 
-TRADING_DATES_WINDOW = 90  # 保留最近 90 个交易日
+def gen_trading_dates_for_year(year: int) -> list:
+    """生成指定年份所有交易日（YYYY-MM-DD 字符串列表）"""
+    result, d = [], date(year, 1, 1)
+    while d.year == year:
+        if is_trading_day(d):
+            result.append(d.isoformat())
+        d += timedelta(days=1)
+    return result
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT  = os.path.dirname(os.path.dirname(SCRIPT_DIR))
@@ -1086,16 +1093,12 @@ def sync():
     # ── 写 _meta ──────────────────────────────────────
     now_utc = datetime.now(timezone.utc).isoformat(timespec='seconds')
     data_date = t1_date  # 已在 chain anchors 前计算
-    # ── trading_dates：滚动保留最近 N 个交易日（供 Worker 计算 navLag） ──
-    today_local = datetime.now(timezone.utc).date()  # Action 运行时为 UTC 次日凌晨，nav_date 才是真实交易日
-    # 用 data_date（本次净值对应的交易日）而非 Action 运行日期，更准确
-    # 用 or [] 兜底：历史 JSON 可能写入 null，.get() 遇到存在的 null 键不用默认值
-    prev_dates = (data.get('_meta') or {}).get('trading_dates') or []
-    if data_date and is_trading_day(date.fromisoformat(data_date)):
-        trading_dates = list(dict.fromkeys(prev_dates + [data_date]))  # 去重保序
-        trading_dates = sorted(trading_dates)[-TRADING_DATES_WINDOW:]
-    else:
-        trading_dates = prev_dates
+    # ── trading_dates：生成当年全量交易日历（Worker 拥有"上帝视角"，无需推测） ──
+    # Q4 时附加次年日历，避免跨年边界（如 12 月底 benchDate 落入次年）
+    run_utc = datetime.now(timezone.utc)
+    trading_dates = gen_trading_dates_for_year(run_utc.year)
+    if run_utc.month >= 10:
+        trading_dates += gen_trading_dates_for_year(run_utc.year + 1)
 
     data['_meta'] = {
         'sync_time':     now_utc,
@@ -1104,7 +1107,7 @@ def sync():
         'nav_kept':      nav_kept,
         'hold_ok':       hold_ok,
         'total':         total,
-        'trading_dates': trading_dates,      # 滚动交易日历（最近90个交易日）
+        'trading_dates': trading_dates,      # 全年交易日历（当年 + Q4 时附加次年）
     }
 
     # ── 写文件（必须在报警之前完成） ─────────────────
