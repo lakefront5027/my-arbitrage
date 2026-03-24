@@ -502,6 +502,38 @@ function fetchTencent(daily = null) {
   });
 }
 
+// ── 直连抓取：新浪 nf_AG0（白银主连）— no-referrer JSONP ──────────────────
+// 旧静态本地版能获取 sinaAG0 的原因：file:// 不发 Referer，Sina 放行。
+// 现托管于 pages.dev，<script> 会带错误 Referer 被 Sina 拦截。
+// 解法：设 referrerPolicy='no-referrer'，与本地打开行为等价，Sina 接受无来源请求。
+// 字段与 worker-full.js fetchSina 完全一致：p[6]=现价，p[10]=昨结算。
+function fetchSinaAG0Direct() {
+  return new Promise(resolve => {
+    let done = false;
+    const t = setTimeout(() => { if (!done) { done = true; resolve(null); } }, 6000);
+    const s = document.createElement('script');
+    s.referrerPolicy = 'no-referrer';
+    s.charset = 'gbk';
+    s.onload = () => {
+      clearTimeout(t);
+      if (done) return;
+      done = true;
+      try {
+        const raw = window['hq_str_nf_AG0'];
+        if (raw) {
+          const p = raw.split(',');
+          const cur = parseFloat(p[6]), prev = parseFloat(p[10]);
+          if (cur > 0 && prev > 0) { s.remove(); resolve((cur - prev) / prev * 100); return; }
+        }
+      } catch(e) {}
+      s.remove(); resolve(null);
+    };
+    s.onerror = () => { clearTimeout(t); if (!done) { done = true; s.remove(); resolve(null); } };
+    s.src = `https://hq.sinajs.cn/list=nf_AG0&_=${Date.now()}`;
+    document.head.appendChild(s);
+  });
+}
+
 // ── 直连抓取：东方财富指数（fetch，有CORS头） ─────────
 function fetchEastmoney() {
   return Promise.all(
@@ -1074,8 +1106,8 @@ async function doRefresh() {
       // 直连模式下不调 fetchSina：fetchSina 依赖 Worker 代理（/api/sina），
       // Worker 已确认不可达，调用只会等待 8s 超时，收益为零。FX 在此模式下为 null，
       // calcFxOk() 会标记 fxOk=false，UI 显示 ⚠ 提示用户精度下降。
-      const [tqData, emIdx] = await Promise.all([
-        fetchTencent(daily), fetchEastmoney(),
+      const [tqData, emIdx, sinaAG0Chg] = await Promise.all([
+        fetchTencent(daily), fetchEastmoney(), fetchSinaAG0Direct(),
       ]);
       const sinaIdx = {};
       // 若 _navCache 尚未就绪，直接从 daily 构建（不等 loadNavsBackground）
@@ -1106,6 +1138,8 @@ async function doRefresh() {
       // EM 填空策略：仅填充腾讯未抓到的指数，不覆盖腾讯已有的实时值
       Object.entries(emIdx).forEach(([c, v]) => { if (idxChg[c] == null) setIdx(c, v); });
       Object.entries(sinaIdx).forEach(([c, v]) => { if (!c.startsWith('_')) setIdx(c, v); });
+      // sinaAG0：直连 Sina no-referrer 实时数据（优先级高于 Tencent nf_AG0 解析）
+      if (sinaAG0Chg != null && idxSanityOk('sinaAG0', sinaAG0Chg)) idxChg['sinaAG0'] = sinaAG0Chg;
       if (!idxChg['hkHSMI']) idxChg['hkHSMI'] = idxChg['hkHSSI'] ?? idxChg['hkHSI'] ?? null;
       if (!idxChg['hkHSSI']) idxChg['hkHSSI'] = idxChg['hkHSI'] ?? null;
       if (!idxChg['hkHSCI']) idxChg['hkHSCI'] = idxChg['hkHSI'] ?? null;
@@ -1123,8 +1157,7 @@ async function doRefresh() {
           staleIdxCodes.add(code);
         }
       }
-      // 直连模式专项：sinaAG0（白银）在直连模式下无实时来源（新浪需 Worker 代理），
-      // 允许在交易时段使用收盘快照（stale 标注），优于持续显示"指数缺失"
+      // 最终兜底：sinaAG0 实时抓取全部失败时，允许使用收盘快照（含交易时段），标注 (收)
       if (idxChg['sinaAG0'] == null && closingData && closingData['sinaAG0']) {
         const _ag0 = closingData['sinaAG0'];
         if (_ag0.chg != null && _ag0.sync_at &&
