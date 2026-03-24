@@ -428,10 +428,8 @@ function getAllTqCodes() {
     else set.add(b);
   });
   TICKER_IDX.forEach(i => set.add(i.tq));
-  // 东方财富专属，不走腾讯；sz399961/sz399979 A股指数，保留腾讯请求
-  // sinaAG0 的腾讯代码是 nf_AG0（期货前缀），需单独加入请求并在解析时映射
+  // 东方财富/新浪专属，腾讯不支持这些代码（csi9xxx/hkHSxx 为EM专属；sinaAG0 由新浪代理获取）
   ['sinaAG0','csi930917','csi930914','csi930792','sh000985','hkHSSI','hkHSMI','hkHSCI'].forEach(c => set.delete(c));
-  set.add('nf_AG0');  // 白银主连：腾讯期货代码，解析后映射为 sinaAG0
   return [...set];
 }
 
@@ -477,15 +475,6 @@ function fetchTencent(daily = null) {
           if (!r.aShareDate) r.aShareDate = parseTencentDate(p);
         }
       });
-      // nf_AG0 → sinaAG0：白银主连期货，腾讯用 nf_ 前缀，解析格式同普通指数（p[3]=现价, p[4]=昨结算）
-      const vAG0 = window['v_nf_AG0'];
-      if (vAG0 && vAG0.length > 5) {
-        const p = vAG0.split('~');
-        const price = parseFloat(p[3]), prev = parseFloat(p[4]);
-        if (price > 0 && prev > 0) {
-          r.indices['sinaAG0'] = { chg: (price - prev) / prev * 100 };
-        }
-      }
       // 解析持仓个股涨跌幅（HK + A股 = 盘中实时；US = T-1 昨收涨跌，仅供展示）
       holdingTqs.forEach(tq => {
         const v = window['v_' + tq];
@@ -1136,13 +1125,12 @@ async function doRefresh() {
       const syncDateBj = (daily && daily._meta && daily._meta.sync_time)
         ? new Date(new Date(daily._meta.sync_time).getTime() + 8 * 3600_000).toISOString().slice(0, 10)
         : null;
-      // 直连模式下不调 fetchSina：fetchSina 依赖 Worker 代理（/api/sina），
-      // Worker 已确认不可达，调用只会等待 8s 超时，收益为零。FX 在此模式下为 null，
-      // calcFxOk() 会标记 fxOk=false，UI 显示 ⚠ 提示用户精度下降。
-      const [tqData, emIdx, sinaAG0Chg] = await Promise.all([
-        fetchTencent(daily), fetchEastmoney(), fetchSinaAG0Direct(),
+      // 直连模式并行调 fetchSina（/api/sina），与 snapshot 是独立端点：
+      //   snapshot 失败 ≠ Worker 宕机。若 Worker 在线，/api/sina 正常返回 sinaAG0 + FX。
+      //   若 Worker 真正宕机，fetchSina 8s 超时后返回 {}，sinaAG0 退回 fetchSinaAG0Direct 结果。
+      const [tqData, emIdx, sinaAG0Chg, sinaIdx] = await Promise.all([
+        fetchTencent(daily), fetchEastmoney(), fetchSinaAG0Direct(), fetchSina(),
       ]);
-      const sinaIdx = {};
       // 若 _navCache 尚未就绪，直接从 daily 构建（不等 loadNavsBackground）
       if (!_navCache && daily) {
         const map = {};
@@ -1171,7 +1159,7 @@ async function doRefresh() {
       // EM 填空策略：仅填充腾讯未抓到的指数，不覆盖腾讯已有的实时值
       Object.entries(emIdx).forEach(([c, v]) => { if (idxChg[c] == null) setIdx(c, v); });
       Object.entries(sinaIdx).forEach(([c, v]) => { if (!c.startsWith('_')) setIdx(c, v); });
-      // sinaAG0：直连 Sina no-referrer 实时数据（优先级高于 Tencent nf_AG0 解析）
+      // sinaAG0：浏览器直连 Sina no-referrer 结果（Worker /api/sina 宕机时的独立备份），覆盖写入
       if (sinaAG0Chg != null && idxSanityOk('sinaAG0', sinaAG0Chg)) idxChg['sinaAG0'] = sinaAG0Chg;
       if (!idxChg['hkHSMI']) idxChg['hkHSMI'] = idxChg['hkHSSI'] ?? idxChg['hkHSI'] ?? null;
       if (!idxChg['hkHSSI']) idxChg['hkHSSI'] = idxChg['hkHSI'] ?? null;
