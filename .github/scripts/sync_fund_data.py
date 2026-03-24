@@ -354,15 +354,21 @@ def fetch_holdings(code: str) -> dict | None:
 #  偏差校准 Drift
 # ══════════════════════════════════════════════════════
 
-def fetch_bench_chg_batch(data: dict) -> dict:
+def fetch_bench_chg_batch(data: dict, t1_date: str) -> tuple[dict, dict]:
     """
     从 fund_daily.json 收集所有基准代码，批量拉取前一交易日收盘涨跌幅。
-    Tencent 一次批量请求；EM 代码逐个请求（与 Worker fetchEastmoney 等价）。
-    返回 { tq_code: chg_pct }。
 
-    Action 运行于北京 07:00（UTC 23:00），此时：
-      • A 股 / 港股 / 美股 ETF：前一交易日均已收盘，chg 为准确的全天变化。
-      • sinaAG0（沪银主力）：腾讯代码 nf_AG0，经 _TQ_ALIASES 透明映射。
+    返回 (chg_map, date_map)：
+      chg_map  = { tq_code: chg_pct }       — 涨跌幅（同旧接口）
+      date_map = { tq_code: trading_date }  — 每个值所属的交易日（时间驱动协议）
+
+    date_map 来源优先级：
+      EM / Tencent → 无法从响应中获取日期，使用 t1_date（已知交易日上下文）
+      Yahoo        → 从 regularMarketTime 解析（美股实际收盘交易日）
+      idx_closing  → 使用 entry['date']（收盘快照已含明确日期）
+
+    调用方（update_chain_anchors / update_drift）需校验 date_map 日期
+    与预期交易日一致，不一致时拒绝使用对应数据。
     """
     tq_needed: set = set()
     for code, fund in data.items():
@@ -380,7 +386,8 @@ def fetch_bench_chg_batch(data: dict) -> dict:
     em_keys   = {k for k in tq_needed if k in _EM_CODES}
     tq_direct = [c for c in tq_needed if c not in em_keys]
 
-    chg_map: dict = {}
+    chg_map:  dict = {}
+    date_map: dict = {}   # tq_code → trading date of the fetched value
 
     # ── Tencent 批量（含别名映射） ──
     if tq_direct:
@@ -397,7 +404,8 @@ def fetch_bench_chg_batch(data: dict) -> dict:
                 try:
                     price, prev = float(p[3]), float(p[4])
                     if price > 0 and prev > 0:
-                        chg_map[our_key] = (price - prev) / prev * 100
+                        chg_map[our_key]  = (price - prev) / prev * 100
+                        date_map[our_key] = t1_date   # Tencent 响应不含日期，用已知交易日
                 except (ValueError, IndexError):
                     pass
         print(f'  [bench] Tencent: '
@@ -418,19 +426,22 @@ def fetch_bench_chg_batch(data: dict) -> dict:
                 # f43（现价）对计算型指数（如399961）可能为0，不用此字段过滤
                 # 只判断 f170 是否有效（null≠0）
                 if f170 is not None:
-                    chg_map[tq_key] = f170 / 100
+                    chg_map[tq_key]  = f170 / 100
+                    date_map[tq_key] = t1_date   # EM 响应不含日期，用已知交易日
             except Exception:
                 pass
         time.sleep(0.05)
     print(f'  [bench] EM: '
           f'{sum(1 for k in em_keys if k in chg_map)}/{len(em_keys)} 成功')
 
-    # ── Yahoo Finance（US ETF/指数）──────────────────────
+    # ── Yahoo Finance（US ETF / HK 指数）──────────────────────
+    # 请求 regularMarketTime（Unix 时间戳）以提取实际交易日期
     yahoo_keys = {k for k in tq_needed if k in _YAHOO_CODES and k not in chg_map}
     if yahoo_keys:
         symbols = ','.join(_YAHOO_CODES[k] for k in yahoo_keys)
         url = (f'https://query1.finance.yahoo.com/v7/finance/quote'
-               f'?symbols={symbols}&fields=regularMarketChangePercent')
+               f'?symbols={symbols}'
+               f'&fields=regularMarketChangePercent,regularMarketTime')
         text = fetch_url(url, referer='https://finance.yahoo.com')
         if text:
             try:
@@ -440,8 +451,22 @@ def fetch_bench_chg_batch(data: dict) -> dict:
                 for q in quotes:
                     sym = q.get('symbol', '')
                     chg = q.get('regularMarketChangePercent')
-                    if chg is not None and sym in yahoo_rev:
-                        chg_map[yahoo_rev[sym]] = chg
+                    if chg is None or sym not in yahoo_rev:
+                        continue
+                    our_key = yahoo_rev[sym]
+                    chg_map[our_key] = chg
+
+                    # 从 regularMarketTime（Unix 秒）提取交易日期
+                    reg_time = q.get('regularMarketTime')
+                    if reg_time:
+                        from datetime import timedelta
+                        # 港股（^HSI / ^HSCE）→ UTC+8；美股 → UTC-5（保守，覆盖盘后）
+                        tz_offset = 8 if sym in ('^HSI', '^HSCE') else -5
+                        dt = (datetime.fromtimestamp(reg_time, tz=timezone.utc)
+                              + timedelta(hours=tz_offset))
+                        date_map[our_key] = dt.strftime('%Y-%m-%d')
+                    else:
+                        date_map[our_key] = t1_date   # 无时间戳，降级到推断日期
             except Exception as e:
                 print(f'  [bench] Yahoo parse error: {e}', file=sys.stderr)
     print(f'  [bench] Yahoo: '
@@ -460,14 +485,15 @@ def fetch_bench_chg_batch(data: dict) -> dict:
             for key in still_missing:
                 entry = closing.get(key)
                 if entry and entry.get('chg') is not None:
-                    chg_map[key] = entry['chg']
+                    chg_map[key]  = entry['chg']
+                    date_map[key] = entry.get('date', t1_date)   # 收盘快照含明确日期
                     filled.append(key)
             if filled:
                 print(f'  [bench] closing fallback 填补: {filled}')
         except Exception as e:
             print(f'  [bench] closing fallback 读取失败: {e}', file=sys.stderr)
 
-    return chg_map
+    return chg_map, date_map
 
 
 def _calc_bench_chg(bench_def, chg_map: dict) -> float | None:
@@ -485,12 +511,50 @@ def _calc_bench_chg(bench_def, chg_map: dict) -> float | None:
     return None
 
 
-def update_drift(data: dict, chg_map: dict) -> None:
+def _get_bench_date(bench_def, date_map: dict, fallback: str) -> str:
+    """
+    从 date_map 取基准数据的交易日期。
+    复合基准取第一个有记录的分量日期；fallback 为兜底值。
+    """
+    if isinstance(bench_def, str):
+        return date_map.get(bench_def) or fallback
+    if isinstance(bench_def, list):
+        for b in bench_def:
+            d = date_map.get(b['tq'])
+            if d:
+                return d
+    return fallback
+
+
+def _bench_dates_ok(bench_def, date_map: dict, expected_date: str) -> bool:
+    """
+    时间驱动协议校验：所有在 date_map 中有记录的基准分量，
+    其交易日必须等于 expected_date，否则视为日期不匹配。
+    对于 date_map 中没有记录的分量（无法确定日期），宽松放行。
+    """
+    if isinstance(bench_def, str):
+        d = date_map.get(bench_def)
+        return d is None or d == expected_date
+    if isinstance(bench_def, list):
+        for b in bench_def:
+            d = date_map.get(b['tq'])
+            if d and d != expected_date:
+                return False
+        return True
+    return True
+
+
+def update_drift(data: dict, chg_map: dict, date_map: dict, now_utc: str) -> None:
     """
     偏差校准 — 零外部文件版（全量内嵌于 fund_daily.json）。
 
     职责：维护 history 序列 + drift_5d 修正因子。
     不再写 est_nav_yesterday（由 update_chain_anchors 专职负责）。
+
+    时间驱动协议：drift 计算公式为
+      est_nav(T) = nav(T-1) × (1 + bench_chg(T))
+    bench_chg 必须是 T 日（curr_date）的收盘涨跌幅。
+    若 date_map 中记录的基准日期与 curr_date 不符，拒绝写入 drift 条目。
 
     每只基金维护：
       fund['history'] = {
@@ -533,6 +597,15 @@ def update_drift(data: dict, chg_map: dict) -> None:
             # ── 新交易日：计算偏差 ────────────────────────
             bench_chg = _calc_bench_chg(bench_def, chg_map)
 
+            # 时间驱动协议：bench 日期必须与 nav 日期（curr_date）一致
+            dates_ok = _bench_dates_ok(bench_def, date_map, curr_date)
+            if not dates_ok:
+                bench_date = _get_bench_date(bench_def, date_map, '?')
+                print(f'    drift {code}: bench 日期不匹配'
+                      f'（nav={curr_date}，bench={bench_date}），跳过本日 drift 条目',
+                      file=sys.stderr)
+                bench_chg = None   # 日期不符，等同于 bench 缺失
+
             if bench_chg is not None and hist['nav']:
                 prev_nav = hist['nav'][-1]
                 est_nav  = round(prev_nav * (1 + bench_chg / 100), 6)
@@ -548,7 +621,7 @@ def update_drift(data: dict, chg_map: dict) -> None:
                       f'  est={est_nav:.4f}  act={curr_nav:.4f}'
                       f'  drift={drift * 100:+.3f}%')
             else:
-                # bench 缺失 or 首次记录（无 prev_nav）
+                # bench 缺失、日期不符 or 首次记录（无 prev_nav）
                 hist['date'].append(curr_date[5:])
                 hist['nav'].append(curr_nav)
                 hist['est'].append(None)
@@ -575,7 +648,7 @@ def update_drift(data: dict, chg_map: dict) -> None:
     print(f'  [drift] {new_entries} 只新增记录（嵌入 fund_daily.json，无独立文件）')
 
 
-def update_chain_anchors(data: dict, chg_map: dict, t1_date: str) -> None:
+def update_chain_anchors(data: dict, chg_map: dict, date_map: dict, t1_date: str) -> None:
     """
     链式补偿锚点 — 每次 Action 运行时强制写入 est_nav_yesterday。
 
@@ -587,6 +660,10 @@ def update_chain_anchors(data: dict, chg_map: dict, t1_date: str) -> None:
     Worker 使用方式（navLag ≥ 2 时）：
       nav = est_nav_yesterday × (1 + today_bench_chg%)
           = official_nav × (1 + T-1_bench%) × (1 + today_bench%)   ← 两步链式
+
+    时间驱动协议：
+      est_nav_date 取自 date_map（bench 数据的实际交易日），而非 t1_date（nav 日期）。
+      两者在正常情况下相同；QDII 净值发布延迟时可能不同，date_map 更准确。
 
     写入规则：
       - bench_chg 可用 → 写入 est_nav_yesterday + est_nav_date（无条件覆盖）
@@ -603,8 +680,10 @@ def update_chain_anchors(data: dict, chg_map: dict, t1_date: str) -> None:
 
         bench_chg = _calc_bench_chg(bench_def, chg_map)
         if bench_chg is not None:
+            # 用 date_map 中的实际交易日，而非 t1_date（nav 日期）
+            bench_date = _get_bench_date(bench_def, date_map, t1_date)
             fund['est_nav_yesterday'] = round(official_nav * (1 + bench_chg / 100), 6)
-            fund['est_nav_date']      = t1_date
+            fund['est_nav_date']      = bench_date
             updated += 1
         else:
             # bench 数据不可用，清除旧锚点防止 Worker 使用过期数据推算
@@ -992,14 +1071,17 @@ def sync():
 
     # ── 偏差校准 Drift + 链式补偿锚点 ───────────────────────
     print('\n--- 偏差校准 Drift + 链式补偿锚点 ---')
-    bench_chg_map = fetch_bench_chg_batch(data)
-    update_drift(data, bench_chg_map)
 
-    # t1_date：本次 chg_map 对应的交易日（所有基金 nav_date 最大值）
+    # t1_date：本次数据对应的交易日（所有基金 nav_date 最大值）
+    # 必须在 fetch_bench_chg_batch 之前计算，作为 EM/Tencent 数据的日期推断依据
     all_nav_dates = [v.get('nav_date', '') for k, v in data.items()
                      if not k.startswith('_') and v.get('nav_date')]
     t1_date = max(all_nav_dates) if all_nav_dates else ''
-    update_chain_anchors(data, bench_chg_map, t1_date)
+
+    now_utc_drift = datetime.now(timezone.utc).isoformat(timespec='seconds')
+    bench_chg_map, bench_date_map = fetch_bench_chg_batch(data, t1_date)
+    update_drift(data, bench_chg_map, bench_date_map, now_utc_drift)
+    update_chain_anchors(data, bench_chg_map, bench_date_map, t1_date)
 
     # ── 写 _meta ──────────────────────────────────────
     now_utc = datetime.now(timezone.utc).isoformat(timespec='seconds')

@@ -561,13 +561,10 @@ async function asyncPatchFromEM(snap) {
     const dynNavReturn = calcDynamicNavReturn(f.code, patchedIdx, stockChg, fxChgUsd, fxChgHkd, daily);
     if (dynNavReturn == null) return f;
 
-    const fundDaily       = daily && daily[f.code];
-    const drift5d         = fundDaily?.drift_5d          || 0;
-    const driftN          = fundDaily?.drift_n           || 0;
-    const driftComputedAt = fundDaily?.drift_computed_at || null;
-    const driftLagDays    = driftComputedAt
-      ? Math.round((Date.now() - new Date(driftComputedAt).getTime()) / 86400000) : 99;
-    const driftActive = drift5d !== 0 && driftN >= 3 && driftLagDays <= 2;
+    const fundDaily = daily && daily[f.code];
+    const drift5d   = fundDaily?.drift_5d || 0;
+    // driftStatus 由 Worker 已用 tradingDayLag 正确计算（含周末修正），直接复用
+    const driftActive = f.driftStatus === 'ACTIVE';
     const alpha = driftActive ? Math.max(-0.02, Math.min(0.02, drift5d)) : 0;
 
     const base = f.useChained ? f.estNavYesterday : f.officialNav;
@@ -1022,6 +1019,10 @@ async function doRefresh() {
       // 🥈 备用链路：先加载 daily（缓存已热则瞬返），再并行拉取行情
       const [daily, closingData] = await Promise.all([loadFundDaily(), loadIdxClosing()]);
       setTradingDates(daily && daily._meta && daily._meta.trading_dates);
+      // fund_daily.json 最近同步北京日期，用于 syncLagDays（替代 fetchAgeH <= 36）
+      const syncDateBj = (daily && daily._meta && daily._meta.sync_time)
+        ? new Date(new Date(daily._meta.sync_time).getTime() + 8 * 3600_000).toISOString().slice(0, 10)
+        : null;
       // 直连模式下不调 fetchSina：fetchSina 依赖 Worker 代理（/api/sina），
       // Worker 已确认不可达，调用只会等待 8s 超时，收益为零。FX 在此模式下为 null，
       // calcFxOk() 会标记 fxOk=false，UI 显示 ⚠ 提示用户精度下降。
@@ -1094,17 +1095,9 @@ async function doRefresh() {
           : false;
         const fxOk           = calcFxOk(f.code, fxChgUsd, fxChgHkd);
         const holdingCoverage = calcHoldingCoverage(f.code, stockChg, daily);
-        // 偏差校准：Hard Enforcement — 宁可无补偿，不可乱补偿
-        const fundDaily       = daily && daily[f.code];
-        const drift5d         = fundDaily ? (fundDaily.drift_5d          || 0)   : 0;
-        const driftN          = fundDaily ? (fundDaily.drift_n           || 0)   : 0;
-        const driftComputedAt = fundDaily ? (fundDaily.drift_computed_at || null): null;
-        const driftLagDays    = driftComputedAt
-          ? Math.round((Date.now() - new Date(driftComputedAt).getTime()) / 86400000)
-          : 99;
-        const driftActive  = drift5d !== 0 && driftN >= 3 && driftLagDays <= 2;
-        const alpha        = driftActive ? Math.max(-0.02, Math.min(0.02, drift5d)) : 0;
-        const driftStatus  = driftActive ? 'ACTIVE' : 'SUSPENDED';
+        const fundDaily = daily && daily[f.code];
+        const drift5d   = fundDaily ? (fundDaily.drift_5d          || 0)   : 0;
+        const driftN    = fundDaily ? (fundDaily.drift_n           || 0)   : 0;
 
         // ── 时间驱动协议（与 worker-full.js 逻辑完全一致）──
         const isCrossBorder = f.cat === 'us' || f.cat === 'hk';
@@ -1118,11 +1111,22 @@ async function doRefresh() {
           benchDate = tqData.aShareDate;  // 降级路径无 Yahoo，统一用 A 股时间戳
         }
 
-        const navLag = (navDate && benchDate) ? tradingDayLag(navDate, benchDate) : 99;
+        // 偏差校准：Hard Enforcement — 宁可无补偿，不可乱补偿
+        // driftLagDays 用交易日数（与 Worker 一致），避免周末误判 Drift SUSPENDED
+        const driftComputedAt   = fundDaily ? (fundDaily.drift_computed_at || null): null;
+        const driftComputedDate = driftComputedAt ? driftComputedAt.slice(0, 10) : null;
+        const driftLagDays      = (driftComputedDate && benchDate)
+          ? tradingDayLag(driftComputedDate, benchDate)
+          : 99;
+        const driftActive  = drift5d !== 0 && driftN >= 3 && driftLagDays <= 2;
+        const alpha        = driftActive ? Math.max(-0.02, Math.min(0.02, drift5d)) : 0;
+        const driftStatus  = driftActive ? 'ACTIVE' : 'SUSPENDED';
+
+        const navLag      = (navDate && benchDate) ? tradingDayLag(navDate, benchDate) : 99;
         const estNavYesterday = fundDaily ? (fundDaily.est_nav_yesterday || null) : null;
-        const navFetchTime    = fundDaily ? (fundDaily.nav_fetch_time || null) : null;
-        const fetchAgeH       = navFetchTime ? (Date.now() - new Date(navFetchTime).getTime()) / 3600000 : 999;
-        const useChained = estNavYesterday && navLag >= 2 && fetchAgeH <= 36;
+        // syncLagDays：fund_daily.json 同步日距 benchDate 的交易日数，替代 fetchAgeH <= 36
+        const syncLagDays = (syncDateBj && benchDate) ? tradingDayLag(syncDateBj, benchDate) : 99;
+        const useChained  = estNavYesterday && navLag >= 2 && syncLagDays <= 1;
         const base = useChained ? estNavYesterday : (officialNav || prevClose);
 
         // 降级模式下 fxDate 不可用（Sina 无法直连），不做 FX 日期校验

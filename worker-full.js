@@ -761,6 +761,13 @@ async function fetchAllData(env = {}) {
   // 注入交易日历（供 isTradingDay / tradingDayLag 使用）
   setTradingDates(daily && daily._meta && daily._meta.trading_dates);
 
+  // fund_daily.json 最近同步的北京日期（UTC → UTC+8）
+  // 用于 useChained 的交易日鲜度校验：替代 fetchAgeH <= 36（日历小时）
+  // 周末不消耗交易日：周五同步 → 周一 syncLagDays=1，仍被认为足够新鲜
+  const syncDateBj = (daily && daily._meta && daily._meta.sync_time)
+    ? new Date(new Date(daily._meta.sync_time).getTime() + 8 * 3600_000).toISOString().slice(0, 10)
+    : null;
+
   // 再并行拉取行情（fetchTencent 需要 daily 来批量加持仓代码）
   // allSettled 断点隔离：任何单路失败不阻塞其他数据源；各 fetch 函数内部也有 try/catch
   const [tqRes, emRes, sinaRes, futRes] = await Promise.allSettled([
@@ -895,19 +902,6 @@ async function fetchAllData(env = {}) {
     const fxOk           = calcFxOk(f.code, fxChgUsd, fxChgHkd); // false → 汇率缺失，估值未计入即时汇率
     const holdingCoverage = calcHoldingCoverage(f.code, stockChg, daily);
 
-    // 偏差校准：Hard Enforcement — 宁可无补偿，不可乱补偿
-    // 前置条件：drift_computed_at ≤2天 AND drift_n ≥3；否则 alpha=0（禁用补偿）
-    const fundDaily         = daily && daily[f.code];
-    const drift5d           = fundDaily ? (fundDaily.drift_5d           || 0)   : 0;
-    const driftN            = fundDaily ? (fundDaily.drift_n            || 0)   : 0;
-    const driftComputedAt   = fundDaily ? (fundDaily.drift_computed_at  || null): null;
-    const driftLagDays      = driftComputedAt
-      ? Math.round((Date.now() - new Date(driftComputedAt).getTime()) / 86400000)
-      : 99;
-    const driftActive  = drift5d !== 0 && driftN >= 3 && driftLagDays <= 2;
-    const alpha        = driftActive ? Math.max(-0.02, Math.min(0.02, drift5d)) : 0;
-    const driftStatus  = driftActive ? 'ACTIVE' : 'SUSPENDED';
-
     // ── 时间驱动协议：benchDate 从数据源时间戳获取，不使用服务器时钟 ──
     // 规则：
     //   A股/港股 → marketContext.aShareDate（来自腾讯 field[30]）
@@ -926,16 +920,35 @@ async function fetchAllData(env = {}) {
       benchDate = marketContext.aShareDate;  // A股 / 港股同属 UTC+8
     }
 
+    // 偏差校准：Hard Enforcement — 宁可无补偿，不可乱补偿
+    // 前置条件：drift_computed_at ≤2交易日 AND drift_n ≥3；否则 alpha=0（禁用补偿）
+    // driftLagDays 必须用交易日数，不能用日历天：
+    //   周五计算的 drift，周一 driftLagDays = 1（交易日），而非 3（日历天）
+    const fundDaily         = daily && daily[f.code];
+    const drift5d           = fundDaily ? (fundDaily.drift_5d           || 0)   : 0;
+    const driftN            = fundDaily ? (fundDaily.drift_n            || 0)   : 0;
+    const driftComputedAt   = fundDaily ? (fundDaily.drift_computed_at  || null): null;
+    const driftComputedDate = driftComputedAt ? driftComputedAt.slice(0, 10) : null;
+    const driftLagDays      = (driftComputedDate && benchDate)
+      ? tradingDayLag(driftComputedDate, benchDate)
+      : 99;
+    const driftActive  = drift5d !== 0 && driftN >= 3 && driftLagDays <= 2;
+    const alpha        = driftActive ? Math.max(-0.02, Math.min(0.02, drift5d)) : 0;
+    const driftStatus  = driftActive ? 'ACTIVE' : 'SUSPENDED';
+
     // navLag：nav_date 距 benchDate 的交易日数（替代原 tradingDayLag(navDate, todayStr)）
     const navLag = (navDate && benchDate) ? tradingDayLag(navDate, benchDate) : 99;
 
-    // T-2 链式修正：前提是 nav_fetch_time 足够新（≤36h）才可信
+    // T-2 链式修正：前提是 fund_daily.json 在上一个交易日内有同步
+    // syncLagDays = tradingDayLag(syncDateBj, benchDate)：
+    //   0 = 当日已同步（Action 07:00 跑完，Worker 09:30 消费）
+    //   1 = 前一交易日同步（正常情况，含周末跨越）
+    //   ≥2 = Action 已连续缺席 ≥1 个交易日，锚点不可信，禁用链式
     const estNavYesterday = fundDaily ? (fundDaily.est_nav_yesterday || null) : null;
-    const navFetchTime    = fundDaily ? (fundDaily.nav_fetch_time    || null) : null;
-    const fetchAgeH       = navFetchTime
-      ? (Date.now() - new Date(navFetchTime).getTime()) / 3600000
-      : 999;
-    const useChained = estNavYesterday && navLag >= 2 && fetchAgeH <= 36;
+    const syncLagDays     = (syncDateBj && benchDate)
+      ? tradingDayLag(syncDateBj, benchDate)
+      : 99;
+    const useChained = estNavYesterday && navLag >= 2 && syncLagDays <= 1;
     const base       = useChained ? estNavYesterday : (officialNav || prevClose);
 
     // navBasis：时间对齐状态 + 估值路径（供 UI 显示基准时间标注和置信度）
