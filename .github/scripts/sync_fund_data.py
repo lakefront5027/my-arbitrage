@@ -473,8 +473,8 @@ def _holdings_age_days(holdings_date: str, today: str) -> int:
 
 
 def _fetch_em_pdf_url(code: str) -> tuple:
-    """从东方财富公告 API 查最新季报 PDF，返回 (url, title)；失败返回 (None, None)。
-    PDF CDN 为 pdf.dfcfw.com，境外 IP 可访问。
+    """从东方财富公告 API 查最新季报 PDF，返回 (url, title, notice_date)；失败返回 (None, None, None)。
+    notice_date 为公告发布日（YYYY-MM-DD），PDF CDN 为 pdf.dfcfw.com，境外 IP 可访问。
     """
     url = (
         'https://np-anotice-stock.eastmoney.com/api/security/ann'
@@ -486,24 +486,31 @@ def _fetch_em_pdf_url(code: str) -> tuple:
         'Referer':    'https://fund.eastmoney.com/',
         'Accept':     'application/json, text/plain, */*',
     }
+
+    def _extract_date(item: dict) -> str:
+        """从公告条目提取发布日期，返回 YYYY-MM-DD，失败返回空串。"""
+        raw = item.get('notice_date') or item.get('noticeTime') or item.get('ann_time') or ''
+        return str(raw)[:10] if raw else ''
+
     try:
         req = urllib.request.Request(url, headers=headers)
-        with urllib.request.urlopen(req, timeout=20) as r:
+        with urllib.request.urlopen(req, timeout=8) as r:
             data = json.loads(r.read().decode('utf-8'))
         items = (data.get('data') or {}).get('list') or []
         for item in items:
             title    = item.get('title', '')
             art_code = item.get('art_code', '')
             if re.search(r'[一二三四]季度?报告|季报', title) and art_code:
-                return f'https://pdf.dfcfw.com/pdf/H2_{art_code}_1.PDF', title
+                return f'https://pdf.dfcfw.com/pdf/H2_{art_code}_1.PDF', title, _extract_date(item)
         # 备选：任何基金公告附件
         for item in items:
             art_code = item.get('art_code', '')
             if art_code:
-                return f'https://pdf.dfcfw.com/pdf/H2_{art_code}_1.PDF', item.get('title', '')
+                return (f'https://pdf.dfcfw.com/pdf/H2_{art_code}_1.PDF',
+                        item.get('title', ''), _extract_date(item))
     except Exception as e:
         print(f'    [em_ann] {code} 公告查询失败: {e}', file=sys.stderr)
-    return None, None
+    return None, None, None
 
 
 def _parse_quarter_end_date(title: str) -> str:
@@ -526,7 +533,7 @@ def _download_pdf_binary(url: str, dest_path: str) -> bool:
     }
     req = urllib.request.Request(url, headers=headers)
     try:
-        with urllib.request.urlopen(req, timeout=60) as r, open(dest_path, 'wb') as f:
+        with urllib.request.urlopen(req, timeout=30) as r, open(dest_path, 'wb') as f:
             while True:
                 chunk = r.read(65536)
                 if not chunk:
@@ -635,21 +642,42 @@ def _extract_holdings_via_gemini(pdf_path: str, code: str) -> list:
     ]
 
 
-def _fetch_holdings_via_pdf(code: str) -> dict | None:
+def _fetch_holdings_via_pdf(code: str, local_holdings_date: str = '') -> dict | None:
     """
-    PDF+Gemini 持仓抓取主入口。
-    成功返回 {'holdings': [...], 'holdings_date': 'YYYY-MM-DD'}，失败返回 None。
+    PDF+Gemini 持仓抓取主入口（公告驱动，增量更新）。
+
+    流程：
+      1. 查询东方财富公告 API，获取最新季报 (url, title, notice_date)
+      2. 解析季报截止日（_parse_quarter_end_date），与 local_holdings_date 比较
+      3. 无更新 → 返回 {'skipped': True, 'holdings_date': ann_quarter_date}
+      4. 有更新 → 下载 PDF → Gemini 提取 → 返回 {'holdings': [...], 'holdings_date': ...}
+      5. 失败     → 返回 None
+
+    不再使用固定 90 天日历阈值；改由公告日期驱动，只在季报推进时触发下载。
     """
     import tempfile, os as _os
 
     print(f'    [pdf] {code}: 查询东方财富公告...', flush=True)
 
-    pdf_url, title = _fetch_em_pdf_url(code)
+    pdf_url, title, notice_date = _fetch_em_pdf_url(code)
     if not pdf_url:
         print(f'    [pdf] {code}: 未找到季报 PDF', file=sys.stderr)
         return None
 
-    print(f'    [pdf] 下载: {title}', flush=True)
+    # ── 增量检查：季报截止日对比本地已有持仓日期 ──────────
+    ann_quarter_date = _parse_quarter_end_date(title)
+    if ann_quarter_date and local_holdings_date and ann_quarter_date <= local_holdings_date:
+        print(
+            f'    [pdf] {code}: 季报无更新'
+            f'（公告截止 {ann_quarter_date} ≤ 本地 {local_holdings_date}'
+            f'，发布日 {notice_date or "?"}）'
+        )
+        return {'skipped': True, 'holdings_date': ann_quarter_date}
+
+    print(
+        f'    [pdf] {code}: 发现新季报 {ann_quarter_date or "?"}（发布: {notice_date or "?"}），下载中...',
+        flush=True,
+    )
 
     tmp = tempfile.NamedTemporaryFile(suffix='.pdf', delete=False)
     pdf_path = tmp.name
@@ -663,9 +691,7 @@ def _fetch_holdings_via_pdf(code: str) -> dict | None:
         if not holdings:
             return None
 
-        holdings_date = _parse_quarter_end_date(title)
-        if not holdings_date:
-            holdings_date = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+        holdings_date = ann_quarter_date or datetime.now(timezone.utc).strftime('%Y-%m-%d')
 
         total_ratio = sum(h['ratio'] for h in holdings)
         print(
@@ -1487,29 +1513,23 @@ def sync():
             top = hold_result['holdings'][0]
             print(f'    持仓 {len(hold_result["holdings"]):2d}只  截止:{hold_result["holdings_date"]}  首位: {top["name"]} {top["ratio"]}%')
         else:
-            # EM jjcc 无数据 → 检查 PDF 刷新条件（holdings 为空 或 > 90 天）
+            # EM jjcc 无数据 → 公告驱动增量更新（传入本地日期，只在季报推进时下载）
             existing_date = fund.get('holdings_date') or ''
-            today_str = datetime.now(timezone.utc).strftime('%Y-%m-%d')
-            need_pdf = (not existing_date or
-                        _holdings_age_days(existing_date, today_str) > PDF_HOLDINGS_MAX_AGE_DAYS)
-            if need_pdf:
-                pdf_result = _fetch_holdings_via_pdf(code)
-                # 每次 PDF 抓取后随机延迟 4–10 秒，避免巨潮反爬触发
-                time.sleep(random.uniform(4, 10))
-                if pdf_result:
-                    fund['holdings']            = pdf_result['holdings']
-                    fund['holdings_date']       = pdf_result['holdings_date']
-                    fund['holdings_fetch_time'] = now_utc
-                    hold_ok += 1
-                    top = pdf_result['holdings'][0]
-                    print(f'    持仓(PDF) {len(pdf_result["holdings"]):2d}只  '
-                          f'截止:{pdf_result["holdings_date"]}  '
-                          f'首位: {top["name"]} {top["ratio"]}%')
-                else:
-                    hold_fail += 1
-                    print(f'    持仓 FAILED (EM+PDF) — 保留旧值', file=sys.stderr)
+            pdf_result = _fetch_holdings_via_pdf(code, existing_date)
+            if pdf_result is None:
+                hold_fail += 1
+                print(f'    持仓 FAILED (EM+PDF) — 保留旧值', file=sys.stderr)
+            elif pdf_result.get('skipped'):
+                print(f'    持仓 EM无数据，季报无更新（截止: {pdf_result.get("holdings_date", "")}）')
             else:
-                print(f'    持仓 EM无数据，PDF未到刷新期（上次: {existing_date}）')
+                fund['holdings']            = pdf_result['holdings']
+                fund['holdings_date']       = pdf_result['holdings_date']
+                fund['holdings_fetch_time'] = now_utc
+                hold_ok += 1
+                top = pdf_result['holdings'][0]
+                print(f'    持仓(PDF) {len(pdf_result["holdings"]):2d}只  '
+                      f'截止:{pdf_result["holdings_date"]}  '
+                      f'首位: {top["name"]} {top["ratio"]}%')
         time.sleep(0.08)
 
         # ── 总份额 ────────────────────────────────────
