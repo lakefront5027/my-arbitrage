@@ -476,10 +476,12 @@ def _fetch_em_pdf_url(code: str) -> tuple:
     """从东方财富公告 API 查最新季报 PDF，返回 (url, title, notice_date)；失败返回 (None, None, None)。
     notice_date 为公告发布日（YYYY-MM-DD），PDF CDN 为 pdf.dfcfw.com，境外 IP 可访问。
     """
+    # EM 公告 API 需要带市场前缀：沪市 5xxxxx → sh{code}，深市其余 → sz{code}
+    market = 'sh' if code.startswith('5') else 'sz'
     url = (
         'https://np-anotice-stock.eastmoney.com/api/security/ann'
         f'?sr=-1&page=1&pageSize=20&ann_type=F&client_source=web'
-        f'&stock={code}&f_node=0&s_node=0'
+        f'&stock={market}{code}&f_node=0&s_node=0'
     )
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
