@@ -472,73 +472,67 @@ def _holdings_age_days(holdings_date: str, today: str) -> int:
         return 9999
 
 
-def _fetch_em_pdf_url(code: str) -> tuple:
-    """从东方财富季报公告页（fundf10 jjzqbg）查最新季报 PDF。
-    返回 (url, title, notice_date)；失败返回 (None, None, None)。
-    使用与 jjcc 相同的域名和 fetch_url 通道，境外 IP 可访问。
+def _fetch_cninfo_pdf_url(code: str) -> tuple:
+    """从巨潮资讯（CNINFO）查最新季报 PDF，返回 (url, title, notice_date)。
+    CNINFO 是基金季报的法定披露平台，所有 A 股上市基金均有记录，境外 IP 可访问。
+    失败返回 (None, None, None)。
     """
-    url = (
-        f'https://fundf10.eastmoney.com/FundArchivesDatas.aspx'
-        f'?type=jjzqbg&code={code}&page=1&per=10&rt={int(time.time())}'
-    )
-    text = fetch_url(url, referer=f'https://fundf10.eastmoney.com/jjgg.html?fundcode={code}')
-    if not text:
-        print(f'    [em_pdf] {code} 季报公告页请求失败', file=sys.stderr)
+    column = 'sse' if code.startswith(('5', '6')) else 'szse'
+    api_url = 'https://www.cninfo.com.cn/new/hisAnnouncement/query'
+    payload = urllib.parse.urlencode({
+        'stock':     code,
+        'category':  'category_jjgg_szsh',
+        'searchkey': '季度报告',
+        'pageNum':   1,
+        'pageSize':  10,
+        'column':    column,
+        'tabName':   'fulltext',
+        'sortName':  '',
+        'sortType':  '',
+        'isHLtitle': 'true',
+    }).encode()
+    headers = {
+        'User-Agent':   'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'Referer':      'https://www.cninfo.com.cn/',
+        'Accept':       'application/json, text/plain, */*',
+    }
+    try:
+        req = urllib.request.Request(api_url, data=payload, headers=headers, method='POST')
+        with urllib.request.urlopen(req, timeout=12) as r:
+            data = json.loads(r.read().decode('utf-8'))
+        anns = data.get('announcements') or []
+    except Exception as e:
+        print(f'    [cninfo] {code} 查询失败: {e}', file=sys.stderr)
         return None, None, None
 
-    # EM jjzqbg 响应格式：var apidata={content:"...HTML...", pages:X}
-    # HTML 内通过 openWinFunc('AP202503...', '2024年第四季度报告', ...) 打开 PDF。
-    # art code 格式为 AP/AN + 纯数字，无 H2_ 前缀；PDF URL = H2_{art_code}_1.PDF
-    entries = []
-    seen = set()
-
-    # 主模式：提取 openWinFunc 的前两个参数（art_code + title）
-    for m in re.finditer(
-        r"openWinFunc\s*\(\s*['\"]([A-Z]{2}[0-9]{14,})['\"]"
-        r"\s*,\s*['\"]([^'\"]{4,80})['\"]",
-        text, re.IGNORECASE
-    ):
-        art_code = m.group(1)
-        title    = m.group(2).strip()
-        if art_code in seen:
-            continue
-        seen.add(art_code)
-        pdf_url = f'https://pdf.dfcfw.com/pdf/H2_{art_code}_1.PDF'
-        # 在匹配位置附近找日期
-        start = max(0, m.start() - 200)
-        ctx   = text[start: m.end() + 200]
-        date_m = re.search(r'(\d{4}-\d{2}-\d{2})', ctx)
-        notice_date = date_m.group(1) if date_m else ''
-        entries.append((pdf_url, title, notice_date))
-
-    # 备用模式：直接扫描引号内的 art code（兼容不同 JS 调用形式）
-    if not entries:
-        for m in re.finditer(r"['\"]([A-Z]{2}[0-9]{14,})['\"]", text):
-            art_code = m.group(1)
-            if art_code in seen:
-                continue
-            seen.add(art_code)
-            pdf_url = f'https://pdf.dfcfw.com/pdf/H2_{art_code}_1.PDF'
-            start = max(0, m.start() - 300)
-            ctx   = text[start: m.end() + 300]
-            title_m = re.search(r'[\u4e00-\u9fa5]{4,40}(?:季度?报告|季报|年度报告)', ctx)
-            title   = title_m.group(0).strip() if title_m else ''
-            date_m  = re.search(r'(\d{4}-\d{2}-\d{2})', ctx)
-            notice_date = date_m.group(1) if date_m else ''
-            entries.append((pdf_url, title, notice_date))
-
-    if not entries:
-        print(f'    [em_pdf] {code} 未找到 art code，页面片段: {text[:400]!r}', file=sys.stderr)
+    if not anns:
+        print(f'    [cninfo] {code} 无公告记录', file=sys.stderr)
         return None, None, None
 
-    # 优先返回季度报告
-    for pdf_url, title, notice_date in entries:
-        if re.search(r'[一二三四]季度?报告|季报', title):
-            return pdf_url, title, notice_date
+    def _ann_date(ann: dict) -> str:
+        raw = ann.get('announcementTime', 0)
+        try:
+            return str(date.fromtimestamp(int(raw) / 1000))
+        except Exception:
+            return str(raw)[:10] if raw else ''
 
-    # 备选：第一个条目
-    pdf_url, title, notice_date = entries[0]
-    return pdf_url, title, notice_date
+    # 优先匹配季度报告
+    for ann in anns:
+        title    = ann.get('announcementTitle', '')
+        pdf_path = ann.get('adjunctUrl', '')
+        if re.search(r'[一二三四]季度?报告|季报', title) and pdf_path:
+            return f'https://static.cninfo.com.cn/{pdf_path}', title, _ann_date(ann)
+
+    # 备选：任何带 PDF 附件的公告
+    for ann in anns:
+        pdf_path = ann.get('adjunctUrl', '')
+        if pdf_path and pdf_path.endswith('.pdf'):
+            title = ann.get('announcementTitle', '')
+            return f'https://static.cninfo.com.cn/{pdf_path}', title, _ann_date(ann)
+
+    print(f'    [cninfo] {code} 未找到带 PDF 的季报公告', file=sys.stderr)
+    return None, None, None
 
 
 def _parse_quarter_end_date(title: str) -> str:
@@ -687,7 +681,7 @@ def _fetch_holdings_via_pdf(code: str, local_holdings_date: str = '') -> dict | 
 
     print(f'    [pdf] {code}: 查询东方财富公告...', flush=True)
 
-    pdf_url, title, notice_date = _fetch_em_pdf_url(code)
+    pdf_url, title, notice_date = _fetch_cninfo_pdf_url(code)
     if not pdf_url:
         print(f'    [pdf] {code}: 未找到季报 PDF', file=sys.stderr)
         return None
