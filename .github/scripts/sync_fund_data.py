@@ -473,46 +473,49 @@ def _holdings_age_days(holdings_date: str, today: str) -> int:
 
 
 def _fetch_em_pdf_url(code: str) -> tuple:
-    """从东方财富公告 API 查最新季报 PDF，返回 (url, title, notice_date)；失败返回 (None, None, None)。
-    notice_date 为公告发布日（YYYY-MM-DD），PDF CDN 为 pdf.dfcfw.com，境外 IP 可访问。
+    """从东方财富季报公告页（fundf10 jjzqbg）查最新季报 PDF。
+    返回 (url, title, notice_date)；失败返回 (None, None, None)。
+    使用与 jjcc 相同的域名和 fetch_url 通道，境外 IP 可访问。
     """
-    # EM 公告 API 需要带市场前缀：沪市 5xxxxx → sh{code}，深市其余 → sz{code}
-    market = 'sh' if code.startswith('5') else 'sz'
     url = (
-        'https://np-anotice-stock.eastmoney.com/api/security/ann'
-        f'?sr=-1&page=1&pageSize=20&ann_type=F&client_source=web'
-        f'&stock={market}{code}&f_node=0&s_node=0'
+        f'https://fundf10.eastmoney.com/FundArchivesDatas.aspx'
+        f'?type=jjzqbg&code={code}&page=1&per=10&rt={int(time.time())}'
     )
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-        'Referer':    'https://fund.eastmoney.com/',
-        'Accept':     'application/json, text/plain, */*',
-    }
+    text = fetch_url(url, referer=f'https://fundf10.eastmoney.com/jjgg.html?fundcode={code}')
+    if not text:
+        print(f'    [em_pdf] {code} 季报公告页请求失败', file=sys.stderr)
+        return None, None, None
 
-    def _extract_date(item: dict) -> str:
-        """从公告条目提取发布日期，返回 YYYY-MM-DD，失败返回空串。"""
-        raw = item.get('notice_date') or item.get('noticeTime') or item.get('ann_time') or ''
-        return str(raw)[:10] if raw else ''
+    # 提取所有 PDF 链接及其上下文：
+    # 典型 HTML 片段：<a href="https://pdf.dfcfw.com/pdf/H2_AP202503...pdf" ...>2024年第四季度报告</a>
+    # 或：<td class="...">2025-03-28</td> ... pdf.dfcfw.com/...
+    entries = []
+    # 匹配 <a> 标签中含 pdf.dfcfw.com 的链接，抓取 href 和链接文字
+    for m in re.finditer(
+        r'<a[^>]+href=["\']?(https://pdf\.dfcfw\.com/[^"\'>\s]+)["\']?[^>]*>(.*?)</a>',
+        text, re.DOTALL | re.IGNORECASE
+    ):
+        pdf_url  = m.group(1).strip()
+        link_txt = re.sub(r'<[^>]+>', '', m.group(2)).strip()
+        # 在链接前后 500 字符内找日期
+        start = max(0, m.start() - 500)
+        ctx   = text[start: m.end() + 200]
+        date_m = re.search(r'(\d{4}-\d{2}-\d{2})', ctx)
+        notice_date = date_m.group(1) if date_m else ''
+        entries.append((pdf_url, link_txt, notice_date))
 
-    try:
-        req = urllib.request.Request(url, headers=headers)
-        with urllib.request.urlopen(req, timeout=8) as r:
-            data = json.loads(r.read().decode('utf-8'))
-        items = (data.get('data') or {}).get('list') or []
-        for item in items:
-            title    = item.get('title', '')
-            art_code = item.get('art_code', '')
-            if re.search(r'[一二三四]季度?报告|季报', title) and art_code:
-                return f'https://pdf.dfcfw.com/pdf/H2_{art_code}_1.PDF', title, _extract_date(item)
-        # 备选：任何基金公告附件
-        for item in items:
-            art_code = item.get('art_code', '')
-            if art_code:
-                return (f'https://pdf.dfcfw.com/pdf/H2_{art_code}_1.PDF',
-                        item.get('title', ''), _extract_date(item))
-    except Exception as e:
-        print(f'    [em_ann] {code} 公告查询失败: {e}', file=sys.stderr)
-    return None, None, None
+    if not entries:
+        print(f'    [em_pdf] {code} 未在页面中找到 PDF 链接', file=sys.stderr)
+        return None, None, None
+
+    # 优先返回季度报告
+    for pdf_url, title, notice_date in entries:
+        if re.search(r'[一二三四]季度?报告|季报', title):
+            return pdf_url, title, notice_date
+
+    # 备选：任何找到的第一个 PDF
+    pdf_url, title, notice_date = entries[0]
+    return pdf_url, title, notice_date
 
 
 def _parse_quarter_end_date(title: str) -> str:
