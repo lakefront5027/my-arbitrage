@@ -486,26 +486,29 @@ def _fetch_em_pdf_url(code: str) -> tuple:
         print(f'    [em_pdf] {code} 季报公告页请求失败', file=sys.stderr)
         return None, None, None
 
-    # 提取所有 PDF 链接及其上下文：
-    # 典型 HTML 片段：<a href="https://pdf.dfcfw.com/pdf/H2_AP202503...pdf" ...>2024年第四季度报告</a>
-    # 或：<td class="...">2025-03-28</td> ... pdf.dfcfw.com/...
+    # EM jjzqbg 页面通过 JavaScript 打开 PDF，art code 嵌在 onclick 中：
+    #   openWinFunc('H2_AP202503...', '2024年第四季度报告', ...)
+    # 不用匹配 href，直接扫描整个 HTML 找 H2_ 开头的 art code，拼出 PDF URL。
     entries = []
-    # 匹配 <a> 标签中含 pdf.dfcfw.com 的链接，抓取 href 和链接文字
-    for m in re.finditer(
-        r'<a[^>]+href=["\']?(https://pdf\.dfcfw\.com/[^"\'>\s]+)["\']?[^>]*>(.*?)</a>',
-        text, re.DOTALL | re.IGNORECASE
-    ):
-        pdf_url  = m.group(1).strip()
-        link_txt = re.sub(r'<[^>]+>', '', m.group(2)).strip()
-        # 在链接前后 500 字符内找日期
-        start = max(0, m.start() - 500)
-        ctx   = text[start: m.end() + 200]
-        date_m = re.search(r'(\d{4}-\d{2}-\d{2})', ctx)
+    seen = set()
+    for m in re.finditer(r'(H2_[A-Z0-9]{10,})', text):
+        art_code = m.group(1)
+        if art_code in seen:
+            continue
+        seen.add(art_code)
+        pdf_url = f'https://pdf.dfcfw.com/pdf/{art_code}_1.PDF'
+        # 在 art code 前后 400 字符内找标题和日期
+        start = max(0, m.start() - 400)
+        ctx   = text[start: m.end() + 400]
+        title_m = re.search(r'[\u4e00-\u9fa5A-Za-z0-9（）()]{4,60}(?:季度?报告|季报)', ctx)
+        title   = title_m.group(0).strip() if title_m else ''
+        date_m  = re.search(r'(\d{4}-\d{2}-\d{2})', ctx)
         notice_date = date_m.group(1) if date_m else ''
-        entries.append((pdf_url, link_txt, notice_date))
+        entries.append((pdf_url, title, notice_date))
 
     if not entries:
-        print(f'    [em_pdf] {code} 未在页面中找到 PDF 链接', file=sys.stderr)
+        # 打印前 300 字符帮助诊断 HTML 结构
+        print(f'    [em_pdf] {code} 未找到 H2_ art code，页面片段: {text[:300]!r}', file=sys.stderr)
         return None, None, None
 
     # 优先返回季度报告
@@ -513,7 +516,7 @@ def _fetch_em_pdf_url(code: str) -> tuple:
         if re.search(r'[一二三四]季度?报告|季报', title):
             return pdf_url, title, notice_date
 
-    # 备选：任何找到的第一个 PDF
+    # 备选：任何找到的第一个条目
     pdf_url, title, notice_date = entries[0]
     return pdf_url, title, notice_date
 
