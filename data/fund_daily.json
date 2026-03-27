@@ -1,1 +1,5732 @@
-{"161127":{"code":"161127","name":"标普生物科技LOF","tq":"sz161127","cat":"us","quota":"限10","fee":"1.20%","rfee":"1.00%","bench":"usXBI","nav":1.6981,"nav_date":"2026-03-26","nav_src":"lsjz","shares":2.87,"holdings":[{"code":"FOLD","name":"爱美医疗","ratio":1.39},{"code":"PRAX","name":"Praxis Precision Medicines Inc","ratio":1.3},{"code":"TVTX","name":"Travere Therapeutics Inc","ratio":1.28},{"code":"BMRN","name":"拜玛林制药","ratio":1.28},{"code":"HALO","name":"奥洛兹美医疗","ratio":1.24},{"code":"ROIV","name":"Roivant Sciences Ltd","ratio":1.24},{"code":"EXEL","name":"伊克力西斯","ratio":1.23},{"code":"REGN","name":"再生元制药","ratio":1.22},{"code":"PCVX","name":"Vaxcyte Inc","ratio":1.22},{"code":"MDGL","name":"Madrigal Pharmaceuticals Inc","ratio":1.21}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-19","03-20","03-20","03-20","03-23","03-24","03-25","03-25","03-25","03-26","03-26"],"nav":[1.6808,1.6524,1.6524,1.6524,1.6695,1.6382,1.6942,1.6942,1.6942,1.6981,1.6981],"est":[null,1.653045,1.625114,null,null,null,null,null,null,1.693927,null],"drift":[null,-0.00039,0.01679,null,null,null,null,null,null,0.002464,null]},"est_nav_yesterday":1.697826,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27","drift_5d":0.006288,"drift_n":3,"drift_computed_at":"2026-03-27T12:32:01+00:00"},"164906":{"code":"164906","name":"中概互联网LOF","tq":"sz164906","cat":"us","quota":"开放","fee":"1.20%","rfee":"1.50%","bench":"usKWEB","nav":1.0271,"nav_date":"2026-03-26","nav_src":"lsjz","shares":55.25,"holdings":[{"code":"00700","name":"腾讯控股","ratio":9.51},{"code":"09988","name":"阿里巴巴-W","ratio":8.16},{"code":"PDD","name":"拼多多","ratio":7.65},{"code":"03690","name":"美团-W","ratio":6.87},{"code":"09999","name":"网易-S","ratio":5.66},{"code":"09888","name":"百度集团-SW","ratio":4.01},{"code":"09961","name":"携程集团-S","ratio":3.91},{"code":"TME","name":"腾讯音乐","ratio":3.74},{"code":"09618","name":"京东集团-SW","ratio":3.69},{"code":"01024","name":"快手-W","ratio":3.61}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-19","03-20","03-20","03-20","03-23","03-24","03-25","03-25","03-25","03-25","03-26"],"nav":[1.0584,1.04,1.04,1.04,1.016,1.0304,1.0524,1.0524,1.0524,1.0524,1.0271],"est":[null,1.02711,1.009254,null,null,null,null,null,null,null,null],"drift":[null,0.01255,0.030464,null,null,null,null,null,null,null,null]},"est_nav_yesterday":0.993968,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27"},"501312":{"code":"501312","name":"海外科技LOF","tq":"sh501312","cat":"us","quota":"限2千","fee":"1.20%","rfee":"1.20%","bench":[{"tq":"usQQQ","w":0.8},{"tq":"hkHSTECH","w":0.1},{"tq":"sh000985","w":0.1}],"nav":1.8551,"nav_date":"2026-03-26","nav_src":"lsjz","shares":4.03,"holdings":null,"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"history":{"date":["03-19","03-20","03-20","03-20","03-23","03-24","03-25","03-25","03-26","03-26","03-26"],"nav":[1.9156,1.8683,1.8683,1.8683,1.9045,1.8869,1.9063,1.9063,1.8551,1.8551,1.8551],"est":[null,1.875489,1.826963,null,null,null,null,null,1.872531,1.822238,null],"drift":[null,-0.003833,0.022626,null,null,null,null,null,-0.009309,0.018034,null]},"est_nav_yesterday":1.822238,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27","drift_5d":0.00688,"drift_n":4,"drift_computed_at":"2026-03-27T12:32:01+00:00"},"164824":{"code":"164824","name":"印度基金LOF","tq":"sz164824","cat":"us","quota":"限1千","fee":"1.20%","rfee":"1.50%","bench":"usINDA","nav":1.2603,"nav_date":"2026-03-26","nav_src":"lsjz","shares":18.25,"holdings":null,"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"history":{"date":["03-19","03-20","03-20","03-20","03-23","03-24","03-25","03-25","03-25","03-25","03-26"],"nav":[1.2762,1.2561,1.2561,1.2561,1.2774,1.2508,1.276,1.276,1.276,1.276,1.2603],"est":[null,1.251224,1.231517,null,null,null,null,null,null,null,null],"drift":[null,0.003897,0.019962,null,null,null,null,null,null,null,null]},"est_nav_yesterday":1.238772,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27"},"160644":{"code":"160644","name":"港美互联网LOF","tq":"sz160644","cat":"us","quota":"限10万","fee":"1.50%","rfee":"1.50%","bench":"usKWEB","nav":1.5067,"nav_date":"2026-03-26","nav_src":"lsjz","shares":1.28,"holdings":[{"code":"GOOGL","name":"谷歌-A","ratio":9.21},{"code":"NVDA","name":"英伟达","ratio":9.16},{"code":"TSM","name":"台积电","ratio":9.12},{"code":"00700","name":"腾讯控股","ratio":8.84},{"code":"09988","name":"阿里巴巴-W","ratio":7.9},{"code":"AVGO","name":"博通","ratio":6.62},{"code":"MU","name":"美光科技","ratio":6.32},{"code":"09992","name":"泡泡玛特","ratio":5.47},{"code":"SNDK","name":"闪迪","ratio":3.75},{"code":"02899","name":"紫金矿业","ratio":3.36}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-19","03-19","03-19","03-20","03-23","03-24","03-25","03-25","03-25","03-25","03-26"],"nav":[1.6343,1.6343,1.6343,1.5865,1.5776,1.5904,1.5738,1.5738,1.5738,1.5738,1.5067],"est":[null,1.585984,1.585984,null,null,null,null,null,null,null,null],"drift":[null,0.030464,0.030464,null,null,null,null,null,null,null,null]},"est_nav_yesterday":1.458097,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27"},"162415":{"code":"162415","name":"美国消费LOF","tq":"sz162415","cat":"us","quota":"限500","fee":"1.20%","rfee":"1.50%","bench":"usXLY","nav":2.736,"nav_date":"2026-03-26","nav_src":"lsjz","shares":2.3,"holdings":[{"code":"AMZN","name":"亚马逊","ratio":21.78},{"code":"TSLA","name":"特斯拉","ratio":19.7},{"code":"HD","name":"家得宝","ratio":5.34},{"code":"MCD","name":"麦当劳","ratio":4.21},{"code":"BKNG","name":"Booking Holdings","ratio":3.77},{"code":"TJX","name":"The TJX Companies Inc","ratio":3.73},{"code":"LOW","name":"劳氏","ratio":2.95},{"code":"SBUX","name":"星巴克","ratio":2.09},{"code":"DASH","name":"DoorDash Inc-A","ratio":1.85},{"code":"ORLY","name":"奥莱利","ratio":1.68}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-19","03-20","03-20","03-20","03-23","03-24","03-25","03-25","03-26","03-26","03-26"],"nav":[2.75,2.701,2.701,2.701,2.767,2.753,2.776,2.776,2.736,2.736,2.736],"est":[null,2.700866,2.652741,null,null,null,null,null,2.728367,2.689053,null],"drift":[null,5e-05,0.018192,null,null,null,null,null,0.002798,0.017459,null]},"est_nav_yesterday":2.689053,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27","drift_5d":0.009625,"drift_n":4,"drift_computed_at":"2026-03-27T12:32:01+00:00"},"161126":{"code":"161126","name":"标普医疗保健LOF","tq":"sz161126","cat":"us","quota":"限10","fee":"1.20%","rfee":"1.00%","bench":"usRSPH","nav":1.8091,"nav_date":"2026-03-26","nav_src":"lsjz","shares":0.76,"holdings":[{"code":"LLY","name":"礼来","ratio":1.7},{"code":"MOH","name":"Molina Healthcare Inc","ratio":1.69},{"code":"MRK","name":"默沙东","ratio":1.69},{"code":"VTRS","name":"Viatris Inc","ratio":1.68},{"code":"ZTS","name":"硕腾","ratio":1.67},{"code":"CNC","name":"康西哥","ratio":1.67},{"code":"REGN","name":"再生元制药","ratio":1.67},{"code":"BMY","name":"百时美施贵宝","ratio":1.65},{"code":"CI","name":"信诺","ratio":1.64},{"code":"BAX","name":"百特国际","ratio":1.64}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-19","03-20","03-20","03-20","03-23","03-24","03-25","03-25","03-25","03-26","03-26"],"nav":[1.8025,1.7855,1.7855,1.7855,1.7951,1.7949,1.8075,1.8075,1.8075,1.8091,1.8091],"est":[null,1.786443,1.769595,null,null,null,null,null,null,1.803931,null],"drift":[null,-0.000528,0.008988,null,null,null,null,null,null,0.002865,null]},"est_nav_yesterday":1.805528,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27","drift_5d":0.003775,"drift_n":3,"drift_computed_at":"2026-03-27T12:32:01+00:00"},"161128":{"code":"161128","name":"标普信息科技LOF","tq":"sz161128","cat":"us","quota":"限10","fee":"1.20%","rfee":"1.00%","bench":"usXLK","nav":5.1824,"nav_date":"2026-03-26","nav_src":"lsjz","shares":6.35,"holdings":[{"code":"NVDA","name":"英伟达","ratio":19.61},{"code":"AAPL","name":"苹果","ratio":17.38},{"code":"MSFT","name":"微软","ratio":15.55},{"code":"AVGO","name":"博通","ratio":7.07},{"code":"PLTR","name":"Palantir Technologies Inc-A","ratio":1.76},{"code":"AMD","name":"超威半导体","ratio":1.51},{"code":"ORCL","name":"甲骨文","ratio":1.42},{"code":"MU","name":"美光科技","ratio":1.39},{"code":"CSCO","name":"思科","ratio":1.31},{"code":"IBM","name":"IBM国际商业机器","ratio":1.2}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-19","03-20","03-20","03-20","03-23","03-24","03-25","03-25","03-26","03-26","03-26"],"nav":[5.3593,5.2441,5.2441,5.2441,5.3259,5.283,5.3091,5.3091,5.1824,5.1824,5.1824],"est":[null,5.237735,5.125148,null,null,null,null,null,5.143724,5.020971,null],"drift":[null,0.001215,0.023209,null,null,null,null,null,0.007519,0.032151,null]},"est_nav_yesterday":5.020971,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27","drift_5d":0.016023,"drift_n":4,"drift_computed_at":"2026-03-27T12:32:01+00:00"},"161125":{"code":"161125","name":"标普500LOF","tq":"sz161125","cat":"us","quota":"限10","fee":"1.20%","rfee":"1.50%","bench":"usINX","nav":2.7289,"nav_date":"2026-03-26","nav_src":"lsjz","shares":5.05,"holdings":[{"code":"NVDA","name":"英伟达","ratio":6.55},{"code":"AAPL","name":"苹果","ratio":5.81},{"code":"MSFT","name":"微软","ratio":5.2},{"code":"AMZN","name":"亚马逊","ratio":3.25},{"code":"GOOGL","name":"谷歌-A","ratio":2.63},{"code":"AVGO","name":"博通","ratio":2.36},{"code":"GOOG","name":"谷歌-C","ratio":2.11},{"code":"META","name":"Meta Platforms Inc-A","ratio":2.08},{"code":"TSLA","name":"特斯拉","ratio":1.83},{"code":"BRK_B","name":"伯克希尔哈撒韦-B","ratio":1.33}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-19","03-20","03-20","03-20","03-23","03-24","03-25","03-25","03-26","03-26","03-26"],"nav":[2.7777,2.7355,2.7355,2.7355,2.7702,2.7567,2.7698,2.7698,2.7289,2.7289,2.7289],"est":[null,2.735651,2.69409,null,null,null,null,null,2.721588,2.6814,null],"drift":[null,-5.5e-05,0.015371,null,null,null,null,null,0.002687,0.017715,null]},"est_nav_yesterday":2.6814,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27","drift_5d":0.008929,"drift_n":4,"drift_computed_at":"2026-03-27T12:32:01+00:00"},"161130":{"code":"161130","name":"纳斯达克100LOF","tq":"sz161130","cat":"us","quota":"限10","fee":"1.20%","rfee":"0.60%","bench":"usQQQ","nav":3.6476,"nav_date":"2026-03-26","nav_src":"lsjz","shares":4.07,"holdings":null,"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"history":{"date":["03-19","03-20","03-20","03-20","03-23","03-24","03-25","03-25","03-25","03-26","03-26"],"nav":[3.7564,3.6858,3.6858,3.6858,3.7354,3.7033,3.7251,3.7251,3.7251,3.6476,3.6476],"est":[null,3.686975,3.61768,null,null,null,null,null,null,3.63619,null],"drift":[null,-0.000319,0.01883,null,null,null,null,null,null,0.003138,null]},"est_nav_yesterday":3.56054,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27","drift_5d":0.007216,"drift_n":3,"drift_computed_at":"2026-03-27T12:32:01+00:00"},"501300":{"code":"501300","name":"美元债LOF","tq":"sh501300","cat":"us","quota":"限1万","fee":"0.80%","rfee":"1.50%","bench":"usAGG","nav":0.9511,"nav_date":"2026-03-26","nav_src":"lsjz","shares":22.43,"holdings":null,"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"history":{"date":["03-19","03-19","03-19","03-20","03-23","03-24","03-25","03-25","03-25","03-25","03-26"],"nav":[0.9561,0.9561,0.9561,0.9502,0.9536,0.9516,0.9522,0.9522,0.9522,0.9522,0.9511],"est":[null,0.948124,0.948124,null,null,null,null,null,null,null,null],"drift":[null,0.008412,0.008412,null,null,null,null,null,null,null,null]},"est_nav_yesterday":0.945726,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27"},"160140":{"code":"160140","name":"美国REIT精选LOF","tq":"sz160140","cat":"us","quota":"限100万","fee":"1.20%","rfee":"1.00%","bench":"usRWR","nav":1.3037,"nav_date":"2026-03-26","nav_src":"lsjz","shares":2.4,"holdings":[{"code":"WELL","name":"Welltower Inc","ratio":10.81},{"code":"PLD","name":"安博","ratio":10.06},{"code":"EQIX","name":"易昆尼克斯","ratio":6.38},{"code":"SPG","name":"西蒙地产","ratio":5.13},{"code":"O","name":"Realty Income Corp","ratio":4.4},{"code":"DLR","name":"数字房地产信托","ratio":4.24},{"code":"PSA","name":"大众仓储","ratio":3.48},{"code":"VTR","name":"芬塔公司","ratio":3.09},{"code":"EXR","name":"Extra Space Storage Inc","ratio":2.35},{"code":"AVB","name":"艾芙隆海湾社区","ratio":2.18}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-19","03-20","03-20","03-20","03-23","03-24","03-25","03-25","03-25","03-25","03-26"],"nav":[1.339,1.297,1.297,1.297,1.3077,1.3014,1.3021,1.3021,1.3021,1.3021,1.3037],"est":[null,1.295198,1.254572,null,null,null,null,null,null,null,null],"drift":[null,0.001391,0.033819,null,null,null,null,null,null,null,null]},"est_nav_yesterday":1.303309,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27"},"501225":{"code":"501225","name":"全球芯片LOF","tq":"sh501225","cat":"us","quota":"暂停","fee":"1.50%","rfee":"1.50%","bench":"usSMH","nav":2.0886,"nav_date":"2026-03-26","nav_src":"lsjz","shares":2.27,"holdings":null,"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"history":{"date":["03-19","03-20","03-20","03-20","03-23","03-24","03-25","03-25","03-25","03-25","03-26"],"nav":[2.1602,2.1123,2.1123,2.1123,2.1167,2.1477,2.1745,2.1745,2.1745,2.1745,2.0886],"est":[null,2.104516,2.05785,null,null,null,null,null,null,null,null],"drift":[null,0.003699,0.02646,null,null,null,null,null,null,null,null]},"est_nav_yesterday":1.99344,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27"},"160216":{"code":"160216","name":"国泰商品LOF","tq":"sz160216","cat":"cm","quota":"限1千","fee":"1.50%","rfee":"1.50%","bench":[{"tq":"usSGOL","w":0.234},{"tq":"usGLD","w":0.193},{"tq":"usGLDM","w":0.154},{"tq":"usUSO","w":0.153},{"tq":"usSLV","w":0.151},{"tq":"usCPER","w":0.143},{"tq":"usXOP","w":0.038}],"nav":0.744,"nav_date":"2026-03-26","nav_src":"lsjz","shares":15.4,"holdings":null,"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"history":{"date":["03-19","03-20","03-20","03-20","03-23","03-24","03-25","03-25","03-25","03-25","03-26"],"nav":[0.767,0.764,0.764,0.764,0.733,0.741,0.748,0.748,0.748,0.748,0.744],"est":[null,0.747333,0.74441,null,null,null,null,null,null,null,null],"drift":[null,0.022302,0.026316,null,null,null,null,null,null,null,null]},"est_nav_yesterday":0.724567,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27"},"161116":{"code":"161116","name":"黄金主题LOF","tq":"sz161116","cat":"cm","quota":"暂停","fee":"0%","rfee":"1.50%","bench":"sh518880","nav":1.6544,"nav_date":"2026-03-26","nav_src":"lsjz","shares":2.71,"holdings":null,"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"history":{"date":["03-19","03-20","03-20","03-20","03-23","03-24","03-25","03-25","03-25","03-25","03-26"],"nav":[1.7444,1.7033,1.7033,1.7033,1.6645,1.6646,1.7107,1.7107,1.7107,1.7107,1.6544],"est":[null,1.576065,1.538932,null,null,null,null,null,null,null,null],"drift":[null,0.08073,0.106807,null,null,null,null,null,null,null,null]},"est_nav_yesterday":1.662176,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27"},"164701":{"code":"164701","name":"黄金LOF","tq":"sz164701","cat":"cm","quota":"限50","fee":"0.80%","rfee":"1.50%","bench":"usGLD","nav":1.749,"nav_date":"2026-03-26","nav_src":"lsjz","shares":6.81,"holdings":null,"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"history":{"date":["03-19","03-20","03-20","03-20","03-23","03-24","03-25","03-25","03-25","03-25","03-26"],"nav":[1.858,1.8,1.8,1.8,1.764,1.762,1.813,1.813,1.813,1.813,1.749],"est":[null,1.801224,1.744997,null,null,null,null,null,null,null,null],"drift":[null,-0.00068,0.03152,null,null,null,null,null,null,null,null]},"est_nav_yesterday":1.683248,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27"},"165513":{"code":"165513","name":"中信保诚商品LOF","tq":"sz165513","cat":"cm","quota":"开放","fee":"1.60%","rfee":"1.50%","bench":"usGLD","nav":1.0589,"nav_date":"2026-03-26","nav_src":"lsjz","shares":4.52,"holdings":null,"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"history":{"date":["03-19","03-20","03-20","03-20","03-23","03-24","03-25","03-25","03-26","03-26","03-26"],"nav":[1.1181,1.089,1.089,1.089,1.0644,1.0645,1.0936,1.0936,1.0589,1.0589,1.0589],"est":[null,1.083934,1.055723,null,null,null,null,null,1.052487,1.019092,null],"drift":[null,0.004674,0.031521,null,null,null,null,null,0.006093,0.039062,null]},"est_nav_yesterday":1.019092,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27","drift_5d":0.020338,"drift_n":4,"drift_computed_at":"2026-03-27T12:32:01+00:00"},"160719":{"code":"160719","name":"嘉实黄金LOF","tq":"sz160719","cat":"cm","quota":"暂停","fee":"1.20%","rfee":"1.50%","bench":"sh518880","nav":1.998,"nav_date":"2026-03-26","nav_src":"lsjz","shares":2.24,"holdings":null,"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"history":{"date":["03-19","03-20","03-20","03-20","03-23","03-24","03-25","03-25","03-25","03-25","03-26"],"nav":[2.101,2.066,2.066,2.066,2.004,2.009,2.067,2.067,2.067,2.067,1.998],"est":[null,1.898253,1.866631,null,null,null,null,null,null,null,null],"drift":[null,0.088369,0.106807,null,null,null,null,null,null,null,null]},"est_nav_yesterday":2.007391,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27"},"161815":{"code":"161815","name":"抗通胀LOF","tq":"sz161815","cat":"cm","quota":"开放","fee":"1.60%","rfee":"1.50%","bench":[{"tq":"usGLD","w":0.171},{"tq":"usIAU","w":0.168},{"tq":"usAAAU","w":0.144},{"tq":"usSGOL","w":0.139},{"tq":"usBCI","w":0.122},{"tq":"usCOMT","w":0.095},{"tq":"usUSO","w":0.051},{"tq":"usBNO","w":0.044},{"tq":"usSLV","w":0.024},{"tq":"usCPER","w":0.053}],"nav":1.143,"nav_date":"2026-03-26","nav_src":"lsjz","shares":2.85,"holdings":null,"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"history":{"date":["03-19","03-20","03-20","03-20","03-23","03-24","03-25","03-25","03-25","03-26","03-26"],"nav":[1.186,1.167,1.167,1.167,1.131,1.138,1.143,1.143,1.143,1.143,1.143],"est":[null,1.164461,1.145806,null,null,null,null,null,null,1.120242,null],"drift":[null,0.00218,0.018497,null,null,null,null,null,null,0.020315,null]},"est_nav_yesterday":1.120242,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27","drift_5d":0.013664,"drift_n":3,"drift_computed_at":"2026-03-27T12:32:01+00:00"},"163208":{"code":"163208","name":"全球油气能源LOF","tq":"sz163208","cat":"cm","quota":"暂停","fee":"1.50%","rfee":"1.50%","bench":"usXLE","nav":1.396,"nav_date":"2026-03-26","nav_src":"lsjz","shares":3.04,"holdings":[{"code":"00916","name":"龙源电力","ratio":3.21},{"code":"00836","name":"华润电力","ratio":2.46},{"code":"00135","name":"昆仑能源","ratio":1.97},{"code":"01798","name":"大唐新能源","ratio":1.87},{"code":"06865","name":"福莱特玻璃","ratio":1.43},{"code":"00968","name":"信义光能","ratio":1.16},{"code":"01811","name":"中广核新能源","ratio":1.14},{"code":"01171","name":"兖矿能源","ratio":1.13},{"code":"00857","name":"中国石油股份","ratio":0.9},{"code":"00386","name":"中国石油化工股份","ratio":0.72}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-19","03-20","03-20","03-20","03-23","03-24","03-25","03-25","03-25","03-25","03-26"],"nav":[1.353,1.36,1.36,1.36,1.348,1.375,1.37,1.37,1.37,1.37,1.396],"est":[null,1.35186,1.358854,null,null,null,null,null,null,null,null],"drift":[null,0.006021,0.000843,null,null,null,null,null,null,null,null]},"est_nav_yesterday":1.417895,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27"},"501018":{"code":"501018","name":"南方原油LOF","tq":"sh501018","cat":"cm","quota":"暂停","fee":"1.20%","rfee":"1.50%","bench":[{"tq":"usUSO","w":0.6},{"tq":"usBNO","w":0.4}],"nav":1.7505,"nav_date":"2026-03-26","nav_src":"lsjz","shares":8.85,"holdings":null,"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"history":{"date":["03-19","03-19","03-20","03-20","03-23","03-24","03-25","03-25","03-25","03-25","03-26"],"nav":[1.789,1.789,1.8048,1.8048,1.7131,1.717,1.6836,1.6836,1.6836,1.6836,1.7505],"est":[null,1.851133,1.851133,null,null,null,null,null,null,null,null],"drift":[null,-0.033565,-0.02503,null,null,null,null,null,null,null,null]},"est_nav_yesterday":1.811903,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27"},"161129":{"code":"161129","name":"原油LOF易方达","tq":"sz161129","cat":"cm","quota":"暂停","fee":"1.20%","rfee":"1.50%","bench":"usUSO","nav":1.6719,"nav_date":"2026-03-26","nav_src":"lsjz","shares":4.35,"holdings":null,"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"history":{"date":["03-19","03-20","03-20","03-20","03-23","03-24","03-25","03-26","03-26","03-26","03-26"],"nav":[1.7047,1.7075,1.7075,1.7075,1.6256,1.6368,1.6067,1.6719,1.6719,1.6719,1.6719],"est":[null,1.763818,1.766715,null,null,null,null,1.661537,1.728962,1.728962,null],"drift":[null,-0.03193,-0.033517,null,null,null,null,0.006237,-0.033004,-0.033004,null]},"est_nav_yesterday":1.728962,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27","drift_5d":-0.025044,"drift_n":5,"drift_computed_at":"2026-03-27T12:32:01+00:00"},"160723":{"code":"160723","name":"嘉实原油LOF","tq":"sz160723","cat":"cm","quota":"暂停","fee":"1.20%","rfee":"1.50%","bench":"usUSO","nav":2.0273,"nav_date":"2026-03-26","nav_src":"lsjz","shares":3.5,"holdings":null,"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"history":{"date":["03-19","03-19","03-19","03-20","03-23","03-24","03-25","03-25","03-25","03-25","03-26"],"nav":[2.0645,2.0645,2.0645,2.0771,1.9769,1.9931,1.9542,1.9542,1.9542,1.9542,2.0273],"est":[null,2.136096,2.136096,null,null,null,null,null,null,null,null],"drift":[null,-0.033517,-0.033517,null,null,null,null,null,null,null,null]},"est_nav_yesterday":2.096492,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27"},"162719":{"code":"162719","name":"石油LOF","tq":"sz162719","cat":"cm","quota":"暂停","fee":"1.20%","rfee":"1.50%","bench":"usXOP","nav":2.9737,"nav_date":"2026-03-26","nav_src":"lsjz","shares":2.95,"holdings":[{"code":"COP","name":"康菲石油","ratio":17.42},{"code":"EOG","name":"EOG能源","ratio":8.53},{"code":"PSX","name":"Phillips 66","ratio":7.77},{"code":"MPC","name":"马拉松原油","ratio":5.86},{"code":"DVN","name":"戴文能源","ratio":4.09},{"code":"FANG","name":"Diamondback Energy Inc","ratio":4.03},{"code":"EXE","name":"Expand Energy Corp","ratio":4.0},{"code":"EQT","name":"EQT能源","ratio":3.95},{"code":"VLO","name":"瓦莱罗能源","ratio":3.88},{"code":"CTRA","name":"Coterra Energy Inc","ratio":3.74}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-19","03-20","03-20","03-20","03-23","03-24","03-25","03-25","03-25","03-25","03-26"],"nav":[2.8354,2.834,2.834,2.834,2.8372,2.906,2.9088,2.9088,2.9088,2.9088,2.9737],"est":[null,2.869093,2.867676,null,null,null,null,null,null,null,null],"drift":[null,-0.012231,-0.011743,null,null,null,null,null,null,null,null]},"est_nav_yesterday":3.034281,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27"},"162411":{"code":"162411","name":"华宝油气LOF","tq":"sz162411","cat":"cm","quota":"开放","fee":"1.50%","rfee":"1.50%","bench":"usXOP","nav":0.9923,"nav_date":"2026-03-26","nav_src":"lsjz","shares":20.34,"holdings":[{"code":"VG","name":"Venture Global Inc-A","ratio":2.91},{"code":"XOM","name":"埃克森美孚","ratio":2.61},{"code":"CVX","name":"雪佛龙","ratio":2.61},{"code":"GPOR","name":"格尔夫波特能源","ratio":2.6},{"code":"OXY","name":"西方石油","ratio":2.55},{"code":"CTRA","name":"Coterra Energy Inc","ratio":2.52},{"code":"COP","name":"康菲石油","ratio":2.51},{"code":"TPL","name":"Texas Pacific Land Corp","ratio":2.5},{"code":"DVN","name":"戴文能源","ratio":2.47},{"code":"MGY","name":"Magnolia Oil & Gas Corp-A","ratio":2.47}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-19","03-20","03-20","03-20","03-23","03-24","03-25","03-25","03-26","03-26","03-26"],"nav":[0.9366,0.9451,0.9451,0.9451,0.9394,0.965,0.9714,0.9714,0.9923,0.9923,0.9923],"est":[null,0.94773,0.956331,null,null,null,null,null,0.99119,1.012515,null],"drift":[null,-0.002775,-0.011744,null,null,null,null,null,0.00112,-0.019965,null]},"est_nav_yesterday":1.012515,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27","drift_5d":-0.008341,"drift_n":4,"drift_computed_at":"2026-03-27T12:32:01+00:00"},"160416":{"code":"160416","name":"石油基金LOF","tq":"sz160416","cat":"cm","quota":"暂停","fee":"1.20%","rfee":"1.50%","bench":"usIXC","nav":2.2309,"nav_date":"2026-03-26","nav_src":"lsjz","shares":1.84,"holdings":[{"code":"XOM","name":"埃克森美孚","ratio":9.33},{"code":"CVX","name":"雪佛龙","ratio":7.87},{"code":"RIGD","name":"印度瑞来斯实业","ratio":5.94},{"code":"SHEL","name":"壳牌","ratio":5.56},{"code":"TTEFP","name":"道达尔集团","ratio":3.71},{"code":"COP","name":"康菲石油","ratio":2.96},{"code":"ENBCN","name":"Enbridge股份有限公司","ratio":2.61},{"code":"BP.","name":"英国石油","ratio":2.36},{"code":"WMB","name":"威廉姆斯","ratio":1.84},{"code":"CNQCN","name":"加拿大自然资源有限公司","ratio":1.78}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-19","03-20","03-20","03-20","03-23","03-24","03-25","03-25","03-25","03-25","03-26"],"nav":[2.175,2.1641,2.1641,2.1641,2.1675,2.2028,2.2015,2.2015,2.2015,2.2015,2.2309],"est":[null,2.161404,2.150572,null,null,null,null,null,null,null,null],"drift":[null,0.001247,0.00629,null,null,null,null,null,null,null,null]},"est_nav_yesterday":2.257248,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27"},"501303":{"code":"501303","name":"恒生中型股LOF","tq":"sh501303","cat":"hk","quota":"开放","fee":"1.20%","rfee":"0.60%","bench":"hkHSMI","nav":1.0311,"nav_date":"2026-03-27","nav_src":"lsjz","shares":0.43,"holdings":[{"code":"09926","name":"康方生物","ratio":2.2},{"code":"03993","name":"洛阳钼业","ratio":1.85},{"code":"00020","name":"商汤-W","ratio":1.85},{"code":"00728","name":"中国电信","ratio":1.81},{"code":"01339","name":"中国人民保险集团","ratio":1.5},{"code":"01336","name":"新华保险","ratio":1.36},{"code":"01818","name":"招金矿业","ratio":1.35},{"code":"01347","name":"华虹半导体","ratio":1.34},{"code":"00300","name":"美的集团","ratio":1.34},{"code":"00788","name":"中国铁塔","ratio":1.31}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-20","03-23","03-23","03-23","03-24","03-25","03-26","03-26","03-26","03-26","03-27"],"nav":[1.0417,1.0065,1.0065,1.0065,1.0305,1.0419,1.0215,1.0215,1.0215,1.0215,1.0311],"est":[null,1.001074,0.967246,1.016062,1.034179,1.042042,1.016373,1.029059,1.030387,1.030387,1.030387],"drift":[null,0.00542,0.040583,-0.009411,-0.003557,-0.000136,0.005044,-0.007346,-0.008625,-0.008625,0.000692]},"est_nav_yesterday":1.040071,"est_nav_date":"2026-03-27","drift_5d":-0.003772,"drift_n":5,"drift_computed_at":"2026-03-27T12:32:01+00:00","est_nav_index_date":"2026-03-27"},"161124":{"code":"161124","name":"港股小盘LOF","tq":"sz161124","cat":"hk","quota":"限1千","fee":"1.20%","rfee":"1.00%","bench":"hkHSSI","nav":1.1113,"nav_date":"2026-03-27","nav_src":"lsjz","shares":0.44,"holdings":[{"code":"01787","name":"山东黄金","ratio":3.02},{"code":"01772","name":"赣锋锂业","ratio":2.02},{"code":"00489","name":"东风集团股份","ratio":1.73},{"code":"02400","name":"心动公司","ratio":1.69},{"code":"06855","name":"亚盛医药-B","ratio":1.37},{"code":"09969","name":"诺诚健华","ratio":1.29},{"code":"03618","name":"重庆农村商业银行","ratio":1.22},{"code":"06682","name":"范式智能","ratio":1.18},{"code":"03931","name":"中创新航","ratio":1.17},{"code":"01070","name":"TCL电子","ratio":1.14}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-20","03-23","03-23","03-23","03-24","03-25","03-26","03-26","03-26","03-26","03-27"],"nav":[1.0927,1.0609,1.0609,1.0609,1.0916,1.1182,1.099,1.099,1.099,1.099,1.1113],"est":[null,1.056313,1.025572,1.070979,1.09347,1.117798,1.094271,1.11054,1.111748,1.111748,1.111748],"drift":[null,0.004342,0.034447,-0.009411,-0.00171,0.00036,0.004322,-0.010391,-0.011467,-0.011467,-0.000403]},"est_nav_yesterday":1.124191,"est_nav_date":"2026-03-27","drift_5d":-0.005881,"drift_n":5,"drift_computed_at":"2026-03-27T12:32:01+00:00","est_nav_index_date":"2026-03-27"},"160322":{"code":"160322","name":"港股精选LOF","tq":"sz160322","cat":"hk","quota":"开放","fee":"1.20%","rfee":"1.50%","bench":"hkHSCI","nav":1.134,"nav_date":"2026-03-27","nav_src":"lsjz","shares":1.13,"holdings":[{"code":"00005","name":"汇丰控股","ratio":9.99},{"code":"00700","name":"腾讯控股","ratio":9.79},{"code":"09988","name":"阿里巴巴-W","ratio":9.03},{"code":"02899","name":"紫金矿业","ratio":4.89},{"code":"01299","name":"友邦保险","ratio":4.55},{"code":"01398","name":"工商银行","ratio":4.5},{"code":"01810","name":"小米集团-W","ratio":4.0},{"code":"00981","name":"中芯国际","ratio":3.85},{"code":"03690","name":"美团-W","ratio":3.18},{"code":"03988","name":"中国银行","ratio":2.94}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-20","03-23","03-23","03-23","03-24","03-25","03-26","03-26","03-26","03-26","03-27"],"nav":[1.1427,1.1123,1.1123,1.1123,1.1329,1.1504,1.1298,1.1298,1.1298,1.1298,1.134],"est":[null,1.102706,1.07337,1.126315,1.144112,1.146042,1.126472,1.13398,1.134658,1.134658,1.134658],"drift":[null,0.0087,0.036269,-0.012443,-0.0098,0.003803,0.002954,-0.003686,-0.004281,-0.004281,-0.00058]},"est_nav_yesterday":1.138876,"est_nav_date":"2026-03-27","drift_5d":-0.001975,"drift_n":5,"drift_computed_at":"2026-03-27T12:32:01+00:00","est_nav_index_date":"2026-03-27"},"501021":{"code":"501021","name":"香港中小LOF","tq":"sh501021","cat":"hk","quota":"暂停","fee":"1.20%","rfee":"1.20%","bench":[{"tq":"hkHSMI","w":0.5},{"tq":"hkHSSI","w":0.5}],"nav":1.4019,"nav_date":"2026-03-27","nav_src":"lsjz","shares":2.34,"holdings":[{"code":"09987","name":"百胜中国","ratio":3.02},{"code":"09868","name":"小鹏汽车-W","ratio":2.64},{"code":"02269","name":"药明生物","ratio":2.54},{"code":"01801","name":"信达生物","ratio":2.46},{"code":"01378","name":"中国宏桥","ratio":2.42},{"code":"09660","name":"地平线机器人-W","ratio":2.11},{"code":"00175","name":"吉利汽车","ratio":2.09},{"code":"02423","name":"贝壳-W","ratio":1.83},{"code":"01109","name":"华润置地","ratio":1.76},{"code":"09926","name":"康方生物","ratio":1.76}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-20","03-20","03-20","03-23","03-24","03-25","03-26","03-26","03-26","03-26","03-27"],"nav":[1.4041,1.4041,1.4041,1.3575,1.398,1.4121,1.3815,1.3815,1.3815,1.3815,1.4019],"est":[null,1.353342,1.353342,1.417439,1.397003,1.422605,1.379692,1.393864,1.395522,1.395522,1.395522],"drift":[null,0.037506,0.037506,-0.042287,0.000714,-0.007384,0.00131,-0.00887,-0.010048,-0.010048,0.00457]},"est_nav_yesterday":1.416129,"est_nav_date":"2026-03-27","drift_5d":-0.004617,"drift_n":5,"drift_computed_at":"2026-03-27T12:32:01+00:00","est_nav_index_date":"2026-03-27"},"501310":{"code":"501310","name":"价值基金LOF","tq":"sh501310","cat":"cn","quota":"开放","fee":"1.20%","rfee":"0.90%","bench":[{"tq":"sh000300","w":0.5},{"tq":"hkHSCEI","w":0.5}],"nav":1.348,"nav_date":"2026-03-27","nav_src":"lsjz","shares":0.53,"holdings":[{"code":"02318","name":"中国平安","ratio":5.77},{"code":"00857","name":"中国石油股份","ratio":5.23},{"code":"01398","name":"工商银行","ratio":4.42},{"code":"03988","name":"中国银行","ratio":4.3},{"code":"00939","name":"建设银行","ratio":4.21},{"code":"601668","name":"中国建筑","ratio":3.73},{"code":"02628","name":"中国人寿","ratio":3.62},{"code":"00267","name":"中信股份","ratio":3.44},{"code":"00386","name":"中国石油化工股份","ratio":3.43},{"code":"03328","name":"交通银行","ratio":2.34}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-20","03-23","03-23","03-23","03-24","03-25","03-26","03-26","03-26","03-26","03-27"],"nav":[1.3608,1.319,1.319,1.319,1.3407,1.3597,1.3459,1.3459,1.3459,1.3459,1.348],"est":[null,1.316438,1.276001,1.323616,1.335883,1.35947,1.341752,1.353437,1.353437,1.353437,1.353437],"drift":[null,0.001946,0.033698,-0.003487,0.003606,0.000169,0.003091,-0.005569,-0.005569,-0.005569,-0.004017]},"est_nav_yesterday":1.355549,"est_nav_date":"2026-03-27","drift_5d":-0.003527,"drift_n":5,"drift_computed_at":"2026-03-27T12:32:01+00:00","est_nav_index_date":"2026-03-27"},"501302":{"code":"501302","name":"恒生指数基金LOF","tq":"sh501302","cat":"hk","quota":"开放","fee":"1.20%","rfee":"0.60%","bench":"hkHSI","nav":1.1532,"nav_date":"2026-03-27","nav_src":"lsjz","shares":2.07,"holdings":null,"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"history":{"date":["03-20","03-20","03-20","03-23","03-24","03-25","03-26","03-26","03-26","03-26","03-27"],"nav":[1.1621,1.1621,1.1621,1.1258,1.155,1.1681,1.1491,1.1491,1.1491,1.1491,1.1532],"est":[null,null,null,null,null,null,null,null,null,null,null],"drift":[null,null,null,null,null,null,null,null,null,null,null]}},"501307":{"code":"501307","name":"银河高股息LOF","tq":"sh501307","cat":"hk","quota":"开放","fee":"1.00%","rfee":"0.68%","bench":"csi930917","nav":1.293,"nav_date":"2026-03-27","nav_src":"lsjz","shares":0.43,"holdings":[{"code":"01919","name":"中远海控","ratio":3.02},{"code":"03668","name":"兖煤澳大利亚","ratio":1.86},{"code":"00639","name":"首钢资源","ratio":1.5},{"code":"000937","name":"冀中能源","ratio":1.4},{"code":"01308","name":"海丰国际","ratio":1.4},{"code":"00316","name":"东方海外国际","ratio":1.33},{"code":"01088","name":"中国神华","ratio":1.25},{"code":"03360","name":"远东宏信","ratio":1.22},{"code":"600256","name":"广汇能源","ratio":1.18},{"code":"00303","name":"VTECH HOLDINGS","ratio":1.14}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-20","03-20","03-20","03-23","03-24","03-25","03-26","03-26","03-26","03-26","03-27"],"nav":[1.3015,1.3015,1.3015,1.2727,1.29,1.2974,1.2895,1.2895,1.2895,1.2895,1.293],"est":[null,1.271956,1.271956,1.311131,1.289245,1.299675,1.28728,1.292853,1.293111,1.293111,1.293111],"drift":[null,0.023227,0.023227,-0.029311,0.000586,-0.00175,0.001725,-0.002593,-0.002792,-0.002792,-8.6e-05]},"est_nav_yesterday":1.29662,"est_nav_date":"2026-03-27","drift_5d":-0.001308,"drift_n":5,"drift_computed_at":"2026-03-27T12:32:01+00:00","est_nav_index_date":"2026-03-27"},"501306":{"code":"501306","name":"港股高股息LOFC","tq":"sh501306","cat":"hk","quota":"开放","fee":"0.00%","rfee":"0.60%","bench":"csi930914","nav":1.2743,"nav_date":"2026-03-27","nav_src":"lsjz","shares":5.46,"holdings":[{"code":"00316","name":"东方海外国际","ratio":6.84},{"code":"01308","name":"海丰国际","ratio":4.08},{"code":"01088","name":"中国神华","ratio":3.63},{"code":"01378","name":"中国宏桥","ratio":3.3},{"code":"00883","name":"中国海洋石油","ratio":2.85},{"code":"00857","name":"中国石油股份","ratio":2.79},{"code":"00386","name":"中国石油化工股份","ratio":2.64},{"code":"00998","name":"中信银行","ratio":2.61},{"code":"02343","name":"太平洋航运","ratio":2.34},{"code":"03988","name":"中国银行","ratio":2.31}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-20","03-20","03-20","03-23","03-24","03-25","03-26","03-26","03-26","03-26","03-27"],"nav":[1.2758,1.2758,1.2758,1.2476,1.2643,1.272,1.2674,1.2674,1.2674,1.2674,1.2743],"est":[null,1.242629,1.242629,1.284986,1.267063,1.271633,1.263223,1.273864,1.274878,1.274878,1.274878],"drift":[null,0.026694,0.026694,-0.029094,-0.002181,0.000289,0.003307,-0.005074,-0.005866,-0.005866,-0.000453]},"est_nav_yesterday":1.281818,"est_nav_date":"2026-03-27","drift_5d":-0.00279,"drift_n":5,"drift_computed_at":"2026-03-27T12:32:01+00:00","est_nav_index_date":"2026-03-27"},"160717":{"code":"160717","name":"H股LOF","tq":"sz160717","cat":"hk","quota":"开放","fee":"1.20%","rfee":"0.95%","bench":"hkHSCEI","nav":0.7298,"nav_date":"2026-03-26","nav_src":"fundgz","shares":3.1,"holdings":[{"code":"00700","name":"腾讯控股","ratio":7.45},{"code":"09988","name":"阿里巴巴-W","ratio":6.98},{"code":"00939","name":"建设银行","ratio":6.28},{"code":"01810","name":"小米集团-W","ratio":6.08},{"code":"03690","name":"美团-W","ratio":4.83},{"code":"01398","name":"工商银行","ratio":4.41},{"code":"00941","name":"中国移动","ratio":4.32},{"code":"02318","name":"中国平安","ratio":3.72},{"code":"01211","name":"比亚迪股份","ratio":2.99},{"code":"00883","name":"中国海洋石油","ratio":2.82}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-20","03-20","03-20","03-23","03-24","03-25","03-26","03-26","03-26","03-26","03-26"],"nav":[0.7411,0.7411,0.7411,0.7208,0.736,0.7436,0.7298,0.7298,0.7298,0.7298,0.7298],"est":[null,null,null,null,null,null,null,null,null,null,null],"drift":[null,null,null,null,null,null,null,null,null,null,null]}},"501311":{"code":"501311","name":"新经济港通LOF","tq":"sh501311","cat":"hk","quota":"开放","fee":"1.20%","rfee":"0.90%","bench":"hkHSTECH","nav":0.9819,"nav_date":"2026-03-26","nav_src":"fundgz","shares":11.91,"holdings":[{"code":"00700","name":"腾讯控股","ratio":14.15},{"code":"09988","name":"阿里巴巴-W","ratio":13.25},{"code":"01810","name":"小米集团-W","ratio":12.1},{"code":"03690","name":"美团-W","ratio":9.6},{"code":"01211","name":"比亚迪股份","ratio":5.93},{"code":"00981","name":"中芯国际","ratio":5.43},{"code":"06160","name":"百济神州","ratio":3.67},{"code":"01024","name":"快手-W","ratio":3.27},{"code":"00669","name":"创科实业","ratio":2.22},{"code":"09868","name":"小鹏汽车-W","ratio":2.18}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-20","03-20","03-20","03-23","03-24","03-25","03-26","03-26","03-26","03-26","03-26"],"nav":[0.9913,0.9913,0.9913,0.9642,0.9912,1.0104,0.9819,0.9819,0.9819,0.9819,0.9819],"est":[null,null,0.958785,0.996554,0.988401,1.010132,0.977259,0.985337,0.985337,0.985337,null],"drift":[null,null,0.033913,-0.032466,0.002832,0.000265,0.004749,-0.003488,-0.003488,-0.003488,null]},"est_nav_yesterday":0.985337,"est_nav_date":"2026-03-27","drift_5d":-0.00109,"drift_n":5,"drift_computed_at":"2026-03-27T12:32:01+00:00","est_nav_index_date":"2026-03-27"},"501301":{"code":"501301","name":"香港大盘LOF","tq":"sh501301","cat":"hk","quota":"开放","fee":"1.20%","rfee":"0.90%","bench":"hkHSCEI","nav":1.2499,"nav_date":"2026-03-27","nav_src":"lsjz","shares":0.97,"holdings":[{"code":"09988","name":"阿里巴巴-W","ratio":16.21},{"code":"00700","name":"腾讯控股","ratio":14.73},{"code":"00939","name":"建设银行","ratio":7.63},{"code":"01810","name":"小米集团-W","ratio":6.61},{"code":"03690","name":"美团-W","ratio":4.75},{"code":"00941","name":"中国移动","ratio":4.66},{"code":"01398","name":"工商银行","ratio":4.53},{"code":"02318","name":"中国平安","ratio":3.37},{"code":"01211","name":"比亚迪股份","ratio":3.16},{"code":"00883","name":"中国海洋石油","ratio":2.95}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-20","03-20","03-20","03-23","03-24","03-25","03-26","03-26","03-26","03-26","03-27"],"nav":[1.2605,1.2605,1.2605,1.2289,1.2549,1.2682,1.2439,1.2439,1.2439,1.2439,1.2499],"est":[null,null,null,null,null,null,null,null,null,null,null],"drift":[null,null,null,null,null,null,null,null,null,null,null]}},"164705":{"code":"164705","name":"恒生LOF","tq":"sz164705","cat":"hk","quota":"开放","fee":"1.20%","rfee":"1.00%","bench":"hkHSI","nav":1.1316,"nav_date":"2026-03-27","nav_src":"lsjz","shares":2.81,"holdings":[{"code":"00005","name":"汇丰控股","ratio":8.45},{"code":"00700","name":"腾讯控股","ratio":7.43},{"code":"09988","name":"阿里巴巴-W","ratio":6.97},{"code":"01299","name":"友邦保险","ratio":4.93},{"code":"00939","name":"建设银行","ratio":4.34},{"code":"01810","name":"小米集团-W","ratio":4.2},{"code":"03690","name":"美团-W","ratio":3.34},{"code":"01398","name":"工商银行","ratio":3.04},{"code":"00941","name":"中国移动","ratio":2.98},{"code":"00388","name":"香港交易所","ratio":2.88}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-20","03-23","03-23","03-23","03-24","03-25","03-26","03-26","03-26","03-26","03-27"],"nav":[1.1403,1.1044,1.1044,1.1044,1.1323,1.1449,1.1275,1.1275,1.1275,1.1275,1.1316],"est":[null,null,null,null,null,null,null,null,null,null,null],"drift":[null,null,null,null,null,null,null,null,null,null,null]}},"161831":{"code":"161831","name":"恒生国企LOF","tq":"sz161831","cat":"hk","quota":"开放","fee":"1.20%","rfee":"1.20%","bench":"hkHSCEI","nav":0.7504,"nav_date":"2026-03-27","nav_src":"lsjz","shares":2.74,"holdings":[{"code":"00700","name":"腾讯控股","ratio":7.75},{"code":"09988","name":"阿里巴巴-W","ratio":7.26},{"code":"01810","name":"小米集团-W","ratio":6.33},{"code":"03690","name":"美团-W","ratio":5.03},{"code":"01398","name":"工商银行","ratio":4.59},{"code":"02318","name":"中国平安","ratio":3.86},{"code":"01211","name":"比亚迪股份","ratio":3.11},{"code":"00883","name":"中国海洋石油","ratio":2.94},{"code":"00981","name":"中芯国际","ratio":2.84},{"code":"03988","name":"中国银行","ratio":2.8}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-20","03-20","03-23","03-23","03-24","03-25","03-26","03-26","03-26","03-26","03-27"],"nav":[0.7583,0.7583,0.7366,0.7366,0.7527,0.7613,0.745,0.745,0.745,0.745,0.7504],"est":[null,null,null,null,null,null,null,null,null,null,null],"drift":[null,null,null,null,null,null,null,null,null,null,null]}},"501305":{"code":"501305","name":"港股高股息LOF","tq":"sh501305","cat":"hk","quota":"开放","fee":"1.20%","rfee":"0.60%","bench":"csi930914","nav":1.3185,"nav_date":"2026-03-27","nav_src":"lsjz","shares":4.72,"holdings":[{"code":"00316","name":"东方海外国际","ratio":6.84},{"code":"01308","name":"海丰国际","ratio":4.08},{"code":"01088","name":"中国神华","ratio":3.63},{"code":"01378","name":"中国宏桥","ratio":3.3},{"code":"00883","name":"中国海洋石油","ratio":2.85},{"code":"00857","name":"中国石油股份","ratio":2.79},{"code":"00386","name":"中国石油化工股份","ratio":2.64},{"code":"00998","name":"中信银行","ratio":2.61},{"code":"02343","name":"太平洋航运","ratio":2.34},{"code":"03988","name":"中国银行","ratio":2.31}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-20","03-20","03-20","03-23","03-24","03-25","03-26","03-26","03-26","03-26","03-27"],"nav":[1.3199,1.3199,1.3199,1.2908,1.3081,1.3161,1.3114,1.3114,1.3114,1.3114,1.3185],"est":[null,1.285583,1.285583,1.329403,1.310936,1.315687,1.307019,1.318088,1.319137,1.319137,1.319137],"drift":[null,0.026694,0.026694,-0.029038,-0.002163,0.000314,0.003352,-0.005074,-0.005865,-0.005865,-0.000483]},"est_nav_yesterday":1.326279,"est_nav_date":"2026-03-27","drift_5d":-0.002787,"drift_n":5,"drift_computed_at":"2026-03-27T12:32:01+00:00","est_nav_index_date":"2026-03-27"},"160924":{"code":"160924","name":"恒生指数LOF","tq":"sz160924","cat":"hk","quota":"开放","fee":"1.20%","rfee":"1.20%","bench":"hkHSI","nav":1.0033,"nav_date":"2026-03-27","nav_src":"lsjz","shares":1.24,"holdings":[{"code":"00005","name":"汇丰控股","ratio":7.87},{"code":"00700","name":"腾讯控股","ratio":6.9},{"code":"09988","name":"阿里巴巴-W","ratio":6.48},{"code":"00939","name":"建设银行","ratio":5.15},{"code":"01299","name":"友邦保险","ratio":4.58},{"code":"01810","name":"小米集团-W","ratio":3.93},{"code":"03690","name":"美团-W","ratio":3.13},{"code":"00941","name":"中国移动","ratio":2.79},{"code":"00388","name":"香港交易所","ratio":2.71},{"code":"03988","name":"中国银行","ratio":2.52}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-20","03-23","03-23","03-23","03-24","03-25","03-26","03-26","03-26","03-26","03-27"],"nav":[1.0115,0.9794,0.9794,0.9794,1.0041,1.0157,0.9998,0.9998,0.9998,0.9998,1.0033],"est":[null,null,null,null,null,null,null,null,null,null,null],"drift":[null,null,null,null,null,null,null,null,null,null,null]}},"501025":{"code":"501025","name":"香港银行LOF","tq":"sh501025","cat":"hk","quota":"开放","fee":"1.20%","rfee":"0.90%","bench":"csi930792","nav":1.6428,"nav_date":"2026-03-27","nav_src":"lsjz","shares":5.47,"holdings":[{"code":"00005","name":"汇丰控股","ratio":15.27},{"code":"00939","name":"建设银行","ratio":13.66},{"code":"01398","name":"工商银行","ratio":11.57},{"code":"02888","name":"渣打集团","ratio":9.09},{"code":"03968","name":"招商银行","ratio":8.01},{"code":"03988","name":"中国银行","ratio":7.91},{"code":"01288","name":"农业银行","ratio":6.39},{"code":"02388","name":"中银香港","ratio":5.99},{"code":"00011","name":"恒生银行","ratio":4.13},{"code":"03328","name":"交通银行","ratio":4.06}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-20","03-20","03-20","03-23","03-24","03-25","03-26","03-26","03-26","03-26","03-27"],"nav":[1.624,1.624,1.624,1.5744,1.617,1.6427,1.6402,1.6402,1.6402,1.6402,1.6428],"est":[null,1.568297,1.568297,1.645924,1.621002,1.642872,1.635144,1.643152,1.642824,1.642824,1.642824],"drift":[null,0.035518,0.035518,-0.043455,-0.002469,-0.000105,0.003092,-0.001797,-0.001597,-0.001597,-1.5e-05]},"est_nav_yesterday":1.645428,"est_nav_date":"2026-03-27","drift_5d":-0.000383,"drift_n":5,"drift_computed_at":"2026-03-27T12:32:01+00:00","est_nav_index_date":"2026-03-27"},"161226":{"code":"161226","name":"国投白银LOF","tq":"sz161226","cat":"cm","quota":"暂停","fee":"1.50%","rfee":"0.50%","bench":"sinaAG0","nav":1.9501,"nav_date":"2026-03-27","nav_src":"lsjz","shares":51.41,"holdings":null,"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"history":{"date":["03-20","03-20","03-20","03-23","03-24","03-25","03-26","03-26","03-26","03-26","03-27"],"nav":[1.9754,1.9754,1.9754,1.8832,1.9115,1.9913,2.0197,2.0197,2.0197,2.0197,1.9501],"est":[null,null,null,1.744778,1.930092,2.046171,1.97435,2.002508,null,null,1.978518],"drift":[null,null,null,0.079335,-0.009633,-0.026816,0.02297,0.008585,null,null,-0.014363]},"est_nav_yesterday":1.910337,"est_nav_date":"2026-03-27","est_nav_index_date":"2026-03-27","drift_5d":-0.003851,"drift_n":5,"drift_computed_at":"2026-03-27T12:32:01+00:00"},"161217":{"code":"161217","name":"国投上游资源LOF","tq":"sz161217","cat":"cn","quota":"开放","fee":"1.50%","rfee":"0.50%","bench":"sz399961","nav":2.3165,"nav_date":"2026-03-27","nav_src":"lsjz","shares":1.49,"holdings":[{"code":"601899","name":"紫金矿业","ratio":17.76},{"code":"603993","name":"洛阳钼业","ratio":5.28},{"code":"601088","name":"中国神华","ratio":4.18},{"code":"600111","name":"北方稀土","ratio":3.74},{"code":"601857","name":"中国石油","ratio":3.69},{"code":"603799","name":"华友钴业","ratio":3.31},{"code":"601600","name":"中国铝业","ratio":3.05},{"code":"600028","name":"中国石化","ratio":2.82},{"code":"601225","name":"陕西煤业","ratio":2.61},{"code":"002460","name":"赣锋锂业","ratio":2.27}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-20","03-20","03-20","03-23","03-24","03-25","03-26","03-26","03-26","03-26","03-27"],"nav":[2.2938,2.2938,2.2938,2.2292,2.2712,2.3087,2.2797,2.2797,2.2797,2.2797,2.3165],"est":[null,null,null,null,null,null,null,null,null,null,null],"drift":[null,null,null,null,null,null,null,null,null,null,null]}},"161715":{"code":"161715","name":"招商大宗商品LOF","tq":"sz161715","cat":"cn","quota":"开放","fee":"1.50%","rfee":"0.50%","bench":"sz399979","nav":2.3894,"nav_date":"2026-03-27","nav_src":"lsjz","shares":1.45,"holdings":[{"code":"300395","name":"菲利华","ratio":1.11},{"code":"600362","name":"江西铜业","ratio":1.1},{"code":"002493","name":"荣盛石化","ratio":1.09},{"code":"000408","name":"藏格矿业","ratio":1.09},{"code":"002738","name":"中矿资源","ratio":1.07},{"code":"600346","name":"恒力石化","ratio":1.07},{"code":"002756","name":"永兴材料","ratio":1.06},{"code":"002318","name":"久立特材","ratio":1.05},{"code":"000807","name":"云铝股份","ratio":1.04},{"code":"000301","name":"东方盛虹","ratio":1.04}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-20","03-23","03-23","03-23","03-24","03-25","03-26","03-26","03-26","03-26","03-27"],"nav":[2.3689,2.3036,2.3036,2.3036,2.3329,2.3624,2.343,2.343,2.343,2.343,2.3894],"est":[null,null,null,null,null,null,null,null,null,null,null],"drift":[null,null,null,null,null,null,null,null,null,null,null]}},"161725":{"code":"161725","name":"招商中证白酒LOF","tq":"sz161725","cat":"cn","quota":"开放","fee":"1.50%","rfee":"0.50%","bench":"sz399987","nav":0.6394,"nav_date":"2026-03-27","nav_src":"lsjz","shares":401.42,"holdings":[{"code":"600519","name":"贵州茅台","ratio":15.38},{"code":"600809","name":"山西汾酒","ratio":15.11},{"code":"000858","name":"五粮液","ratio":14.65},{"code":"000568","name":"泸州老窖","ratio":14.53},{"code":"002304","name":"洋河股份","ratio":8.34},{"code":"000596","name":"古井贡酒","ratio":5.14},{"code":"603369","name":"今世缘","ratio":4.97},{"code":"603198","name":"迎驾贡酒","ratio":2.47},{"code":"600702","name":"舍得酒业","ratio":2.14},{"code":"603589","name":"口子窖","ratio":2.06}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-20","03-20","03-23","03-23","03-24","03-25","03-26","03-26","03-26","03-26","03-27"],"nav":[0.6519,0.6519,0.6325,0.6325,0.6378,0.6405,0.6318,0.6318,0.6318,0.6318,0.6394],"est":[null,0.630127,0.630127,0.636801,0.639964,0.641691,0.631789,0.640013,0.640013,0.640013,0.640013],"drift":[null,0.034553,0.003766,-0.006754,-0.003381,-0.001856,1.7e-05,-0.012833,-0.012833,-0.012833,-0.000958]},"est_nav_yesterday":0.647712,"est_nav_date":"2026-03-27","drift_5d":-0.007888,"drift_n":5,"drift_computed_at":"2026-03-27T12:32:01+00:00","est_nav_index_date":"2026-03-27"},"161032":{"code":"161032","name":"富国中证煤炭LOF","tq":"sz161032","cat":"cn","quota":"开放","fee":"1.50%","rfee":"0.50%","bench":"sz399998","nav":2.324,"nav_date":"2026-03-27","nav_src":"lsjz","shares":3.06,"holdings":[{"code":"601088","name":"中国神华","ratio":9.71},{"code":"601225","name":"陕西煤业","ratio":9.38},{"code":"600188","name":"兖矿能源","ratio":7.67},{"code":"601898","name":"中煤能源","ratio":7.43},{"code":"000983","name":"山西焦煤","ratio":5.94},{"code":"600348","name":"华阳股份","ratio":4.86},{"code":"000723","name":"美锦能源","ratio":4.73},{"code":"601699","name":"潞安环能","ratio":4.61},{"code":"600985","name":"淮北矿业","ratio":3.9},{"code":"601666","name":"平煤股份","ratio":3.8}],"nav_fetch_time":"2026-03-27T12:22:25+00:00","nav_consecutive_fails":0,"holdings_date":"","holdings_fetch_time":"2026-03-27T12:22:25+00:00","history":{"date":["03-20","03-23","03-23","03-23","03-24","03-25","03-26","03-26","03-26","03-26","03-27"],"nav":[2.333,2.349,2.349,2.349,2.342,2.308,2.333,2.333,2.333,2.333,2.324],"est":[null,2.350498,2.366618,2.325275,2.340779,2.305465,2.334542,2.322968,2.322968,2.322968,2.322968],"drift":[null,-0.000637,-0.007444,0.010203,0.000522,0.0011,-0.000661,0.004319,0.004319,0.004319,0.000444]},"est_nav_yesterday":2.314007,"est_nav_date":"2026-03-27","drift_5d":0.002548,"drift_n":5,"drift_computed_at":"2026-03-27T12:32:01+00:00","est_nav_index_date":"2026-03-27"},"_meta":{"sync_time":"2026-03-27T12:32:48+00:00","data_date":"2026-03-27","nav_ok":47,"nav_kept":0,"hold_ok":31,"total":47,"trading_dates":["2026-01-04","2026-01-05","2026-01-06","2026-01-07","2026-01-08","2026-01-09","2026-01-12","2026-01-13","2026-01-14","2026-01-15","2026-01-16","2026-01-19","2026-01-20","2026-01-21","2026-01-22","2026-01-23","2026-01-26","2026-01-27","2026-01-28","2026-01-29","2026-01-30","2026-02-02","2026-02-03","2026-02-04","2026-02-05","2026-02-06","2026-02-09","2026-02-10","2026-02-11","2026-02-12","2026-02-13","2026-02-14","2026-02-24","2026-02-25","2026-02-26","2026-02-27","2026-02-28","2026-03-02","2026-03-03","2026-03-04","2026-03-05","2026-03-06","2026-03-09","2026-03-10","2026-03-11","2026-03-12","2026-03-13","2026-03-16","2026-03-17","2026-03-18","2026-03-19","2026-03-20","2026-03-23","2026-03-24","2026-03-25","2026-03-26","2026-03-27","2026-03-30","2026-03-31","2026-04-01","2026-04-02","2026-04-03","2026-04-07","2026-04-08","2026-04-09","2026-04-10","2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17","2026-04-20","2026-04-21","2026-04-22","2026-04-23","2026-04-24","2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-06","2026-05-07","2026-05-08","2026-05-09","2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-18","2026-05-19","2026-05-20","2026-05-21","2026-05-22","2026-05-25","2026-05-26","2026-05-27","2026-05-28","2026-05-29","2026-06-01","2026-06-02","2026-06-03","2026-06-04","2026-06-05","2026-06-08","2026-06-09","2026-06-10","2026-06-11","2026-06-12","2026-06-15","2026-06-16","2026-06-17","2026-06-18","2026-06-22","2026-06-23","2026-06-24","2026-06-25","2026-06-26","2026-06-29","2026-06-30","2026-07-01","2026-07-02","2026-07-03","2026-07-06","2026-07-07","2026-07-08","2026-07-09","2026-07-10","2026-07-13","2026-07-14","2026-07-15","2026-07-16","2026-07-17","2026-07-20","2026-07-21","2026-07-22","2026-07-23","2026-07-24","2026-07-27","2026-07-28","2026-07-29","2026-07-30","2026-07-31","2026-08-03","2026-08-04","2026-08-05","2026-08-06","2026-08-07","2026-08-10","2026-08-11","2026-08-12","2026-08-13","2026-08-14","2026-08-17","2026-08-18","2026-08-19","2026-08-20","2026-08-21","2026-08-24","2026-08-25","2026-08-26","2026-08-27","2026-08-28","2026-08-31","2026-09-01","2026-09-02","2026-09-03","2026-09-04","2026-09-07","2026-09-08","2026-09-09","2026-09-10","2026-09-11","2026-09-14","2026-09-15","2026-09-16","2026-09-17","2026-09-18","2026-09-20","2026-09-21","2026-09-22","2026-09-23","2026-09-24","2026-09-28","2026-09-29","2026-09-30","2026-10-08","2026-10-09","2026-10-10","2026-10-12","2026-10-13","2026-10-14","2026-10-15","2026-10-16","2026-10-19","2026-10-20","2026-10-21","2026-10-22","2026-10-23","2026-10-26","2026-10-27","2026-10-28","2026-10-29","2026-10-30","2026-11-02","2026-11-03","2026-11-04","2026-11-05","2026-11-06","2026-11-09","2026-11-10","2026-11-11","2026-11-12","2026-11-13","2026-11-16","2026-11-17","2026-11-18","2026-11-19","2026-11-20","2026-11-23","2026-11-24","2026-11-25","2026-11-26","2026-11-27","2026-11-30","2026-12-01","2026-12-02","2026-12-03","2026-12-04","2026-12-07","2026-12-08","2026-12-09","2026-12-10","2026-12-11","2026-12-14","2026-12-15","2026-12-16","2026-12-17","2026-12-18","2026-12-21","2026-12-22","2026-12-23","2026-12-24","2026-12-25","2026-12-28","2026-12-29","2026-12-30","2026-12-31"]},"_fx":{"usd_cnh_t1":6.9212,"hkd_cnh_t1":0.8836,"date":"2026-03-27"}}
+{
+  "161127": {
+    "code": "161127",
+    "name": "标普生物科技LOF",
+    "tq": "sz161127",
+    "cat": "us",
+    "quota": "限10",
+    "fee": "1.20%",
+    "rfee": "1.00%",
+    "bench": "usXBI",
+    "nav": 1.6981,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 2.87,
+    "holdings": [
+      {
+        "code": "FOLD",
+        "name": "爱美医疗",
+        "ratio": 1.39
+      },
+      {
+        "code": "PRAX",
+        "name": "Praxis Precision Medicines Inc",
+        "ratio": 1.3
+      },
+      {
+        "code": "TVTX",
+        "name": "Travere Therapeutics Inc",
+        "ratio": 1.28
+      },
+      {
+        "code": "BMRN",
+        "name": "拜玛林制药",
+        "ratio": 1.28
+      },
+      {
+        "code": "HALO",
+        "name": "奥洛兹美医疗",
+        "ratio": 1.24
+      },
+      {
+        "code": "ROIV",
+        "name": "Roivant Sciences Ltd",
+        "ratio": 1.24
+      },
+      {
+        "code": "EXEL",
+        "name": "伊克力西斯",
+        "ratio": 1.23
+      },
+      {
+        "code": "REGN",
+        "name": "再生元制药",
+        "ratio": 1.22
+      },
+      {
+        "code": "PCVX",
+        "name": "Vaxcyte Inc",
+        "ratio": 1.22
+      },
+      {
+        "code": "MDGL",
+        "name": "Madrigal Pharmaceuticals Inc",
+        "ratio": 1.21
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-19",
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        1.6808,
+        1.6524,
+        1.6524,
+        1.6524,
+        1.6695,
+        1.6382,
+        1.6942,
+        1.6942,
+        1.6942,
+        1.6981,
+        1.6981,
+        1.6981
+      ],
+      "est": [
+        null,
+        1.653045,
+        1.625114,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        1.693927,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        -0.00039,
+        0.01679,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        0.002464,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 1.697826,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27",
+    "drift_5d": 0.006288,
+    "drift_n": 3,
+    "drift_computed_at": "2026-03-27T13:04:25+00:00"
+  },
+  "164906": {
+    "code": "164906",
+    "name": "中概互联网LOF",
+    "tq": "sz164906",
+    "cat": "us",
+    "quota": "开放",
+    "fee": "1.20%",
+    "rfee": "1.50%",
+    "bench": "usKWEB",
+    "nav": 1.0271,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 55.25,
+    "holdings": [
+      {
+        "code": "00700",
+        "name": "腾讯控股",
+        "ratio": 9.51
+      },
+      {
+        "code": "09988",
+        "name": "阿里巴巴-W",
+        "ratio": 8.16
+      },
+      {
+        "code": "PDD",
+        "name": "拼多多",
+        "ratio": 7.65
+      },
+      {
+        "code": "03690",
+        "name": "美团-W",
+        "ratio": 6.87
+      },
+      {
+        "code": "09999",
+        "name": "网易-S",
+        "ratio": 5.66
+      },
+      {
+        "code": "09888",
+        "name": "百度集团-SW",
+        "ratio": 4.01
+      },
+      {
+        "code": "09961",
+        "name": "携程集团-S",
+        "ratio": 3.91
+      },
+      {
+        "code": "TME",
+        "name": "腾讯音乐",
+        "ratio": 3.74
+      },
+      {
+        "code": "09618",
+        "name": "京东集团-SW",
+        "ratio": 3.69
+      },
+      {
+        "code": "01024",
+        "name": "快手-W",
+        "ratio": 3.61
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-19",
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        1.0584,
+        1.04,
+        1.04,
+        1.04,
+        1.016,
+        1.0304,
+        1.0524,
+        1.0524,
+        1.0524,
+        1.0524,
+        1.0271,
+        1.0271
+      ],
+      "est": [
+        null,
+        1.02711,
+        1.009254,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        0.01255,
+        0.030464,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 0.993968,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "501312": {
+    "code": "501312",
+    "name": "海外科技LOF",
+    "tq": "sh501312",
+    "cat": "us",
+    "quota": "限2千",
+    "fee": "1.20%",
+    "rfee": "1.20%",
+    "bench": [
+      {
+        "tq": "usQQQ",
+        "w": 0.8
+      },
+      {
+        "tq": "hkHSTECH",
+        "w": 0.1
+      },
+      {
+        "tq": "sh000985",
+        "w": 0.1
+      }
+    ],
+    "nav": 1.8551,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 4.03,
+    "holdings": null,
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19",
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        1.9156,
+        1.8683,
+        1.8683,
+        1.8683,
+        1.9045,
+        1.8869,
+        1.9063,
+        1.9063,
+        1.8551,
+        1.8551,
+        1.8551,
+        1.8551
+      ],
+      "est": [
+        null,
+        1.875489,
+        1.826963,
+        null,
+        null,
+        null,
+        null,
+        null,
+        1.872531,
+        1.822238,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        -0.003833,
+        0.022626,
+        null,
+        null,
+        null,
+        null,
+        null,
+        -0.009309,
+        0.018034,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 1.822238,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27",
+    "drift_5d": 0.00688,
+    "drift_n": 4,
+    "drift_computed_at": "2026-03-27T13:04:25+00:00"
+  },
+  "164824": {
+    "code": "164824",
+    "name": "印度基金LOF",
+    "tq": "sz164824",
+    "cat": "us",
+    "quota": "限1千",
+    "fee": "1.20%",
+    "rfee": "1.50%",
+    "bench": "usINDA",
+    "nav": 1.2603,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 18.25,
+    "holdings": null,
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19",
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        1.2762,
+        1.2561,
+        1.2561,
+        1.2561,
+        1.2774,
+        1.2508,
+        1.276,
+        1.276,
+        1.276,
+        1.276,
+        1.2603,
+        1.2603
+      ],
+      "est": [
+        null,
+        1.251224,
+        1.231517,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        0.003897,
+        0.019962,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 1.238772,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "160644": {
+    "code": "160644",
+    "name": "港美互联网LOF",
+    "tq": "sz160644",
+    "cat": "us",
+    "quota": "限10万",
+    "fee": "1.50%",
+    "rfee": "1.50%",
+    "bench": "usKWEB",
+    "nav": 1.5067,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 1.28,
+    "holdings": [
+      {
+        "code": "GOOGL",
+        "name": "谷歌-A",
+        "ratio": 9.21
+      },
+      {
+        "code": "NVDA",
+        "name": "英伟达",
+        "ratio": 9.16
+      },
+      {
+        "code": "TSM",
+        "name": "台积电",
+        "ratio": 9.12
+      },
+      {
+        "code": "00700",
+        "name": "腾讯控股",
+        "ratio": 8.84
+      },
+      {
+        "code": "09988",
+        "name": "阿里巴巴-W",
+        "ratio": 7.9
+      },
+      {
+        "code": "AVGO",
+        "name": "博通",
+        "ratio": 6.62
+      },
+      {
+        "code": "MU",
+        "name": "美光科技",
+        "ratio": 6.32
+      },
+      {
+        "code": "09992",
+        "name": "泡泡玛特",
+        "ratio": 5.47
+      },
+      {
+        "code": "SNDK",
+        "name": "闪迪",
+        "ratio": 3.75
+      },
+      {
+        "code": "02899",
+        "name": "紫金矿业",
+        "ratio": 3.36
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-09-30",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-19",
+        "03-19",
+        "03-19",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        1.6343,
+        1.6343,
+        1.6343,
+        1.5865,
+        1.5776,
+        1.5904,
+        1.5738,
+        1.5738,
+        1.5738,
+        1.5738,
+        1.5067,
+        1.5067
+      ],
+      "est": [
+        null,
+        1.585984,
+        1.585984,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        0.030464,
+        0.030464,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 1.458097,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "162415": {
+    "code": "162415",
+    "name": "美国消费LOF",
+    "tq": "sz162415",
+    "cat": "us",
+    "quota": "限500",
+    "fee": "1.20%",
+    "rfee": "1.50%",
+    "bench": "usXLY",
+    "nav": 2.736,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 2.3,
+    "holdings": [
+      {
+        "code": "AMZN",
+        "name": "亚马逊",
+        "ratio": 21.78
+      },
+      {
+        "code": "TSLA",
+        "name": "特斯拉",
+        "ratio": 19.7
+      },
+      {
+        "code": "HD",
+        "name": "家得宝",
+        "ratio": 5.34
+      },
+      {
+        "code": "MCD",
+        "name": "麦当劳",
+        "ratio": 4.21
+      },
+      {
+        "code": "BKNG",
+        "name": "Booking Holdings",
+        "ratio": 3.77
+      },
+      {
+        "code": "TJX",
+        "name": "The TJX Companies Inc",
+        "ratio": 3.73
+      },
+      {
+        "code": "LOW",
+        "name": "劳氏",
+        "ratio": 2.95
+      },
+      {
+        "code": "SBUX",
+        "name": "星巴克",
+        "ratio": 2.09
+      },
+      {
+        "code": "DASH",
+        "name": "DoorDash Inc-A",
+        "ratio": 1.85
+      },
+      {
+        "code": "ORLY",
+        "name": "奥莱利",
+        "ratio": 1.68
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-19",
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        2.75,
+        2.701,
+        2.701,
+        2.701,
+        2.767,
+        2.753,
+        2.776,
+        2.776,
+        2.736,
+        2.736,
+        2.736,
+        2.736
+      ],
+      "est": [
+        null,
+        2.700866,
+        2.652741,
+        null,
+        null,
+        null,
+        null,
+        null,
+        2.728367,
+        2.689053,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        5e-05,
+        0.018192,
+        null,
+        null,
+        null,
+        null,
+        null,
+        0.002798,
+        0.017459,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 2.689053,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27",
+    "drift_5d": 0.009625,
+    "drift_n": 4,
+    "drift_computed_at": "2026-03-27T13:04:25+00:00"
+  },
+  "161126": {
+    "code": "161126",
+    "name": "标普医疗保健LOF",
+    "tq": "sz161126",
+    "cat": "us",
+    "quota": "限10",
+    "fee": "1.20%",
+    "rfee": "1.00%",
+    "bench": "usRSPH",
+    "nav": 1.8091,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 0.76,
+    "holdings": [
+      {
+        "code": "LLY",
+        "name": "礼来",
+        "ratio": 1.7
+      },
+      {
+        "code": "MOH",
+        "name": "Molina Healthcare Inc",
+        "ratio": 1.69
+      },
+      {
+        "code": "MRK",
+        "name": "默沙东",
+        "ratio": 1.69
+      },
+      {
+        "code": "VTRS",
+        "name": "Viatris Inc",
+        "ratio": 1.68
+      },
+      {
+        "code": "ZTS",
+        "name": "硕腾",
+        "ratio": 1.67
+      },
+      {
+        "code": "CNC",
+        "name": "康西哥",
+        "ratio": 1.67
+      },
+      {
+        "code": "REGN",
+        "name": "再生元制药",
+        "ratio": 1.67
+      },
+      {
+        "code": "BMY",
+        "name": "百时美施贵宝",
+        "ratio": 1.65
+      },
+      {
+        "code": "CI",
+        "name": "信诺",
+        "ratio": 1.64
+      },
+      {
+        "code": "BAX",
+        "name": "百特国际",
+        "ratio": 1.64
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-19",
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        1.8025,
+        1.7855,
+        1.7855,
+        1.7855,
+        1.7951,
+        1.7949,
+        1.8075,
+        1.8075,
+        1.8075,
+        1.8091,
+        1.8091,
+        1.8091
+      ],
+      "est": [
+        null,
+        1.786443,
+        1.769595,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        1.803931,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        -0.000528,
+        0.008988,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        0.002865,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 1.805528,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27",
+    "drift_5d": 0.003775,
+    "drift_n": 3,
+    "drift_computed_at": "2026-03-27T13:04:25+00:00"
+  },
+  "161128": {
+    "code": "161128",
+    "name": "标普信息科技LOF",
+    "tq": "sz161128",
+    "cat": "us",
+    "quota": "限10",
+    "fee": "1.20%",
+    "rfee": "1.00%",
+    "bench": "usXLK",
+    "nav": 5.1824,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 6.35,
+    "holdings": [
+      {
+        "code": "NVDA",
+        "name": "英伟达",
+        "ratio": 19.61
+      },
+      {
+        "code": "AAPL",
+        "name": "苹果",
+        "ratio": 17.38
+      },
+      {
+        "code": "MSFT",
+        "name": "微软",
+        "ratio": 15.55
+      },
+      {
+        "code": "AVGO",
+        "name": "博通",
+        "ratio": 7.07
+      },
+      {
+        "code": "PLTR",
+        "name": "Palantir Technologies Inc-A",
+        "ratio": 1.76
+      },
+      {
+        "code": "AMD",
+        "name": "超威半导体",
+        "ratio": 1.51
+      },
+      {
+        "code": "ORCL",
+        "name": "甲骨文",
+        "ratio": 1.42
+      },
+      {
+        "code": "MU",
+        "name": "美光科技",
+        "ratio": 1.39
+      },
+      {
+        "code": "CSCO",
+        "name": "思科",
+        "ratio": 1.31
+      },
+      {
+        "code": "IBM",
+        "name": "IBM国际商业机器",
+        "ratio": 1.2
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-19",
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        5.3593,
+        5.2441,
+        5.2441,
+        5.2441,
+        5.3259,
+        5.283,
+        5.3091,
+        5.3091,
+        5.1824,
+        5.1824,
+        5.1824,
+        5.1824
+      ],
+      "est": [
+        null,
+        5.237735,
+        5.125148,
+        null,
+        null,
+        null,
+        null,
+        null,
+        5.143724,
+        5.020971,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        0.001215,
+        0.023209,
+        null,
+        null,
+        null,
+        null,
+        null,
+        0.007519,
+        0.032151,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 5.020971,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27",
+    "drift_5d": 0.016023,
+    "drift_n": 4,
+    "drift_computed_at": "2026-03-27T13:04:25+00:00"
+  },
+  "161125": {
+    "code": "161125",
+    "name": "标普500LOF",
+    "tq": "sz161125",
+    "cat": "us",
+    "quota": "限10",
+    "fee": "1.20%",
+    "rfee": "1.50%",
+    "bench": "usINX",
+    "nav": 2.7289,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 5.05,
+    "holdings": [
+      {
+        "code": "NVDA",
+        "name": "英伟达",
+        "ratio": 6.55
+      },
+      {
+        "code": "AAPL",
+        "name": "苹果",
+        "ratio": 5.81
+      },
+      {
+        "code": "MSFT",
+        "name": "微软",
+        "ratio": 5.2
+      },
+      {
+        "code": "AMZN",
+        "name": "亚马逊",
+        "ratio": 3.25
+      },
+      {
+        "code": "GOOGL",
+        "name": "谷歌-A",
+        "ratio": 2.63
+      },
+      {
+        "code": "AVGO",
+        "name": "博通",
+        "ratio": 2.36
+      },
+      {
+        "code": "GOOG",
+        "name": "谷歌-C",
+        "ratio": 2.11
+      },
+      {
+        "code": "META",
+        "name": "Meta Platforms Inc-A",
+        "ratio": 2.08
+      },
+      {
+        "code": "TSLA",
+        "name": "特斯拉",
+        "ratio": 1.83
+      },
+      {
+        "code": "BRK_B",
+        "name": "伯克希尔哈撒韦-B",
+        "ratio": 1.33
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-19",
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        2.7777,
+        2.7355,
+        2.7355,
+        2.7355,
+        2.7702,
+        2.7567,
+        2.7698,
+        2.7698,
+        2.7289,
+        2.7289,
+        2.7289,
+        2.7289
+      ],
+      "est": [
+        null,
+        2.735651,
+        2.69409,
+        null,
+        null,
+        null,
+        null,
+        null,
+        2.721588,
+        2.6814,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        -5.5e-05,
+        0.015371,
+        null,
+        null,
+        null,
+        null,
+        null,
+        0.002687,
+        0.017715,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 2.6814,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27",
+    "drift_5d": 0.008929,
+    "drift_n": 4,
+    "drift_computed_at": "2026-03-27T13:04:25+00:00"
+  },
+  "161130": {
+    "code": "161130",
+    "name": "纳斯达克100LOF",
+    "tq": "sz161130",
+    "cat": "us",
+    "quota": "限10",
+    "fee": "1.20%",
+    "rfee": "0.60%",
+    "bench": "usQQQ",
+    "nav": 3.6476,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 4.07,
+    "holdings": null,
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19",
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        3.7564,
+        3.6858,
+        3.6858,
+        3.6858,
+        3.7354,
+        3.7033,
+        3.7251,
+        3.7251,
+        3.7251,
+        3.6476,
+        3.6476,
+        3.6476
+      ],
+      "est": [
+        null,
+        3.686975,
+        3.61768,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        3.63619,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        -0.000319,
+        0.01883,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        0.003138,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 3.56054,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27",
+    "drift_5d": 0.007216,
+    "drift_n": 3,
+    "drift_computed_at": "2026-03-27T13:04:25+00:00"
+  },
+  "501300": {
+    "code": "501300",
+    "name": "美元债LOF",
+    "tq": "sh501300",
+    "cat": "us",
+    "quota": "限1万",
+    "fee": "0.80%",
+    "rfee": "1.50%",
+    "bench": "usAGG",
+    "nav": 0.9511,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 22.43,
+    "holdings": null,
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19",
+        "03-19",
+        "03-19",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        0.9561,
+        0.9561,
+        0.9561,
+        0.9502,
+        0.9536,
+        0.9516,
+        0.9522,
+        0.9522,
+        0.9522,
+        0.9522,
+        0.9511,
+        0.9511
+      ],
+      "est": [
+        null,
+        0.948124,
+        0.948124,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        0.008412,
+        0.008412,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 0.945726,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "160140": {
+    "code": "160140",
+    "name": "美国REIT精选LOF",
+    "tq": "sz160140",
+    "cat": "us",
+    "quota": "限100万",
+    "fee": "1.20%",
+    "rfee": "1.00%",
+    "bench": "usRWR",
+    "nav": 1.3037,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 2.4,
+    "holdings": [
+      {
+        "code": "WELL",
+        "name": "Welltower Inc",
+        "ratio": 10.81
+      },
+      {
+        "code": "PLD",
+        "name": "安博",
+        "ratio": 10.06
+      },
+      {
+        "code": "EQIX",
+        "name": "易昆尼克斯",
+        "ratio": 6.38
+      },
+      {
+        "code": "SPG",
+        "name": "西蒙地产",
+        "ratio": 5.13
+      },
+      {
+        "code": "O",
+        "name": "Realty Income Corp",
+        "ratio": 4.4
+      },
+      {
+        "code": "DLR",
+        "name": "数字房地产信托",
+        "ratio": 4.24
+      },
+      {
+        "code": "PSA",
+        "name": "大众仓储",
+        "ratio": 3.48
+      },
+      {
+        "code": "VTR",
+        "name": "芬塔公司",
+        "ratio": 3.09
+      },
+      {
+        "code": "EXR",
+        "name": "Extra Space Storage Inc",
+        "ratio": 2.35
+      },
+      {
+        "code": "AVB",
+        "name": "艾芙隆海湾社区",
+        "ratio": 2.18
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-19",
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        1.339,
+        1.297,
+        1.297,
+        1.297,
+        1.3077,
+        1.3014,
+        1.3021,
+        1.3021,
+        1.3021,
+        1.3021,
+        1.3037,
+        1.3037
+      ],
+      "est": [
+        null,
+        1.295198,
+        1.254572,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        0.001391,
+        0.033819,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 1.303309,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "501225": {
+    "code": "501225",
+    "name": "全球芯片LOF",
+    "tq": "sh501225",
+    "cat": "us",
+    "quota": "暂停",
+    "fee": "1.50%",
+    "rfee": "1.50%",
+    "bench": "usSMH",
+    "nav": 2.0886,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 2.27,
+    "holdings": null,
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19",
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        2.1602,
+        2.1123,
+        2.1123,
+        2.1123,
+        2.1167,
+        2.1477,
+        2.1745,
+        2.1745,
+        2.1745,
+        2.1745,
+        2.0886,
+        2.0886
+      ],
+      "est": [
+        null,
+        2.104516,
+        2.05785,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        0.003699,
+        0.02646,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 1.99344,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "160216": {
+    "code": "160216",
+    "name": "国泰商品LOF",
+    "tq": "sz160216",
+    "cat": "cm",
+    "quota": "限1千",
+    "fee": "1.50%",
+    "rfee": "1.50%",
+    "bench": [
+      {
+        "tq": "usSGOL",
+        "w": 0.234
+      },
+      {
+        "tq": "usGLD",
+        "w": 0.193
+      },
+      {
+        "tq": "usGLDM",
+        "w": 0.154
+      },
+      {
+        "tq": "usUSO",
+        "w": 0.153
+      },
+      {
+        "tq": "usSLV",
+        "w": 0.151
+      },
+      {
+        "tq": "usCPER",
+        "w": 0.143
+      },
+      {
+        "tq": "usXOP",
+        "w": 0.038
+      }
+    ],
+    "nav": 0.744,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 15.4,
+    "holdings": null,
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19",
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        0.767,
+        0.764,
+        0.764,
+        0.764,
+        0.733,
+        0.741,
+        0.748,
+        0.748,
+        0.748,
+        0.748,
+        0.744,
+        0.744
+      ],
+      "est": [
+        null,
+        0.747333,
+        0.74441,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        0.022302,
+        0.026316,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 0.724567,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "161116": {
+    "code": "161116",
+    "name": "黄金主题LOF",
+    "tq": "sz161116",
+    "cat": "cm",
+    "quota": "暂停",
+    "fee": "0%",
+    "rfee": "1.50%",
+    "bench": "sh518880",
+    "nav": 1.6544,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 2.71,
+    "holdings": null,
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19",
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        1.7444,
+        1.7033,
+        1.7033,
+        1.7033,
+        1.6645,
+        1.6646,
+        1.7107,
+        1.7107,
+        1.7107,
+        1.7107,
+        1.6544,
+        1.6544
+      ],
+      "est": [
+        null,
+        1.576065,
+        1.538932,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        0.08073,
+        0.106807,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 1.662176,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "164701": {
+    "code": "164701",
+    "name": "黄金LOF",
+    "tq": "sz164701",
+    "cat": "cm",
+    "quota": "限50",
+    "fee": "0.80%",
+    "rfee": "1.50%",
+    "bench": "usGLD",
+    "nav": 1.749,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 6.81,
+    "holdings": null,
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19",
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        1.858,
+        1.8,
+        1.8,
+        1.8,
+        1.764,
+        1.762,
+        1.813,
+        1.813,
+        1.813,
+        1.813,
+        1.749,
+        1.749
+      ],
+      "est": [
+        null,
+        1.801224,
+        1.744997,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        -0.00068,
+        0.03152,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 1.683248,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "165513": {
+    "code": "165513",
+    "name": "中信保诚商品LOF",
+    "tq": "sz165513",
+    "cat": "cm",
+    "quota": "开放",
+    "fee": "1.60%",
+    "rfee": "1.50%",
+    "bench": "usGLD",
+    "nav": 1.0589,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 4.52,
+    "holdings": null,
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19",
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        1.1181,
+        1.089,
+        1.089,
+        1.089,
+        1.0644,
+        1.0645,
+        1.0936,
+        1.0936,
+        1.0589,
+        1.0589,
+        1.0589,
+        1.0589
+      ],
+      "est": [
+        null,
+        1.083934,
+        1.055723,
+        null,
+        null,
+        null,
+        null,
+        null,
+        1.052487,
+        1.019092,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        0.004674,
+        0.031521,
+        null,
+        null,
+        null,
+        null,
+        null,
+        0.006093,
+        0.039062,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 1.019092,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27",
+    "drift_5d": 0.020338,
+    "drift_n": 4,
+    "drift_computed_at": "2026-03-27T13:04:25+00:00"
+  },
+  "160719": {
+    "code": "160719",
+    "name": "嘉实黄金LOF",
+    "tq": "sz160719",
+    "cat": "cm",
+    "quota": "暂停",
+    "fee": "1.20%",
+    "rfee": "1.50%",
+    "bench": "sh518880",
+    "nav": 1.998,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 2.24,
+    "holdings": null,
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19",
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        2.101,
+        2.066,
+        2.066,
+        2.066,
+        2.004,
+        2.009,
+        2.067,
+        2.067,
+        2.067,
+        2.067,
+        1.998,
+        1.998
+      ],
+      "est": [
+        null,
+        1.898253,
+        1.866631,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        0.088369,
+        0.106807,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 2.007391,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "161815": {
+    "code": "161815",
+    "name": "抗通胀LOF",
+    "tq": "sz161815",
+    "cat": "cm",
+    "quota": "开放",
+    "fee": "1.60%",
+    "rfee": "1.50%",
+    "bench": [
+      {
+        "tq": "usGLD",
+        "w": 0.171
+      },
+      {
+        "tq": "usIAU",
+        "w": 0.168
+      },
+      {
+        "tq": "usAAAU",
+        "w": 0.144
+      },
+      {
+        "tq": "usSGOL",
+        "w": 0.139
+      },
+      {
+        "tq": "usBCI",
+        "w": 0.122
+      },
+      {
+        "tq": "usCOMT",
+        "w": 0.095
+      },
+      {
+        "tq": "usUSO",
+        "w": 0.051
+      },
+      {
+        "tq": "usBNO",
+        "w": 0.044
+      },
+      {
+        "tq": "usSLV",
+        "w": 0.024
+      },
+      {
+        "tq": "usCPER",
+        "w": 0.053
+      }
+    ],
+    "nav": 1.143,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 2.85,
+    "holdings": null,
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19",
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        1.186,
+        1.167,
+        1.167,
+        1.167,
+        1.131,
+        1.138,
+        1.143,
+        1.143,
+        1.143,
+        1.143,
+        1.143,
+        1.143
+      ],
+      "est": [
+        null,
+        1.164461,
+        1.145806,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        1.120242,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        0.00218,
+        0.018497,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        0.020315,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 1.120242,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27",
+    "drift_5d": 0.013664,
+    "drift_n": 3,
+    "drift_computed_at": "2026-03-27T13:04:25+00:00"
+  },
+  "163208": {
+    "code": "163208",
+    "name": "全球油气能源LOF",
+    "tq": "sz163208",
+    "cat": "cm",
+    "quota": "暂停",
+    "fee": "1.50%",
+    "rfee": "1.50%",
+    "bench": "usXLE",
+    "nav": 1.396,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 3.04,
+    "holdings": [
+      {
+        "code": "00916",
+        "name": "龙源电力",
+        "ratio": 3.21
+      },
+      {
+        "code": "00836",
+        "name": "华润电力",
+        "ratio": 2.46
+      },
+      {
+        "code": "00135",
+        "name": "昆仑能源",
+        "ratio": 1.97
+      },
+      {
+        "code": "01798",
+        "name": "大唐新能源",
+        "ratio": 1.87
+      },
+      {
+        "code": "06865",
+        "name": "福莱特玻璃",
+        "ratio": 1.43
+      },
+      {
+        "code": "00968",
+        "name": "信义光能",
+        "ratio": 1.16
+      },
+      {
+        "code": "01811",
+        "name": "中广核新能源",
+        "ratio": 1.14
+      },
+      {
+        "code": "01171",
+        "name": "兖矿能源",
+        "ratio": 1.13
+      },
+      {
+        "code": "00857",
+        "name": "中国石油股份",
+        "ratio": 0.9
+      },
+      {
+        "code": "00386",
+        "name": "中国石油化工股份",
+        "ratio": 0.72
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-19",
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        1.353,
+        1.36,
+        1.36,
+        1.36,
+        1.348,
+        1.375,
+        1.37,
+        1.37,
+        1.37,
+        1.37,
+        1.396,
+        1.396
+      ],
+      "est": [
+        null,
+        1.35186,
+        1.358854,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        0.006021,
+        0.000843,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 1.417895,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "501018": {
+    "code": "501018",
+    "name": "南方原油LOF",
+    "tq": "sh501018",
+    "cat": "cm",
+    "quota": "暂停",
+    "fee": "1.20%",
+    "rfee": "1.50%",
+    "bench": [
+      {
+        "tq": "usUSO",
+        "w": 0.6
+      },
+      {
+        "tq": "usBNO",
+        "w": 0.4
+      }
+    ],
+    "nav": 1.7505,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 8.85,
+    "holdings": null,
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19",
+        "03-19",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        1.789,
+        1.789,
+        1.8048,
+        1.8048,
+        1.7131,
+        1.717,
+        1.6836,
+        1.6836,
+        1.6836,
+        1.6836,
+        1.7505,
+        1.7505
+      ],
+      "est": [
+        null,
+        1.851133,
+        1.851133,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        -0.033565,
+        -0.02503,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 1.811903,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "161129": {
+    "code": "161129",
+    "name": "原油LOF易方达",
+    "tq": "sz161129",
+    "cat": "cm",
+    "quota": "暂停",
+    "fee": "1.20%",
+    "rfee": "1.50%",
+    "bench": "usUSO",
+    "nav": 1.6719,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 4.35,
+    "holdings": null,
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19",
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        1.7047,
+        1.7075,
+        1.7075,
+        1.7075,
+        1.6256,
+        1.6368,
+        1.6067,
+        1.6719,
+        1.6719,
+        1.6719,
+        1.6719,
+        1.6719
+      ],
+      "est": [
+        null,
+        1.763818,
+        1.766715,
+        null,
+        null,
+        null,
+        null,
+        1.661537,
+        1.728962,
+        1.728962,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        -0.03193,
+        -0.033517,
+        null,
+        null,
+        null,
+        null,
+        0.006237,
+        -0.033004,
+        -0.033004,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 1.728962,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27",
+    "drift_5d": -0.025044,
+    "drift_n": 5,
+    "drift_computed_at": "2026-03-27T13:04:25+00:00"
+  },
+  "160723": {
+    "code": "160723",
+    "name": "嘉实原油LOF",
+    "tq": "sz160723",
+    "cat": "cm",
+    "quota": "暂停",
+    "fee": "1.20%",
+    "rfee": "1.50%",
+    "bench": "usUSO",
+    "nav": 2.0273,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 3.5,
+    "holdings": null,
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-19",
+        "03-19",
+        "03-19",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        2.0645,
+        2.0645,
+        2.0645,
+        2.0771,
+        1.9769,
+        1.9931,
+        1.9542,
+        1.9542,
+        1.9542,
+        1.9542,
+        2.0273,
+        2.0273
+      ],
+      "est": [
+        null,
+        2.136096,
+        2.136096,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        -0.033517,
+        -0.033517,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 2.096492,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "162719": {
+    "code": "162719",
+    "name": "石油LOF",
+    "tq": "sz162719",
+    "cat": "cm",
+    "quota": "暂停",
+    "fee": "1.20%",
+    "rfee": "1.50%",
+    "bench": "usXOP",
+    "nav": 2.9737,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 2.95,
+    "holdings": [
+      {
+        "code": "COP",
+        "name": "康菲石油",
+        "ratio": 17.42
+      },
+      {
+        "code": "EOG",
+        "name": "EOG能源",
+        "ratio": 8.53
+      },
+      {
+        "code": "PSX",
+        "name": "Phillips 66",
+        "ratio": 7.77
+      },
+      {
+        "code": "MPC",
+        "name": "马拉松原油",
+        "ratio": 5.86
+      },
+      {
+        "code": "DVN",
+        "name": "戴文能源",
+        "ratio": 4.09
+      },
+      {
+        "code": "FANG",
+        "name": "Diamondback Energy Inc",
+        "ratio": 4.03
+      },
+      {
+        "code": "EXE",
+        "name": "Expand Energy Corp",
+        "ratio": 4.0
+      },
+      {
+        "code": "EQT",
+        "name": "EQT能源",
+        "ratio": 3.95
+      },
+      {
+        "code": "VLO",
+        "name": "瓦莱罗能源",
+        "ratio": 3.88
+      },
+      {
+        "code": "CTRA",
+        "name": "Coterra Energy Inc",
+        "ratio": 3.74
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-19",
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        2.8354,
+        2.834,
+        2.834,
+        2.834,
+        2.8372,
+        2.906,
+        2.9088,
+        2.9088,
+        2.9088,
+        2.9088,
+        2.9737,
+        2.9737
+      ],
+      "est": [
+        null,
+        2.869093,
+        2.867676,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        -0.012231,
+        -0.011743,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 3.034281,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "162411": {
+    "code": "162411",
+    "name": "华宝油气LOF",
+    "tq": "sz162411",
+    "cat": "cm",
+    "quota": "开放",
+    "fee": "1.50%",
+    "rfee": "1.50%",
+    "bench": "usXOP",
+    "nav": 0.9923,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 20.34,
+    "holdings": [
+      {
+        "code": "VG",
+        "name": "Venture Global Inc-A",
+        "ratio": 2.91
+      },
+      {
+        "code": "XOM",
+        "name": "埃克森美孚",
+        "ratio": 2.61
+      },
+      {
+        "code": "CVX",
+        "name": "雪佛龙",
+        "ratio": 2.61
+      },
+      {
+        "code": "GPOR",
+        "name": "格尔夫波特能源",
+        "ratio": 2.6
+      },
+      {
+        "code": "OXY",
+        "name": "西方石油",
+        "ratio": 2.55
+      },
+      {
+        "code": "CTRA",
+        "name": "Coterra Energy Inc",
+        "ratio": 2.52
+      },
+      {
+        "code": "COP",
+        "name": "康菲石油",
+        "ratio": 2.51
+      },
+      {
+        "code": "TPL",
+        "name": "Texas Pacific Land Corp",
+        "ratio": 2.5
+      },
+      {
+        "code": "DVN",
+        "name": "戴文能源",
+        "ratio": 2.47
+      },
+      {
+        "code": "MGY",
+        "name": "Magnolia Oil & Gas Corp-A",
+        "ratio": 2.47
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-19",
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        0.9366,
+        0.9451,
+        0.9451,
+        0.9451,
+        0.9394,
+        0.965,
+        0.9714,
+        0.9714,
+        0.9923,
+        0.9923,
+        0.9923,
+        0.9923
+      ],
+      "est": [
+        null,
+        0.94773,
+        0.956331,
+        null,
+        null,
+        null,
+        null,
+        null,
+        0.99119,
+        1.012515,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        -0.002775,
+        -0.011744,
+        null,
+        null,
+        null,
+        null,
+        null,
+        0.00112,
+        -0.019965,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 1.012515,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27",
+    "drift_5d": -0.008341,
+    "drift_n": 4,
+    "drift_computed_at": "2026-03-27T13:04:25+00:00"
+  },
+  "160416": {
+    "code": "160416",
+    "name": "石油基金LOF",
+    "tq": "sz160416",
+    "cat": "cm",
+    "quota": "暂停",
+    "fee": "1.20%",
+    "rfee": "1.50%",
+    "bench": "usIXC",
+    "nav": 2.2309,
+    "nav_date": "2026-03-26",
+    "nav_src": "lsjz",
+    "shares": 1.84,
+    "holdings": [
+      {
+        "code": "XOM",
+        "name": "埃克森美孚",
+        "ratio": 9.33
+      },
+      {
+        "code": "CVX",
+        "name": "雪佛龙",
+        "ratio": 7.87
+      },
+      {
+        "code": "RIGD",
+        "name": "印度瑞来斯实业",
+        "ratio": 5.94
+      },
+      {
+        "code": "SHEL",
+        "name": "壳牌",
+        "ratio": 5.56
+      },
+      {
+        "code": "TTEFP",
+        "name": "道达尔集团",
+        "ratio": 3.71
+      },
+      {
+        "code": "COP",
+        "name": "康菲石油",
+        "ratio": 2.96
+      },
+      {
+        "code": "ENBCN",
+        "name": "Enbridge股份有限公司",
+        "ratio": 2.61
+      },
+      {
+        "code": "BP.",
+        "name": "英国石油",
+        "ratio": 2.36
+      },
+      {
+        "code": "WMB",
+        "name": "威廉姆斯",
+        "ratio": 1.84
+      },
+      {
+        "code": "CNQCN",
+        "name": "加拿大自然资源有限公司",
+        "ratio": 1.78
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-19",
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-25",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        2.175,
+        2.1641,
+        2.1641,
+        2.1641,
+        2.1675,
+        2.2028,
+        2.2015,
+        2.2015,
+        2.2015,
+        2.2015,
+        2.2309,
+        2.2309
+      ],
+      "est": [
+        null,
+        2.161404,
+        2.150572,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        0.001247,
+        0.00629,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "est_nav_yesterday": 2.257248,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "501303": {
+    "code": "501303",
+    "name": "恒生中型股LOF",
+    "tq": "sh501303",
+    "cat": "hk",
+    "quota": "开放",
+    "fee": "1.20%",
+    "rfee": "0.60%",
+    "bench": "hkHSMI",
+    "nav": 1.0311,
+    "nav_date": "2026-03-27",
+    "nav_src": "lsjz",
+    "shares": 0.43,
+    "holdings": [
+      {
+        "code": "09926",
+        "name": "康方生物",
+        "ratio": 2.2
+      },
+      {
+        "code": "03993",
+        "name": "洛阳钼业",
+        "ratio": 1.85
+      },
+      {
+        "code": "00020",
+        "name": "商汤-W",
+        "ratio": 1.85
+      },
+      {
+        "code": "00728",
+        "name": "中国电信",
+        "ratio": 1.81
+      },
+      {
+        "code": "01339",
+        "name": "中国人民保险集团",
+        "ratio": 1.5
+      },
+      {
+        "code": "01336",
+        "name": "新华保险",
+        "ratio": 1.36
+      },
+      {
+        "code": "01818",
+        "name": "招金矿业",
+        "ratio": 1.35
+      },
+      {
+        "code": "01347",
+        "name": "华虹半导体",
+        "ratio": 1.34
+      },
+      {
+        "code": "00300",
+        "name": "美的集团",
+        "ratio": 1.34
+      },
+      {
+        "code": "00788",
+        "name": "中国铁塔",
+        "ratio": 1.31
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-20",
+        "03-23",
+        "03-23",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-27",
+        "03-27"
+      ],
+      "nav": [
+        1.0417,
+        1.0065,
+        1.0065,
+        1.0065,
+        1.0305,
+        1.0419,
+        1.0215,
+        1.0215,
+        1.0215,
+        1.0215,
+        1.0311,
+        1.0311
+      ],
+      "est": [
+        null,
+        1.001074,
+        0.967246,
+        1.016062,
+        1.034179,
+        1.042042,
+        1.016373,
+        1.029059,
+        1.030387,
+        1.030387,
+        1.030387,
+        1.040071
+      ],
+      "drift": [
+        null,
+        0.00542,
+        0.040583,
+        -0.009411,
+        -0.003557,
+        -0.000136,
+        0.005044,
+        -0.007346,
+        -0.008625,
+        -0.008625,
+        0.000692,
+        -0.008625
+      ]
+    },
+    "est_nav_yesterday": 1.040071,
+    "est_nav_date": "2026-03-27",
+    "drift_5d": -0.006506,
+    "drift_n": 5,
+    "drift_computed_at": "2026-03-27T13:04:25+00:00",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "161124": {
+    "code": "161124",
+    "name": "港股小盘LOF",
+    "tq": "sz161124",
+    "cat": "hk",
+    "quota": "限1千",
+    "fee": "1.20%",
+    "rfee": "1.00%",
+    "bench": "hkHSSI",
+    "nav": 1.1113,
+    "nav_date": "2026-03-27",
+    "nav_src": "lsjz",
+    "shares": 0.44,
+    "holdings": [
+      {
+        "code": "01787",
+        "name": "山东黄金",
+        "ratio": 3.02
+      },
+      {
+        "code": "01772",
+        "name": "赣锋锂业",
+        "ratio": 2.02
+      },
+      {
+        "code": "00489",
+        "name": "东风集团股份",
+        "ratio": 1.73
+      },
+      {
+        "code": "02400",
+        "name": "心动公司",
+        "ratio": 1.69
+      },
+      {
+        "code": "06855",
+        "name": "亚盛医药-B",
+        "ratio": 1.37
+      },
+      {
+        "code": "09969",
+        "name": "诺诚健华",
+        "ratio": 1.29
+      },
+      {
+        "code": "03618",
+        "name": "重庆农村商业银行",
+        "ratio": 1.22
+      },
+      {
+        "code": "06682",
+        "name": "范式智能",
+        "ratio": 1.18
+      },
+      {
+        "code": "03931",
+        "name": "中创新航",
+        "ratio": 1.17
+      },
+      {
+        "code": "01070",
+        "name": "TCL电子",
+        "ratio": 1.14
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-20",
+        "03-23",
+        "03-23",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-27",
+        "03-27"
+      ],
+      "nav": [
+        1.0927,
+        1.0609,
+        1.0609,
+        1.0609,
+        1.0916,
+        1.1182,
+        1.099,
+        1.099,
+        1.099,
+        1.099,
+        1.1113,
+        1.1113
+      ],
+      "est": [
+        null,
+        1.056313,
+        1.025572,
+        1.070979,
+        1.09347,
+        1.117798,
+        1.094271,
+        1.11054,
+        1.111748,
+        1.111748,
+        1.111748,
+        1.124191
+      ],
+      "drift": [
+        null,
+        0.004342,
+        0.034447,
+        -0.009411,
+        -0.00171,
+        0.00036,
+        0.004322,
+        -0.010391,
+        -0.011467,
+        -0.011467,
+        -0.000403,
+        -0.011467
+      ]
+    },
+    "est_nav_yesterday": 1.124191,
+    "est_nav_date": "2026-03-27",
+    "drift_5d": -0.009039,
+    "drift_n": 5,
+    "drift_computed_at": "2026-03-27T13:04:25+00:00",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "160322": {
+    "code": "160322",
+    "name": "港股精选LOF",
+    "tq": "sz160322",
+    "cat": "hk",
+    "quota": "开放",
+    "fee": "1.20%",
+    "rfee": "1.50%",
+    "bench": "hkHSCI",
+    "nav": 1.134,
+    "nav_date": "2026-03-27",
+    "nav_src": "lsjz",
+    "shares": 1.13,
+    "holdings": [
+      {
+        "code": "00005",
+        "name": "汇丰控股",
+        "ratio": 9.99
+      },
+      {
+        "code": "00700",
+        "name": "腾讯控股",
+        "ratio": 9.79
+      },
+      {
+        "code": "09988",
+        "name": "阿里巴巴-W",
+        "ratio": 9.03
+      },
+      {
+        "code": "02899",
+        "name": "紫金矿业",
+        "ratio": 4.89
+      },
+      {
+        "code": "01299",
+        "name": "友邦保险",
+        "ratio": 4.55
+      },
+      {
+        "code": "01398",
+        "name": "工商银行",
+        "ratio": 4.5
+      },
+      {
+        "code": "01810",
+        "name": "小米集团-W",
+        "ratio": 4.0
+      },
+      {
+        "code": "00981",
+        "name": "中芯国际",
+        "ratio": 3.85
+      },
+      {
+        "code": "03690",
+        "name": "美团-W",
+        "ratio": 3.18
+      },
+      {
+        "code": "03988",
+        "name": "中国银行",
+        "ratio": 2.94
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-20",
+        "03-23",
+        "03-23",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-27",
+        "03-27"
+      ],
+      "nav": [
+        1.1427,
+        1.1123,
+        1.1123,
+        1.1123,
+        1.1329,
+        1.1504,
+        1.1298,
+        1.1298,
+        1.1298,
+        1.1298,
+        1.134,
+        1.134
+      ],
+      "est": [
+        null,
+        1.102706,
+        1.07337,
+        1.126315,
+        1.144112,
+        1.146042,
+        1.126472,
+        1.13398,
+        1.134658,
+        1.134658,
+        1.134658,
+        1.138876
+      ],
+      "drift": [
+        null,
+        0.0087,
+        0.036269,
+        -0.012443,
+        -0.0098,
+        0.003803,
+        0.002954,
+        -0.003686,
+        -0.004281,
+        -0.004281,
+        -0.00058,
+        -0.004281
+      ]
+    },
+    "est_nav_yesterday": 1.138876,
+    "est_nav_date": "2026-03-27",
+    "drift_5d": -0.003422,
+    "drift_n": 5,
+    "drift_computed_at": "2026-03-27T13:04:25+00:00",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "501021": {
+    "code": "501021",
+    "name": "香港中小LOF",
+    "tq": "sh501021",
+    "cat": "hk",
+    "quota": "暂停",
+    "fee": "1.20%",
+    "rfee": "1.20%",
+    "bench": [
+      {
+        "tq": "hkHSMI",
+        "w": 0.5
+      },
+      {
+        "tq": "hkHSSI",
+        "w": 0.5
+      }
+    ],
+    "nav": 1.4019,
+    "nav_date": "2026-03-27",
+    "nav_src": "lsjz",
+    "shares": 2.34,
+    "holdings": [
+      {
+        "code": "09987",
+        "name": "百胜中国",
+        "ratio": 3.02
+      },
+      {
+        "code": "09868",
+        "name": "小鹏汽车-W",
+        "ratio": 2.64
+      },
+      {
+        "code": "02269",
+        "name": "药明生物",
+        "ratio": 2.54
+      },
+      {
+        "code": "01801",
+        "name": "信达生物",
+        "ratio": 2.46
+      },
+      {
+        "code": "01378",
+        "name": "中国宏桥",
+        "ratio": 2.42
+      },
+      {
+        "code": "09660",
+        "name": "地平线机器人-W",
+        "ratio": 2.11
+      },
+      {
+        "code": "00175",
+        "name": "吉利汽车",
+        "ratio": 2.09
+      },
+      {
+        "code": "02423",
+        "name": "贝壳-W",
+        "ratio": 1.83
+      },
+      {
+        "code": "01109",
+        "name": "华润置地",
+        "ratio": 1.76
+      },
+      {
+        "code": "09926",
+        "name": "康方生物",
+        "ratio": 1.76
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-27",
+        "03-27"
+      ],
+      "nav": [
+        1.4041,
+        1.4041,
+        1.4041,
+        1.3575,
+        1.398,
+        1.4121,
+        1.3815,
+        1.3815,
+        1.3815,
+        1.3815,
+        1.4019,
+        1.4019
+      ],
+      "est": [
+        null,
+        1.353342,
+        1.353342,
+        1.417439,
+        1.397003,
+        1.422605,
+        1.379692,
+        1.393864,
+        1.395522,
+        1.395522,
+        1.395522,
+        1.416129
+      ],
+      "drift": [
+        null,
+        0.037506,
+        0.037506,
+        -0.042287,
+        0.000714,
+        -0.007384,
+        0.00131,
+        -0.00887,
+        -0.010048,
+        -0.010048,
+        0.00457,
+        -0.010048
+      ]
+    },
+    "est_nav_yesterday": 1.416129,
+    "est_nav_date": "2026-03-27",
+    "drift_5d": -0.006889,
+    "drift_n": 5,
+    "drift_computed_at": "2026-03-27T13:04:25+00:00",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "501310": {
+    "code": "501310",
+    "name": "价值基金LOF",
+    "tq": "sh501310",
+    "cat": "cn",
+    "quota": "开放",
+    "fee": "1.20%",
+    "rfee": "0.90%",
+    "bench": [
+      {
+        "tq": "sh000300",
+        "w": 0.5
+      },
+      {
+        "tq": "hkHSCEI",
+        "w": 0.5
+      }
+    ],
+    "nav": 1.348,
+    "nav_date": "2026-03-27",
+    "nav_src": "lsjz",
+    "shares": 0.53,
+    "holdings": [
+      {
+        "code": "02318",
+        "name": "中国平安",
+        "ratio": 5.77
+      },
+      {
+        "code": "00857",
+        "name": "中国石油股份",
+        "ratio": 5.23
+      },
+      {
+        "code": "01398",
+        "name": "工商银行",
+        "ratio": 4.42
+      },
+      {
+        "code": "03988",
+        "name": "中国银行",
+        "ratio": 4.3
+      },
+      {
+        "code": "00939",
+        "name": "建设银行",
+        "ratio": 4.21
+      },
+      {
+        "code": "601668",
+        "name": "中国建筑",
+        "ratio": 3.73
+      },
+      {
+        "code": "02628",
+        "name": "中国人寿",
+        "ratio": 3.62
+      },
+      {
+        "code": "00267",
+        "name": "中信股份",
+        "ratio": 3.44
+      },
+      {
+        "code": "00386",
+        "name": "中国石油化工股份",
+        "ratio": 3.43
+      },
+      {
+        "code": "03328",
+        "name": "交通银行",
+        "ratio": 2.34
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-20",
+        "03-23",
+        "03-23",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-27",
+        "03-27"
+      ],
+      "nav": [
+        1.3608,
+        1.319,
+        1.319,
+        1.319,
+        1.3407,
+        1.3597,
+        1.3459,
+        1.3459,
+        1.3459,
+        1.3459,
+        1.348,
+        1.348
+      ],
+      "est": [
+        null,
+        1.316438,
+        1.276001,
+        1.323616,
+        1.335883,
+        1.35947,
+        1.341752,
+        1.353437,
+        1.353437,
+        1.353437,
+        1.353437,
+        1.355549
+      ],
+      "drift": [
+        null,
+        0.001946,
+        0.033698,
+        -0.003487,
+        0.003606,
+        0.000169,
+        0.003091,
+        -0.005569,
+        -0.005569,
+        -0.005569,
+        -0.004017,
+        -0.005569
+      ]
+    },
+    "est_nav_yesterday": 1.355549,
+    "est_nav_date": "2026-03-27",
+    "drift_5d": -0.005259,
+    "drift_n": 5,
+    "drift_computed_at": "2026-03-27T13:04:25+00:00",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "501302": {
+    "code": "501302",
+    "name": "恒生指数基金LOF",
+    "tq": "sh501302",
+    "cat": "hk",
+    "quota": "开放",
+    "fee": "1.20%",
+    "rfee": "0.60%",
+    "bench": "hkHSI",
+    "nav": 1.1532,
+    "nav_date": "2026-03-27",
+    "nav_src": "lsjz",
+    "shares": 2.07,
+    "holdings": null,
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-27",
+        "03-27"
+      ],
+      "nav": [
+        1.1621,
+        1.1621,
+        1.1621,
+        1.1258,
+        1.155,
+        1.1681,
+        1.1491,
+        1.1491,
+        1.1491,
+        1.1491,
+        1.1532,
+        1.1532
+      ],
+      "est": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  },
+  "501307": {
+    "code": "501307",
+    "name": "银河高股息LOF",
+    "tq": "sh501307",
+    "cat": "hk",
+    "quota": "开放",
+    "fee": "1.00%",
+    "rfee": "0.68%",
+    "bench": "csi930917",
+    "nav": 1.293,
+    "nav_date": "2026-03-27",
+    "nav_src": "lsjz",
+    "shares": 0.43,
+    "holdings": [
+      {
+        "code": "01919",
+        "name": "中远海控",
+        "ratio": 3.02
+      },
+      {
+        "code": "03668",
+        "name": "兖煤澳大利亚",
+        "ratio": 1.86
+      },
+      {
+        "code": "00639",
+        "name": "首钢资源",
+        "ratio": 1.5
+      },
+      {
+        "code": "000937",
+        "name": "冀中能源",
+        "ratio": 1.4
+      },
+      {
+        "code": "01308",
+        "name": "海丰国际",
+        "ratio": 1.4
+      },
+      {
+        "code": "00316",
+        "name": "东方海外国际",
+        "ratio": 1.33
+      },
+      {
+        "code": "01088",
+        "name": "中国神华",
+        "ratio": 1.25
+      },
+      {
+        "code": "03360",
+        "name": "远东宏信",
+        "ratio": 1.22
+      },
+      {
+        "code": "600256",
+        "name": "广汇能源",
+        "ratio": 1.18
+      },
+      {
+        "code": "00303",
+        "name": "VTECH HOLDINGS",
+        "ratio": 1.14
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-27",
+        "03-27"
+      ],
+      "nav": [
+        1.3015,
+        1.3015,
+        1.3015,
+        1.2727,
+        1.29,
+        1.2974,
+        1.2895,
+        1.2895,
+        1.2895,
+        1.2895,
+        1.293,
+        1.293
+      ],
+      "est": [
+        null,
+        1.271956,
+        1.271956,
+        1.311131,
+        1.289245,
+        1.299675,
+        1.28728,
+        1.292853,
+        1.293111,
+        1.293111,
+        1.293111,
+        1.29662
+      ],
+      "drift": [
+        null,
+        0.023227,
+        0.023227,
+        -0.029311,
+        0.000586,
+        -0.00175,
+        0.001725,
+        -0.002593,
+        -0.002792,
+        -0.002792,
+        -8.6e-05,
+        -0.002792
+      ]
+    },
+    "est_nav_yesterday": 1.29662,
+    "est_nav_date": "2026-03-27",
+    "drift_5d": -0.002211,
+    "drift_n": 5,
+    "drift_computed_at": "2026-03-27T13:04:25+00:00",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "501306": {
+    "code": "501306",
+    "name": "港股高股息LOFC",
+    "tq": "sh501306",
+    "cat": "hk",
+    "quota": "开放",
+    "fee": "0.00%",
+    "rfee": "0.60%",
+    "bench": "csi930914",
+    "nav": 1.2743,
+    "nav_date": "2026-03-27",
+    "nav_src": "lsjz",
+    "shares": 5.46,
+    "holdings": [
+      {
+        "code": "00316",
+        "name": "东方海外国际",
+        "ratio": 6.84
+      },
+      {
+        "code": "01308",
+        "name": "海丰国际",
+        "ratio": 4.08
+      },
+      {
+        "code": "01088",
+        "name": "中国神华",
+        "ratio": 3.63
+      },
+      {
+        "code": "01378",
+        "name": "中国宏桥",
+        "ratio": 3.3
+      },
+      {
+        "code": "00883",
+        "name": "中国海洋石油",
+        "ratio": 2.85
+      },
+      {
+        "code": "00857",
+        "name": "中国石油股份",
+        "ratio": 2.79
+      },
+      {
+        "code": "00386",
+        "name": "中国石油化工股份",
+        "ratio": 2.64
+      },
+      {
+        "code": "00998",
+        "name": "中信银行",
+        "ratio": 2.61
+      },
+      {
+        "code": "02343",
+        "name": "太平洋航运",
+        "ratio": 2.34
+      },
+      {
+        "code": "03988",
+        "name": "中国银行",
+        "ratio": 2.31
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2024-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-27",
+        "03-27"
+      ],
+      "nav": [
+        1.2758,
+        1.2758,
+        1.2758,
+        1.2476,
+        1.2643,
+        1.272,
+        1.2674,
+        1.2674,
+        1.2674,
+        1.2674,
+        1.2743,
+        1.2743
+      ],
+      "est": [
+        null,
+        1.242629,
+        1.242629,
+        1.284986,
+        1.267063,
+        1.271633,
+        1.263223,
+        1.273864,
+        1.274878,
+        1.274878,
+        1.274878,
+        1.281818
+      ],
+      "drift": [
+        null,
+        0.026694,
+        0.026694,
+        -0.029094,
+        -0.002181,
+        0.000289,
+        0.003307,
+        -0.005074,
+        -0.005866,
+        -0.005866,
+        -0.000453,
+        -0.005865
+      ]
+    },
+    "est_nav_yesterday": 1.281818,
+    "est_nav_date": "2026-03-27",
+    "drift_5d": -0.004625,
+    "drift_n": 5,
+    "drift_computed_at": "2026-03-27T13:04:25+00:00",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "160717": {
+    "code": "160717",
+    "name": "H股LOF",
+    "tq": "sz160717",
+    "cat": "hk",
+    "quota": "开放",
+    "fee": "1.20%",
+    "rfee": "0.95%",
+    "bench": "hkHSCEI",
+    "nav": 0.7298,
+    "nav_date": "2026-03-26",
+    "nav_src": "fundgz",
+    "shares": 3.1,
+    "holdings": [
+      {
+        "code": "00700",
+        "name": "腾讯控股",
+        "ratio": 7.45
+      },
+      {
+        "code": "09988",
+        "name": "阿里巴巴-W",
+        "ratio": 6.98
+      },
+      {
+        "code": "00939",
+        "name": "建设银行",
+        "ratio": 6.28
+      },
+      {
+        "code": "01810",
+        "name": "小米集团-W",
+        "ratio": 6.08
+      },
+      {
+        "code": "03690",
+        "name": "美团-W",
+        "ratio": 4.83
+      },
+      {
+        "code": "01398",
+        "name": "工商银行",
+        "ratio": 4.41
+      },
+      {
+        "code": "00941",
+        "name": "中国移动",
+        "ratio": 4.32
+      },
+      {
+        "code": "02318",
+        "name": "中国平安",
+        "ratio": 3.72
+      },
+      {
+        "code": "01211",
+        "name": "比亚迪股份",
+        "ratio": 2.99
+      },
+      {
+        "code": "00883",
+        "name": "中国海洋石油",
+        "ratio": 2.82
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26"
+      ],
+      "nav": [
+        0.7411,
+        0.7411,
+        0.7411,
+        0.7208,
+        0.736,
+        0.7436,
+        0.7298,
+        0.7298,
+        0.7298,
+        0.7298,
+        0.7298,
+        0.7298
+      ],
+      "est": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  },
+  "501311": {
+    "code": "501311",
+    "name": "新经济港通LOF",
+    "tq": "sh501311",
+    "cat": "hk",
+    "quota": "开放",
+    "fee": "1.20%",
+    "rfee": "0.90%",
+    "bench": "hkHSTECH",
+    "nav": 0.9914,
+    "nav_date": "2026-03-27",
+    "nav_src": "lsjz",
+    "shares": 11.91,
+    "holdings": [
+      {
+        "code": "00700",
+        "name": "腾讯控股",
+        "ratio": 14.15
+      },
+      {
+        "code": "09988",
+        "name": "阿里巴巴-W",
+        "ratio": 13.25
+      },
+      {
+        "code": "01810",
+        "name": "小米集团-W",
+        "ratio": 12.1
+      },
+      {
+        "code": "03690",
+        "name": "美团-W",
+        "ratio": 9.6
+      },
+      {
+        "code": "01211",
+        "name": "比亚迪股份",
+        "ratio": 5.93
+      },
+      {
+        "code": "00981",
+        "name": "中芯国际",
+        "ratio": 5.43
+      },
+      {
+        "code": "06160",
+        "name": "百济神州",
+        "ratio": 3.67
+      },
+      {
+        "code": "01024",
+        "name": "快手-W",
+        "ratio": 3.27
+      },
+      {
+        "code": "00669",
+        "name": "创科实业",
+        "ratio": 2.22
+      },
+      {
+        "code": "09868",
+        "name": "小鹏汽车-W",
+        "ratio": 2.18
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-27"
+      ],
+      "nav": [
+        0.9913,
+        0.9913,
+        0.9913,
+        0.9642,
+        0.9912,
+        1.0104,
+        0.9819,
+        0.9819,
+        0.9819,
+        0.9819,
+        0.9819,
+        0.9914
+      ],
+      "est": [
+        null,
+        null,
+        0.958785,
+        0.996554,
+        0.988401,
+        1.010132,
+        0.977259,
+        0.985337,
+        0.985337,
+        0.985337,
+        null,
+        0.985337
+      ],
+      "drift": [
+        null,
+        null,
+        0.033913,
+        -0.032466,
+        0.002832,
+        0.000265,
+        0.004749,
+        -0.003488,
+        -0.003488,
+        -0.003488,
+        null,
+        0.006153
+      ]
+    },
+    "est_nav_yesterday": 0.99487,
+    "est_nav_date": "2026-03-27",
+    "drift_5d": 8.8e-05,
+    "drift_n": 5,
+    "drift_computed_at": "2026-03-27T13:04:25+00:00",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "501301": {
+    "code": "501301",
+    "name": "香港大盘LOF",
+    "tq": "sh501301",
+    "cat": "hk",
+    "quota": "开放",
+    "fee": "1.20%",
+    "rfee": "0.90%",
+    "bench": "hkHSCEI",
+    "nav": 1.2499,
+    "nav_date": "2026-03-27",
+    "nav_src": "lsjz",
+    "shares": 0.97,
+    "holdings": [
+      {
+        "code": "09988",
+        "name": "阿里巴巴-W",
+        "ratio": 16.21
+      },
+      {
+        "code": "00700",
+        "name": "腾讯控股",
+        "ratio": 14.73
+      },
+      {
+        "code": "00939",
+        "name": "建设银行",
+        "ratio": 7.63
+      },
+      {
+        "code": "01810",
+        "name": "小米集团-W",
+        "ratio": 6.61
+      },
+      {
+        "code": "03690",
+        "name": "美团-W",
+        "ratio": 4.75
+      },
+      {
+        "code": "00941",
+        "name": "中国移动",
+        "ratio": 4.66
+      },
+      {
+        "code": "01398",
+        "name": "工商银行",
+        "ratio": 4.53
+      },
+      {
+        "code": "02318",
+        "name": "中国平安",
+        "ratio": 3.37
+      },
+      {
+        "code": "01211",
+        "name": "比亚迪股份",
+        "ratio": 3.16
+      },
+      {
+        "code": "00883",
+        "name": "中国海洋石油",
+        "ratio": 2.95
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-27",
+        "03-27"
+      ],
+      "nav": [
+        1.2605,
+        1.2605,
+        1.2605,
+        1.2289,
+        1.2549,
+        1.2682,
+        1.2439,
+        1.2439,
+        1.2439,
+        1.2439,
+        1.2499,
+        1.2499
+      ],
+      "est": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  },
+  "164705": {
+    "code": "164705",
+    "name": "恒生LOF",
+    "tq": "sz164705",
+    "cat": "hk",
+    "quota": "开放",
+    "fee": "1.20%",
+    "rfee": "1.00%",
+    "bench": "hkHSI",
+    "nav": 1.1316,
+    "nav_date": "2026-03-27",
+    "nav_src": "lsjz",
+    "shares": 2.81,
+    "holdings": [
+      {
+        "code": "00005",
+        "name": "汇丰控股",
+        "ratio": 8.45
+      },
+      {
+        "code": "00700",
+        "name": "腾讯控股",
+        "ratio": 7.43
+      },
+      {
+        "code": "09988",
+        "name": "阿里巴巴-W",
+        "ratio": 6.97
+      },
+      {
+        "code": "01299",
+        "name": "友邦保险",
+        "ratio": 4.93
+      },
+      {
+        "code": "00939",
+        "name": "建设银行",
+        "ratio": 4.34
+      },
+      {
+        "code": "01810",
+        "name": "小米集团-W",
+        "ratio": 4.2
+      },
+      {
+        "code": "03690",
+        "name": "美团-W",
+        "ratio": 3.34
+      },
+      {
+        "code": "01398",
+        "name": "工商银行",
+        "ratio": 3.04
+      },
+      {
+        "code": "00941",
+        "name": "中国移动",
+        "ratio": 2.98
+      },
+      {
+        "code": "00388",
+        "name": "香港交易所",
+        "ratio": 2.88
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-20",
+        "03-23",
+        "03-23",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-27",
+        "03-27"
+      ],
+      "nav": [
+        1.1403,
+        1.1044,
+        1.1044,
+        1.1044,
+        1.1323,
+        1.1449,
+        1.1275,
+        1.1275,
+        1.1275,
+        1.1275,
+        1.1316,
+        1.1316
+      ],
+      "est": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  },
+  "161831": {
+    "code": "161831",
+    "name": "恒生国企LOF",
+    "tq": "sz161831",
+    "cat": "hk",
+    "quota": "开放",
+    "fee": "1.20%",
+    "rfee": "1.20%",
+    "bench": "hkHSCEI",
+    "nav": 0.7504,
+    "nav_date": "2026-03-27",
+    "nav_src": "lsjz",
+    "shares": 2.74,
+    "holdings": [
+      {
+        "code": "00700",
+        "name": "腾讯控股",
+        "ratio": 7.75
+      },
+      {
+        "code": "09988",
+        "name": "阿里巴巴-W",
+        "ratio": 7.26
+      },
+      {
+        "code": "01810",
+        "name": "小米集团-W",
+        "ratio": 6.33
+      },
+      {
+        "code": "03690",
+        "name": "美团-W",
+        "ratio": 5.03
+      },
+      {
+        "code": "01398",
+        "name": "工商银行",
+        "ratio": 4.59
+      },
+      {
+        "code": "02318",
+        "name": "中国平安",
+        "ratio": 3.86
+      },
+      {
+        "code": "01211",
+        "name": "比亚迪股份",
+        "ratio": 3.11
+      },
+      {
+        "code": "00883",
+        "name": "中国海洋石油",
+        "ratio": 2.94
+      },
+      {
+        "code": "00981",
+        "name": "中芯国际",
+        "ratio": 2.84
+      },
+      {
+        "code": "03988",
+        "name": "中国银行",
+        "ratio": 2.8
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-27",
+        "03-27"
+      ],
+      "nav": [
+        0.7583,
+        0.7583,
+        0.7366,
+        0.7366,
+        0.7527,
+        0.7613,
+        0.745,
+        0.745,
+        0.745,
+        0.745,
+        0.7504,
+        0.7504
+      ],
+      "est": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  },
+  "501305": {
+    "code": "501305",
+    "name": "港股高股息LOF",
+    "tq": "sh501305",
+    "cat": "hk",
+    "quota": "开放",
+    "fee": "1.20%",
+    "rfee": "0.60%",
+    "bench": "csi930914",
+    "nav": 1.3185,
+    "nav_date": "2026-03-27",
+    "nav_src": "lsjz",
+    "shares": 4.72,
+    "holdings": [
+      {
+        "code": "00316",
+        "name": "东方海外国际",
+        "ratio": 6.84
+      },
+      {
+        "code": "01308",
+        "name": "海丰国际",
+        "ratio": 4.08
+      },
+      {
+        "code": "01088",
+        "name": "中国神华",
+        "ratio": 3.63
+      },
+      {
+        "code": "01378",
+        "name": "中国宏桥",
+        "ratio": 3.3
+      },
+      {
+        "code": "00883",
+        "name": "中国海洋石油",
+        "ratio": 2.85
+      },
+      {
+        "code": "00857",
+        "name": "中国石油股份",
+        "ratio": 2.79
+      },
+      {
+        "code": "00386",
+        "name": "中国石油化工股份",
+        "ratio": 2.64
+      },
+      {
+        "code": "00998",
+        "name": "中信银行",
+        "ratio": 2.61
+      },
+      {
+        "code": "02343",
+        "name": "太平洋航运",
+        "ratio": 2.34
+      },
+      {
+        "code": "03988",
+        "name": "中国银行",
+        "ratio": 2.31
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2024-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-27",
+        "03-27"
+      ],
+      "nav": [
+        1.3199,
+        1.3199,
+        1.3199,
+        1.2908,
+        1.3081,
+        1.3161,
+        1.3114,
+        1.3114,
+        1.3114,
+        1.3114,
+        1.3185,
+        1.3185
+      ],
+      "est": [
+        null,
+        1.285583,
+        1.285583,
+        1.329403,
+        1.310936,
+        1.315687,
+        1.307019,
+        1.318088,
+        1.319137,
+        1.319137,
+        1.319137,
+        1.326279
+      ],
+      "drift": [
+        null,
+        0.026694,
+        0.026694,
+        -0.029038,
+        -0.002163,
+        0.000314,
+        0.003352,
+        -0.005074,
+        -0.005865,
+        -0.005865,
+        -0.000483,
+        -0.005865
+      ]
+    },
+    "est_nav_yesterday": 1.326279,
+    "est_nav_date": "2026-03-27",
+    "drift_5d": -0.00463,
+    "drift_n": 5,
+    "drift_computed_at": "2026-03-27T13:04:25+00:00",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "160924": {
+    "code": "160924",
+    "name": "恒生指数LOF",
+    "tq": "sz160924",
+    "cat": "hk",
+    "quota": "开放",
+    "fee": "1.20%",
+    "rfee": "1.20%",
+    "bench": "hkHSI",
+    "nav": 1.0033,
+    "nav_date": "2026-03-27",
+    "nav_src": "lsjz",
+    "shares": 1.24,
+    "holdings": [
+      {
+        "code": "00005",
+        "name": "汇丰控股",
+        "ratio": 7.87
+      },
+      {
+        "code": "00700",
+        "name": "腾讯控股",
+        "ratio": 6.9
+      },
+      {
+        "code": "09988",
+        "name": "阿里巴巴-W",
+        "ratio": 6.48
+      },
+      {
+        "code": "00939",
+        "name": "建设银行",
+        "ratio": 5.15
+      },
+      {
+        "code": "01299",
+        "name": "友邦保险",
+        "ratio": 4.58
+      },
+      {
+        "code": "01810",
+        "name": "小米集团-W",
+        "ratio": 3.93
+      },
+      {
+        "code": "03690",
+        "name": "美团-W",
+        "ratio": 3.13
+      },
+      {
+        "code": "00941",
+        "name": "中国移动",
+        "ratio": 2.79
+      },
+      {
+        "code": "00388",
+        "name": "香港交易所",
+        "ratio": 2.71
+      },
+      {
+        "code": "03988",
+        "name": "中国银行",
+        "ratio": 2.52
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-20",
+        "03-23",
+        "03-23",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-27",
+        "03-27"
+      ],
+      "nav": [
+        1.0115,
+        0.9794,
+        0.9794,
+        0.9794,
+        1.0041,
+        1.0157,
+        0.9998,
+        0.9998,
+        0.9998,
+        0.9998,
+        1.0033,
+        1.0033
+      ],
+      "est": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  },
+  "501025": {
+    "code": "501025",
+    "name": "香港银行LOF",
+    "tq": "sh501025",
+    "cat": "hk",
+    "quota": "开放",
+    "fee": "1.20%",
+    "rfee": "0.90%",
+    "bench": "csi930792",
+    "nav": 1.6428,
+    "nav_date": "2026-03-27",
+    "nav_src": "lsjz",
+    "shares": 5.47,
+    "holdings": [
+      {
+        "code": "00005",
+        "name": "汇丰控股",
+        "ratio": 15.27
+      },
+      {
+        "code": "00939",
+        "name": "建设银行",
+        "ratio": 13.66
+      },
+      {
+        "code": "01398",
+        "name": "工商银行",
+        "ratio": 11.57
+      },
+      {
+        "code": "02888",
+        "name": "渣打集团",
+        "ratio": 9.09
+      },
+      {
+        "code": "03968",
+        "name": "招商银行",
+        "ratio": 8.01
+      },
+      {
+        "code": "03988",
+        "name": "中国银行",
+        "ratio": 7.91
+      },
+      {
+        "code": "01288",
+        "name": "农业银行",
+        "ratio": 6.39
+      },
+      {
+        "code": "02388",
+        "name": "中银香港",
+        "ratio": 5.99
+      },
+      {
+        "code": "00011",
+        "name": "恒生银行",
+        "ratio": 4.13
+      },
+      {
+        "code": "03328",
+        "name": "交通银行",
+        "ratio": 4.06
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-27",
+        "03-27"
+      ],
+      "nav": [
+        1.624,
+        1.624,
+        1.624,
+        1.5744,
+        1.617,
+        1.6427,
+        1.6402,
+        1.6402,
+        1.6402,
+        1.6402,
+        1.6428,
+        1.6428
+      ],
+      "est": [
+        null,
+        1.568297,
+        1.568297,
+        1.645924,
+        1.621002,
+        1.642872,
+        1.635144,
+        1.643152,
+        1.642824,
+        1.642824,
+        1.642824,
+        1.645428
+      ],
+      "drift": [
+        null,
+        0.035518,
+        0.035518,
+        -0.043455,
+        -0.002469,
+        -0.000105,
+        0.003092,
+        -0.001797,
+        -0.001597,
+        -0.001597,
+        -1.5e-05,
+        -0.001597
+      ]
+    },
+    "est_nav_yesterday": 1.645428,
+    "est_nav_date": "2026-03-27",
+    "drift_5d": -0.001321,
+    "drift_n": 5,
+    "drift_computed_at": "2026-03-27T13:04:25+00:00",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "161226": {
+    "code": "161226",
+    "name": "国投白银LOF",
+    "tq": "sz161226",
+    "cat": "cm",
+    "quota": "暂停",
+    "fee": "1.50%",
+    "rfee": "0.50%",
+    "bench": "sinaAG0",
+    "nav": 1.9501,
+    "nav_date": "2026-03-27",
+    "nav_src": "lsjz",
+    "shares": 51.41,
+    "holdings": null,
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "history": {
+      "date": [
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-27",
+        "03-27"
+      ],
+      "nav": [
+        1.9754,
+        1.9754,
+        1.9754,
+        1.8832,
+        1.9115,
+        1.9913,
+        2.0197,
+        2.0197,
+        2.0197,
+        2.0197,
+        1.9501,
+        1.9501
+      ],
+      "est": [
+        null,
+        null,
+        null,
+        1.744778,
+        1.930092,
+        2.046171,
+        1.97435,
+        2.002508,
+        null,
+        null,
+        1.978518,
+        1.910337
+      ],
+      "drift": [
+        null,
+        null,
+        null,
+        0.079335,
+        -0.009633,
+        -0.026816,
+        0.02297,
+        0.008585,
+        null,
+        null,
+        -0.014363,
+        0.020815
+      ]
+    },
+    "est_nav_yesterday": 1.910337,
+    "est_nav_date": "2026-03-27",
+    "est_nav_index_date": "2026-03-27",
+    "drift_5d": 0.002238,
+    "drift_n": 5,
+    "drift_computed_at": "2026-03-27T13:04:25+00:00"
+  },
+  "161217": {
+    "code": "161217",
+    "name": "国投上游资源LOF",
+    "tq": "sz161217",
+    "cat": "cn",
+    "quota": "开放",
+    "fee": "1.50%",
+    "rfee": "0.50%",
+    "bench": "sz399961",
+    "nav": 2.3165,
+    "nav_date": "2026-03-27",
+    "nav_src": "lsjz",
+    "shares": 1.49,
+    "holdings": [
+      {
+        "code": "601899",
+        "name": "紫金矿业",
+        "ratio": 17.76
+      },
+      {
+        "code": "603993",
+        "name": "洛阳钼业",
+        "ratio": 5.28
+      },
+      {
+        "code": "601088",
+        "name": "中国神华",
+        "ratio": 4.18
+      },
+      {
+        "code": "600111",
+        "name": "北方稀土",
+        "ratio": 3.74
+      },
+      {
+        "code": "601857",
+        "name": "中国石油",
+        "ratio": 3.69
+      },
+      {
+        "code": "603799",
+        "name": "华友钴业",
+        "ratio": 3.31
+      },
+      {
+        "code": "601600",
+        "name": "中国铝业",
+        "ratio": 3.05
+      },
+      {
+        "code": "600028",
+        "name": "中国石化",
+        "ratio": 2.82
+      },
+      {
+        "code": "601225",
+        "name": "陕西煤业",
+        "ratio": 2.61
+      },
+      {
+        "code": "002460",
+        "name": "赣锋锂业",
+        "ratio": 2.27
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-20",
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-27",
+        "03-27"
+      ],
+      "nav": [
+        2.2938,
+        2.2938,
+        2.2938,
+        2.2292,
+        2.2712,
+        2.3087,
+        2.2797,
+        2.2797,
+        2.2797,
+        2.2797,
+        2.3165,
+        2.3165
+      ],
+      "est": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  },
+  "161715": {
+    "code": "161715",
+    "name": "招商大宗商品LOF",
+    "tq": "sz161715",
+    "cat": "cn",
+    "quota": "开放",
+    "fee": "1.50%",
+    "rfee": "0.50%",
+    "bench": "sz399979",
+    "nav": 2.3894,
+    "nav_date": "2026-03-27",
+    "nav_src": "lsjz",
+    "shares": 1.45,
+    "holdings": [
+      {
+        "code": "300395",
+        "name": "菲利华",
+        "ratio": 1.11
+      },
+      {
+        "code": "600362",
+        "name": "江西铜业",
+        "ratio": 1.1
+      },
+      {
+        "code": "002493",
+        "name": "荣盛石化",
+        "ratio": 1.09
+      },
+      {
+        "code": "000408",
+        "name": "藏格矿业",
+        "ratio": 1.09
+      },
+      {
+        "code": "002738",
+        "name": "中矿资源",
+        "ratio": 1.07
+      },
+      {
+        "code": "600346",
+        "name": "恒力石化",
+        "ratio": 1.07
+      },
+      {
+        "code": "002756",
+        "name": "永兴材料",
+        "ratio": 1.06
+      },
+      {
+        "code": "002318",
+        "name": "久立特材",
+        "ratio": 1.05
+      },
+      {
+        "code": "000807",
+        "name": "云铝股份",
+        "ratio": 1.04
+      },
+      {
+        "code": "000301",
+        "name": "东方盛虹",
+        "ratio": 1.04
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-20",
+        "03-23",
+        "03-23",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-27",
+        "03-27"
+      ],
+      "nav": [
+        2.3689,
+        2.3036,
+        2.3036,
+        2.3036,
+        2.3329,
+        2.3624,
+        2.343,
+        2.343,
+        2.343,
+        2.343,
+        2.3894,
+        2.3894
+      ],
+      "est": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "drift": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  },
+  "161725": {
+    "code": "161725",
+    "name": "招商中证白酒LOF",
+    "tq": "sz161725",
+    "cat": "cn",
+    "quota": "开放",
+    "fee": "1.50%",
+    "rfee": "0.50%",
+    "bench": "sz399987",
+    "nav": 0.6394,
+    "nav_date": "2026-03-27",
+    "nav_src": "lsjz",
+    "shares": 401.42,
+    "holdings": [
+      {
+        "code": "600519",
+        "name": "贵州茅台",
+        "ratio": 15.38
+      },
+      {
+        "code": "600809",
+        "name": "山西汾酒",
+        "ratio": 15.11
+      },
+      {
+        "code": "000858",
+        "name": "五粮液",
+        "ratio": 14.65
+      },
+      {
+        "code": "000568",
+        "name": "泸州老窖",
+        "ratio": 14.53
+      },
+      {
+        "code": "002304",
+        "name": "洋河股份",
+        "ratio": 8.34
+      },
+      {
+        "code": "000596",
+        "name": "古井贡酒",
+        "ratio": 5.14
+      },
+      {
+        "code": "603369",
+        "name": "今世缘",
+        "ratio": 4.97
+      },
+      {
+        "code": "603198",
+        "name": "迎驾贡酒",
+        "ratio": 2.47
+      },
+      {
+        "code": "600702",
+        "name": "舍得酒业",
+        "ratio": 2.14
+      },
+      {
+        "code": "603589",
+        "name": "口子窖",
+        "ratio": 2.06
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-20",
+        "03-20",
+        "03-23",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-27",
+        "03-27"
+      ],
+      "nav": [
+        0.6519,
+        0.6519,
+        0.6325,
+        0.6325,
+        0.6378,
+        0.6405,
+        0.6318,
+        0.6318,
+        0.6318,
+        0.6318,
+        0.6394,
+        0.6394
+      ],
+      "est": [
+        null,
+        0.630127,
+        0.630127,
+        0.636801,
+        0.639964,
+        0.641691,
+        0.631789,
+        0.640013,
+        0.640013,
+        0.640013,
+        0.640013,
+        0.647712
+      ],
+      "drift": [
+        null,
+        0.034553,
+        0.003766,
+        -0.006754,
+        -0.003381,
+        -0.001856,
+        1.7e-05,
+        -0.012833,
+        -0.012833,
+        -0.012833,
+        -0.000958,
+        -0.012833
+      ]
+    },
+    "est_nav_yesterday": 0.647712,
+    "est_nav_date": "2026-03-27",
+    "drift_5d": -0.010458,
+    "drift_n": 5,
+    "drift_computed_at": "2026-03-27T13:04:25+00:00",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "161032": {
+    "code": "161032",
+    "name": "富国中证煤炭LOF",
+    "tq": "sz161032",
+    "cat": "cn",
+    "quota": "开放",
+    "fee": "1.50%",
+    "rfee": "0.50%",
+    "bench": "sz399998",
+    "nav": 2.324,
+    "nav_date": "2026-03-27",
+    "nav_src": "lsjz",
+    "shares": 3.06,
+    "holdings": [
+      {
+        "code": "601088",
+        "name": "中国神华",
+        "ratio": 9.71
+      },
+      {
+        "code": "601225",
+        "name": "陕西煤业",
+        "ratio": 9.38
+      },
+      {
+        "code": "600188",
+        "name": "兖矿能源",
+        "ratio": 7.67
+      },
+      {
+        "code": "601898",
+        "name": "中煤能源",
+        "ratio": 7.43
+      },
+      {
+        "code": "000983",
+        "name": "山西焦煤",
+        "ratio": 5.94
+      },
+      {
+        "code": "600348",
+        "name": "华阳股份",
+        "ratio": 4.86
+      },
+      {
+        "code": "000723",
+        "name": "美锦能源",
+        "ratio": 4.73
+      },
+      {
+        "code": "601699",
+        "name": "潞安环能",
+        "ratio": 4.61
+      },
+      {
+        "code": "600985",
+        "name": "淮北矿业",
+        "ratio": 3.9
+      },
+      {
+        "code": "601666",
+        "name": "平煤股份",
+        "ratio": 3.8
+      }
+    ],
+    "nav_fetch_time": "2026-03-27T12:49:21+00:00",
+    "nav_consecutive_fails": 0,
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-27T12:49:21+00:00",
+    "history": {
+      "date": [
+        "03-20",
+        "03-23",
+        "03-23",
+        "03-23",
+        "03-24",
+        "03-25",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-26",
+        "03-27",
+        "03-27"
+      ],
+      "nav": [
+        2.333,
+        2.349,
+        2.349,
+        2.349,
+        2.342,
+        2.308,
+        2.333,
+        2.333,
+        2.333,
+        2.333,
+        2.324,
+        2.324
+      ],
+      "est": [
+        null,
+        2.350498,
+        2.366618,
+        2.325275,
+        2.340779,
+        2.305465,
+        2.334542,
+        2.322968,
+        2.322968,
+        2.322968,
+        2.322968,
+        2.314007
+      ],
+      "drift": [
+        null,
+        -0.000637,
+        -0.007444,
+        0.010203,
+        0.000522,
+        0.0011,
+        -0.000661,
+        0.004319,
+        0.004319,
+        0.004319,
+        0.000444,
+        0.004318
+      ]
+    },
+    "est_nav_yesterday": 2.314007,
+    "est_nav_date": "2026-03-27",
+    "drift_5d": 0.003544,
+    "drift_n": 5,
+    "drift_computed_at": "2026-03-27T13:04:25+00:00",
+    "est_nav_index_date": "2026-03-27"
+  },
+  "_meta": {
+    "sync_time": "2026-03-27T13:05:29+00:00",
+    "data_date": "2026-03-27",
+    "nav_ok": 47,
+    "nav_kept": 0,
+    "hold_ok": 31,
+    "total": 47,
+    "trading_dates": [
+      "2026-01-04",
+      "2026-01-05",
+      "2026-01-06",
+      "2026-01-07",
+      "2026-01-08",
+      "2026-01-09",
+      "2026-01-12",
+      "2026-01-13",
+      "2026-01-14",
+      "2026-01-15",
+      "2026-01-16",
+      "2026-01-19",
+      "2026-01-20",
+      "2026-01-21",
+      "2026-01-22",
+      "2026-01-23",
+      "2026-01-26",
+      "2026-01-27",
+      "2026-01-28",
+      "2026-01-29",
+      "2026-01-30",
+      "2026-02-02",
+      "2026-02-03",
+      "2026-02-04",
+      "2026-02-05",
+      "2026-02-06",
+      "2026-02-09",
+      "2026-02-10",
+      "2026-02-11",
+      "2026-02-12",
+      "2026-02-13",
+      "2026-02-14",
+      "2026-02-24",
+      "2026-02-25",
+      "2026-02-26",
+      "2026-02-27",
+      "2026-02-28",
+      "2026-03-02",
+      "2026-03-03",
+      "2026-03-04",
+      "2026-03-05",
+      "2026-03-06",
+      "2026-03-09",
+      "2026-03-10",
+      "2026-03-11",
+      "2026-03-12",
+      "2026-03-13",
+      "2026-03-16",
+      "2026-03-17",
+      "2026-03-18",
+      "2026-03-19",
+      "2026-03-20",
+      "2026-03-23",
+      "2026-03-24",
+      "2026-03-25",
+      "2026-03-26",
+      "2026-03-27",
+      "2026-03-30",
+      "2026-03-31",
+      "2026-04-01",
+      "2026-04-02",
+      "2026-04-03",
+      "2026-04-07",
+      "2026-04-08",
+      "2026-04-09",
+      "2026-04-10",
+      "2026-04-13",
+      "2026-04-14",
+      "2026-04-15",
+      "2026-04-16",
+      "2026-04-17",
+      "2026-04-20",
+      "2026-04-21",
+      "2026-04-22",
+      "2026-04-23",
+      "2026-04-24",
+      "2026-04-27",
+      "2026-04-28",
+      "2026-04-29",
+      "2026-04-30",
+      "2026-05-06",
+      "2026-05-07",
+      "2026-05-08",
+      "2026-05-09",
+      "2026-05-11",
+      "2026-05-12",
+      "2026-05-13",
+      "2026-05-14",
+      "2026-05-15",
+      "2026-05-18",
+      "2026-05-19",
+      "2026-05-20",
+      "2026-05-21",
+      "2026-05-22",
+      "2026-05-25",
+      "2026-05-26",
+      "2026-05-27",
+      "2026-05-28",
+      "2026-05-29",
+      "2026-06-01",
+      "2026-06-02",
+      "2026-06-03",
+      "2026-06-04",
+      "2026-06-05",
+      "2026-06-08",
+      "2026-06-09",
+      "2026-06-10",
+      "2026-06-11",
+      "2026-06-12",
+      "2026-06-15",
+      "2026-06-16",
+      "2026-06-17",
+      "2026-06-18",
+      "2026-06-22",
+      "2026-06-23",
+      "2026-06-24",
+      "2026-06-25",
+      "2026-06-26",
+      "2026-06-29",
+      "2026-06-30",
+      "2026-07-01",
+      "2026-07-02",
+      "2026-07-03",
+      "2026-07-06",
+      "2026-07-07",
+      "2026-07-08",
+      "2026-07-09",
+      "2026-07-10",
+      "2026-07-13",
+      "2026-07-14",
+      "2026-07-15",
+      "2026-07-16",
+      "2026-07-17",
+      "2026-07-20",
+      "2026-07-21",
+      "2026-07-22",
+      "2026-07-23",
+      "2026-07-24",
+      "2026-07-27",
+      "2026-07-28",
+      "2026-07-29",
+      "2026-07-30",
+      "2026-07-31",
+      "2026-08-03",
+      "2026-08-04",
+      "2026-08-05",
+      "2026-08-06",
+      "2026-08-07",
+      "2026-08-10",
+      "2026-08-11",
+      "2026-08-12",
+      "2026-08-13",
+      "2026-08-14",
+      "2026-08-17",
+      "2026-08-18",
+      "2026-08-19",
+      "2026-08-20",
+      "2026-08-21",
+      "2026-08-24",
+      "2026-08-25",
+      "2026-08-26",
+      "2026-08-27",
+      "2026-08-28",
+      "2026-08-31",
+      "2026-09-01",
+      "2026-09-02",
+      "2026-09-03",
+      "2026-09-04",
+      "2026-09-07",
+      "2026-09-08",
+      "2026-09-09",
+      "2026-09-10",
+      "2026-09-11",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18",
+      "2026-09-20",
+      "2026-09-21",
+      "2026-09-22",
+      "2026-09-23",
+      "2026-09-24",
+      "2026-09-28",
+      "2026-09-29",
+      "2026-09-30",
+      "2026-10-08",
+      "2026-10-09",
+      "2026-10-10",
+      "2026-10-12",
+      "2026-10-13",
+      "2026-10-14",
+      "2026-10-15",
+      "2026-10-16",
+      "2026-10-19",
+      "2026-10-20",
+      "2026-10-21",
+      "2026-10-22",
+      "2026-10-23",
+      "2026-10-26",
+      "2026-10-27",
+      "2026-10-28",
+      "2026-10-29",
+      "2026-10-30",
+      "2026-11-02",
+      "2026-11-03",
+      "2026-11-04",
+      "2026-11-05",
+      "2026-11-06",
+      "2026-11-09",
+      "2026-11-10",
+      "2026-11-11",
+      "2026-11-12",
+      "2026-11-13",
+      "2026-11-16",
+      "2026-11-17",
+      "2026-11-18",
+      "2026-11-19",
+      "2026-11-20",
+      "2026-11-23",
+      "2026-11-24",
+      "2026-11-25",
+      "2026-11-26",
+      "2026-11-27",
+      "2026-11-30",
+      "2026-12-01",
+      "2026-12-02",
+      "2026-12-03",
+      "2026-12-04",
+      "2026-12-07",
+      "2026-12-08",
+      "2026-12-09",
+      "2026-12-10",
+      "2026-12-11",
+      "2026-12-14",
+      "2026-12-15",
+      "2026-12-16",
+      "2026-12-17",
+      "2026-12-18",
+      "2026-12-21",
+      "2026-12-22",
+      "2026-12-23",
+      "2026-12-24",
+      "2026-12-25",
+      "2026-12-28",
+      "2026-12-29",
+      "2026-12-30",
+      "2026-12-31"
+    ]
+  },
+  "_fx": {
+    "usd_cnh_t1": 6.9211,
+    "hkd_cnh_t1": 0.8835,
+    "date": "2026-03-27"
+  }
+}
