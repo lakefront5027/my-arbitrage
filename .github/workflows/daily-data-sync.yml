@@ -25,15 +25,14 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: pip install chinesecalendar pdfplumber
+        run: pip install chinesecalendar pdfplumber google-generativeai
 
       - name: Run sync + audit script
         env:
-          # GITHUB_TOKEN 和 GITHUB_REPOSITORY 由 Actions 自动注入，显式传入更清晰
           GITHUB_TOKEN:      ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-          # WX_KEY：在仓库 Settings → Secrets → Actions 中配置
           WX_KEY:            ${{ secrets.WX_KEY }}
+          GEMINI_API_KEY:    ${{ secrets.GEMINI_API_KEY }}
         run: python .github/scripts/sync_fund_data.py
 
       - name: Commit updated fund data
