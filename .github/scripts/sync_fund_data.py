@@ -486,29 +486,49 @@ def _fetch_em_pdf_url(code: str) -> tuple:
         print(f'    [em_pdf] {code} 季报公告页请求失败', file=sys.stderr)
         return None, None, None
 
-    # EM jjzqbg 页面通过 JavaScript 打开 PDF，art code 嵌在 onclick 中：
-    #   openWinFunc('H2_AP202503...', '2024年第四季度报告', ...)
-    # 不用匹配 href，直接扫描整个 HTML 找 H2_ 开头的 art code，拼出 PDF URL。
+    # EM jjzqbg 响应格式：var apidata={content:"...HTML...", pages:X}
+    # HTML 内通过 openWinFunc('AP202503...', '2024年第四季度报告', ...) 打开 PDF。
+    # art code 格式为 AP/AN + 纯数字，无 H2_ 前缀；PDF URL = H2_{art_code}_1.PDF
     entries = []
     seen = set()
-    for m in re.finditer(r'(H2_[A-Z0-9]{10,})', text):
+
+    # 主模式：提取 openWinFunc 的前两个参数（art_code + title）
+    for m in re.finditer(
+        r"openWinFunc\s*\(\s*['\"]([A-Z]{2}[0-9]{14,})['\"]"
+        r"\s*,\s*['\"]([^'\"]{4,80})['\"]",
+        text, re.IGNORECASE
+    ):
         art_code = m.group(1)
+        title    = m.group(2).strip()
         if art_code in seen:
             continue
         seen.add(art_code)
-        pdf_url = f'https://pdf.dfcfw.com/pdf/{art_code}_1.PDF'
-        # 在 art code 前后 400 字符内找标题和日期
-        start = max(0, m.start() - 400)
-        ctx   = text[start: m.end() + 400]
-        title_m = re.search(r'[\u4e00-\u9fa5A-Za-z0-9（）()]{4,60}(?:季度?报告|季报)', ctx)
-        title   = title_m.group(0).strip() if title_m else ''
-        date_m  = re.search(r'(\d{4}-\d{2}-\d{2})', ctx)
+        pdf_url = f'https://pdf.dfcfw.com/pdf/H2_{art_code}_1.PDF'
+        # 在匹配位置附近找日期
+        start = max(0, m.start() - 200)
+        ctx   = text[start: m.end() + 200]
+        date_m = re.search(r'(\d{4}-\d{2}-\d{2})', ctx)
         notice_date = date_m.group(1) if date_m else ''
         entries.append((pdf_url, title, notice_date))
 
+    # 备用模式：直接扫描引号内的 art code（兼容不同 JS 调用形式）
     if not entries:
-        # 打印前 300 字符帮助诊断 HTML 结构
-        print(f'    [em_pdf] {code} 未找到 H2_ art code，页面片段: {text[:300]!r}', file=sys.stderr)
+        for m in re.finditer(r"['\"]([A-Z]{2}[0-9]{14,})['\"]", text):
+            art_code = m.group(1)
+            if art_code in seen:
+                continue
+            seen.add(art_code)
+            pdf_url = f'https://pdf.dfcfw.com/pdf/H2_{art_code}_1.PDF'
+            start = max(0, m.start() - 300)
+            ctx   = text[start: m.end() + 300]
+            title_m = re.search(r'[\u4e00-\u9fa5]{4,40}(?:季度?报告|季报|年度报告)', ctx)
+            title   = title_m.group(0).strip() if title_m else ''
+            date_m  = re.search(r'(\d{4}-\d{2}-\d{2})', ctx)
+            notice_date = date_m.group(1) if date_m else ''
+            entries.append((pdf_url, title, notice_date))
+
+    if not entries:
+        print(f'    [em_pdf] {code} 未找到 art code，页面片段: {text[:400]!r}', file=sys.stderr)
         return None, None, None
 
     # 优先返回季度报告
@@ -516,7 +536,7 @@ def _fetch_em_pdf_url(code: str) -> tuple:
         if re.search(r'[一二三四]季度?报告|季报', title):
             return pdf_url, title, notice_date
 
-    # 备选：任何找到的第一个条目
+    # 备选：第一个条目
     pdf_url, title, notice_date = entries[0]
     return pdf_url, title, notice_date
 
