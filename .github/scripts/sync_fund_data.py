@@ -491,6 +491,9 @@ def _fetch_quarterly_pdf_url(code: str) -> tuple:
         text = fetch_url(url, referer=f'https://fundf10.eastmoney.com/jjgg.html?fundcode={code}')
         if not text:
             return None, None, None
+        # 诊断：仅 ndbg 类型打印实际响应片段，帮助确认 EM 返回内容
+        if report_type == 'ndbg':
+            print(f'    [em_ndbg] {code} 响应片段: {text[:500]!r}', file=sys.stderr)
         entries = []
         seen    = set()
         # openWinFunc('AP202503...', '标题', ...) 形式
