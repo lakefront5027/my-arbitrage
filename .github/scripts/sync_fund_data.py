@@ -477,37 +477,47 @@ def _fetch_cninfo_pdf_url(code: str) -> tuple:
     CNINFO 是基金季报的法定披露平台，所有 A 股上市基金均有记录，境外 IP 可访问。
     失败返回 (None, None, None)。
     """
+    # 不使用 searchkey/tabName（CNINFO 全文检索在境外 IP 返回空结果）。
+    # 改为拉全量基金公告列表（category_jjgg_szsh），由 Python 过滤季报标题。
+    # 两个 column 都尝试，防止交易所判断有误。
     column = 'sse' if code.startswith(('5', '6')) else 'szse'
     api_url = 'https://www.cninfo.com.cn/new/hisAnnouncement/query'
-    payload = urllib.parse.urlencode({
-        'stock':     code,
-        'category':  'category_jjgg_szsh',
-        'searchkey': '季度报告',
-        'pageNum':   1,
-        'pageSize':  10,
-        'column':    column,
-        'tabName':   'fulltext',
-        'sortName':  '',
-        'sortType':  '',
-        'isHLtitle': 'true',
-    }).encode()
-    headers = {
-        'User-Agent':   'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        'Referer':      'https://www.cninfo.com.cn/',
-        'Accept':       'application/json, text/plain, */*',
-    }
-    try:
-        req = urllib.request.Request(api_url, data=payload, headers=headers, method='POST')
-        with urllib.request.urlopen(req, timeout=12) as r:
-            data = json.loads(r.read().decode('utf-8'))
-        anns = data.get('announcements') or []
-    except Exception as e:
-        print(f'    [cninfo] {code} 查询失败: {e}', file=sys.stderr)
-        return None, None, None
+
+    def _query(col: str) -> list:
+        payload = urllib.parse.urlencode({
+            'stock':    code,
+            'category': 'category_jjgg_szsh',
+            'pageNum':  1,
+            'pageSize': 30,
+            'column':   col,
+            'tabName':  'latest',
+            'sortName': '',
+            'sortType': '',
+        }).encode()
+        headers = {
+            'User-Agent':   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'Referer':      'https://www.cninfo.com.cn/',
+            'Accept':       'application/json, text/plain, */*',
+            'Accept-Language': 'zh-CN,zh;q=0.9',
+        }
+        try:
+            req = urllib.request.Request(api_url, data=payload, headers=headers, method='POST')
+            with urllib.request.urlopen(req, timeout=12) as r:
+                data = json.loads(r.read().decode('utf-8'))
+            return data.get('announcements') or []
+        except Exception as e:
+            print(f'    [cninfo] {code}/{col} 请求失败: {e}', file=sys.stderr)
+            return []
+
+    anns = _query(column)
+    if not anns:
+        # 尝试另一个交易所
+        alt = 'szse' if column == 'sse' else 'sse'
+        anns = _query(alt)
 
     if not anns:
-        print(f'    [cninfo] {code} 无公告记录', file=sys.stderr)
+        print(f'    [cninfo] {code} 两个交易所均无公告记录', file=sys.stderr)
         return None, None, None
 
     def _ann_date(ann: dict) -> str:
