@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 LOF套利雷达 — 每日数据同步 + 持仓审计脚本
-运行时间：北京时间 07:00（UTC 23:00）
-  此时美股已收盘 3h+，确保 USO/BNO/QQQ 等前一交易日收盘涨跌幅稳定可用。
+运行时间：北京时间 06:30（UTC 22:30）
+  此时美股已收盘 2.5h+（EDT）/ 1.5h+（EST），确保 USO/BNO/QQQ 等收盘涨跌幅稳定可用。
 流程：
   1. 拉取 47 只基金 T-1 净值（fundgz → lsjz 兜底，失败保留旧值）
   2. 拉取 47 只基金前十大持仓（东方财富 jjcc API）
@@ -15,6 +15,7 @@ LOF套利雷达 — 每日数据同步 + 持仓审计脚本
 """
 
 import json
+import random
 import re
 import sys
 import time
@@ -374,6 +375,322 @@ def fetch_holdings(code: str) -> dict | None:
     print(f'    [holdings] {code}: 近 6 季均无数据（可能为单只 ETF 持仓型基金）',
           file=sys.stderr)
     return None
+
+
+# ══════════════════════════════════════════════════════
+#  PDF 持仓提取（巨潮资讯季报）
+# ══════════════════════════════════════════════════════
+# 对 EM jjcc 无法返回持仓的基金（主要为持有外盘 ETF 的美股/商品类 LOF），
+# 在 holdings 为空或距今超过 90 天时，通过巨潮资讯季报 PDF 提取前十大持仓。
+
+PDF_HOLDINGS_MAX_AGE_DAYS = 90   # PDF 持仓刷新阈值（日历天）
+
+# 外盘 ETF 名称关键词 → 内部 tq 代码（优先级从高到低，依序匹配，首中即返）
+_ETF_NAME_TO_TQ: list = [
+    # ── 原油 WTI ──
+    ('WisdomTree WTI',           'usUSO'),
+    ('Simplex WTI',              'usUSO'),
+    ('Nomura Crude Oil',         'usUSO'),
+    ('GSCI Crude Oil',           'usUSO'),  # 须在通用 GSCI 前
+    ('Invesco DB Oil',           'usUSO'),
+    ('United States Oil Fund',   'usUSO'),
+    ('WTI',                      'usUSO'),  # 兜底
+    # ── 原油 Brent ──
+    ('WisdomTree Brent',         'usBNO'),
+    ('United States Brent',      'usBNO'),
+    ('Brent',                    'usBNO'),  # 兜底
+    # ── 黄金 ──
+    ('SPDR Gold',                'usGLD'),
+    ('iShares Gold Trust',       'usIAU'),
+    ('iShares Gold ETF',         'usIAU'),
+    ('Aberdeen Standard Gold',   'usSGOL'),
+    ('Invesco Physical Gold',    'usSGOL'),
+    ('Perth Mint Gold',          'usAAAU'),
+    ('Sprott Physical Gold',     'usAAAU'),
+    ('Sprott Gold',              'usAAAU'),
+    # ── 白银 ──
+    ('iShares Silver',           'usSLV'),
+    ('United States Silver',     'usSLV'),
+    ('Silver',                   'usSLV'),  # 兜底
+    # ── 铜 ──
+    ('Copper Index',             'usCPER'),
+    ('United States Copper',     'usCPER'),
+    # ── 能源 / 油气 ──
+    ('Energy Select Sector',     'usXLE'),
+    ('Oil & Gas Exploration',    'usXOP'),
+    ('Oil and Gas Exploration',  'usXOP'),
+    ('Global Energy',            'usIXC'),
+    # ── 综合商品 ──
+    ('Bloomberg Commodity',      'usBCI'),
+    ('S&P GSCI',                 'usCOMT'),  # 通用 GSCI（须在 GSCI Crude Oil 后）
+    # ── 纳斯达克 / QQQ ──
+    ('Invesco QQQ',              'usQQQ'),
+    ('QQQ',                      'usQQQ'),
+    # ── 科技 ──
+    ('Technology Select Sector', 'usXLK'),
+    ('PHLX Semiconductor',       'usSMH'),
+    ('Semiconductor',            'usSMH'),  # 兜底
+    # ── 印度 ──
+    ('MSCI India',               'usINDA'),
+    # ── 中国互联网 ──
+    ('CSI China Internet',       'usKWEB'),
+    ('KraneShares China',        'usKWEB'),
+    # ── 生物科技 ──
+    ('S&P Biotech',              'usXBI'),
+    ('Biotech',                  'usXBI'),  # 兜底
+    # ── 消费 ──
+    ('Consumer Discretionary',   'usXLY'),
+    # ── 医疗 ──
+    ('Health Care Equal Weight', 'usRSPH'),
+    ('Equal Weight Health',      'usRSPH'),
+    # ── 地产 ──
+    ('Dow Jones REIT',           'usRWR'),
+    ('REIT',                     'usRWR'),  # 兜底
+    # ── 债券 ──
+    ('Aggregate Bond',           'usAGG'),
+    ('Core U.S. Aggregate',      'usAGG'),
+    # ── 标普500 ──
+    ('SPDR S&P 500',             'usINX'),
+    ('Vanguard S&P 500',         'usINX'),
+    ('S&P 500 ETF',              'usINX'),
+]
+
+
+def _match_etf_name(name: str) -> str | None:
+    """从 ETF 名称关键词匹配内部 tq 代码；无匹配返回 None。"""
+    for keyword, tq in _ETF_NAME_TO_TQ:
+        if keyword in name:
+            return tq
+    return None
+
+
+def _holdings_age_days(holdings_date: str, today: str) -> int:
+    """持仓日期距今的日历天数。"""
+    try:
+        return (date.fromisoformat(today) - date.fromisoformat(holdings_date)).days
+    except Exception:
+        return 9999
+
+
+def _cninfo_post(url: str, payload: dict) -> dict | None:
+    """向巨潮资讯 API 发 POST 请求，返回解析后的 JSON 或 None。"""
+    data = urllib.parse.urlencode(payload).encode()
+    headers = {
+        'User-Agent':   'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'Referer':      'https://www.cninfo.com.cn/',
+        'Accept':       'application/json, text/plain, */*',
+    }
+    req = urllib.request.Request(url, data=data, headers=headers, method='POST')
+    try:
+        with urllib.request.urlopen(req, timeout=20) as r:
+            return json.loads(r.read().decode('utf-8'))
+    except Exception as e:
+        print(f'    [cninfo] {url}: {e}', file=sys.stderr)
+        return None
+
+
+def _fetch_cninfo_org_id(code: str) -> str | None:
+    """查询基金代码对应的巨潮 orgId（如 'jjjl0000041'）。"""
+    result = _cninfo_post(
+        'https://www.cninfo.com.cn/new/hisAnnouncement/topSearch/query',
+        {'keyWord': code, 'marketType': 'fund'},
+    )
+    if not isinstance(result, list):
+        return None
+    for item in result:
+        if item.get('secCode') == code and item.get('orgId'):
+            return item['orgId']
+    return None
+
+
+def _fetch_cninfo_pdf_url(code: str, org_id: str) -> tuple:
+    """查询最近一份季报 PDF URL，返回 (url, title)；失败返回 (None, None)。"""
+    result = _cninfo_post(
+        'https://www.cninfo.com.cn/new/hisAnnouncement/query',
+        {
+            'stock':     f'{code},{org_id}',
+            'category':  'category_jjgg_szsh',
+            'searchkey': '季度报告',
+            'pageNum':   1,
+            'pageSize':  10,
+            'column':    'fund',
+            'tabName':   'fulltext',
+            'sortName':  '',
+            'sortType':  '',
+            'isHLtitle': 'true',
+        },
+    )
+    if not result:
+        return None, None
+    anns = result.get('announcements') or []
+    for ann in anns:
+        title    = ann.get('announcementTitle', '')
+        pdf_path = ann.get('adjunctUrl', '')
+        if re.search(r'[一二三四]季度?报告|季报', title) and pdf_path:
+            return f'https://static.cninfo.com.cn/{pdf_path}', title
+    # 备选：任何 PDF 附件
+    for ann in anns:
+        pdf_path = ann.get('adjunctUrl', '')
+        if pdf_path and pdf_path.lower().endswith('.pdf'):
+            return f'https://static.cninfo.com.cn/{pdf_path}', ann.get('announcementTitle', '')
+    return None, None
+
+
+def _parse_quarter_end_date(title: str) -> str:
+    """从季报标题解析季末日期，如 '2025年第四季度报告' → '2025-12-31'。"""
+    _quarter_month = {'一': 3, '二': 6, '三': 9, '四': 12}
+    _month_day     = {3: 31, 6: 30, 9: 30, 12: 31}
+    m = re.search(r'(\d{4})年第?([一二三四])季度', title)
+    if m:
+        year  = int(m.group(1))
+        month = _quarter_month[m.group(2)]
+        return f'{year}-{month:02d}-{_month_day[month]}'
+    return ''
+
+
+def _download_pdf_binary(url: str, dest_path: str) -> bool:
+    """下载 PDF 二进制到本地路径。"""
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+        'Referer':    'https://www.cninfo.com.cn/',
+    }
+    req = urllib.request.Request(url, headers=headers)
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r, open(dest_path, 'wb') as f:
+            while True:
+                chunk = r.read(65536)
+                if not chunk:
+                    break
+                f.write(chunk)
+        return True
+    except Exception as e:
+        print(f'    [pdf] 下载失败: {e}', file=sys.stderr)
+        return False
+
+
+def _extract_holdings_from_pdf(pdf_path: str) -> list:
+    """
+    用 pdfplumber 从季报 PDF 提取前十大持仓中能映射到 tq 代码的行。
+    返回 [{'name': str, 'tq': str, 'ratio': float}, ...]，空列表表示未找到。
+    策略：扫描所有表格 → 关键词过滤 → 按 tq 合并同类持仓。
+    """
+    try:
+        import pdfplumber
+    except ImportError:
+        print('    [pdf] pdfplumber 未安装，跳过 PDF 解析', file=sys.stderr)
+        return []
+
+    _HOLDINGS_KW = [
+        '前十大基金', '基金持仓', '主要投资标的', '前十大权益',
+        '前十大债券', '前十大股票', '重仓股', '持有的基金份额',
+        'ETF', 'Fund', 'Trust', 'Oil', 'Gold', 'Silver',
+    ]
+    _PCT_RE = re.compile(r'(\d{1,3}(?:\.\d{1,4})?)%?$')
+
+    tq_agg: dict = {}   # tq_code → accumulated ratio
+
+    try:
+        with pdfplumber.open(pdf_path) as pdf:
+            for page in pdf.pages:
+                for tbl in (page.extract_tables() or []):
+                    if not tbl or len(tbl) < 2:
+                        continue
+                    sample = ' '.join(
+                        str(c) for row in tbl[:5] for c in (row or []) if c
+                    )
+                    if not any(kw in sample for kw in _HOLDINGS_KW):
+                        continue
+                    for row in tbl[1:]:
+                        if not row:
+                            continue
+                        cells = [str(c).strip() if c else '' for c in row]
+                        # 找末尾 0–100 的百分比
+                        pct = None
+                        for cell in reversed(cells):
+                            m = _PCT_RE.search(cell)
+                            if m:
+                                v = float(m.group(1))
+                                if 0 < v < 100:
+                                    pct = v
+                                    break
+                        if pct is None:
+                            continue
+                        # 最长非数字单元格作为名称
+                        name = max(
+                            (c for c in cells
+                             if len(c) > 4
+                             and not c.replace('.', '').replace('%', '').replace(',', '').isdigit()),
+                            key=len, default='',
+                        )
+                        if not name:
+                            continue
+                        tq = _match_etf_name(name)
+                        if tq:
+                            tq_agg[tq] = tq_agg.get(tq, 0) + pct
+    except Exception as e:
+        print(f'    [pdf] 解析失败: {e}', file=sys.stderr)
+        return []
+
+    # 转为列表，按比例降序
+    results = [
+        {'code': tq, 'name': tq, 'ratio': round(ratio, 2)}
+        for tq, ratio in sorted(tq_agg.items(), key=lambda x: -x[1])
+    ]
+    return results
+
+
+def _fetch_holdings_via_pdf(code: str) -> dict | None:
+    """
+    PDF 持仓抓取主入口。
+    成功返回 {'holdings': [...], 'holdings_date': 'YYYY-MM-DD'}，失败返回 None。
+    holdings 格式与 fetch_holdings() 一致（含 code/name/ratio 字段）。
+    """
+    import tempfile, os as _os
+
+    print(f'    [pdf] {code}: 查询巨潮资讯...', flush=True)
+
+    org_id = _fetch_cninfo_org_id(code)
+    if not org_id:
+        print(f'    [pdf] {code}: 未找到 orgId', file=sys.stderr)
+        return None
+
+    pdf_url, title = _fetch_cninfo_pdf_url(code, org_id)
+    if not pdf_url:
+        print(f'    [pdf] {code}: 未找到季报 PDF', file=sys.stderr)
+        return None
+
+    print(f'    [pdf] 下载: {title}', flush=True)
+
+    tmp = tempfile.NamedTemporaryFile(suffix='.pdf', delete=False)
+    pdf_path = tmp.name
+    tmp.close()
+
+    try:
+        if not _download_pdf_binary(pdf_url, pdf_path):
+            return None
+
+        holdings = _extract_holdings_from_pdf(pdf_path)
+        if not holdings:
+            print(f'    [pdf] {code}: PDF 中未找到可映射的持仓', file=sys.stderr)
+            return None
+
+        holdings_date = _parse_quarter_end_date(title)
+        if not holdings_date:
+            # 无法从标题解析日期，用今日日期作为近似
+            holdings_date = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+
+        total_ratio = sum(h['ratio'] for h in holdings)
+        print(
+            f'    [pdf] {code}: 找到 {len(holdings)} 个 tq 代码，'
+            f'合计 {total_ratio:.1f}%  截止: {holdings_date}'
+        )
+        return {'holdings': holdings[:10], 'holdings_date': holdings_date}
+    finally:
+        try:
+            _os.unlink(pdf_path)
+        except Exception:
+            pass
 
 
 # ══════════════════════════════════════════════════════
@@ -1175,15 +1492,36 @@ def sync():
         # ── 持仓 ──────────────────────────────────────
         hold_result = fetch_holdings(code)
         if hold_result:
-            fund['holdings']       = hold_result['holdings']
-            fund['holdings_date']  = hold_result['holdings_date']   # 季报截止日期
-            fund['holdings_fetch_time'] = now_utc                   # 本次成功抓取时刻
+            fund['holdings']            = hold_result['holdings']
+            fund['holdings_date']       = hold_result['holdings_date']
+            fund['holdings_fetch_time'] = now_utc
             hold_ok += 1
             top = hold_result['holdings'][0]
             print(f'    持仓 {len(hold_result["holdings"]):2d}只  截止:{hold_result["holdings_date"]}  首位: {top["name"]} {top["ratio"]}%')
         else:
-            hold_fail += 1
-            print(f'    持仓 FAILED — 保留旧值', file=sys.stderr)
+            # EM jjcc 无数据 → 检查 PDF 刷新条件（holdings 为空 或 > 90 天）
+            existing_date = fund.get('holdings_date') or ''
+            today_str = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+            need_pdf = (not existing_date or
+                        _holdings_age_days(existing_date, today_str) > PDF_HOLDINGS_MAX_AGE_DAYS)
+            if need_pdf:
+                pdf_result = _fetch_holdings_via_pdf(code)
+                # 每次 PDF 抓取后随机延迟 4–10 秒，避免巨潮反爬触发
+                time.sleep(random.uniform(4, 10))
+                if pdf_result:
+                    fund['holdings']            = pdf_result['holdings']
+                    fund['holdings_date']       = pdf_result['holdings_date']
+                    fund['holdings_fetch_time'] = now_utc
+                    hold_ok += 1
+                    top = pdf_result['holdings'][0]
+                    print(f'    持仓(PDF) {len(pdf_result["holdings"]):2d}只  '
+                          f'截止:{pdf_result["holdings_date"]}  '
+                          f'首位: {top["name"]} {top["ratio"]}%')
+                else:
+                    hold_fail += 1
+                    print(f'    持仓 FAILED (EM+PDF) — 保留旧值', file=sys.stderr)
+            else:
+                print(f'    持仓 EM无数据，PDF未到刷新期（上次: {existing_date}）')
         time.sleep(0.08)
 
         # ── 总份额 ────────────────────────────────────

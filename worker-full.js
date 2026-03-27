@@ -154,7 +154,7 @@ const BENCH = {
   '161815': [{tq:'usGLD',w:0.171},{tq:'usIAU',w:0.168},{tq:'usAAAU',w:0.144},{tq:'usSGOL',w:0.139},{tq:'usBCI',w:0.122},{tq:'usCOMT',w:0.095},{tq:'usUSO',w:0.051},{tq:'usBNO',w:0.044},{tq:'usSLV',w:0.024},{tq:'usCPER',w:0.053}],
   '163208': [{tq:'usXLE',w:0.5},{tq:'hkHSCEI',w:0.5}],             // 全球油气：US油气ETF + HK能源/公用
   '501018': [{tq:'usUSO',w:0.6},{tq:'usBNO',w:0.4}],
-  '161129': 'usUSO',
+  '161129': [{tq:'usUSO',w:0.7443},{tq:'usBNO',w:0.1835}],  // Q4 2025 持仓: WTI系74.4% + Brent18.4%
   '160723': 'usUSO',
   '162719': 'usXOP',
   '162411': 'usXOP',
@@ -466,48 +466,61 @@ async function fetchYahooFutures(daily = null) {
   // 超过 48 小时则视为过期（含长周末，48h > 2×24h 确保跨节假日安全）
   const refsStale = !commodityRefs || (Date.now() - commodityRefsTime > 48 * 3600 * 1000);
 
-  // 股指期货请求列表
-  const equityEntries = Object.entries(EQUITY_FUTURES);
-  // 商品期货请求列表
+  // 股指期货 + 商品期货合并为单次 v7/finance/quote 批量请求
+  // 使用 v7/quote（而非 v8/chart）：
+  //   - 单次请求 vs 8 次并发，降低被 Yahoo 封锁概率
+  //   - v7 为已验证可从 Cloudflare Worker 访问的稳定端点
+  //   - regularMarketPrice 字段可满足商品精准模式（现价 / 参考价 - 1）
+  const equityEntries   = Object.entries(EQUITY_FUTURES);
   const commodityEntries = Object.entries(COMMODITY_FUTURES);
   const allSyms = [...equityEntries.map(([s]) => s), ...commodityEntries.map(([s]) => s)];
 
-  const results = await Promise.allSettled(allSyms.map(async sym => {
-    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${sym}?interval=1m&range=1d`;
+  let quoteMap = {};  // symbol → quote object
+  try {
+    const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${allSyms.join(',')}`
+              + `&fields=regularMarketPrice,regularMarketChangePercent,regularMarketTime`;
     const resp = await fetch(url, {
-      headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json' },
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        'Accept': 'application/json',
+        'Referer': 'https://finance.yahoo.com/',
+      },
       cf: { cacheTtl: 60 },
     });
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const d = await resp.json();
-    const meta = d?.chart?.result?.[0]?.meta;
-    if (!meta) throw new Error('no meta');
-    return { sym, meta };
-  }));
+    const quotes = d?.quoteResponse?.result || [];
+    for (const q of quotes) {
+      if (q.symbol) quoteMap[q.symbol] = q;
+    }
+    console.log(`[futures] Yahoo v7 批量请求：返回 ${quotes.length}/${allSyms.length} 条`);
+  } catch (e) {
+    console.warn('[futures] Yahoo v7 整体失败:', e.message);
+    return overrides;  // 所有 us* 指数回退到 null，由 idxMissing 报告
+  }
 
-  // 处理股指期货
-  for (let i = 0; i < equityEntries.length; i++) {
-    const [sym, tqCodes] = equityEntries[i];
-    const r = results[i];
-    if (r.status !== 'fulfilled') { console.warn(`[futures] ${sym} 失败:`, r.reason?.message); continue; }
-    const { meta } = r.value;
-    const chgPct = meta.regularMarketChangePercent;
+  // 处理股指期货（regularMarketChangePercent，结算价基准，精度已足够）
+  for (const [sym, tqCodes] of equityEntries) {
+    // v7 返回的 symbol 字段是 URL 解码后的原始符号（如 'NQ=F'），需反向映射
+    const decodedSym = decodeURIComponent(sym);
+    const q = quoteMap[sym] || quoteMap[decodedSym];
+    if (!q) { console.warn(`[futures/eq] ${sym} 无数据`); continue; }
+    const chgPct = q.regularMarketChangePercent;
     if (chgPct == null || !isFinite(chgPct)) continue;
     // _usDate 仅从股指期货提取（有明确的日盘收盘时间语义）
-    if (!_usDate && meta.regularMarketTime) {
-      _usDate = toEasternDate(meta.regularMarketTime);
+    if (!_usDate && q.regularMarketTime) {
+      _usDate = toEasternDate(q.regularMarketTime);
     }
     for (const tq of tqCodes) overrides[tq] = chgPct;
     console.log(`[futures/eq] ${sym} → ${chgPct.toFixed(3)}% → [${tqCodes.join(',')}]`);
   }
 
-  // 处理商品期货
-  for (let i = 0; i < commodityEntries.length; i++) {
-    const [sym, { codes, ref }] = commodityEntries[i];
-    const r = results[equityEntries.length + i];
-    if (r.status !== 'fulfilled') { console.warn(`[futures] ${sym} 失败:`, r.reason?.message); continue; }
-    const { meta } = r.value;
-    const currentPrice = meta.regularMarketPrice;
+  // 处理商品期货（优先 16:00 ET 参考价精准模式，降级至结算价涨跌幅）
+  for (const [sym, { codes, ref }] of commodityEntries) {
+    const decodedSym = decodeURIComponent(sym);
+    const q = quoteMap[sym] || quoteMap[decodedSym];
+    if (!q) { console.warn(`[futures/co] ${sym} 无数据`); continue; }
+    const currentPrice = q.regularMarketPrice;
     if (currentPrice == null || !isFinite(currentPrice) || currentPrice <= 0) continue;
 
     let chgPct;
@@ -517,8 +530,8 @@ async function fetchYahooFutures(daily = null) {
       chgPct = (currentPrice / refPrice - 1) * 100;
       console.log(`[futures/co] ${sym} ${ref}=${refPrice}→${currentPrice} chg=${chgPct.toFixed(3)}%`);
     } else {
-      // 降级模式：使用结算价涨跌幅（精度受限，COMEX 结算 vs 16:00 ET 约1.5-2.5h 偏差）
-      chgPct = meta.regularMarketChangePercent;
+      // 降级模式：使用结算价涨跌幅（COMEX 结算 vs 16:00 ET 约1.5-2.5h 偏差）
+      chgPct = q.regularMarketChangePercent;
       if (chgPct == null || !isFinite(chgPct)) continue;
       _commodityRefStale = true;
       console.warn(`[futures/co] ${sym} 降级至结算价基准 chg=${chgPct.toFixed(3)}%`);
@@ -527,8 +540,8 @@ async function fetchYahooFutures(daily = null) {
     for (const tq of codes) overrides[tq] = chgPct;
   }
 
-  overrides._usDate = _usDate;                    // 随结果透传，fetchAllData 中提取后删除
-  overrides._commodityRefStale = _commodityRefStale;  // 同上
+  overrides._usDate = _usDate;
+  overrides._commodityRefStale = _commodityRefStale;
   return overrides;
 }
 
