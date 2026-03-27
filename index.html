@@ -19,7 +19,7 @@ tailwind.config = {
         premium: '#f59e0b',
         discount: '#10b981',
         alert: '#ef4444',
-        muted: '#666666',
+        muted: '#999999',
         primary: '#e5e5e5',
       },
       fontFamily: {
@@ -1935,7 +1935,7 @@ function buildHoldingsHtml(code, fund) {
     </tr>`;
   }).join('');
 
-  // 底部汇总：持仓贡献 + Bench残差 + 估值合计
+  // 底部汇总：持仓贡献 + 期货贡献 + 指数残差 + 估值合计
   let coveredContrib = 0, coveredW = 0;
   for (const h of daily.holdings) {
     const tq = holdingToTqCode(h.code);
@@ -1945,28 +1945,44 @@ function buildHoldingsHtml(code, fund) {
     coveredContrib += (h.ratio / 100) * chg;
     coveredW += h.ratio / 100;
   }
-  const benchResidual = (fund && fund.benchChg != null) ? fund.benchChg * (1 - coveredW) : null;
+  const benchResidualTotal = (fund && fund.benchChg != null) ? fund.benchChg * (1 - coveredW) : null;
+
+  // 计算期货贡献 vs 纯指数残差（按 BENCH 权重比例拆分）
+  const benchDef = BENCH[code];
+  const benchArr = Array.isArray(benchDef) ? benchDef : (benchDef ? [{tq: benchDef, w: 1}] : []);
+  const totalBW = benchArr.reduce((s, b) => s + (b.w ?? 1), 0) || 1;
+  const futuresBW = benchArr.filter(b => b.tq && b.tq.startsWith('us')).reduce((s, b) => s + (b.w ?? 1), 0);
+  const futuresFrac = futuresBW / totalBW;
+  const futuresContrib = benchResidualTotal != null && futuresFrac > 0 ? benchResidualTotal * futuresFrac : null;
+  const indexContrib   = benchResidualTotal != null && futuresFrac < 1 ? benchResidualTotal * (1 - futuresFrac) : null;
+
   const totalEst = (fund && fund.nav && fund.officialNav) ? (fund.nav / fund.officialNav - 1) * 100 : null;
 
   const sfmt = v => `${v >= 0 ? '+' : ''}${v.toFixed(2)}%`;
   const scol = v => v > 0 ? 'text-green-400/90' : v < 0 ? 'text-red-400/90' : 'text-muted/70';
-  const maxAbs = Math.max(Math.abs(coveredContrib), Math.abs(benchResidual ?? 0), 0.01);
+  const allVals = [coveredContrib, futuresContrib ?? 0, indexContrib ?? 0];
+  const maxAbs = Math.max(...allVals.map(Math.abs), 0.01);
   const sbar = v => {
     const w = Math.round(Math.abs(v) / maxAbs * 100);
     const c = v >= 0 ? 'bg-green-500/40' : 'bg-red-500/40';
     return `<div class="flex-1 h-1 rounded-full bg-border/40"><div class="h-1 rounded-full ${c}" style="width:${w}%"></div></div>`;
   };
 
-  const summaryRows = (coveredW > 0 || benchResidual != null) ? `
+  const summaryRows = (coveredW > 0 || benchResidualTotal != null) ? `
     <tr class="border-t border-border/50">
       <td class="pt-2 pb-1 px-2"></td>
       <td class="pt-2 pb-1 px-1 font-mono text-[9px] text-muted/80 whitespace-nowrap">持仓贡献</td>
       <td class="pt-2 pb-1 px-2"><div class="flex items-center gap-1.5">${sbar(coveredContrib)}<span class="font-mono text-[9px] ${scol(coveredContrib)} w-16 text-right flex-shrink-0">${sfmt(coveredContrib)}</span></div></td>
     </tr>
-    ${benchResidual != null ? `<tr>
+    ${futuresContrib != null ? `<tr>
       <td class="py-1 px-2"></td>
-      <td class="py-1 px-1 font-mono text-[9px] text-muted/80 whitespace-nowrap">Bench残差</td>
-      <td class="py-1 px-2"><div class="flex items-center gap-1.5">${sbar(benchResidual)}<span class="font-mono text-[9px] ${scol(benchResidual)} w-16 text-right flex-shrink-0">${sfmt(benchResidual)}</span></div></td>
+      <td class="py-1 px-1 font-mono text-[9px] text-muted/80 whitespace-nowrap">期货贡献</td>
+      <td class="py-1 px-2"><div class="flex items-center gap-1.5">${sbar(futuresContrib)}<span class="font-mono text-[9px] ${scol(futuresContrib)} w-16 text-right flex-shrink-0">${sfmt(futuresContrib)}</span></div></td>
+    </tr>` : ''}
+    ${indexContrib != null ? `<tr>
+      <td class="py-1 px-2"></td>
+      <td class="py-1 px-1 font-mono text-[9px] text-muted/80 whitespace-nowrap">指数残差</td>
+      <td class="py-1 px-2"><div class="flex items-center gap-1.5">${sbar(indexContrib)}<span class="font-mono text-[9px] ${scol(indexContrib)} w-16 text-right flex-shrink-0">${sfmt(indexContrib)}</span></div></td>
     </tr>` : ''}
     ${totalEst != null ? `<tr class="border-t border-border/30">
       <td class="pt-1.5 pb-2 px-2"></td>
