@@ -1178,6 +1178,16 @@ async function fetchAllData(env = {}) {
       navLag,
       premium,
       benchChg,
+      benchComponents: (() => {
+        const bd = BENCH[f.code];
+        const arr = Array.isArray(bd) ? bd : (bd ? [{tq: bd, w: 1}] : []);
+        const totalW = arr.reduce((s, b) => s + (b.w ?? 1), 0) || 1;
+        return arr.map(b => ({
+          tq:  b.tq,
+          w:   Math.round((b.w ?? 1) / totalW * 100),
+          chg: idxChg[b.tq] ?? null,
+        }));
+      })(),
       benchOk,
       benchStale,
       fxOk,

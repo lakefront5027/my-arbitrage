@@ -265,7 +265,7 @@ tailwind.config = {
   <div class="absolute inset-0 flex items-center justify-center p-4">
     <div class="relative bg-surface border border-border rounded-lg w-full max-w-md shadow-2xl flex flex-col" style="max-height:90vh">
       <button onclick="closeModal()" class="absolute top-4 right-4 text-muted hover:text-primary font-mono text-lg leading-none z-10">✕</button>
-      <div id="modalContent" class="overflow-y-auto p-6"></div>
+      <div id="modalContent" class="overflow-y-auto p-6 min-h-0 flex-1"></div>
     </div>
   </div>
 </div>
@@ -1321,7 +1321,12 @@ async function doRefresh() {
           if (nav != null) premium = (price - nav.value) / nav.value * 100;
         }
         const holdingsDate = fundDaily ? (fundDaily.holdings_date || null) : null;
-        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, estNavYesterday: useChained ? estNavEntity : null, navDate, navLag, useChained, navBasis, premium, benchChg, benchOk, benchStale, fxOk, fxAdj, holdingCoverage, holdingsDate, drift5d, driftN, driftStatus, quota: f.quota, fee: f.fee, rfee: f.rfee, vol, _src: 'L' };
+        const _benchArr = Array.isArray(BENCH[f.code]) ? BENCH[f.code] : (BENCH[f.code] ? [{tq: BENCH[f.code], w: 1}] : []);
+        const _totalBW  = _benchArr.reduce((s, b) => s + (b.w ?? 1), 0) || 1;
+        const benchComponents = _benchArr.map(b => ({
+          tq: b.tq, w: Math.round((b.w ?? 1) / _totalBW * 100), chg: idxChg[b.tq] ?? null,
+        }));
+        return { code: f.code, name: f.name, cat: f.cat, price, chg, nav, officialNav, estNavYesterday: useChained ? estNavEntity : null, navDate, navLag, useChained, navBasis, premium, benchChg, benchOk, benchStale, fxOk, fxAdj, holdingCoverage, holdingsDate, drift5d, driftN, driftStatus, quota: f.quota, fee: f.fee, rfee: f.rfee, vol, benchComponents, _src: 'L' };
       });
       indices = {};
       TICKER_IDX.forEach(i => {
@@ -1778,6 +1783,27 @@ function openModal(code) {
         : `<span class="font-mono text-[10px] text-muted/85">[Drift Offline] — 数据过期或样本不足，已回退至原始估值</span>`}
     </div>
 
+
+    ${(f.benchComponents && f.benchComponents.length > 0) ? `
+    <div class="border border-border rounded overflow-hidden mb-2">
+      <div class="px-2 py-1.5 border-b border-border font-mono text-[10px] text-muted tracking-wider" style="background:#0d0d0d">
+        基准构成${f.benchComponents.length > 1 ? `（复合 ${f.benchComponents.length} 项）` : ''}
+      </div>
+      <div class="divide-y divide-border/30">
+        ${f.benchComponents.map(b => {
+          const label = (BENCH_NAMES[b.tq] || b.tq.replace(/^(us|hk|sh|sz|sina|csi)/i, '').toUpperCase());
+          const chgStr = b.chg != null ? (b.chg >= 0 ? '+' : '') + b.chg.toFixed(2) + '%' : '—';
+          const chgCls = b.chg == null ? 'text-muted' : b.chg > 0 ? 'text-green-400/80' : b.chg < 0 ? 'text-red-400/80' : 'text-muted';
+          return `<div class="flex items-center justify-between px-3 py-1.5">
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-[10px] text-primary/80">${label}</span>
+              <span class="font-mono text-[10px] text-muted/70">×${b.w}%</span>
+            </div>
+            <span class="font-mono text-[10px] ${chgCls}">${chgStr}</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>` : ''}
 
     <div class="border border-border rounded p-3 mb-4" style="background:#0d0d0d">
       <div class="font-mono text-[10px] text-muted tracking-wider mb-1">套利信号</div>

@@ -21,8 +21,8 @@ The system runs entirely on Cloudflare infrastructure (Worker + Pages), backed b
 │  sync_fund_data.py                                                  │
 │    • 抓取 47 只基金 T-1 净值（fundgz + lsjz 双路，pingzhong 兜底）    │
 │    • 抓取前十大持仓（东方财富 jjcc API，境内基金）                      │
-│    • 境外 QDII 持仓：DeepSeek 搜索季报 PDF → pdfplumber 提取文本      │
-│      → DeepSeek 解析持仓 JSON（每次运行最多处理 4 只，防 API 超额）     │
+│    • 境外 QDII 持仓：JJGG API 扫描公告（每日全量，免费）→ ann_id 比对   │
+│      → 有新公告或超31天强制 → 下载 dfcfw PDF → pdfplumber + DeepSeek   │
 │    • 抓取 FX 结算汇率（Sina）                                         │
 │    • 计算 drift 历史（30日滚动）及 drift_5d 修正因子                   │
 │    • 写入 est_nav_yesterday 链式补偿锚点（update_chain_anchors）       │
@@ -1181,6 +1181,8 @@ T-1 基金净值以 **16:00 ET 价格**为计算基准，而 Yahoo `regularMarke
 - **BENCH 权重应以最新季报实际持仓为准**，不得凭主观臆测。2026-03-28 完成 Q4 2025 全量普查，7 只基金 bench 已校准（见下文"QDII 持仓与 Bench 校准历史"）。
 - CME futures (NQ=F → usQQQ/usIXIC/usXLK/usSMH, ES=F → usINX) override Tencent T-1 close prices during A-share trading hours. This is Worker-side only (server-to-server, no CORS issue).
 - HK index fallback chain: `hkHSMI → hkHSSI → hkHSI`, `hkHSSI → hkHSI`, `hkHSCI → hkHSI`.
+- **`benchComponents` 字段**：Worker snapshot 每只基金携带 `benchComponents: [{tq, w, chg}]`（tq 代码、归一化权重%、当日涨跌幅），fallback 路径也同步计算。详情弹窗使用此字段展示基准构成（复合基准时显示各分量及当日表现）。
+- **详情弹窗滚动**：`#modalContent` 容器设有 `min-h-0 flex-1 overflow-y-auto`，确保持仓超出屏幕时可滚动查看（flex 子元素需 `min-h-0` 才能正确约束高度）。
 
 ---
 
@@ -1190,14 +1192,17 @@ T-1 基金净值以 **16:00 ET 价格**为计算基准，而 Yahoo `regularMarke
 
 东方财富 jjcc 持仓 API（`api.fund.eastmoney.com/f10/jjcc`）对 QDII 基金（持有美股/港股 ETF）**不返回数据**——这是 EM 数据授权限制，不是网络封锁。因此 QDII 持仓必须通过季报 PDF 解析获取。
 
-### 当前实现：DeepSeek 两步流水线
+### 当前实现：JJGG + DeepSeek 流水线（2026-03 重构）
 
 ```
-sync_fund_data.py 主循环（每只 QDII，最多 4 只/次）
+sync_fund_data.py 主循环（每只 QDII，每日全量扫描）
   │
-  ├─ _deepseek_find_pdf_url()   # DeepSeek Search → 最新季报 PDF URL
-  │     prompt: "请搜索 {code} 最新季报 PDF（https://static.cninfo.com.cn 或 pdf.dfcfw.com）"
-  │     期望响应: 单个 PDF URL
+  ├─ _em_find_pdf_url()         # 主路：api.fund.eastmoney.com/f10/JJGG
+  │     type=3 = 定期报告（季报+年报）
+  │     PDF URL 规则：http://pdf.dfcfw.com/pdf/H2_{AN_ID}_1.pdf
+  │     ann_id 防重复：与 _last_pdf_url 相同 → 季报未更新，跳过
+  │     ann_id 强制旁路：超过季末 31 天未更新 → 强制重解析（force_reparse）
+  │     JJGG 失败 → _deepseek_find_pdf_url() 兜底（最多 2 次/轮，按次计费）
   │
   ├─ _download_pdf_bytes()      # urllib 下载 PDF 二进制
   │
@@ -1207,21 +1212,27 @@ sync_fund_data.py 主循环（每只 QDII，最多 4 只/次）
         _match_etf_name() 将 ETF 英文名映射到内部 tq 代码
 ```
 
-**防重复机制**：`fund['_last_pdf_url']` 写入 `fund_daily.json`；URL 未变化则跳过（季报未更新）。
+**PDF URL 发现策略**：
+- **主路**：`_em_find_pdf_url()` 调用 `api.fund.eastmoney.com/f10/JJGG`（与 lsjz/jjcc 同域，已确认从 GitHub Actions 境外 IP 可访问）
+- **兜底**：JJGG 失败时调用 `_deepseek_find_pdf_url()`（DeepSeek 搜索，限 2 次/轮）
+- JJGG 访问免费，无需 API Key；dfcfw PDF CDN 全球可访问
 
-**每次运行限额**：`_GEMINI_MAX_FUNDS_PER_RUN = 4`（命名历史遗留），按 `holdings_date` 最旧优先排序。
+**防重复机制**：`fund['_last_pdf_url']` 存储 ann_id（公告 ID），每日 JJGG 扫描对比；ID 未变 = 季报未更新 = 跳过解析（DeepSeek 不收费）。
 
-### 更可靠的 PDF URL 来源：巨潮 cninfo API
+**强制更新条件**：`holdings_date < expected_qe` AND `(today - expected_qe).days >= 31`，即超过季末 31 天仍未更新时，即便 ann_id 未变也强制重解析（处理解析失败遗留的旧持仓）。
 
-`test_pdf_holdings.py` 中的 `cninfo_search()` 直接查询官方信息披露数据库，**不依赖 AI 搜索，无幻觉风险，无 API 费用**：
+**无运行上限**：原 `_GEMINI_MAX_FUNDS_PER_RUN = 4` 限制已移除；JJGG 每日全量免费扫描，ann_id 防重复确保 DeepSeek 每季度最多解析一次。
+
+### cninfo API（仅用于测试脚本）
+
+`test_pdf_holdings.py` 中的 `cninfo_search()` 直接查询官方信息披露数据库，但从 GitHub Actions 境外 IP **软封锁**（HTTP 200 但结果为空）。
 
 ```python
 POST https://www.cninfo.com.cn/new/hisAnnouncement/query
-参数: stock={code}, category=category_jjgg_szsh, searchkey=季度报告
-返回: announcements[].adjunctUrl  →  https://static.cninfo.com.cn/{adjunctUrl}
+# 可从境内 IP / 本地测试访问；境外 IP 不可用（已验证，非硬封锁）
 ```
 
-**待优化**：将 `_deepseek_find_pdf_url()` 替换为 `_cninfo_find_pdf_url()`（cninfo API 方案），只保留 DeepSeek 做 PDF 文本解析。cninfo 方案在 GitHub Actions 环境中可正常访问（Ubuntu 无需 VPN）。
+**EM JJGG 优于 cninfo 的原因**：与 lsjz 同域，境外 IP 可访问；返回格式规则（AN_ID → dfcfw PDF URL）。
 
 ### ETF 名称到 tq 代码映射
 

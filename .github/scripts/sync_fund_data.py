@@ -552,6 +552,42 @@ def _em_find_pdf_url(code: str) -> tuple[str | None, str | None]:
     return None, None
 
 
+def _deepseek_find_pdf_url(code: str, api_key: str) -> str | None:
+    """
+    DeepSeek 网络搜索兜底：JJGG API 失败时用 AI 搜索最新季报 PDF URL。
+    每次 Action 最多触发 2 次（防 API 超额，按次计费）。
+    """
+    try:
+        from openai import OpenAI
+        client = OpenAI(api_key=api_key, base_url='https://api.deepseek.com')
+    except ImportError:
+        print('    [deepseek_search] openai 包未安装', file=sys.stderr)
+        return None
+
+    prompt = (
+        f'请搜索基金代码 {code} 的最新季度报告 PDF 下载链接。'
+        f'通常托管在巨潮资讯（static.cninfo.com.cn）或东方财富（pdf.dfcfw.com）。'
+        f'只返回完整 PDF URL，不要任何解释。'
+    )
+    try:
+        resp = client.chat.completions.create(
+            model='deepseek-chat',
+            messages=[{'role': 'user', 'content': prompt}],
+            max_tokens=200,
+            temperature=0,
+        )
+        text = (resp.choices[0].message.content or '').strip()
+        m = re.search(r'https?://\S+\.pdf', text, re.IGNORECASE)
+        if m:
+            url = m.group(0).rstrip(')')
+            print(f'    [deepseek_search] {code}: 找到 {url}')
+            return url
+        print(f'    [deepseek_search] {code}: 未提取到 PDF URL，响应: {text[:120]}', file=sys.stderr)
+    except Exception as e:
+        print(f'    [deepseek_search] {code}: 失败 {e}', file=sys.stderr)
+    return None
+
+
 def _extract_holdings_from_pdf_deepseek(pdf_bytes: bytes, code: str, client) -> tuple:
     """
     pdfplumber 提取 PDF 文本 → DeepSeek 解析持仓。
@@ -650,12 +686,15 @@ def _extract_holdings_from_pdf_deepseek(pdf_bytes: bytes, code: str, client) -> 
     return holdings, holdings_date
 
 
-def _fetch_holdings_via_deepseek(code: str, fund: dict, now_utc: str) -> dict | None:
+def _fetch_holdings_via_deepseek(code: str, fund: dict, now_utc: str,
+                                 *, search_budget: list = None) -> dict | None:
     """
     全流程 QDII 持仓抓取（jjcc 无数据时）：
       1. 时效检查：holdings_date >= 应有季末 → skipped
-      2. api.fund.eastmoney.com/f10/JJGG → 找最新季报 PDF URL（无需 AI 搜索）
+      2. api.fund.eastmoney.com/f10/JJGG → 找最新季报 PDF URL
+         失败时 → DeepSeek 搜索兜底（search_budget 控制，最多 2 次/轮）
       3. 防重复：AN ID 与上次相同 → skipped（报告未更新）
+         例外：超过季末 31 天仍未更新 → 强制重解析（force_reparse）
       4. 下载 PDF bytes
       5. pdfplumber 提取文本 + DeepSeek 解析持仓 JSON
     返回 {'holdings': [...], 'holdings_date': 'YYYY-MM-DD'} / {'skipped': True} / None
@@ -669,21 +708,38 @@ def _fetch_holdings_via_deepseek(code: str, fund: dict, now_utc: str) -> dict | 
         print(f'    [deepseek] {code}: 持仓已最新（{current_hd} >= {expected_qe}），跳过')
         return {'skipped': True}
 
+    # 超过季末 31 天仍未更新 → 强制重解析，不受 ann_id 缓存保护
+    force_reparse = bool(
+        expected_qe and current_hd < expected_qe and
+        (date.fromisoformat(today) - date.fromisoformat(expected_qe)).days >= 31
+    )
+    if force_reparse:
+        print(f'    [deepseek] {code}: 超过季末31天仍未更新，强制重解析')
+
     print(f'    [deepseek] {code}: 触发更新（当前:{current_hd or "无"} 期望:{expected_qe}）')
 
-    # ── Step 1: 用 EM JJGG API 查找最新季报 PDF URL ───────────────────────
+    api_key = _os.environ.get('DEEPSEEK_API_KEY')
+
+    # ── Step 1: EM JJGG API 查找最新季报 PDF URL ──────────────────────
     pdf_url, ann_id = _em_find_pdf_url(code)
     if not pdf_url:
-        print(f'    [deepseek] {code}: JJGG API 未找到 PDF URL', file=sys.stderr)
-        return None
+        # JJGG 失败 → DeepSeek 搜索兜底（限 2 次/轮，按次收费）
+        if api_key and search_budget and search_budget[0] > 0:
+            search_budget[0] -= 1
+            print(f'    [deepseek] {code}: JJGG 失败，尝试 DeepSeek 搜索'
+                  f'（剩余 {search_budget[0]} 次）')
+            pdf_url = _deepseek_find_pdf_url(code, api_key)
+        if not pdf_url:
+            print(f'    [deepseek] {code}: 未找到 PDF URL', file=sys.stderr)
+            return None
+        ann_id = None  # 搜索兜底无 ann_id
 
-    if ann_id and ann_id == fund.get('_last_pdf_url', ''):
+    if not force_reparse and ann_id and ann_id == fund.get('_last_pdf_url', ''):
         print(f'    [deepseek] {code}: 季报未更新（AN={ann_id}），跳过')
         return {'skipped': True}
 
     print(f'    [deepseek] {code}: PDF = {pdf_url}')
 
-    api_key = _os.environ.get('DEEPSEEK_API_KEY')
     if not api_key:
         print('    [deepseek] DEEPSEEK_API_KEY 未配置', file=sys.stderr)
         return None
@@ -1465,20 +1521,9 @@ def sync():
     nav_ok = nav_kept = nav_fail = hold_ok = hold_fail = 0
     now_utc = datetime.now(timezone.utc).isoformat(timespec='seconds')
 
-    # Gemini 每日调用上限（免费层 RPD=20，每只基金最多2次调用）
-    _GEMINI_MAX_FUNDS_PER_RUN = 4
-    _today = now_utc[:10]
-    _expected_qe = _latest_expected_quarter_end(_today)
-    # 找出需要 Gemini 的基金（jjcc 无数据、持仓已过期），按 holdings_date 最旧优先
-    _gemini_candidates = sorted(
-        [c for c in fund_codes
-         if _expected_qe and data[c].get('holdings_date', '') < _expected_qe],
-        key=lambda c: data[c].get('holdings_date', ''),
-    )
-    _gemini_eligible_codes = set(_gemini_candidates[:_GEMINI_MAX_FUNDS_PER_RUN])
-    if _gemini_candidates:
-        print(f'[Gemini] 待更新持仓 {len(_gemini_candidates)} 只，本轮处理前 {_GEMINI_MAX_FUNDS_PER_RUN} 只: '
-              f'{list(_gemini_eligible_codes)}')
+    # JJGG 扫描免费，每日全量检查所有 QDII 基金；ann_id 防重复确保每季度只解析一次
+    # DeepSeek 搜索作为 JJGG 失败时的兜底，按次收费，每轮上限 2 次
+    _search_budget = [2]
 
     print(f'=== 同步开始 | {total} 只基金 | {now_utc} UTC\n')
 
@@ -1536,13 +1581,9 @@ def sync():
             top = hold_result['holdings'][0]
             print(f'    持仓 {len(hold_result["holdings"]):2d}只  截止:{hold_result["holdings_date"]}  首位: {top["name"]} {top["ratio"]}%')
         else:
-            # EM jjcc 无数据 → Gemini 全流程：Search 找 PDF → 下载 → Gemini 读取
-            # 每次 Action 最多处理 _GEMINI_MAX_FUNDS_PER_RUN 只，防止超出免费层 RPD 上限
-            if code not in _gemini_eligible_codes:
-                print(f'    持仓 EM无数据，本轮已达 Gemini 上限（{_GEMINI_MAX_FUNDS_PER_RUN}只），跳过')
-                gem_result = {'skipped': True}
-            else:
-                gem_result = _fetch_holdings_via_deepseek(code, fund, now_utc)
+            # EM jjcc 无数据 → DeepSeek 全流程：JJGG 找 PDF → 下载 → DeepSeek 解析
+            # JJGG 免费，每日全量扫描；ann_id 防重复，每季度最多解析一次
+            gem_result = _fetch_holdings_via_deepseek(code, fund, now_utc, search_budget=_search_budget)
             if gem_result is None:
                 hold_fail += 1
                 print(f'    持仓 FAILED (EM+DeepSeek) — 保留旧值', file=sys.stderr)
