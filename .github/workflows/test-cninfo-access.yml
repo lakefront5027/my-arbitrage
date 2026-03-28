@@ -1,16 +1,16 @@
-name: Test cninfo PDF Access
+name: Test PDF Data Sources
 
 on:
   workflow_dispatch:
     inputs:
-      fund_code:
-        description: '基金代码（默认 161129）'
+      fund_codes:
+        description: '基金代码（空格分隔，默认 161129 501018）'
         required: false
-        default: '161129'
+        default: '161129 501018'
 
 jobs:
   test:
-    name: Test cninfo API + PDF Download
+    name: Test all PDF sources from Actions
     runs-on: ubuntu-latest
 
     steps:
@@ -23,5 +23,8 @@ jobs:
       - name: Install dependencies
         run: pip install pdfplumber
 
-      - name: Test cninfo search + PDF download
-        run: python .github/scripts/test_pdf_holdings.py ${{ github.event.inputs.fund_code }}
+      - name: Multi-source test (cninfo / eastmoney / szse / sse / sina)
+        run: python .github/scripts/test_pdf_sources.py ${{ github.event.inputs.fund_codes }}
+
+      - name: cninfo original test (single fund, reference)
+        run: python .github/scripts/test_pdf_holdings.py 161129 || true
