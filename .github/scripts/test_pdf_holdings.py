@@ -41,14 +41,16 @@ def cninfo_search(code: str) -> list[dict]:
     column = 'sse' if code.startswith(('5', '6')) else 'szse'
 
     url = 'https://www.cninfo.com.cn/new/hisAnnouncement/query'
+    # tabName='latest' 按时间取最近公告，不依赖全文索引（fulltext 在 Actions 环境返回空）
+    # category='category_jjgg_szsh' 限定基金公告分类，searchkey 留空由 Python 侧过滤标题
     payload = urllib.parse.urlencode({
         'stock':      code,
-        'category':   'category_jjgg_szsh',   # 基金公告（深市）
-        'searchkey':  '季度报告',
+        'category':   'category_jjgg_szsh',
+        'searchkey':  '',
         'pageNum':    1,
-        'pageSize':   10,
+        'pageSize':   30,
         'column':     column,
-        'tabName':    'fulltext',
+        'tabName':    'latest',
         'sortName':   '',
         'sortType':   '',
         'isHLtitle':  'true',
