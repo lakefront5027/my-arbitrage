@@ -1987,7 +1987,7 @@ function buildHoldingsHtml(code, fund) {
   const futuresContrib = benchResidualTotal != null && futuresFrac > 0 ? benchResidualTotal * futuresFrac : null;
   const indexContrib   = benchResidualTotal != null && futuresFrac < 1 ? benchResidualTotal * (1 - futuresFrac) : null;
 
-  const totalEst = (fund && fund.nav && fund.officialNav) ? (fund.nav / fund.officialNav - 1) * 100 : null;
+  const totalEst = (fund && fund.nav?.value && fund.officialNav?.value) ? (fund.nav.value / fund.officialNav.value - 1) * 100 : null;
 
   const sfmt = v => `${v >= 0 ? '+' : ''}${v.toFixed(2)}%`;
   const scol = v => v > 0 ? 'text-green-400/90' : v < 0 ? 'text-red-400/90' : 'text-muted/70';
