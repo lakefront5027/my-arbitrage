@@ -14,60 +14,60 @@
     "shares": 2.87,
     "holdings": [
       {
-        "code": "FOLD",
-        "name": "爱美医疗",
+        "code": "usFOLD",
+        "name": "usFOLD",
         "ratio": 1.39
       },
       {
-        "code": "PRAX",
-        "name": "Praxis Precision Medicines Inc",
+        "code": "usPRAX",
+        "name": "usPRAX",
         "ratio": 1.3
       },
       {
-        "code": "TVTX",
-        "name": "Travere Therapeutics Inc",
+        "code": "usTVTX",
+        "name": "usTVTX",
         "ratio": 1.28
       },
       {
-        "code": "BMRN",
-        "name": "拜玛林制药",
+        "code": "usBMRN",
+        "name": "usBMRN",
         "ratio": 1.28
       },
       {
-        "code": "HALO",
-        "name": "奥洛兹美医疗",
+        "code": "usHALO",
+        "name": "usHALO",
         "ratio": 1.24
       },
       {
-        "code": "ROIV",
-        "name": "Roivant Sciences Ltd",
+        "code": "usROIV",
+        "name": "usROIV",
         "ratio": 1.24
       },
       {
-        "code": "EXEL",
-        "name": "伊克力西斯",
+        "code": "usEXEL",
+        "name": "usEXEL",
         "ratio": 1.23
       },
       {
-        "code": "REGN",
-        "name": "再生元制药",
+        "code": "usREGN",
+        "name": "usREGN",
         "ratio": 1.22
       },
       {
-        "code": "PCVX",
-        "name": "Vaxcyte Inc",
+        "code": "usPCVX",
+        "name": "usPCVX",
         "ratio": 1.22
       },
       {
-        "code": "MDGL",
-        "name": "Madrigal Pharmaceuticals Inc",
+        "code": "usMDGL",
+        "name": "usMDGL",
         "ratio": 1.21
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-19",
@@ -85,7 +85,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         1.6808,
@@ -97,6 +98,7 @@
         1.6942,
         1.6942,
         1.6942,
+        1.6981,
         1.6981,
         1.6981,
         1.6981,
@@ -121,6 +123,7 @@
         null,
         null,
         null,
+        null,
         null
       ],
       "drift": [
@@ -139,15 +142,21 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 1.63903,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27",
     "drift_5d": 0.006288,
     "drift_n": 3,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00"
+    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "chain_est": [
+      {
+        "value": 1.63903,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "164906": {
     "code": "164906",
@@ -164,60 +173,60 @@
     "shares": 55.25,
     "holdings": [
       {
-        "code": "00700",
-        "name": "腾讯控股",
+        "code": "hk00700",
+        "name": "hk00700",
         "ratio": 9.51
       },
       {
-        "code": "09988",
-        "name": "阿里巴巴-W",
+        "code": "hk09988",
+        "name": "hk09988",
         "ratio": 8.16
       },
       {
-        "code": "PDD",
-        "name": "拼多多",
+        "code": "usPDD",
+        "name": "usPDD",
         "ratio": 7.65
       },
       {
-        "code": "03690",
-        "name": "美团-W",
+        "code": "hk03690",
+        "name": "hk03690",
         "ratio": 6.87
       },
       {
-        "code": "09999",
-        "name": "网易-S",
+        "code": "hk09999",
+        "name": "hk09999",
         "ratio": 5.66
       },
       {
-        "code": "09888",
-        "name": "百度集团-SW",
+        "code": "hk09888",
+        "name": "hk09888",
         "ratio": 4.01
       },
       {
-        "code": "09961",
-        "name": "携程集团-S",
+        "code": "hk09961",
+        "name": "hk09961",
         "ratio": 3.91
       },
       {
-        "code": "TME",
-        "name": "腾讯音乐",
+        "code": "usTME",
+        "name": "usTME",
         "ratio": 3.74
       },
       {
-        "code": "09618",
-        "name": "京东集团-SW",
+        "code": "hk09618",
+        "name": "hk09618",
         "ratio": 3.69
       },
       {
-        "code": "01024",
-        "name": "快手-W",
+        "code": "hk01024",
+        "name": "hk01024",
         "ratio": 3.61
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-19",
@@ -235,7 +244,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         1.0584,
@@ -253,12 +263,14 @@
         1.0271,
         1.0271,
         1.0271,
+        1.0271,
         1.0271
       ],
       "est": [
         null,
         1.02711,
         1.009254,
+        null,
         null,
         null,
         null,
@@ -289,12 +301,18 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 1.016538,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27"
+    "chain_est": [
+      {
+        "value": 1.016538,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "501312": {
     "code": "501312",
@@ -324,57 +342,57 @@
     "shares": 4.03,
     "holdings": [
       {
-        "code": "ARKK",
-        "name": "ARK Innovation ETF",
+        "code": "usARKK",
+        "name": "usARKK",
         "ratio": 18.62
       },
       {
-        "code": "ARKG",
-        "name": "ARK Genomic Revolution ETF",
+        "code": "usARKG",
+        "name": "usARKG",
         "ratio": 15.04
       },
       {
-        "code": "ARKQ",
-        "name": "ARK Autonomous Technology ETF",
+        "code": "usARKQ",
+        "name": "usARKQ",
         "ratio": 11.01
       },
       {
-        "code": "SOXX",
-        "name": "iShares Semiconductor ETF",
+        "code": "usSOXX",
+        "name": "usSOXX",
         "ratio": 8.74
       },
       {
-        "code": "AIQ",
-        "name": "Global X AI & Technology ETF",
+        "code": "usAIQ",
+        "name": "usAIQ",
         "ratio": 7.88
       },
       {
-        "code": "BOTZ",
-        "name": "Global X Robotics & AI ETF",
+        "code": "usBOTZ",
+        "name": "usBOTZ",
         "ratio": 7.5
       },
       {
-        "code": "QQQ",
-        "name": "Invesco QQQ Trust",
+        "code": "usQQQ",
+        "name": "usQQQ",
         "ratio": 7.35
       },
       {
-        "code": "XLK",
-        "name": "Technology Select Sector SPDR",
+        "code": "usXLK",
+        "name": "usXLK",
         "ratio": 6.69
       },
       {
-        "code": "SMH",
-        "name": "VanEck Semiconductor ETF",
+        "code": "usSMH",
+        "name": "usSMH",
         "ratio": 3.4
       },
       {
-        "code": "ARKF",
-        "name": "ARK Fintech Innovation ETF",
+        "code": "usARKF",
+        "name": "usARKF",
         "ratio": 1.46
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -393,7 +411,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         1.9156,
@@ -404,6 +423,7 @@
         1.8869,
         1.9063,
         1.9063,
+        1.8551,
         1.8551,
         1.8551,
         1.8551,
@@ -429,6 +449,7 @@
         null,
         null,
         null,
+        null,
         null
       ],
       "drift": [
@@ -447,17 +468,23 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 1.828666,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27",
     "drift_5d": 0.00688,
     "drift_n": 4,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00",
+    "drift_computed_at": "2026-03-28T16:32:52+00:00",
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T00:00:00Z"
+    "holdings_fetch_time": "2026-03-28T00:00:00Z",
+    "chain_est": [
+      {
+        "value": 1.828666,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "164824": {
     "code": "164824",
@@ -474,57 +501,47 @@
     "shares": 18.25,
     "holdings": [
       {
-        "code": "INDA.L",
-        "name": "iShares MSCI India UCITS ETF",
-        "ratio": 16.37
+        "code": "usINDA",
+        "name": "usINDA",
+        "ratio": 47.85
       },
       {
-        "code": "EPI",
-        "name": "WisdomTree India Earnings ETF",
+        "code": "usEPI",
+        "name": "usEPI",
         "ratio": 16.35
       },
       {
-        "code": "INDA",
-        "name": "iShares MSCI India ETF",
-        "ratio": 16.28
-      },
-      {
-        "code": "AMUN.L",
-        "name": "Amundi MSCI India UCITS ETF",
-        "ratio": 15.2
-      },
-      {
-        "code": "SMIN",
-        "name": "iShares India Small-Cap ETF",
+        "code": "usSMIN",
+        "name": "usSMIN",
         "ratio": 8.19
       },
       {
-        "code": "INDY",
-        "name": "iShares India 50 ETF",
+        "code": "usINDY",
+        "name": "usINDY",
         "ratio": 6.49
       },
       {
-        "code": "NOMI.T",
-        "name": "Nomura Nifty 50 ETF",
+        "code": "usUSO",
+        "name": "usUSO",
         "ratio": 4.33
       },
       {
-        "code": "INCO",
-        "name": "Columbia India Consumer ETF",
+        "code": "usINCO",
+        "name": "usINCO",
         "ratio": 3.13
       },
       {
-        "code": "INDIA",
-        "name": "VanEck India Growth Leaders ETF",
+        "code": "usINDIA",
+        "name": "usINDIA",
         "ratio": 1.5
       },
       {
         "code": "ISNX.L",
-        "name": "iShares SENSEX India UCITS ETF",
+        "name": "ISNX.L",
         "ratio": 0.88
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -543,7 +560,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         1.2762,
@@ -561,12 +579,14 @@
         1.2603,
         1.2603,
         1.2603,
+        1.2603,
         1.2603
       ],
       "est": [
         null,
         1.251224,
         1.231517,
+        null,
         null,
         null,
         null,
@@ -597,14 +617,20 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 1.238939,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27",
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T00:00:00Z"
+    "holdings_fetch_time": "2026-03-28T00:00:00Z",
+    "chain_est": [
+      {
+        "value": 1.238939,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "160644": {
     "code": "160644",
@@ -621,60 +647,60 @@
     "shares": 1.28,
     "holdings": [
       {
-        "code": "GOOGL",
-        "name": "谷歌-A",
+        "code": "usGOOGL",
+        "name": "usGOOGL",
         "ratio": 9.21
       },
       {
-        "code": "NVDA",
-        "name": "英伟达",
+        "code": "usNVDA",
+        "name": "usNVDA",
         "ratio": 9.16
       },
       {
-        "code": "TSM",
-        "name": "台积电",
+        "code": "usTSM",
+        "name": "usTSM",
         "ratio": 9.12
       },
       {
-        "code": "00700",
-        "name": "腾讯控股",
+        "code": "hk00700",
+        "name": "hk00700",
         "ratio": 8.84
       },
       {
-        "code": "09988",
-        "name": "阿里巴巴-W",
+        "code": "hk09988",
+        "name": "hk09988",
         "ratio": 7.9
       },
       {
-        "code": "AVGO",
-        "name": "博通",
+        "code": "usAVGO",
+        "name": "usAVGO",
         "ratio": 6.62
       },
       {
-        "code": "MU",
-        "name": "美光科技",
+        "code": "usMU",
+        "name": "usMU",
         "ratio": 6.32
       },
       {
-        "code": "09992",
-        "name": "泡泡玛特",
+        "code": "hk09992",
+        "name": "hk09992",
         "ratio": 5.47
       },
       {
-        "code": "SNDK",
-        "name": "闪迪",
+        "code": "usSNDK",
+        "name": "usSNDK",
         "ratio": 3.75
       },
       {
-        "code": "02899",
-        "name": "紫金矿业",
+        "code": "hk02899",
+        "name": "hk02899",
         "ratio": 3.36
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-19",
@@ -692,7 +718,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         1.6343,
@@ -710,12 +737,14 @@
         1.5067,
         1.5067,
         1.5067,
+        1.5067,
         1.5067
       ],
       "est": [
         null,
         1.585984,
         1.585984,
+        null,
         null,
         null,
         null,
@@ -746,12 +775,18 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 1.491206,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27"
+    "chain_est": [
+      {
+        "value": 1.491206,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "162415": {
     "code": "162415",
@@ -768,60 +803,60 @@
     "shares": 2.3,
     "holdings": [
       {
-        "code": "AMZN",
-        "name": "亚马逊",
+        "code": "usAMZN",
+        "name": "usAMZN",
         "ratio": 21.78
       },
       {
-        "code": "TSLA",
-        "name": "特斯拉",
+        "code": "usTSLA",
+        "name": "usTSLA",
         "ratio": 19.7
       },
       {
-        "code": "HD",
-        "name": "家得宝",
+        "code": "usHD",
+        "name": "usHD",
         "ratio": 5.34
       },
       {
-        "code": "MCD",
-        "name": "麦当劳",
+        "code": "usMCD",
+        "name": "usMCD",
         "ratio": 4.21
       },
       {
-        "code": "BKNG",
-        "name": "Booking Holdings",
+        "code": "usBKNG",
+        "name": "usBKNG",
         "ratio": 3.77
       },
       {
-        "code": "TJX",
-        "name": "The TJX Companies Inc",
+        "code": "usTJX",
+        "name": "usTJX",
         "ratio": 3.73
       },
       {
-        "code": "LOW",
-        "name": "劳氏",
+        "code": "usLOW",
+        "name": "usLOW",
         "ratio": 2.95
       },
       {
-        "code": "SBUX",
-        "name": "星巴克",
+        "code": "usSBUX",
+        "name": "usSBUX",
         "ratio": 2.09
       },
       {
-        "code": "DASH",
-        "name": "DoorDash Inc-A",
+        "code": "usDASH",
+        "name": "usDASH",
         "ratio": 1.85
       },
       {
-        "code": "ORLY",
-        "name": "奥莱利",
+        "code": "usORLY",
+        "name": "usORLY",
         "ratio": 1.68
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-19",
@@ -839,7 +874,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         2.75,
@@ -850,6 +886,7 @@
         2.753,
         2.776,
         2.776,
+        2.736,
         2.736,
         2.736,
         2.736,
@@ -875,6 +912,7 @@
         null,
         null,
         null,
+        null,
         null
       ],
       "drift": [
@@ -893,15 +931,21 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 2.656809,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27",
     "drift_5d": 0.009625,
     "drift_n": 4,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00"
+    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "chain_est": [
+      {
+        "value": 2.656809,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "161126": {
     "code": "161126",
@@ -918,60 +962,60 @@
     "shares": 0.76,
     "holdings": [
       {
-        "code": "LLY",
-        "name": "礼来",
+        "code": "usLLY",
+        "name": "usLLY",
         "ratio": 1.7
       },
       {
-        "code": "MOH",
-        "name": "Molina Healthcare Inc",
+        "code": "usMOH",
+        "name": "usMOH",
         "ratio": 1.69
       },
       {
-        "code": "MRK",
-        "name": "默沙东",
+        "code": "usMRK",
+        "name": "usMRK",
         "ratio": 1.69
       },
       {
-        "code": "VTRS",
-        "name": "Viatris Inc",
+        "code": "usVTRS",
+        "name": "usVTRS",
         "ratio": 1.68
       },
       {
-        "code": "ZTS",
-        "name": "硕腾",
+        "code": "usZTS",
+        "name": "usZTS",
         "ratio": 1.67
       },
       {
-        "code": "CNC",
-        "name": "康西哥",
+        "code": "usCNC",
+        "name": "usCNC",
         "ratio": 1.67
       },
       {
-        "code": "REGN",
-        "name": "再生元制药",
+        "code": "usREGN",
+        "name": "usREGN",
         "ratio": 1.67
       },
       {
-        "code": "BMY",
-        "name": "百时美施贵宝",
+        "code": "usBMY",
+        "name": "usBMY",
         "ratio": 1.65
       },
       {
-        "code": "CI",
-        "name": "信诺",
+        "code": "usCI",
+        "name": "usCI",
         "ratio": 1.64
       },
       {
-        "code": "BAX",
-        "name": "百特国际",
+        "code": "usBAX",
+        "name": "usBAX",
         "ratio": 1.64
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-19",
@@ -989,7 +1033,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         1.8025,
@@ -1001,6 +1046,7 @@
         1.8075,
         1.8075,
         1.8075,
+        1.8091,
         1.8091,
         1.8091,
         1.8091,
@@ -1025,6 +1071,7 @@
         null,
         null,
         null,
+        null,
         null
       ],
       "drift": [
@@ -1043,15 +1090,21 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 1.764961,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27",
     "drift_5d": 0.003775,
     "drift_n": 3,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00"
+    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "chain_est": [
+      {
+        "value": 1.764961,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "161128": {
     "code": "161128",
@@ -1068,60 +1121,60 @@
     "shares": 6.35,
     "holdings": [
       {
-        "code": "NVDA",
-        "name": "英伟达",
+        "code": "usNVDA",
+        "name": "usNVDA",
         "ratio": 19.61
       },
       {
-        "code": "AAPL",
-        "name": "苹果",
+        "code": "usAAPL",
+        "name": "usAAPL",
         "ratio": 17.38
       },
       {
-        "code": "MSFT",
-        "name": "微软",
+        "code": "usMSFT",
+        "name": "usMSFT",
         "ratio": 15.55
       },
       {
-        "code": "AVGO",
-        "name": "博通",
+        "code": "usAVGO",
+        "name": "usAVGO",
         "ratio": 7.07
       },
       {
-        "code": "PLTR",
-        "name": "Palantir Technologies Inc-A",
+        "code": "usPLTR",
+        "name": "usPLTR",
         "ratio": 1.76
       },
       {
-        "code": "AMD",
-        "name": "超威半导体",
+        "code": "usAMD",
+        "name": "usAMD",
         "ratio": 1.51
       },
       {
-        "code": "ORCL",
-        "name": "甲骨文",
+        "code": "usORCL",
+        "name": "usORCL",
         "ratio": 1.42
       },
       {
-        "code": "MU",
-        "name": "美光科技",
+        "code": "usMU",
+        "name": "usMU",
         "ratio": 1.39
       },
       {
-        "code": "CSCO",
-        "name": "思科",
+        "code": "usCSCO",
+        "name": "usCSCO",
         "ratio": 1.31
       },
       {
-        "code": "IBM",
-        "name": "IBM国际商业机器",
+        "code": "usIBM",
+        "name": "usIBM",
         "ratio": 1.2
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-19",
@@ -1139,7 +1192,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         5.3593,
@@ -1150,6 +1204,7 @@
         5.283,
         5.3091,
         5.3091,
+        5.1824,
         5.1824,
         5.1824,
         5.1824,
@@ -1175,6 +1230,7 @@
         null,
         null,
         null,
+        null,
         null
       ],
       "drift": [
@@ -1193,15 +1249,21 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 5.08149,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27",
     "drift_5d": 0.016023,
     "drift_n": 4,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00"
+    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "chain_est": [
+      {
+        "value": 5.08149,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "161125": {
     "code": "161125",
@@ -1218,60 +1280,60 @@
     "shares": 5.05,
     "holdings": [
       {
-        "code": "NVDA",
-        "name": "英伟达",
+        "code": "usNVDA",
+        "name": "usNVDA",
         "ratio": 6.55
       },
       {
-        "code": "AAPL",
-        "name": "苹果",
+        "code": "usAAPL",
+        "name": "usAAPL",
         "ratio": 5.81
       },
       {
-        "code": "MSFT",
-        "name": "微软",
+        "code": "usMSFT",
+        "name": "usMSFT",
         "ratio": 5.2
       },
       {
-        "code": "AMZN",
-        "name": "亚马逊",
+        "code": "usAMZN",
+        "name": "usAMZN",
         "ratio": 3.25
       },
       {
-        "code": "GOOGL",
-        "name": "谷歌-A",
+        "code": "usGOOGL",
+        "name": "usGOOGL",
         "ratio": 2.63
       },
       {
-        "code": "AVGO",
-        "name": "博通",
+        "code": "usAVGO",
+        "name": "usAVGO",
         "ratio": 2.36
       },
       {
-        "code": "GOOG",
-        "name": "谷歌-C",
+        "code": "usGOOG",
+        "name": "usGOOG",
         "ratio": 2.11
       },
       {
-        "code": "META",
-        "name": "Meta Platforms Inc-A",
+        "code": "usMETA",
+        "name": "usMETA",
         "ratio": 2.08
       },
       {
-        "code": "TSLA",
-        "name": "特斯拉",
+        "code": "usTSLA",
+        "name": "usTSLA",
         "ratio": 1.83
       },
       {
         "code": "BRK_B",
-        "name": "伯克希尔哈撒韦-B",
+        "name": "BRK_B",
         "ratio": 1.33
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-19",
@@ -1289,7 +1351,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         2.7777,
@@ -1300,6 +1363,7 @@
         2.7567,
         2.7698,
         2.7698,
+        2.7289,
         2.7289,
         2.7289,
         2.7289,
@@ -1325,6 +1389,7 @@
         null,
         null,
         null,
+        null,
         null
       ],
       "drift": [
@@ -1343,15 +1408,21 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 2.683268,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27",
     "drift_5d": 0.008929,
     "drift_n": 4,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00"
+    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "chain_est": [
+      {
+        "value": 2.683268,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "161130": {
     "code": "161130",
@@ -1368,12 +1439,12 @@
     "shares": 4.07,
     "holdings": [
       {
-        "code": "513100",
-        "name": "易方达纳斯达克100ETF",
+        "code": "sh513100",
+        "name": "sh513100",
         "ratio": 90.6
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -1392,7 +1463,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         3.7564,
@@ -1404,6 +1476,7 @@
         3.7251,
         3.7251,
         3.7251,
+        3.6476,
         3.6476,
         3.6476,
         3.6476,
@@ -1428,6 +1501,7 @@
         null,
         null,
         null,
+        null,
         null
       ],
       "drift": [
@@ -1446,17 +1520,23 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 3.576338,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27",
     "drift_5d": 0.007216,
     "drift_n": 3,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00",
+    "drift_computed_at": "2026-03-28T16:32:52+00:00",
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T00:00:00Z"
+    "holdings_fetch_time": "2026-03-28T00:00:00Z",
+    "chain_est": [
+      {
+        "value": 3.576338,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "501300": {
     "code": "501300",
@@ -1471,8 +1551,34 @@
     "nav_date": "2026-03-26",
     "nav_src": "lsjz",
     "shares": 22.43,
-    "holdings": null,
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings": [
+      {
+        "code": "US91282CPJ44",
+        "name": "US91282CPJ44",
+        "ratio": 8.97
+      },
+      {
+        "code": "US91282CMM00",
+        "name": "US91282CMM00",
+        "ratio": 8.87
+      },
+      {
+        "code": "US91282CNC19",
+        "name": "US91282CNC19",
+        "ratio": 8.52
+      },
+      {
+        "code": "US91282CPA35",
+        "name": "US91282CPA35",
+        "ratio": 4.55
+      },
+      {
+        "code": "US91282CNT44",
+        "name": "US91282CNT44",
+        "ratio": 3.97
+      }
+    ],
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -1491,7 +1597,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         0.9561,
@@ -1504,6 +1611,7 @@
         0.9522,
         0.9522,
         0.9522,
+        0.9511,
         0.9511,
         0.9511,
         0.9511,
@@ -1527,6 +1635,7 @@
         null,
         null,
         null,
+        null,
         null
       ],
       "drift": [
@@ -1545,14 +1654,21 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 0.951003,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27",
-    "holdings_date": null,
-    "holdings_fetch_time": null
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "_last_pdf_url": "AN202601211818217732",
+    "chain_est": [
+      {
+        "value": 0.951003,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "160140": {
     "code": "160140",
@@ -1565,64 +1681,64 @@
     "bench": "usRWR",
     "nav": 1.3037,
     "nav_date": "2026-03-26",
-    "nav_src": "fundgz",
+    "nav_src": "lsjz",
     "shares": 2.4,
     "holdings": [
       {
-        "code": "WELL",
-        "name": "Welltower Inc",
+        "code": "usWELL",
+        "name": "usWELL",
         "ratio": 10.81
       },
       {
-        "code": "PLD",
-        "name": "安博",
+        "code": "usPLD",
+        "name": "usPLD",
         "ratio": 10.06
       },
       {
-        "code": "EQIX",
-        "name": "易昆尼克斯",
+        "code": "usEQIX",
+        "name": "usEQIX",
         "ratio": 6.38
       },
       {
-        "code": "SPG",
-        "name": "西蒙地产",
+        "code": "usSPG",
+        "name": "usSPG",
         "ratio": 5.13
       },
       {
-        "code": "O",
-        "name": "Realty Income Corp",
+        "code": "usO",
+        "name": "usO",
         "ratio": 4.4
       },
       {
-        "code": "DLR",
-        "name": "数字房地产信托",
+        "code": "usDLR",
+        "name": "usDLR",
         "ratio": 4.24
       },
       {
-        "code": "PSA",
-        "name": "大众仓储",
+        "code": "usPSA",
+        "name": "usPSA",
         "ratio": 3.48
       },
       {
-        "code": "VTR",
-        "name": "芬塔公司",
+        "code": "usVTR",
+        "name": "usVTR",
         "ratio": 3.09
       },
       {
-        "code": "EXR",
-        "name": "Extra Space Storage Inc",
+        "code": "usEXR",
+        "name": "usEXR",
         "ratio": 2.35
       },
       {
-        "code": "AVB",
-        "name": "艾芙隆海湾社区",
+        "code": "usAVB",
+        "name": "usAVB",
         "ratio": 2.18
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-19",
@@ -1640,7 +1756,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         1.339,
@@ -1658,12 +1775,14 @@
         1.3037,
         1.3037,
         1.3037,
+        1.3037,
         1.3037
       ],
       "est": [
         null,
         1.295198,
         1.254572,
+        null,
         null,
         null,
         null,
@@ -1694,12 +1813,18 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 1.293017,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27"
+    "chain_est": [
+      {
+        "value": 1.293017,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "501225": {
     "code": "501225",
@@ -1716,47 +1841,47 @@
     "shares": 2.27,
     "holdings": [
       {
-        "code": "SMH",
-        "name": "VanEck Semiconductor ETF",
+        "code": "usSMH",
+        "name": "usSMH",
         "ratio": 17.98
       },
       {
-        "code": "SOXQ",
-        "name": "Invesco PHLX Semiconductor ETF",
+        "code": "usSOXQ",
+        "name": "usSOXQ",
         "ratio": 17.81
       },
       {
-        "code": "SOXX",
-        "name": "iShares Semiconductor ETF",
+        "code": "usSOXX",
+        "name": "usSOXX",
         "ratio": 17.8
       },
       {
-        "code": "PSI",
-        "name": "Invesco Dynamic Semiconductors ETF",
+        "code": "usPSI",
+        "name": "usPSI",
         "ratio": 17.69
       },
       {
-        "code": "516260",
-        "name": "华夏国证半导体芯片ETF",
+        "code": "sh516260",
+        "name": "sh516260",
         "ratio": 7.01
       },
       {
-        "code": "516670",
-        "name": "国泰中证芯片产业ETF",
+        "code": "sh516670",
+        "name": "sh516670",
         "ratio": 7.0
       },
       {
-        "code": "159755",
-        "name": "景顺长城中证半导体芯片ETF",
+        "code": "sz159755",
+        "name": "sz159755",
         "ratio": 6.81
       },
       {
-        "code": "JPXN",
-        "name": "Global X Japan Semiconductor ETF",
+        "code": "usJPXN",
+        "name": "usJPXN",
         "ratio": 1.67
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -1775,7 +1900,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         2.1602,
@@ -1793,12 +1919,14 @@
         2.0886,
         2.0886,
         2.0886,
+        2.0886,
         2.0886
       ],
       "est": [
         null,
         2.104516,
         2.05785,
+        null,
         null,
         null,
         null,
@@ -1829,14 +1957,20 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 2.052459,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27",
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T00:00:00Z"
+    "holdings_fetch_time": "2026-03-28T00:00:00Z",
+    "chain_est": [
+      {
+        "value": 2.052459,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "160216": {
     "code": "160216",
@@ -1882,42 +2016,42 @@
     "shares": 15.4,
     "holdings": [
       {
-        "code": "CPER",
-        "name": "United States Copper Index Fund",
+        "code": "usCPER",
+        "name": "usCPER",
         "ratio": 18.12
       },
       {
-        "code": "GLDM",
-        "name": "SPDR Gold MiniShares Trust",
+        "code": "usGLDM",
+        "name": "usGLDM",
         "ratio": 12.84
       },
       {
-        "code": "SGOL",
-        "name": "Aberdeen Standard Physical Gold ETF",
+        "code": "usSGOL",
+        "name": "usSGOL",
         "ratio": 12.84
       },
       {
-        "code": "UGL",
-        "name": "ProShares Ultra Gold (2x Leveraged)",
+        "code": "usUGL",
+        "name": "usUGL",
         "ratio": 12.35
       },
       {
-        "code": "COPX",
-        "name": "Global X Copper Miners ETF",
+        "code": "usCOPX",
+        "name": "usCOPX",
         "ratio": 5.35
       },
       {
         "code": "DBBB.L",
-        "name": "Invesco DB Base Metals ETF",
+        "name": "DBBB.L",
         "ratio": 4.13
       },
       {
-        "code": "GDXU",
-        "name": "MicroSectors Gold Miners 3x Leveraged",
+        "code": "usGDXU",
+        "name": "usGDXU",
         "ratio": 1.97
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -1936,7 +2070,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         0.767,
@@ -1954,12 +2089,14 @@
         0.744,
         0.744,
         0.744,
+        0.744,
         0.744
       ],
       "est": [
         null,
         0.747333,
         0.74441,
+        null,
         null,
         null,
         null,
@@ -1990,14 +2127,20 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 0.769812,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27",
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T00:00:00Z"
+    "holdings_fetch_time": "2026-03-28T00:00:00Z",
+    "chain_est": [
+      {
+        "value": 0.769812,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "161116": {
     "code": "161116",
@@ -2014,37 +2157,37 @@
     "shares": 2.71,
     "holdings": [
       {
-        "code": "GLD",
-        "name": "SPDR Gold Shares",
+        "code": "usGLD",
+        "name": "usGLD",
         "ratio": 18.46
       },
       {
-        "code": "SGOL",
-        "name": "Aberdeen Standard Physical Gold ETF",
+        "code": "usSGOL",
+        "name": "usSGOL",
         "ratio": 17.84
       },
       {
-        "code": "GLDM",
-        "name": "SPDR Gold MiniShares Trust",
+        "code": "usGLDM",
+        "name": "usGLDM",
         "ratio": 13.53
       },
       {
-        "code": "IAU",
-        "name": "iShares Gold Trust",
+        "code": "usIAU",
+        "name": "usIAU",
         "ratio": 12.81
       },
       {
         "code": "UBSG.L",
-        "name": "UBS ETF Gold (USD)",
+        "name": "UBSG.L",
         "ratio": 11.71
       },
       {
-        "code": "UGL",
-        "name": "ProShares Ultra Gold (2x Leveraged)",
+        "code": "usUGL",
+        "name": "usUGL",
         "ratio": 8.46
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -2063,7 +2206,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         1.7444,
@@ -2081,12 +2225,14 @@
         1.6544,
         1.6544,
         1.6544,
+        1.6544,
         1.6544
       ],
       "est": [
         null,
         1.576065,
         1.538932,
+        null,
         null,
         null,
         null,
@@ -2117,14 +2263,20 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 1.662176,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27",
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T00:00:00Z"
+    "holdings_fetch_time": "2026-03-28T00:00:00Z",
+    "chain_est": [
+      {
+        "value": 1.662176,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "164701": {
     "code": "164701",
@@ -2141,57 +2293,57 @@
     "shares": 6.81,
     "holdings": [
       {
-        "code": "UGL",
-        "name": "ProShares Ultra Gold (2x Leveraged)",
+        "code": "usUGL",
+        "name": "usUGL",
         "ratio": 10.52
       },
       {
-        "code": "GLDM",
-        "name": "SPDR Gold MiniShares Trust",
+        "code": "usGLDM",
+        "name": "usGLDM",
         "ratio": 8.62
       },
       {
-        "code": "IAUM",
-        "name": "iShares Gold Trust Micro",
+        "code": "usIAUM",
+        "name": "usIAUM",
         "ratio": 8.2
       },
       {
-        "code": "GLD",
-        "name": "SPDR Gold Shares",
+        "code": "usGLD",
+        "name": "usGLD",
         "ratio": 6.35
       },
       {
-        "code": "BAR",
-        "name": "GraniteShares Gold Trust",
+        "code": "usBAR",
+        "name": "usBAR",
         "ratio": 6.31
       },
       {
-        "code": "AAAU",
-        "name": "Perth Mint Physical Gold ETF",
+        "code": "usAAAU",
+        "name": "usAAAU",
         "ratio": 4.94
       },
       {
-        "code": "SGOL",
-        "name": "Aberdeen Standard Physical Gold ETF",
+        "code": "usSGOL",
+        "name": "usSGOL",
         "ratio": 4.09
       },
       {
-        "code": "IAU",
-        "name": "iShares Gold Trust",
+        "code": "usIAU",
+        "name": "usIAU",
         "ratio": 3.06
       },
       {
-        "code": "SLV",
-        "name": "iShares Silver Trust",
+        "code": "usSLV",
+        "name": "usSLV",
         "ratio": 0.73
       },
       {
-        "code": "SIVR",
-        "name": "Aberdeen Standard Physical Silver ETF",
+        "code": "usSIVR",
+        "name": "usSIVR",
         "ratio": 0.1
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -2210,7 +2362,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         1.858,
@@ -2228,12 +2381,14 @@
         1.749,
         1.749,
         1.749,
+        1.749,
         1.749
       ],
       "est": [
         null,
         1.801224,
         1.744997,
+        null,
         null,
         null,
         null,
@@ -2264,14 +2419,20 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 1.810379,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27",
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T00:00:00Z"
+    "holdings_fetch_time": "2026-03-28T00:00:00Z",
+    "chain_est": [
+      {
+        "value": 1.810379,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "165513": {
     "code": "165513",
@@ -2288,52 +2449,52 @@
     "shares": 4.52,
     "holdings": [
       {
-        "code": "GLDM",
-        "name": "SPDR Gold MiniShares Trust",
+        "code": "usGLDM",
+        "name": "usGLDM",
         "ratio": 16.24
       },
       {
-        "code": "SGOL",
-        "name": "Aberdeen Standard Physical Gold ETF",
+        "code": "usSGOL",
+        "name": "usSGOL",
         "ratio": 16.23
       },
       {
-        "code": "IAUM",
-        "name": "iShares Gold Trust Micro",
+        "code": "usIAUM",
+        "name": "usIAUM",
         "ratio": 14.67
       },
       {
-        "code": "IAU",
-        "name": "iShares Gold Trust",
+        "code": "usIAU",
+        "name": "usIAU",
         "ratio": 12.3
       },
       {
         "code": "SGOL.L",
-        "name": "Invesco Physical Gold ETC",
+        "name": "SGOL.L",
         "ratio": 9.34
       },
       {
-        "code": "GLD",
-        "name": "SPDR Gold Shares",
+        "code": "usGLD",
+        "name": "usGLD",
         "ratio": 6.88
       },
       {
-        "code": "DGP",
-        "name": "DB Gold Double Long ETN",
+        "code": "usDGP",
+        "name": "usDGP",
         "ratio": 4.25
       },
       {
         "code": "PGLD.T",
-        "name": "Japan Physical Gold ETF",
+        "name": "PGLD.T",
         "ratio": 2.62
       },
       {
-        "code": "USO",
-        "name": "United States Oil Fund (Simplex WTI)",
+        "code": "usUSO",
+        "name": "usUSO",
         "ratio": 0.2
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -2352,7 +2513,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         1.1181,
@@ -2363,6 +2525,7 @@
         1.0645,
         1.0936,
         1.0936,
+        1.0589,
         1.0589,
         1.0589,
         1.0589,
@@ -2388,6 +2551,7 @@
         null,
         null,
         null,
+        null,
         null
       ],
       "drift": [
@@ -2406,17 +2570,23 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 1.096061,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27",
     "drift_5d": 0.020338,
     "drift_n": 4,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00",
+    "drift_computed_at": "2026-03-28T16:32:52+00:00",
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T00:00:00Z"
+    "holdings_fetch_time": "2026-03-28T00:00:00Z",
+    "chain_est": [
+      {
+        "value": 1.096061,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "160719": {
     "code": "160719",
@@ -2433,37 +2603,32 @@
     "shares": 2.24,
     "holdings": [
       {
-        "code": "GLD",
-        "name": "SPDR Gold Shares",
-        "ratio": 15.78
+        "code": "usGLD",
+        "name": "usGLD",
+        "ratio": 29.63
       },
       {
-        "code": "SGOL",
-        "name": "Aberdeen Standard Physical Gold ETF",
+        "code": "usSGOL",
+        "name": "usSGOL",
         "ratio": 15.76
       },
       {
-        "code": "IAU",
-        "name": "iShares Gold Trust",
+        "code": "usIAU",
+        "name": "usIAU",
         "ratio": 15.53
       },
       {
-        "code": "SWCG.SW",
-        "name": "Swisscanto Gold ETF",
-        "ratio": 13.85
-      },
-      {
         "code": "UBSG.L",
-        "name": "UBS ETF Gold (USD)",
+        "name": "UBSG.L",
         "ratio": 13.55
       },
       {
         "code": "IGLN.L",
-        "name": "iShares Physical Gold ETC",
+        "name": "IGLN.L",
         "ratio": 8.51
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -2482,7 +2647,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         2.101,
@@ -2500,12 +2666,14 @@
         1.998,
         1.998,
         1.998,
+        1.998,
         1.998
       ],
       "est": [
         null,
         1.898253,
         1.866631,
+        null,
         null,
         null,
         null,
@@ -2536,14 +2704,20 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 2.007391,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27",
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T00:00:00Z"
+    "holdings_fetch_time": "2026-03-28T00:00:00Z",
+    "chain_est": [
+      {
+        "value": 2.007391,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "161815": {
     "code": "161815",
@@ -2601,52 +2775,52 @@
     "shares": 2.85,
     "holdings": [
       {
-        "code": "GLD",
-        "name": "SPDR Gold Shares",
+        "code": "usGLD",
+        "name": "usGLD",
         "ratio": 14.67
       },
       {
-        "code": "IAU",
-        "name": "iShares Gold Trust",
+        "code": "usIAU",
+        "name": "usIAU",
         "ratio": 14.37
       },
       {
-        "code": "AAAU",
-        "name": "Perth Mint Physical Gold ETF",
+        "code": "usAAAU",
+        "name": "usAAAU",
         "ratio": 12.33
       },
       {
-        "code": "SGOL",
-        "name": "Aberdeen Standard Physical Gold ETF",
+        "code": "usSGOL",
+        "name": "usSGOL",
         "ratio": 11.9
       },
       {
-        "code": "BCI",
-        "name": "iPath Bloomberg Commodity ETN",
+        "code": "usBCI",
+        "name": "usBCI",
         "ratio": 10.46
       },
       {
-        "code": "COMT",
-        "name": "iShares GSCI Commodity ETF",
+        "code": "usCOMT",
+        "name": "usCOMT",
         "ratio": 8.09
       },
       {
-        "code": "CRUD.L",
-        "name": "WisdomTree WTI Crude Oil ETP",
+        "code": "usUSO",
+        "name": "usUSO",
         "ratio": 4.33
       },
       {
-        "code": "BRNT.L",
-        "name": "WisdomTree Brent Crude Oil ETP",
+        "code": "usBNO",
+        "name": "usBNO",
         "ratio": 3.8
       },
       {
-        "code": "SLV",
-        "name": "iShares Silver Trust",
+        "code": "usSLV",
+        "name": "usSLV",
         "ratio": 2.07
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -2665,7 +2839,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         1.186,
@@ -2674,6 +2849,7 @@
         1.167,
         1.131,
         1.138,
+        1.143,
         1.143,
         1.143,
         1.143,
@@ -2701,6 +2877,7 @@
         null,
         null,
         null,
+        null,
         null
       ],
       "drift": [
@@ -2719,17 +2896,23 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 1.180707,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27",
     "drift_5d": 0.013664,
     "drift_n": 3,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00",
+    "drift_computed_at": "2026-03-28T16:32:52+00:00",
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T00:00:00Z"
+    "holdings_fetch_time": "2026-03-28T00:00:00Z",
+    "chain_est": [
+      {
+        "value": 1.180707,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "163208": {
     "code": "163208",
@@ -2746,60 +2929,60 @@
     "shares": 3.04,
     "holdings": [
       {
-        "code": "00916",
-        "name": "龙源电力",
+        "code": "hk00916",
+        "name": "hk00916",
         "ratio": 3.21
       },
       {
-        "code": "00836",
-        "name": "华润电力",
+        "code": "hk00836",
+        "name": "hk00836",
         "ratio": 2.46
       },
       {
-        "code": "00135",
-        "name": "昆仑能源",
+        "code": "hk00135",
+        "name": "hk00135",
         "ratio": 1.97
       },
       {
-        "code": "01798",
-        "name": "大唐新能源",
+        "code": "hk01798",
+        "name": "hk01798",
         "ratio": 1.87
       },
       {
-        "code": "06865",
-        "name": "福莱特玻璃",
+        "code": "hk06865",
+        "name": "hk06865",
         "ratio": 1.43
       },
       {
-        "code": "00968",
-        "name": "信义光能",
+        "code": "hk00968",
+        "name": "hk00968",
         "ratio": 1.16
       },
       {
-        "code": "01811",
-        "name": "中广核新能源",
+        "code": "hk01811",
+        "name": "hk01811",
         "ratio": 1.14
       },
       {
-        "code": "01171",
-        "name": "兖矿能源",
+        "code": "hk01171",
+        "name": "hk01171",
         "ratio": 1.13
       },
       {
-        "code": "00857",
-        "name": "中国石油股份",
+        "code": "hk00857",
+        "name": "hk00857",
         "ratio": 0.9
       },
       {
-        "code": "00386",
-        "name": "中国石油化工股份",
+        "code": "hk00386",
+        "name": "hk00386",
         "ratio": 0.72
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-19",
@@ -2817,7 +3000,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         1.353,
@@ -2835,12 +3019,14 @@
         1.396,
         1.396,
         1.396,
+        1.396,
         1.396
       ],
       "est": [
         null,
         1.35186,
         1.358854,
+        null,
         null,
         null,
         null,
@@ -2871,12 +3057,18 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 1.419599,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27"
+    "chain_est": [
+      {
+        "value": 1.419599,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "501018": {
     "code": "501018",
@@ -2902,42 +3094,22 @@
     "shares": 8.85,
     "holdings": [
       {
-        "code": "BRNT.L",
-        "name": "WisdomTree Brent Crude Oil ETP",
-        "ratio": 19.68
+        "code": "usUSO",
+        "name": "usUSO",
+        "ratio": 61.4
       },
       {
-        "code": "CRUD.L",
-        "name": "WisdomTree WTI Crude Oil ETP",
-        "ratio": 19.63
-      },
-      {
-        "code": "USO",
-        "name": "United States Oil Fund",
-        "ratio": 19.46
-      },
-      {
-        "code": "NOMI.T",
-        "name": "Nomura Crude Oil ETF",
-        "ratio": 11.73
-      },
-      {
-        "code": "SPWT.T",
-        "name": "Simplex WTI Crude Oil ETF",
-        "ratio": 10.58
-      },
-      {
-        "code": "BNO",
-        "name": "United States Brent Oil Fund",
-        "ratio": 7.76
+        "code": "usBNO",
+        "name": "usBNO",
+        "ratio": 27.44
       },
       {
         "code": "OIL.L",
-        "name": "UBS CMCI Oil ETF",
+        "name": "OIL.L",
         "ratio": 5.06
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -2956,7 +3128,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         1.789,
@@ -2974,12 +3147,14 @@
         1.7505,
         1.7505,
         1.7505,
+        1.7505,
         1.7505
       ],
       "est": [
         null,
         1.851133,
         1.851133,
+        null,
         null,
         null,
         null,
@@ -3010,14 +3185,20 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 1.842443,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27",
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T00:00:00Z"
+    "holdings_fetch_time": "2026-03-28T00:00:00Z",
+    "chain_est": [
+      {
+        "value": 1.842443,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "161129": {
     "code": "161129",
@@ -3034,37 +3215,27 @@
     "shares": 4.35,
     "holdings": [
       {
-        "code": "CRUD.L",
-        "name": "WisdomTree WTI Crude Oil ETP",
-        "ratio": 18.52
+        "code": "usUSO",
+        "name": "usUSO",
+        "ratio": 51.14
       },
       {
-        "code": "BRNT.L",
-        "name": "WisdomTree Brent Crude Oil ETP",
+        "code": "usBNO",
+        "name": "usBNO",
         "ratio": 18.35
       },
       {
-        "code": "DBO",
-        "name": "Invesco DB Oil Fund",
+        "code": "usDBO",
+        "name": "usDBO",
         "ratio": 17.57
       },
       {
-        "code": "SPWT.T",
-        "name": "Simplex WTI Crude Oil ETF",
-        "ratio": 16.51
-      },
-      {
-        "code": "NOMI.T",
-        "name": "Nomura Crude Oil ETF",
-        "ratio": 16.11
-      },
-      {
         "code": "KORE.L",
-        "name": "Samsung GSCI Crude Oil ETF",
+        "name": "KORE.L",
         "ratio": 5.72
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -3083,7 +3254,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         1.7047,
@@ -3093,6 +3265,7 @@
         1.6256,
         1.6368,
         1.6067,
+        1.6719,
         1.6719,
         1.6719,
         1.6719,
@@ -3119,6 +3292,7 @@
         null,
         null,
         null,
+        null,
         null
       ],
       "drift": [
@@ -3137,17 +3311,23 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 1.770851,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27",
     "drift_5d": -0.025044,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00",
+    "drift_computed_at": "2026-03-28T16:32:52+00:00",
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T00:00:00Z"
+    "holdings_fetch_time": "2026-03-28T00:00:00Z",
+    "chain_est": [
+      {
+        "value": 1.770851,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "160723": {
     "code": "160723",
@@ -3164,42 +3344,22 @@
     "shares": 3.5,
     "holdings": [
       {
-        "code": "USO",
-        "name": "United States Oil Fund",
-        "ratio": 17.22
+        "code": "usUSO",
+        "name": "usUSO",
+        "ratio": 63.46
       },
       {
-        "code": "CRUD.L",
-        "name": "WisdomTree WTI Crude Oil ETP",
-        "ratio": 16.92
-      },
-      {
-        "code": "SPWT.T",
-        "name": "Simplex WTI Crude Oil ETF",
-        "ratio": 15.03
-      },
-      {
-        "code": "BRNT.L",
-        "name": "WisdomTree Brent Crude Oil ETP",
-        "ratio": 14.89
-      },
-      {
-        "code": "BNO",
-        "name": "United States Brent Oil Fund",
-        "ratio": 14.74
-      },
-      {
-        "code": "NOMI.T",
-        "name": "Nomura Crude Oil ETF",
-        "ratio": 14.29
+        "code": "usBNO",
+        "name": "usBNO",
+        "ratio": 29.63
       },
       {
         "code": "WBRN.L",
-        "name": "WisdomTree Bloomberg Brent Crude ETP",
+        "name": "WBRN.L",
         "ratio": 0.25
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -3218,7 +3378,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         2.0645,
@@ -3231,6 +3392,7 @@
         1.9542,
         1.9542,
         1.9542,
+        2.0273,
         2.0273,
         2.0273,
         2.0273,
@@ -3254,6 +3416,7 @@
         null,
         null,
         null,
+        null,
         null
       ],
       "drift": [
@@ -3272,14 +3435,20 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 2.147285,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27",
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T00:00:00Z"
+    "holdings_fetch_time": "2026-03-28T00:00:00Z",
+    "chain_est": [
+      {
+        "value": 2.147285,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "162719": {
     "code": "162719",
@@ -3296,60 +3465,60 @@
     "shares": 2.95,
     "holdings": [
       {
-        "code": "COP",
-        "name": "康菲石油",
+        "code": "usCOP",
+        "name": "usCOP",
         "ratio": 17.42
       },
       {
-        "code": "EOG",
-        "name": "EOG能源",
+        "code": "usEOG",
+        "name": "usEOG",
         "ratio": 8.53
       },
       {
-        "code": "PSX",
-        "name": "Phillips 66",
+        "code": "usPSX",
+        "name": "usPSX",
         "ratio": 7.77
       },
       {
-        "code": "MPC",
-        "name": "马拉松原油",
+        "code": "usMPC",
+        "name": "usMPC",
         "ratio": 5.86
       },
       {
-        "code": "DVN",
-        "name": "戴文能源",
+        "code": "usDVN",
+        "name": "usDVN",
         "ratio": 4.09
       },
       {
-        "code": "FANG",
-        "name": "Diamondback Energy Inc",
+        "code": "usFANG",
+        "name": "usFANG",
         "ratio": 4.03
       },
       {
-        "code": "EXE",
-        "name": "Expand Energy Corp",
+        "code": "usEXE",
+        "name": "usEXE",
         "ratio": 4.0
       },
       {
-        "code": "EQT",
-        "name": "EQT能源",
+        "code": "usEQT",
+        "name": "usEQT",
         "ratio": 3.95
       },
       {
-        "code": "VLO",
-        "name": "瓦莱罗能源",
+        "code": "usVLO",
+        "name": "usVLO",
         "ratio": 3.88
       },
       {
-        "code": "CTRA",
-        "name": "Coterra Energy Inc",
+        "code": "usCTRA",
+        "name": "usCTRA",
         "ratio": 3.74
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-19",
@@ -3367,7 +3536,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         2.8354,
@@ -3385,12 +3555,14 @@
         2.9737,
         2.9737,
         2.9737,
+        2.9737,
         2.9737
       ],
       "est": [
         null,
         2.869093,
         2.867676,
+        null,
         null,
         null,
         null,
@@ -3421,12 +3593,18 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 3.019592,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27"
+    "chain_est": [
+      {
+        "value": 3.019592,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "162411": {
     "code": "162411",
@@ -3443,60 +3621,60 @@
     "shares": 20.34,
     "holdings": [
       {
-        "code": "VG",
-        "name": "Venture Global Inc-A",
+        "code": "usVG",
+        "name": "usVG",
         "ratio": 2.91
       },
       {
-        "code": "XOM",
-        "name": "埃克森美孚",
+        "code": "usXOM",
+        "name": "usXOM",
         "ratio": 2.61
       },
       {
-        "code": "CVX",
-        "name": "雪佛龙",
+        "code": "usCVX",
+        "name": "usCVX",
         "ratio": 2.61
       },
       {
-        "code": "GPOR",
-        "name": "格尔夫波特能源",
+        "code": "usGPOR",
+        "name": "usGPOR",
         "ratio": 2.6
       },
       {
-        "code": "OXY",
-        "name": "西方石油",
+        "code": "usOXY",
+        "name": "usOXY",
         "ratio": 2.55
       },
       {
-        "code": "CTRA",
-        "name": "Coterra Energy Inc",
+        "code": "usCTRA",
+        "name": "usCTRA",
         "ratio": 2.52
       },
       {
-        "code": "COP",
-        "name": "康菲石油",
+        "code": "usCOP",
+        "name": "usCOP",
         "ratio": 2.51
       },
       {
-        "code": "TPL",
-        "name": "Texas Pacific Land Corp",
+        "code": "usTPL",
+        "name": "usTPL",
         "ratio": 2.5
       },
       {
-        "code": "DVN",
-        "name": "戴文能源",
+        "code": "usDVN",
+        "name": "usDVN",
         "ratio": 2.47
       },
       {
-        "code": "MGY",
-        "name": "Magnolia Oil & Gas Corp-A",
+        "code": "usMGY",
+        "name": "usMGY",
         "ratio": 2.47
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-19",
@@ -3514,7 +3692,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         0.9366,
@@ -3525,6 +3704,7 @@
         0.965,
         0.9714,
         0.9714,
+        0.9923,
         0.9923,
         0.9923,
         0.9923,
@@ -3550,6 +3730,7 @@
         null,
         null,
         null,
+        null,
         null
       ],
       "drift": [
@@ -3568,15 +3749,21 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 1.007614,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27",
     "drift_5d": -0.008341,
     "drift_n": 4,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00"
+    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "chain_est": [
+      {
+        "value": 1.007614,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "160416": {
     "code": "160416",
@@ -3593,60 +3780,60 @@
     "shares": 1.84,
     "holdings": [
       {
-        "code": "XOM",
-        "name": "埃克森美孚",
+        "code": "usXOM",
+        "name": "usXOM",
         "ratio": 9.33
       },
       {
-        "code": "CVX",
-        "name": "雪佛龙",
+        "code": "usCVX",
+        "name": "usCVX",
         "ratio": 7.87
       },
       {
-        "code": "RIGD",
-        "name": "印度瑞来斯实业",
+        "code": "usRIGD",
+        "name": "usRIGD",
         "ratio": 5.94
       },
       {
-        "code": "SHEL",
-        "name": "壳牌",
+        "code": "usSHEL",
+        "name": "usSHEL",
         "ratio": 5.56
       },
       {
-        "code": "TTEFP",
-        "name": "道达尔集团",
+        "code": "usTTEFP",
+        "name": "usTTEFP",
         "ratio": 3.71
       },
       {
-        "code": "COP",
-        "name": "康菲石油",
+        "code": "usCOP",
+        "name": "usCOP",
         "ratio": 2.96
       },
       {
-        "code": "ENBCN",
-        "name": "Enbridge股份有限公司",
+        "code": "usENBCN",
+        "name": "usENBCN",
         "ratio": 2.61
       },
       {
         "code": "BP.",
-        "name": "英国石油",
+        "name": "BP.",
         "ratio": 2.36
       },
       {
-        "code": "WMB",
-        "name": "威廉姆斯",
+        "code": "usWMB",
+        "name": "usWMB",
         "ratio": 1.84
       },
       {
-        "code": "CNQCN",
-        "name": "加拿大自然资源有限公司",
+        "code": "usCNQCN",
+        "name": "usCNQCN",
         "ratio": 1.78
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-19",
@@ -3664,7 +3851,8 @@
         "03-26",
         "03-26",
         "03-26",
-        "03-26"
+        "03-26",
+        "2026-03-26"
       ],
       "nav": [
         2.175,
@@ -3682,12 +3870,14 @@
         2.2309,
         2.2309,
         2.2309,
+        2.2309,
         2.2309
       ],
       "est": [
         null,
         2.161404,
         2.150572,
+        null,
         null,
         null,
         null,
@@ -3718,12 +3908,18 @@
         null,
         null,
         null,
+        null,
         null
       ]
     },
-    "est_nav_yesterday": 2.264325,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27"
+    "chain_est": [
+      {
+        "value": 2.264325,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "501303": {
     "code": "501303",
@@ -3740,60 +3936,60 @@
     "shares": 0.43,
     "holdings": [
       {
-        "code": "09926",
-        "name": "康方生物",
+        "code": "hk09926",
+        "name": "hk09926",
         "ratio": 2.2
       },
       {
-        "code": "03993",
-        "name": "洛阳钼业",
+        "code": "hk03993",
+        "name": "hk03993",
         "ratio": 1.85
       },
       {
-        "code": "00020",
-        "name": "商汤-W",
+        "code": "hk00020",
+        "name": "hk00020",
         "ratio": 1.85
       },
       {
-        "code": "00728",
-        "name": "中国电信",
+        "code": "hk00728",
+        "name": "hk00728",
         "ratio": 1.81
       },
       {
-        "code": "01339",
-        "name": "中国人民保险集团",
+        "code": "hk01339",
+        "name": "hk01339",
         "ratio": 1.5
       },
       {
-        "code": "01336",
-        "name": "新华保险",
+        "code": "hk01336",
+        "name": "hk01336",
         "ratio": 1.36
       },
       {
-        "code": "01818",
-        "name": "招金矿业",
+        "code": "hk01818",
+        "name": "hk01818",
         "ratio": 1.35
       },
       {
-        "code": "01347",
-        "name": "华虹半导体",
+        "code": "hk01347",
+        "name": "hk01347",
         "ratio": 1.34
       },
       {
-        "code": "00300",
-        "name": "美的集团",
+        "code": "hk00300",
+        "name": "hk00300",
         "ratio": 1.34
       },
       {
-        "code": "00788",
-        "name": "中国铁塔",
+        "code": "hk00788",
+        "name": "hk00788",
         "ratio": 1.31
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-20",
@@ -3811,7 +4007,8 @@
         "03-27",
         "03-27",
         "03-27",
-        "03-27"
+        "03-27",
+        "2026-03-27"
       ],
       "nav": [
         1.0417,
@@ -3824,6 +4021,7 @@
         1.0215,
         1.0215,
         1.0215,
+        1.0311,
         1.0311,
         1.0311,
         1.0311,
@@ -3847,6 +4045,7 @@
         1.040071,
         1.040071,
         1.040071,
+        1.040071,
         1.040071
       ],
       "drift": [
@@ -3865,15 +4064,21 @@
         -0.008625,
         -0.008625,
         -0.008625,
+        -0.008625,
         -0.008625
       ]
     },
-    "est_nav_yesterday": 1.040071,
-    "est_nav_date": "2026-03-27",
     "drift_5d": -0.008625,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00",
-    "est_nav_index_date": "2026-03-27"
+    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "chain_est": [
+      {
+        "value": 1.040071,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "161124": {
     "code": "161124",
@@ -3890,60 +4095,60 @@
     "shares": 0.44,
     "holdings": [
       {
-        "code": "01787",
-        "name": "山东黄金",
+        "code": "hk01787",
+        "name": "hk01787",
         "ratio": 3.02
       },
       {
-        "code": "01772",
-        "name": "赣锋锂业",
+        "code": "hk01772",
+        "name": "hk01772",
         "ratio": 2.02
       },
       {
-        "code": "00489",
-        "name": "东风集团股份",
+        "code": "hk00489",
+        "name": "hk00489",
         "ratio": 1.73
       },
       {
-        "code": "02400",
-        "name": "心动公司",
+        "code": "hk02400",
+        "name": "hk02400",
         "ratio": 1.69
       },
       {
-        "code": "06855",
-        "name": "亚盛医药-B",
+        "code": "hk06855",
+        "name": "hk06855",
         "ratio": 1.37
       },
       {
-        "code": "09969",
-        "name": "诺诚健华",
+        "code": "hk09969",
+        "name": "hk09969",
         "ratio": 1.29
       },
       {
-        "code": "03618",
-        "name": "重庆农村商业银行",
+        "code": "hk03618",
+        "name": "hk03618",
         "ratio": 1.22
       },
       {
-        "code": "06682",
-        "name": "范式智能",
+        "code": "hk06682",
+        "name": "hk06682",
         "ratio": 1.18
       },
       {
-        "code": "03931",
-        "name": "中创新航",
+        "code": "hk03931",
+        "name": "hk03931",
         "ratio": 1.17
       },
       {
-        "code": "01070",
-        "name": "TCL电子",
+        "code": "hk01070",
+        "name": "hk01070",
         "ratio": 1.14
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-20",
@@ -3961,7 +4166,8 @@
         "03-27",
         "03-27",
         "03-27",
-        "03-27"
+        "03-27",
+        "2026-03-27"
       ],
       "nav": [
         1.0927,
@@ -3974,6 +4180,7 @@
         1.099,
         1.099,
         1.099,
+        1.1113,
         1.1113,
         1.1113,
         1.1113,
@@ -3997,6 +4204,7 @@
         1.124191,
         1.124191,
         1.124191,
+        1.124191,
         1.124191
       ],
       "drift": [
@@ -4015,15 +4223,21 @@
         -0.011467,
         -0.011467,
         -0.011467,
+        -0.011467,
         -0.011467
       ]
     },
-    "est_nav_yesterday": 1.124191,
-    "est_nav_date": "2026-03-27",
     "drift_5d": -0.011467,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00",
-    "est_nav_index_date": "2026-03-27"
+    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "chain_est": [
+      {
+        "value": 1.124191,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "160322": {
     "code": "160322",
@@ -4040,60 +4254,60 @@
     "shares": 1.13,
     "holdings": [
       {
-        "code": "00005",
-        "name": "汇丰控股",
+        "code": "hk00005",
+        "name": "hk00005",
         "ratio": 9.99
       },
       {
-        "code": "00700",
-        "name": "腾讯控股",
+        "code": "hk00700",
+        "name": "hk00700",
         "ratio": 9.79
       },
       {
-        "code": "09988",
-        "name": "阿里巴巴-W",
+        "code": "hk09988",
+        "name": "hk09988",
         "ratio": 9.03
       },
       {
-        "code": "02899",
-        "name": "紫金矿业",
+        "code": "hk02899",
+        "name": "hk02899",
         "ratio": 4.89
       },
       {
-        "code": "01299",
-        "name": "友邦保险",
+        "code": "hk01299",
+        "name": "hk01299",
         "ratio": 4.55
       },
       {
-        "code": "01398",
-        "name": "工商银行",
+        "code": "hk01398",
+        "name": "hk01398",
         "ratio": 4.5
       },
       {
-        "code": "01810",
-        "name": "小米集团-W",
+        "code": "hk01810",
+        "name": "hk01810",
         "ratio": 4.0
       },
       {
-        "code": "00981",
-        "name": "中芯国际",
+        "code": "hk00981",
+        "name": "hk00981",
         "ratio": 3.85
       },
       {
-        "code": "03690",
-        "name": "美团-W",
+        "code": "hk03690",
+        "name": "hk03690",
         "ratio": 3.18
       },
       {
-        "code": "03988",
-        "name": "中国银行",
+        "code": "hk03988",
+        "name": "hk03988",
         "ratio": 2.94
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-20",
@@ -4111,7 +4325,8 @@
         "03-27",
         "03-27",
         "03-27",
-        "03-27"
+        "03-27",
+        "2026-03-27"
       ],
       "nav": [
         1.1427,
@@ -4124,6 +4339,7 @@
         1.1298,
         1.1298,
         1.1298,
+        1.134,
         1.134,
         1.134,
         1.134,
@@ -4147,6 +4363,7 @@
         1.138876,
         1.138876,
         1.138876,
+        1.138876,
         1.138876
       ],
       "drift": [
@@ -4165,15 +4382,21 @@
         -0.004281,
         -0.004281,
         -0.004281,
+        -0.004281,
         -0.004281
       ]
     },
-    "est_nav_yesterday": 1.138876,
-    "est_nav_date": "2026-03-27",
     "drift_5d": -0.004281,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00",
-    "est_nav_index_date": "2026-03-27"
+    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "chain_est": [
+      {
+        "value": 1.138876,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "501021": {
     "code": "501021",
@@ -4199,60 +4422,60 @@
     "shares": 2.34,
     "holdings": [
       {
-        "code": "09987",
-        "name": "百胜中国",
+        "code": "hk09987",
+        "name": "hk09987",
         "ratio": 3.02
       },
       {
-        "code": "09868",
-        "name": "小鹏汽车-W",
+        "code": "hk09868",
+        "name": "hk09868",
         "ratio": 2.64
       },
       {
-        "code": "02269",
-        "name": "药明生物",
+        "code": "hk02269",
+        "name": "hk02269",
         "ratio": 2.54
       },
       {
-        "code": "01801",
-        "name": "信达生物",
+        "code": "hk01801",
+        "name": "hk01801",
         "ratio": 2.46
       },
       {
-        "code": "01378",
-        "name": "中国宏桥",
+        "code": "hk01378",
+        "name": "hk01378",
         "ratio": 2.42
       },
       {
-        "code": "09660",
-        "name": "地平线机器人-W",
+        "code": "hk09660",
+        "name": "hk09660",
         "ratio": 2.11
       },
       {
-        "code": "00175",
-        "name": "吉利汽车",
+        "code": "hk00175",
+        "name": "hk00175",
         "ratio": 2.09
       },
       {
-        "code": "02423",
-        "name": "贝壳-W",
+        "code": "hk02423",
+        "name": "hk02423",
         "ratio": 1.83
       },
       {
-        "code": "01109",
-        "name": "华润置地",
+        "code": "hk01109",
+        "name": "hk01109",
         "ratio": 1.76
       },
       {
-        "code": "09926",
-        "name": "康方生物",
+        "code": "hk09926",
+        "name": "hk09926",
         "ratio": 1.76
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-20",
@@ -4270,7 +4493,8 @@
         "03-27",
         "03-27",
         "03-27",
-        "03-27"
+        "03-27",
+        "2026-03-27"
       ],
       "nav": [
         1.4041,
@@ -4283,6 +4507,7 @@
         1.3815,
         1.3815,
         1.3815,
+        1.4019,
         1.4019,
         1.4019,
         1.4019,
@@ -4306,6 +4531,7 @@
         1.416129,
         1.416129,
         1.416129,
+        1.416129,
         1.416129
       ],
       "drift": [
@@ -4324,15 +4550,21 @@
         -0.010048,
         -0.010048,
         -0.010048,
+        -0.010048,
         -0.010048
       ]
     },
-    "est_nav_yesterday": 1.416129,
-    "est_nav_date": "2026-03-27",
     "drift_5d": -0.010048,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00",
-    "est_nav_index_date": "2026-03-27"
+    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "chain_est": [
+      {
+        "value": 1.416129,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "501310": {
     "code": "501310",
@@ -4358,60 +4590,60 @@
     "shares": 0.53,
     "holdings": [
       {
-        "code": "02318",
-        "name": "中国平安",
+        "code": "hk02318",
+        "name": "hk02318",
         "ratio": 5.77
       },
       {
-        "code": "00857",
-        "name": "中国石油股份",
+        "code": "hk00857",
+        "name": "hk00857",
         "ratio": 5.23
       },
       {
-        "code": "01398",
-        "name": "工商银行",
+        "code": "hk01398",
+        "name": "hk01398",
         "ratio": 4.42
       },
       {
-        "code": "03988",
-        "name": "中国银行",
+        "code": "hk03988",
+        "name": "hk03988",
         "ratio": 4.3
       },
       {
-        "code": "00939",
-        "name": "建设银行",
+        "code": "hk00939",
+        "name": "hk00939",
         "ratio": 4.21
       },
       {
-        "code": "601668",
-        "name": "中国建筑",
+        "code": "sh601668",
+        "name": "sh601668",
         "ratio": 3.73
       },
       {
-        "code": "02628",
-        "name": "中国人寿",
+        "code": "hk02628",
+        "name": "hk02628",
         "ratio": 3.62
       },
       {
-        "code": "00267",
-        "name": "中信股份",
+        "code": "hk00267",
+        "name": "hk00267",
         "ratio": 3.44
       },
       {
-        "code": "00386",
-        "name": "中国石油化工股份",
+        "code": "hk00386",
+        "name": "hk00386",
         "ratio": 3.43
       },
       {
-        "code": "03328",
-        "name": "交通银行",
+        "code": "hk03328",
+        "name": "hk03328",
         "ratio": 2.34
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-20",
@@ -4429,7 +4661,8 @@
         "03-27",
         "03-27",
         "03-27",
-        "03-27"
+        "03-27",
+        "2026-03-27"
       ],
       "nav": [
         1.3608,
@@ -4442,6 +4675,7 @@
         1.3459,
         1.3459,
         1.3459,
+        1.348,
         1.348,
         1.348,
         1.348,
@@ -4465,6 +4699,7 @@
         1.355549,
         1.355549,
         1.355549,
+        1.355549,
         1.355549
       ],
       "drift": [
@@ -4483,15 +4718,21 @@
         -0.005569,
         -0.005569,
         -0.005569,
+        -0.005569,
         -0.005569
       ]
     },
-    "est_nav_yesterday": 1.355549,
-    "est_nav_date": "2026-03-27",
     "drift_5d": -0.005569,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00",
-    "est_nav_index_date": "2026-03-27"
+    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "chain_est": [
+      {
+        "value": 1.355549,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "501302": {
     "code": "501302",
@@ -4508,12 +4749,12 @@
     "shares": 2.07,
     "holdings": [
       {
-        "code": "159920",
-        "name": "南方恒生指数ETF",
+        "code": "sz159920",
+        "name": "sz159920",
         "ratio": 96.82
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -4532,7 +4773,8 @@
         "03-27",
         "03-27",
         "03-27",
-        "03-27"
+        "03-27",
+        "2026-03-27"
       ],
       "nav": [
         1.1621,
@@ -4545,6 +4787,7 @@
         1.1491,
         1.1491,
         1.1491,
+        1.1532,
         1.1532,
         1.1532,
         1.1532,
@@ -4568,9 +4811,11 @@
         null,
         null,
         null,
+        null,
         null
       ],
       "drift": [
+        null,
         null,
         null,
         null,
@@ -4607,60 +4852,60 @@
     "shares": 0.43,
     "holdings": [
       {
-        "code": "01919",
-        "name": "中远海控",
+        "code": "hk01919",
+        "name": "hk01919",
         "ratio": 3.02
       },
       {
-        "code": "03668",
-        "name": "兖煤澳大利亚",
+        "code": "hk03668",
+        "name": "hk03668",
         "ratio": 1.86
       },
       {
-        "code": "00639",
-        "name": "首钢资源",
+        "code": "hk00639",
+        "name": "hk00639",
         "ratio": 1.5
       },
       {
-        "code": "000937",
-        "name": "冀中能源",
+        "code": "sz000937",
+        "name": "sz000937",
         "ratio": 1.4
       },
       {
-        "code": "01308",
-        "name": "海丰国际",
+        "code": "hk01308",
+        "name": "hk01308",
         "ratio": 1.4
       },
       {
-        "code": "00316",
-        "name": "东方海外国际",
+        "code": "hk00316",
+        "name": "hk00316",
         "ratio": 1.33
       },
       {
-        "code": "01088",
-        "name": "中国神华",
+        "code": "hk01088",
+        "name": "hk01088",
         "ratio": 1.25
       },
       {
-        "code": "03360",
-        "name": "远东宏信",
+        "code": "hk03360",
+        "name": "hk03360",
         "ratio": 1.22
       },
       {
-        "code": "600256",
-        "name": "广汇能源",
+        "code": "sh600256",
+        "name": "sh600256",
         "ratio": 1.18
       },
       {
-        "code": "00303",
-        "name": "VTECH HOLDINGS",
+        "code": "hk00303",
+        "name": "hk00303",
         "ratio": 1.14
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-20",
@@ -4678,7 +4923,8 @@
         "03-27",
         "03-27",
         "03-27",
-        "03-27"
+        "03-27",
+        "2026-03-27"
       ],
       "nav": [
         1.3015,
@@ -4691,6 +4937,7 @@
         1.2895,
         1.2895,
         1.2895,
+        1.293,
         1.293,
         1.293,
         1.293,
@@ -4714,6 +4961,7 @@
         1.29662,
         1.29662,
         1.29662,
+        1.29662,
         1.29662
       ],
       "drift": [
@@ -4732,15 +4980,21 @@
         -0.002792,
         -0.002792,
         -0.002792,
+        -0.002792,
         -0.002792
       ]
     },
-    "est_nav_yesterday": 1.29662,
-    "est_nav_date": "2026-03-27",
     "drift_5d": -0.002792,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00",
-    "est_nav_index_date": "2026-03-27"
+    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "chain_est": [
+      {
+        "value": 1.29662,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "501306": {
     "code": "501306",
@@ -4757,60 +5011,60 @@
     "shares": 5.46,
     "holdings": [
       {
-        "code": "00316",
-        "name": "东方海外国际",
+        "code": "hk00316",
+        "name": "hk00316",
         "ratio": 6.84
       },
       {
-        "code": "01308",
-        "name": "海丰国际",
+        "code": "hk01308",
+        "name": "hk01308",
         "ratio": 4.08
       },
       {
-        "code": "01088",
-        "name": "中国神华",
+        "code": "hk01088",
+        "name": "hk01088",
         "ratio": 3.63
       },
       {
-        "code": "01378",
-        "name": "中国宏桥",
+        "code": "hk01378",
+        "name": "hk01378",
         "ratio": 3.3
       },
       {
-        "code": "00883",
-        "name": "中国海洋石油",
+        "code": "hk00883",
+        "name": "hk00883",
         "ratio": 2.85
       },
       {
-        "code": "00857",
-        "name": "中国石油股份",
+        "code": "hk00857",
+        "name": "hk00857",
         "ratio": 2.79
       },
       {
-        "code": "00386",
-        "name": "中国石油化工股份",
+        "code": "hk00386",
+        "name": "hk00386",
         "ratio": 2.64
       },
       {
-        "code": "00998",
-        "name": "中信银行",
+        "code": "hk00998",
+        "name": "hk00998",
         "ratio": 2.61
       },
       {
-        "code": "02343",
-        "name": "太平洋航运",
+        "code": "hk02343",
+        "name": "hk02343",
         "ratio": 2.34
       },
       {
-        "code": "03988",
-        "name": "中国银行",
+        "code": "hk03988",
+        "name": "hk03988",
         "ratio": 2.31
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2024-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-20",
@@ -4828,7 +5082,8 @@
         "03-27",
         "03-27",
         "03-27",
-        "03-27"
+        "03-27",
+        "2026-03-27"
       ],
       "nav": [
         1.2758,
@@ -4841,6 +5096,7 @@
         1.2674,
         1.2674,
         1.2674,
+        1.2743,
         1.2743,
         1.2743,
         1.2743,
@@ -4864,6 +5120,7 @@
         1.281818,
         1.281818,
         1.281818,
+        1.281818,
         1.281818
       ],
       "drift": [
@@ -4882,15 +5139,21 @@
         -0.005865,
         -0.005865,
         -0.005865,
+        -0.005865,
         -0.005865
       ]
     },
-    "est_nav_yesterday": 1.281818,
-    "est_nav_date": "2026-03-27",
     "drift_5d": -0.005865,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00",
-    "est_nav_index_date": "2026-03-27"
+    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "chain_est": [
+      {
+        "value": 1.281818,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "160717": {
     "code": "160717",
@@ -4907,60 +5170,60 @@
     "shares": 3.1,
     "holdings": [
       {
-        "code": "00700",
-        "name": "腾讯控股",
+        "code": "hk00700",
+        "name": "hk00700",
         "ratio": 7.45
       },
       {
-        "code": "09988",
-        "name": "阿里巴巴-W",
+        "code": "hk09988",
+        "name": "hk09988",
         "ratio": 6.98
       },
       {
-        "code": "00939",
-        "name": "建设银行",
+        "code": "hk00939",
+        "name": "hk00939",
         "ratio": 6.28
       },
       {
-        "code": "01810",
-        "name": "小米集团-W",
+        "code": "hk01810",
+        "name": "hk01810",
         "ratio": 6.08
       },
       {
-        "code": "03690",
-        "name": "美团-W",
+        "code": "hk03690",
+        "name": "hk03690",
         "ratio": 4.83
       },
       {
-        "code": "01398",
-        "name": "工商银行",
+        "code": "hk01398",
+        "name": "hk01398",
         "ratio": 4.41
       },
       {
-        "code": "00941",
-        "name": "中国移动",
+        "code": "hk00941",
+        "name": "hk00941",
         "ratio": 4.32
       },
       {
-        "code": "02318",
-        "name": "中国平安",
+        "code": "hk02318",
+        "name": "hk02318",
         "ratio": 3.72
       },
       {
-        "code": "01211",
-        "name": "比亚迪股份",
+        "code": "hk01211",
+        "name": "hk01211",
         "ratio": 2.99
       },
       {
-        "code": "00883",
-        "name": "中国海洋石油",
+        "code": "hk00883",
+        "name": "hk00883",
         "ratio": 2.82
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-20",
@@ -4978,7 +5241,8 @@
         "03-27",
         "03-27",
         "03-27",
-        "03-27"
+        "03-27",
+        "2026-03-27"
       ],
       "nav": [
         0.7411,
@@ -4993,6 +5257,7 @@
         0.7298,
         0.7298,
         0.7298,
+        0.7351,
         0.7351,
         0.7351,
         0.7351,
@@ -5014,9 +5279,11 @@
         null,
         null,
         null,
+        null,
         null
       ],
       "drift": [
+        null,
         null,
         null,
         null,
@@ -5051,60 +5318,60 @@
     "shares": 11.91,
     "holdings": [
       {
-        "code": "00700",
-        "name": "腾讯控股",
+        "code": "hk00700",
+        "name": "hk00700",
         "ratio": 14.15
       },
       {
-        "code": "09988",
-        "name": "阿里巴巴-W",
+        "code": "hk09988",
+        "name": "hk09988",
         "ratio": 13.25
       },
       {
-        "code": "01810",
-        "name": "小米集团-W",
+        "code": "hk01810",
+        "name": "hk01810",
         "ratio": 12.1
       },
       {
-        "code": "03690",
-        "name": "美团-W",
+        "code": "hk03690",
+        "name": "hk03690",
         "ratio": 9.6
       },
       {
-        "code": "01211",
-        "name": "比亚迪股份",
+        "code": "hk01211",
+        "name": "hk01211",
         "ratio": 5.93
       },
       {
-        "code": "00981",
-        "name": "中芯国际",
+        "code": "hk00981",
+        "name": "hk00981",
         "ratio": 5.43
       },
       {
-        "code": "06160",
-        "name": "百济神州",
+        "code": "hk06160",
+        "name": "hk06160",
         "ratio": 3.67
       },
       {
-        "code": "01024",
-        "name": "快手-W",
+        "code": "hk01024",
+        "name": "hk01024",
         "ratio": 3.27
       },
       {
-        "code": "00669",
-        "name": "创科实业",
+        "code": "hk00669",
+        "name": "hk00669",
         "ratio": 2.22
       },
       {
-        "code": "09868",
-        "name": "小鹏汽车-W",
+        "code": "hk09868",
+        "name": "hk09868",
         "ratio": 2.18
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-20",
@@ -5122,7 +5389,8 @@
         "03-27",
         "03-27",
         "03-27",
-        "03-27"
+        "03-27",
+        "2026-03-27"
       ],
       "nav": [
         0.9913,
@@ -5136,6 +5404,7 @@
         0.9819,
         0.9819,
         0.9819,
+        0.9914,
         0.9914,
         0.9914,
         0.9914,
@@ -5158,6 +5427,7 @@
         0.99487,
         0.99487,
         0.99487,
+        0.99487,
         0.99487
       ],
       "drift": [
@@ -5176,15 +5446,21 @@
         -0.003488,
         -0.003488,
         -0.003488,
+        -0.003488,
         -0.003488
       ]
     },
-    "est_nav_yesterday": 0.99487,
-    "est_nav_date": "2026-03-27",
-    "drift_5d": -0.00156,
+    "drift_5d": -0.003488,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00",
-    "est_nav_index_date": "2026-03-27"
+    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "chain_est": [
+      {
+        "value": 0.99487,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "501301": {
     "code": "501301",
@@ -5201,60 +5477,60 @@
     "shares": 0.97,
     "holdings": [
       {
-        "code": "09988",
-        "name": "阿里巴巴-W",
+        "code": "hk09988",
+        "name": "hk09988",
         "ratio": 16.21
       },
       {
-        "code": "00700",
-        "name": "腾讯控股",
+        "code": "hk00700",
+        "name": "hk00700",
         "ratio": 14.73
       },
       {
-        "code": "00939",
-        "name": "建设银行",
+        "code": "hk00939",
+        "name": "hk00939",
         "ratio": 7.63
       },
       {
-        "code": "01810",
-        "name": "小米集团-W",
+        "code": "hk01810",
+        "name": "hk01810",
         "ratio": 6.61
       },
       {
-        "code": "03690",
-        "name": "美团-W",
+        "code": "hk03690",
+        "name": "hk03690",
         "ratio": 4.75
       },
       {
-        "code": "00941",
-        "name": "中国移动",
+        "code": "hk00941",
+        "name": "hk00941",
         "ratio": 4.66
       },
       {
-        "code": "01398",
-        "name": "工商银行",
+        "code": "hk01398",
+        "name": "hk01398",
         "ratio": 4.53
       },
       {
-        "code": "02318",
-        "name": "中国平安",
+        "code": "hk02318",
+        "name": "hk02318",
         "ratio": 3.37
       },
       {
-        "code": "01211",
-        "name": "比亚迪股份",
+        "code": "hk01211",
+        "name": "hk01211",
         "ratio": 3.16
       },
       {
-        "code": "00883",
-        "name": "中国海洋石油",
+        "code": "hk00883",
+        "name": "hk00883",
         "ratio": 2.95
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-20",
@@ -5272,7 +5548,8 @@
         "03-27",
         "03-27",
         "03-27",
-        "03-27"
+        "03-27",
+        "2026-03-27"
       ],
       "nav": [
         1.2605,
@@ -5285,6 +5562,7 @@
         1.2439,
         1.2439,
         1.2439,
+        1.2499,
         1.2499,
         1.2499,
         1.2499,
@@ -5308,9 +5586,11 @@
         null,
         null,
         null,
+        null,
         null
       ],
       "drift": [
+        null,
         null,
         null,
         null,
@@ -5345,60 +5625,60 @@
     "shares": 2.81,
     "holdings": [
       {
-        "code": "00005",
-        "name": "汇丰控股",
+        "code": "hk00005",
+        "name": "hk00005",
         "ratio": 8.45
       },
       {
-        "code": "00700",
-        "name": "腾讯控股",
+        "code": "hk00700",
+        "name": "hk00700",
         "ratio": 7.43
       },
       {
-        "code": "09988",
-        "name": "阿里巴巴-W",
+        "code": "hk09988",
+        "name": "hk09988",
         "ratio": 6.97
       },
       {
-        "code": "01299",
-        "name": "友邦保险",
+        "code": "hk01299",
+        "name": "hk01299",
         "ratio": 4.93
       },
       {
-        "code": "00939",
-        "name": "建设银行",
+        "code": "hk00939",
+        "name": "hk00939",
         "ratio": 4.34
       },
       {
-        "code": "01810",
-        "name": "小米集团-W",
+        "code": "hk01810",
+        "name": "hk01810",
         "ratio": 4.2
       },
       {
-        "code": "03690",
-        "name": "美团-W",
+        "code": "hk03690",
+        "name": "hk03690",
         "ratio": 3.34
       },
       {
-        "code": "01398",
-        "name": "工商银行",
+        "code": "hk01398",
+        "name": "hk01398",
         "ratio": 3.04
       },
       {
-        "code": "00941",
-        "name": "中国移动",
+        "code": "hk00941",
+        "name": "hk00941",
         "ratio": 2.98
       },
       {
-        "code": "00388",
-        "name": "香港交易所",
+        "code": "hk00388",
+        "name": "hk00388",
         "ratio": 2.88
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-20",
@@ -5416,7 +5696,8 @@
         "03-27",
         "03-27",
         "03-27",
-        "03-27"
+        "03-27",
+        "2026-03-27"
       ],
       "nav": [
         1.1403,
@@ -5429,6 +5710,7 @@
         1.1275,
         1.1275,
         1.1275,
+        1.1316,
         1.1316,
         1.1316,
         1.1316,
@@ -5452,9 +5734,11 @@
         null,
         null,
         null,
+        null,
         null
       ],
       "drift": [
+        null,
         null,
         null,
         null,
@@ -5489,60 +5773,60 @@
     "shares": 2.74,
     "holdings": [
       {
-        "code": "00700",
-        "name": "腾讯控股",
+        "code": "hk00700",
+        "name": "hk00700",
         "ratio": 7.75
       },
       {
-        "code": "09988",
-        "name": "阿里巴巴-W",
+        "code": "hk09988",
+        "name": "hk09988",
         "ratio": 7.26
       },
       {
-        "code": "01810",
-        "name": "小米集团-W",
+        "code": "hk01810",
+        "name": "hk01810",
         "ratio": 6.33
       },
       {
-        "code": "03690",
-        "name": "美团-W",
+        "code": "hk03690",
+        "name": "hk03690",
         "ratio": 5.03
       },
       {
-        "code": "01398",
-        "name": "工商银行",
+        "code": "hk01398",
+        "name": "hk01398",
         "ratio": 4.59
       },
       {
-        "code": "02318",
-        "name": "中国平安",
+        "code": "hk02318",
+        "name": "hk02318",
         "ratio": 3.86
       },
       {
-        "code": "01211",
-        "name": "比亚迪股份",
+        "code": "hk01211",
+        "name": "hk01211",
         "ratio": 3.11
       },
       {
-        "code": "00883",
-        "name": "中国海洋石油",
+        "code": "hk00883",
+        "name": "hk00883",
         "ratio": 2.94
       },
       {
-        "code": "00981",
-        "name": "中芯国际",
+        "code": "hk00981",
+        "name": "hk00981",
         "ratio": 2.84
       },
       {
-        "code": "03988",
-        "name": "中国银行",
+        "code": "hk03988",
+        "name": "hk03988",
         "ratio": 2.8
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-20",
@@ -5560,7 +5844,8 @@
         "03-27",
         "03-27",
         "03-27",
-        "03-27"
+        "03-27",
+        "2026-03-27"
       ],
       "nav": [
         0.7583,
@@ -5573,6 +5858,7 @@
         0.745,
         0.745,
         0.745,
+        0.7504,
         0.7504,
         0.7504,
         0.7504,
@@ -5596,9 +5882,11 @@
         null,
         null,
         null,
+        null,
         null
       ],
       "drift": [
+        null,
         null,
         null,
         null,
@@ -5633,60 +5921,60 @@
     "shares": 4.72,
     "holdings": [
       {
-        "code": "00316",
-        "name": "东方海外国际",
+        "code": "hk00316",
+        "name": "hk00316",
         "ratio": 6.84
       },
       {
-        "code": "01308",
-        "name": "海丰国际",
+        "code": "hk01308",
+        "name": "hk01308",
         "ratio": 4.08
       },
       {
-        "code": "01088",
-        "name": "中国神华",
+        "code": "hk01088",
+        "name": "hk01088",
         "ratio": 3.63
       },
       {
-        "code": "01378",
-        "name": "中国宏桥",
+        "code": "hk01378",
+        "name": "hk01378",
         "ratio": 3.3
       },
       {
-        "code": "00883",
-        "name": "中国海洋石油",
+        "code": "hk00883",
+        "name": "hk00883",
         "ratio": 2.85
       },
       {
-        "code": "00857",
-        "name": "中国石油股份",
+        "code": "hk00857",
+        "name": "hk00857",
         "ratio": 2.79
       },
       {
-        "code": "00386",
-        "name": "中国石油化工股份",
+        "code": "hk00386",
+        "name": "hk00386",
         "ratio": 2.64
       },
       {
-        "code": "00998",
-        "name": "中信银行",
+        "code": "hk00998",
+        "name": "hk00998",
         "ratio": 2.61
       },
       {
-        "code": "02343",
-        "name": "太平洋航运",
+        "code": "hk02343",
+        "name": "hk02343",
         "ratio": 2.34
       },
       {
-        "code": "03988",
-        "name": "中国银行",
+        "code": "hk03988",
+        "name": "hk03988",
         "ratio": 2.31
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2024-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-20",
@@ -5704,7 +5992,8 @@
         "03-27",
         "03-27",
         "03-27",
-        "03-27"
+        "03-27",
+        "2026-03-27"
       ],
       "nav": [
         1.3199,
@@ -5717,6 +6006,7 @@
         1.3114,
         1.3114,
         1.3114,
+        1.3185,
         1.3185,
         1.3185,
         1.3185,
@@ -5740,6 +6030,7 @@
         1.326279,
         1.326279,
         1.326279,
+        1.326279,
         1.326279
       ],
       "drift": [
@@ -5758,15 +6049,21 @@
         -0.005865,
         -0.005865,
         -0.005865,
+        -0.005865,
         -0.005865
       ]
     },
-    "est_nav_yesterday": 1.326279,
-    "est_nav_date": "2026-03-27",
     "drift_5d": -0.005865,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00",
-    "est_nav_index_date": "2026-03-27"
+    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "chain_est": [
+      {
+        "value": 1.326279,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "160924": {
     "code": "160924",
@@ -5783,60 +6080,60 @@
     "shares": 1.24,
     "holdings": [
       {
-        "code": "00005",
-        "name": "汇丰控股",
+        "code": "hk00005",
+        "name": "hk00005",
         "ratio": 7.87
       },
       {
-        "code": "00700",
-        "name": "腾讯控股",
+        "code": "hk00700",
+        "name": "hk00700",
         "ratio": 6.9
       },
       {
-        "code": "09988",
-        "name": "阿里巴巴-W",
+        "code": "hk09988",
+        "name": "hk09988",
         "ratio": 6.48
       },
       {
-        "code": "00939",
-        "name": "建设银行",
+        "code": "hk00939",
+        "name": "hk00939",
         "ratio": 5.15
       },
       {
-        "code": "01299",
-        "name": "友邦保险",
+        "code": "hk01299",
+        "name": "hk01299",
         "ratio": 4.58
       },
       {
-        "code": "01810",
-        "name": "小米集团-W",
+        "code": "hk01810",
+        "name": "hk01810",
         "ratio": 3.93
       },
       {
-        "code": "03690",
-        "name": "美团-W",
+        "code": "hk03690",
+        "name": "hk03690",
         "ratio": 3.13
       },
       {
-        "code": "00941",
-        "name": "中国移动",
+        "code": "hk00941",
+        "name": "hk00941",
         "ratio": 2.79
       },
       {
-        "code": "00388",
-        "name": "香港交易所",
+        "code": "hk00388",
+        "name": "hk00388",
         "ratio": 2.71
       },
       {
-        "code": "03988",
-        "name": "中国银行",
+        "code": "hk03988",
+        "name": "hk03988",
         "ratio": 2.52
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-20",
@@ -5854,7 +6151,8 @@
         "03-27",
         "03-27",
         "03-27",
-        "03-27"
+        "03-27",
+        "2026-03-27"
       ],
       "nav": [
         1.0115,
@@ -5867,6 +6165,7 @@
         0.9998,
         0.9998,
         0.9998,
+        1.0033,
         1.0033,
         1.0033,
         1.0033,
@@ -5890,9 +6189,11 @@
         null,
         null,
         null,
+        null,
         null
       ],
       "drift": [
+        null,
         null,
         null,
         null,
@@ -5927,60 +6228,60 @@
     "shares": 5.47,
     "holdings": [
       {
-        "code": "00005",
-        "name": "汇丰控股",
+        "code": "hk00005",
+        "name": "hk00005",
         "ratio": 15.27
       },
       {
-        "code": "00939",
-        "name": "建设银行",
+        "code": "hk00939",
+        "name": "hk00939",
         "ratio": 13.66
       },
       {
-        "code": "01398",
-        "name": "工商银行",
+        "code": "hk01398",
+        "name": "hk01398",
         "ratio": 11.57
       },
       {
-        "code": "02888",
-        "name": "渣打集团",
+        "code": "hk02888",
+        "name": "hk02888",
         "ratio": 9.09
       },
       {
-        "code": "03968",
-        "name": "招商银行",
+        "code": "hk03968",
+        "name": "hk03968",
         "ratio": 8.01
       },
       {
-        "code": "03988",
-        "name": "中国银行",
+        "code": "hk03988",
+        "name": "hk03988",
         "ratio": 7.91
       },
       {
-        "code": "01288",
-        "name": "农业银行",
+        "code": "hk01288",
+        "name": "hk01288",
         "ratio": 6.39
       },
       {
-        "code": "02388",
-        "name": "中银香港",
+        "code": "hk02388",
+        "name": "hk02388",
         "ratio": 5.99
       },
       {
-        "code": "00011",
-        "name": "恒生银行",
+        "code": "hk00011",
+        "name": "hk00011",
         "ratio": 4.13
       },
       {
-        "code": "03328",
-        "name": "交通银行",
+        "code": "hk03328",
+        "name": "hk03328",
         "ratio": 4.06
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-20",
@@ -5998,7 +6299,8 @@
         "03-27",
         "03-27",
         "03-27",
-        "03-27"
+        "03-27",
+        "2026-03-27"
       ],
       "nav": [
         1.624,
@@ -6011,6 +6313,7 @@
         1.6402,
         1.6402,
         1.6402,
+        1.6428,
         1.6428,
         1.6428,
         1.6428,
@@ -6034,6 +6337,7 @@
         1.645428,
         1.645428,
         1.645428,
+        1.645428,
         1.645428
       ],
       "drift": [
@@ -6052,15 +6356,21 @@
         -0.001597,
         -0.001597,
         -0.001597,
+        -0.001597,
         -0.001597
       ]
     },
-    "est_nav_yesterday": 1.645428,
-    "est_nav_date": "2026-03-27",
     "drift_5d": -0.001597,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00",
-    "est_nav_index_date": "2026-03-27"
+    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "chain_est": [
+      {
+        "value": 1.645428,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "161226": {
     "code": "161226",
@@ -6076,7 +6386,7 @@
     "nav_src": "lsjz",
     "shares": 51.41,
     "holdings": null,
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -6095,7 +6405,8 @@
         "03-27",
         "03-27",
         "03-27",
-        "03-27"
+        "03-27",
+        "2026-03-27"
       ],
       "nav": [
         1.9754,
@@ -6108,6 +6419,7 @@
         2.0197,
         2.0197,
         2.0197,
+        1.9501,
         1.9501,
         1.9501,
         1.9501,
@@ -6131,6 +6443,7 @@
         1.910337,
         1.910337,
         1.910337,
+        1.910337,
         1.910337
       ],
       "drift": [
@@ -6149,15 +6462,21 @@
         0.020815,
         0.020815,
         0.020815,
+        0.020815,
         0.020815
       ]
     },
-    "est_nav_yesterday": 1.910337,
-    "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27",
     "drift_5d": 0.020815,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00"
+    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "chain_est": [
+      {
+        "value": 1.910337,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "161217": {
     "code": "161217",
@@ -6174,60 +6493,60 @@
     "shares": 1.49,
     "holdings": [
       {
-        "code": "601899",
-        "name": "紫金矿业",
+        "code": "sh601899",
+        "name": "sh601899",
         "ratio": 17.76
       },
       {
-        "code": "603993",
-        "name": "洛阳钼业",
+        "code": "sh603993",
+        "name": "sh603993",
         "ratio": 5.28
       },
       {
-        "code": "601088",
-        "name": "中国神华",
+        "code": "sh601088",
+        "name": "sh601088",
         "ratio": 4.18
       },
       {
-        "code": "600111",
-        "name": "北方稀土",
+        "code": "sh600111",
+        "name": "sh600111",
         "ratio": 3.74
       },
       {
-        "code": "601857",
-        "name": "中国石油",
+        "code": "sh601857",
+        "name": "sh601857",
         "ratio": 3.69
       },
       {
-        "code": "603799",
-        "name": "华友钴业",
+        "code": "sh603799",
+        "name": "sh603799",
         "ratio": 3.31
       },
       {
-        "code": "601600",
-        "name": "中国铝业",
+        "code": "sh601600",
+        "name": "sh601600",
         "ratio": 3.05
       },
       {
-        "code": "600028",
-        "name": "中国石化",
+        "code": "sh600028",
+        "name": "sh600028",
         "ratio": 2.82
       },
       {
-        "code": "601225",
-        "name": "陕西煤业",
+        "code": "sh601225",
+        "name": "sh601225",
         "ratio": 2.61
       },
       {
-        "code": "002460",
-        "name": "赣锋锂业",
+        "code": "sz002460",
+        "name": "sz002460",
         "ratio": 2.27
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-20",
@@ -6245,7 +6564,8 @@
         "03-27",
         "03-27",
         "03-27",
-        "03-27"
+        "03-27",
+        "2026-03-27"
       ],
       "nav": [
         2.2938,
@@ -6258,6 +6578,7 @@
         2.2797,
         2.2797,
         2.2797,
+        2.3165,
         2.3165,
         2.3165,
         2.3165,
@@ -6281,9 +6602,11 @@
         null,
         null,
         null,
+        null,
         null
       ],
       "drift": [
+        null,
         null,
         null,
         null,
@@ -6318,60 +6641,60 @@
     "shares": 1.45,
     "holdings": [
       {
-        "code": "300395",
-        "name": "菲利华",
+        "code": "sz300395",
+        "name": "sz300395",
         "ratio": 1.11
       },
       {
-        "code": "600362",
-        "name": "江西铜业",
+        "code": "sh600362",
+        "name": "sh600362",
         "ratio": 1.1
       },
       {
-        "code": "002493",
-        "name": "荣盛石化",
+        "code": "sz002493",
+        "name": "sz002493",
         "ratio": 1.09
       },
       {
-        "code": "000408",
-        "name": "藏格矿业",
+        "code": "sz000408",
+        "name": "sz000408",
         "ratio": 1.09
       },
       {
-        "code": "002738",
-        "name": "中矿资源",
+        "code": "sz002738",
+        "name": "sz002738",
         "ratio": 1.07
       },
       {
-        "code": "600346",
-        "name": "恒力石化",
+        "code": "sh600346",
+        "name": "sh600346",
         "ratio": 1.07
       },
       {
-        "code": "002756",
-        "name": "永兴材料",
+        "code": "sz002756",
+        "name": "sz002756",
         "ratio": 1.06
       },
       {
-        "code": "002318",
-        "name": "久立特材",
+        "code": "sz002318",
+        "name": "sz002318",
         "ratio": 1.05
       },
       {
-        "code": "000807",
-        "name": "云铝股份",
+        "code": "sz000807",
+        "name": "sz000807",
         "ratio": 1.04
       },
       {
-        "code": "000301",
-        "name": "东方盛虹",
+        "code": "sz000301",
+        "name": "sz000301",
         "ratio": 1.04
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-20",
@@ -6389,7 +6712,8 @@
         "03-27",
         "03-27",
         "03-27",
-        "03-27"
+        "03-27",
+        "2026-03-27"
       ],
       "nav": [
         2.3689,
@@ -6402,6 +6726,7 @@
         2.343,
         2.343,
         2.343,
+        2.3894,
         2.3894,
         2.3894,
         2.3894,
@@ -6425,9 +6750,11 @@
         null,
         null,
         null,
+        null,
         null
       ],
       "drift": [
+        null,
         null,
         null,
         null,
@@ -6462,60 +6789,60 @@
     "shares": 401.42,
     "holdings": [
       {
-        "code": "600519",
-        "name": "贵州茅台",
+        "code": "sh600519",
+        "name": "sh600519",
         "ratio": 15.38
       },
       {
-        "code": "600809",
-        "name": "山西汾酒",
+        "code": "sh600809",
+        "name": "sh600809",
         "ratio": 15.11
       },
       {
-        "code": "000858",
-        "name": "五粮液",
+        "code": "sz000858",
+        "name": "sz000858",
         "ratio": 14.65
       },
       {
-        "code": "000568",
-        "name": "泸州老窖",
+        "code": "sz000568",
+        "name": "sz000568",
         "ratio": 14.53
       },
       {
-        "code": "002304",
-        "name": "洋河股份",
+        "code": "sz002304",
+        "name": "sz002304",
         "ratio": 8.34
       },
       {
-        "code": "000596",
-        "name": "古井贡酒",
+        "code": "sz000596",
+        "name": "sz000596",
         "ratio": 5.14
       },
       {
-        "code": "603369",
-        "name": "今世缘",
+        "code": "sh603369",
+        "name": "sh603369",
         "ratio": 4.97
       },
       {
-        "code": "603198",
-        "name": "迎驾贡酒",
+        "code": "sh603198",
+        "name": "sh603198",
         "ratio": 2.47
       },
       {
-        "code": "600702",
-        "name": "舍得酒业",
+        "code": "sh600702",
+        "name": "sh600702",
         "ratio": 2.14
       },
       {
-        "code": "603589",
-        "name": "口子窖",
+        "code": "sh603589",
+        "name": "sh603589",
         "ratio": 2.06
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-20",
@@ -6533,7 +6860,8 @@
         "03-27",
         "03-27",
         "03-27",
-        "03-27"
+        "03-27",
+        "2026-03-27"
       ],
       "nav": [
         0.6519,
@@ -6546,6 +6874,7 @@
         0.6318,
         0.6318,
         0.6318,
+        0.6394,
         0.6394,
         0.6394,
         0.6394,
@@ -6569,6 +6898,7 @@
         0.647712,
         0.647712,
         0.647712,
+        0.647712,
         0.647712
       ],
       "drift": [
@@ -6587,15 +6917,21 @@
         -0.012833,
         -0.012833,
         -0.012833,
+        -0.012833,
         -0.012833
       ]
     },
-    "est_nav_yesterday": 0.647712,
-    "est_nav_date": "2026-03-27",
     "drift_5d": -0.012833,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00",
-    "est_nav_index_date": "2026-03-27"
+    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "chain_est": [
+      {
+        "value": 0.647712,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "161032": {
     "code": "161032",
@@ -6612,60 +6948,60 @@
     "shares": 3.06,
     "holdings": [
       {
-        "code": "601088",
-        "name": "中国神华",
+        "code": "sh601088",
+        "name": "sh601088",
         "ratio": 9.71
       },
       {
-        "code": "601225",
-        "name": "陕西煤业",
+        "code": "sh601225",
+        "name": "sh601225",
         "ratio": 9.38
       },
       {
-        "code": "600188",
-        "name": "兖矿能源",
+        "code": "sh600188",
+        "name": "sh600188",
         "ratio": 7.67
       },
       {
-        "code": "601898",
-        "name": "中煤能源",
+        "code": "sh601898",
+        "name": "sh601898",
         "ratio": 7.43
       },
       {
-        "code": "000983",
-        "name": "山西焦煤",
+        "code": "sz000983",
+        "name": "sz000983",
         "ratio": 5.94
       },
       {
-        "code": "600348",
-        "name": "华阳股份",
+        "code": "sh600348",
+        "name": "sh600348",
         "ratio": 4.86
       },
       {
-        "code": "000723",
-        "name": "美锦能源",
+        "code": "sz000723",
+        "name": "sz000723",
         "ratio": 4.73
       },
       {
-        "code": "601699",
-        "name": "潞安环能",
+        "code": "sh601699",
+        "name": "sh601699",
         "ratio": 4.61
       },
       {
-        "code": "600985",
-        "name": "淮北矿业",
+        "code": "sh600985",
+        "name": "sh600985",
         "ratio": 3.9
       },
       {
-        "code": "601666",
-        "name": "平煤股份",
+        "code": "sh601666",
+        "name": "sh601666",
         "ratio": 3.8
       }
     ],
-    "nav_fetch_time": "2026-03-28T02:52:56+00:00",
+    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T02:52:56+00:00",
+    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
     "history": {
       "date": [
         "03-20",
@@ -6683,7 +7019,8 @@
         "03-27",
         "03-27",
         "03-27",
-        "03-27"
+        "03-27",
+        "2026-03-27"
       ],
       "nav": [
         2.333,
@@ -6696,6 +7033,7 @@
         2.333,
         2.333,
         2.333,
+        2.324,
         2.324,
         2.324,
         2.324,
@@ -6719,6 +7057,7 @@
         2.314007,
         2.314007,
         2.314007,
+        2.314007,
         2.314007
       ],
       "drift": [
@@ -6737,22 +7076,28 @@
         0.004318,
         0.004318,
         0.004318,
+        0.004318,
         0.004318
       ]
     },
-    "est_nav_yesterday": 2.314007,
-    "est_nav_date": "2026-03-27",
     "drift_5d": 0.004318,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00",
-    "est_nav_index_date": "2026-03-27"
+    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "chain_est": [
+      {
+        "value": 2.314007,
+        "date": "2026-03-27",
+        "index_date": "2026-03-27",
+        "computed_at": "2026-03-28T16:32:52+00:00"
+      }
+    ]
   },
   "_meta": {
-    "sync_time": "2026-03-28T03:02:30+00:00",
+    "sync_time": "2026-03-28T16:33:39+00:00",
     "data_date": "2026-03-27",
     "nav_ok": 47,
     "nav_kept": 0,
-    "hold_ok": 31,
+    "hold_ok": 32,
     "total": 47,
     "trading_dates": [
       "2026-01-04",
