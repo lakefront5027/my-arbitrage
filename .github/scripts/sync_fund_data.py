@@ -503,8 +503,8 @@ def _gemini_find_pdf_url(code: str, model) -> str | None:
         f'找不到则返回 NOT_FOUND。'
     )
 
-    # 尝试带 Google Search grounding（gemini-2.0-flash 支持）
-    for model_name in ('gemini-2.0-flash', 'gemini-1.5-flash'):
+    # 尝试带 Google Search grounding（gemini-2.5-flash 支持）
+    for model_name in ('gemini-2.5-flash', 'gemini-2.0-flash'):
         try:
             search_model = genai.GenerativeModel(
                 model_name,
@@ -650,7 +650,7 @@ def _fetch_holdings_via_gemini(code: str, fund: dict, now_utc: str) -> dict | No
         return None
 
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-2.0-flash')
+    model = genai.GenerativeModel('gemini-2.5-flash')
 
     # ── Step 1: 搜索 PDF URL ──────────────────────────
     pdf_url = _gemini_find_pdf_url(code, model)
