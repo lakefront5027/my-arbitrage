@@ -1437,6 +1437,21 @@ def sync():
     nav_ok = nav_kept = nav_fail = hold_ok = hold_fail = 0
     now_utc = datetime.now(timezone.utc).isoformat(timespec='seconds')
 
+    # Gemini 每日调用上限（免费层 RPD=20，每只基金最多2次调用）
+    _GEMINI_MAX_FUNDS_PER_RUN = 4
+    _today = now_utc[:10]
+    _expected_qe = _latest_expected_quarter_end(_today)
+    # 找出需要 Gemini 的基金（jjcc 无数据、持仓已过期），按 holdings_date 最旧优先
+    _gemini_candidates = sorted(
+        [c for c in fund_codes
+         if _expected_qe and data[c].get('holdings_date', '') < _expected_qe],
+        key=lambda c: data[c].get('holdings_date', ''),
+    )
+    _gemini_eligible_codes = set(_gemini_candidates[:_GEMINI_MAX_FUNDS_PER_RUN])
+    if _gemini_candidates:
+        print(f'[Gemini] 待更新持仓 {len(_gemini_candidates)} 只，本轮处理前 {_GEMINI_MAX_FUNDS_PER_RUN} 只: '
+              f'{list(_gemini_eligible_codes)}')
+
     print(f'=== 同步开始 | {total} 只基金 | {now_utc} UTC\n')
 
     for code in fund_codes:
@@ -1494,7 +1509,12 @@ def sync():
             print(f'    持仓 {len(hold_result["holdings"]):2d}只  截止:{hold_result["holdings_date"]}  首位: {top["name"]} {top["ratio"]}%')
         else:
             # EM jjcc 无数据 → Gemini 全流程：Search 找 PDF → 下载 → Gemini 读取
-            gem_result = _fetch_holdings_via_gemini(code, fund, now_utc)
+            # 每次 Action 最多处理 _GEMINI_MAX_FUNDS_PER_RUN 只，防止超出免费层 RPD 上限
+            if code not in _gemini_eligible_codes:
+                print(f'    持仓 EM无数据，本轮已达 Gemini 上限（{_GEMINI_MAX_FUNDS_PER_RUN}只），跳过')
+                gem_result = {'skipped': True}
+            else:
+                gem_result = _fetch_holdings_via_gemini(code, fund, now_utc)
             if gem_result is None:
                 hold_fail += 1
                 print(f'    持仓 FAILED (EM+Gemini) — 保留旧值', file=sys.stderr)
