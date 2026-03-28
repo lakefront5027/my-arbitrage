@@ -745,6 +745,8 @@ function calcFxOk(code, fxChgUsd, fxChgHkd) {
 function resolveIdxChg(rawChg, code, idxDate, benchDate) {
   if (rawChg == null) return null;
   const dataDate = idxDate && idxDate[code];
+  // 'futures' 标记：Yahoo 期货实时数据，无需与 benchDate 比对（期货 24h 交易，始终为当前有效值）
+  if (dataDate === 'futures') return rawChg;
   if (!dataDate || !benchDate || dataDate === benchDate) return rawChg;
   if (code.startsWith('us')) return 0;
   return null;
@@ -1293,7 +1295,9 @@ async function doRefresh() {
 
         const navLag = (navDate && benchDate) ? tradingDayLag(navDate, benchDate) : 99;
         // 构建 estNavEntity (AssetEntity)，携带链式锚点日期
-        const chainEst    = fundDaily?.chain_est ?? null;  // AssetEntity：{value, date, index_date, computed_at}
+        // chain_est 为滚动缓冲区（最多 2 条列表），取最后一条（最新）作为链式锚点
+        const chainEstArr = fundDaily?.chain_est ?? null;
+        const chainEst    = Array.isArray(chainEstArr) ? (chainEstArr.at(-1) ?? null) : (chainEstArr ?? null);
         const estNavEntity = (chainEst?.value && chainEst?.date)
           ? { value: chainEst.value, date: chainEst.date, src: 'chain', index_date: chainEst.index_date ?? null }
           : null;

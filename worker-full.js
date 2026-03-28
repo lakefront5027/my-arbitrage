@@ -783,6 +783,8 @@ async function fetchSina() {
 function resolveIdxChg(rawChg, code, idxDate, benchDate) {
   if (rawChg == null) return null;
   const dataDate = idxDate && idxDate[code];
+  // 'futures' 标记：Yahoo 期货实时数据，无需与 benchDate 比对（期货 24h 交易，始终为当前有效值）
+  if (dataDate === 'futures') return rawChg;
   if (!dataDate || !benchDate || dataDate === benchDate) return rawChg;
   if (code.startsWith('us')) return 0;
   return null;
@@ -1045,7 +1047,10 @@ async function fetchAllData(env = {}) {
       if (staleIdxCodes.has(code)) {
         idxDate[code] = closingData[code]?.date || null;
       } else if (futuresCodes.has(code)) {
-        idxDate[code] = marketContext.usDate || marketContext.aShareDate;
+        // 期货实时数据：打 'futures' 标记，resolveIdxChg 见此标记直接返回原值，
+        // 不与 benchDate 比对。解决 cat='cm' 基金（benchDate=aShareDate）vs
+        // cat='us' 基金（benchDate=usDate）的日期不匹配问题。
+        idxDate[code] = 'futures';
       } else if (code.startsWith('us')) {
         idxDate[code] = prevTradingDay(marketContext.aShareDate);
       } else {
@@ -1127,7 +1132,9 @@ async function fetchAllData(env = {}) {
     //   0 = 当日已同步（Action 07:00 跑完，Worker 09:30 消费）
     //   1 = 前一交易日同步（正常情况，含周末跨越）
     //   ≥2 = Action 已连续缺席 ≥1 个交易日，锚点不可信，禁用链式
-    const chainEst    = fundDaily?.chain_est ?? null;  // AssetEntity：{value, date, index_date, computed_at}
+    // chain_est 为滚动缓冲区（最多 2 条列表），取最后一条（最新）作为链式锚点
+    const chainEstArr = fundDaily?.chain_est ?? null;
+    const chainEst    = Array.isArray(chainEstArr) ? (chainEstArr.at(-1) ?? null) : (chainEstArr ?? null);
     const estNavEntity = (chainEst?.value && chainEst?.date)
       ? { value: chainEst.value, date: chainEst.date, src: 'chain', index_date: chainEst.index_date ?? null }
       : null;

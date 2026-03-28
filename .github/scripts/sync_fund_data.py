@@ -1035,13 +1035,16 @@ def update_drift(data: dict, chg_map: dict, date_map: dict, now_utc: str) -> Non
             # est 的业务日期（chain_est.date）与 nav 业务日期（curr_date）完全一致。
             retroactive_est = None
             if bench_chg is None:
-                chain_est       = fund.get('chain_est') or {}
-                stored_est      = chain_est.get('value')
-                stored_est_date = chain_est.get('date', '')
-                if stored_est and stored_est_date == curr_date:
-                    retroactive_est = stored_est
-                    print(f'    drift {code}: 追溯模式（T-2基金）'
-                          f'  chain_est.date={stored_est_date}  est={stored_est:.4f}')
+                # chain_est 现为列表（最多 2 条），搜索与 curr_date 匹配的条目
+                chain_buf = fund.get('chain_est') or []
+                if isinstance(chain_buf, dict):
+                    chain_buf = [chain_buf]   # 兼容旧单条格式
+                for entry in chain_buf:
+                    if entry.get('date') == curr_date and entry.get('value'):
+                        retroactive_est = entry['value']
+                        print(f'    drift {code}: 追溯模式（T-2/T-3基金）'
+                              f'  chain_est.date={curr_date}  est={retroactive_est:.4f}')
+                        break
 
             if bench_chg is not None and hist['nav']:
                 prev_nav = hist['nav'][-1]
@@ -1118,8 +1121,9 @@ def update_chain_anchors(data: dict, chg_map: dict, date_map: dict, t1_date: str
       供 Worker T-2 双重计数断路器（isUsDoubleCount）使用。
 
     写入规则：
-      - bench_chg 可用 → 写入 chain_est（无条件覆盖）
+      - bench_chg 可用 → 追加新条目到 chain_est 列表，保留最近 2 条（按 date 去重，幂等）
       - bench_chg 不可用 → 清除旧 chain_est，防止 Worker 误用过期数据
+      - T-3 覆盖能力：2 条缓冲区覆盖 T-2（1日延迟）和 T-3（2日延迟）；T-4+ 不保证
     """
     updated = cleared = 0
     for code, fund in data.items():
@@ -1134,12 +1138,20 @@ def update_chain_anchors(data: dict, chg_map: dict, date_map: dict, t1_date: str
         if bench_chg is not None:
             # date 取自 date_map 实际交易日，而非 t1_date（nav 日期）
             bench_date = _get_bench_date(bench_def, date_map, t1_date)
-            fund['chain_est'] = {
-                'value':      round(official_nav * (1 + bench_chg / 100), 6),
-                'date':       bench_date,       # 绝对日期：本次估算所代表的交易日
-                'index_date': bench_date,       # 历史公证：消费的 bench 指数交易日
-                'computed_at': now_utc,         # 本次 Action 写入时刻
+            new_entry = {
+                'value':       round(official_nav * (1 + bench_chg / 100), 6),
+                'date':        bench_date,   # 绝对日期：本次估算所代表的交易日
+                'index_date':  bench_date,   # 历史公证：消费的 bench 指数交易日
+                'computed_at': now_utc,      # 本次 Action 写入时刻
             }
+            # 维护滚动缓冲区（最多 2 条，按 date 去重）
+            existing = fund.get('chain_est') or []
+            if isinstance(existing, dict):
+                existing = [existing]   # 兼容旧单条格式
+            # 去除同日旧条目（幂等），追加新条目，保留最新 2 条
+            buf = [e for e in existing if e.get('date') != bench_date]
+            buf.append(new_entry)
+            fund['chain_est'] = buf[-2:]     # 最多保留最近 2 条
             # 清理旧字段（兼容旧数据迁移）
             fund.pop('est_nav_yesterday',  None)
             fund.pop('est_nav_date',       None)
