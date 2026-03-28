@@ -378,6 +378,71 @@ def fetch_holdings(code: str) -> dict | None:
 
 
 # ══════════════════════════════════════════════════════
+#  移动端 API 持仓抓取（QDII / 外盘 ETF 基金）
+# ══════════════════════════════════════════════════════
+
+def fetch_holdings_mobile(code: str) -> dict | None:
+    """
+    天天基金 App 移动端 API 持仓接口，用于 jjcc 无数据的 QDII 基金。
+    返回 {'holdings': [...], 'holdings_date': 'YYYY-MM-DD'}，失败返回 None。
+    """
+    url = (
+        f'https://fundmobapi.eastmoney.com/FundMApi/FundPortfolioPortfolio.ashx'
+        f'?fundCode={code}&type=0&page=1&pageSize=10'
+        f'&plat=Wap&deviceid=Wap&version=6.3.8&product=EFund'
+        f'&appType=ttjj&clienttype=1&format=json'
+    )
+    text = fetch_url(url, referer='https://fund.eastmoney.com/')
+    if not text:
+        return None
+    try:
+        data = json.loads(text)
+    except Exception:
+        return None
+
+    # 响应结构：{"Datas": [...], "ErrCode": 0, ...}
+    datas = (data.get('Datas') or [])
+    if not datas:
+        print(f'    [mobile] {code}: API 返回空持仓', file=sys.stderr)
+        return None
+
+    holdings = []
+    holdings_date = ''
+    for item in datas[:10]:
+        name  = item.get('GPJC') or item.get('JJJC') or item.get('SECURITYNAME') or ''
+        code_ = item.get('GPDM') or item.get('JJDM') or item.get('SECURITYCODE') or ''
+        ratio = item.get('JZBL') or item.get('FUNDNETPERCENT') or 0
+        date_ = item.get('PCDATE') or item.get('REPORTDATE') or ''
+        if not name:
+            continue
+        try:
+            ratio = round(float(str(ratio).rstrip('%')), 2)
+        except ValueError:
+            ratio = 0.0
+        if date_ and not holdings_date:
+            # 取季末日期：API 可能返回 "2025-12-31" 或 "20251231"
+            d = re.sub(r'[^\d-]', '', date_)
+            if len(d) == 8 and '-' not in d:
+                d = f'{d[:4]}-{d[4:6]}-{d[6:]}'
+            holdings_date = d[:10] if len(d) >= 10 else ''
+        holdings.append({'code': code_, 'name': name, 'ratio': ratio})
+
+    if not holdings:
+        return None
+
+    # holdings_date 回退：取最近季末
+    if not holdings_date:
+        for year, month in _recent_quarters():
+            holdings_date = f'{year}-{month:02d}-{_quarter_last_day[month]}'
+            break
+
+    return {'holdings': holdings, 'holdings_date': holdings_date}
+
+
+_quarter_last_day = {3: 31, 6: 30, 9: 30, 12: 31}
+
+
+# ══════════════════════════════════════════════════════
 #  PDF 持仓提取（巨潮资讯季报）
 # ══════════════════════════════════════════════════════
 # 对 EM jjcc 无法返回持仓的基金（主要为持有外盘 ETF 的美股/商品类 LOF），
@@ -1581,23 +1646,35 @@ def sync():
             top = hold_result['holdings'][0]
             print(f'    持仓 {len(hold_result["holdings"]):2d}只  截止:{hold_result["holdings_date"]}  首位: {top["name"]} {top["ratio"]}%')
         else:
-            # EM jjcc 无数据 → 公告驱动增量更新（传入本地日期，只在季报推进时下载）
-            existing_date = fund.get('holdings_date') or ''
-            pdf_result = _fetch_holdings_via_pdf(code, existing_date)
-            if pdf_result is None:
-                hold_fail += 1
-                print(f'    持仓 FAILED (EM+PDF) — 保留旧值', file=sys.stderr)
-            elif pdf_result.get('skipped'):
-                print(f'    持仓 EM无数据，季报无更新（截止: {pdf_result.get("holdings_date", "")}）')
-            else:
-                fund['holdings']            = pdf_result['holdings']
-                fund['holdings_date']       = pdf_result['holdings_date']
+            # EM jjcc 无数据 → 先尝试移动端 API → 再走公告驱动 PDF
+            mob_result = fetch_holdings_mobile(code)
+            if mob_result:
+                fund['holdings']            = mob_result['holdings']
+                fund['holdings_date']       = mob_result['holdings_date']
                 fund['holdings_fetch_time'] = now_utc
                 hold_ok += 1
-                top = pdf_result['holdings'][0]
-                print(f'    持仓(PDF) {len(pdf_result["holdings"]):2d}只  '
-                      f'截止:{pdf_result["holdings_date"]}  '
+                top = mob_result['holdings'][0]
+                print(f'    持仓(mob) {len(mob_result["holdings"]):2d}只  '
+                      f'截止:{mob_result["holdings_date"]}  '
                       f'首位: {top["name"]} {top["ratio"]}%')
+            else:
+                # 移动端 API 也无数据 → 公告驱动增量更新（传入本地日期，只在季报推进时下载）
+                existing_date = fund.get('holdings_date') or ''
+                pdf_result = _fetch_holdings_via_pdf(code, existing_date)
+                if pdf_result is None:
+                    hold_fail += 1
+                    print(f'    持仓 FAILED (EM+mob+PDF) — 保留旧值', file=sys.stderr)
+                elif pdf_result.get('skipped'):
+                    print(f'    持仓 EM/mob无数据，季报无更新（截止: {pdf_result.get("holdings_date", "")}）')
+                else:
+                    fund['holdings']            = pdf_result['holdings']
+                    fund['holdings_date']       = pdf_result['holdings_date']
+                    fund['holdings_fetch_time'] = now_utc
+                    hold_ok += 1
+                    top = pdf_result['holdings'][0]
+                    print(f'    持仓(PDF) {len(pdf_result["holdings"]):2d}只  '
+                          f'截止:{pdf_result["holdings_date"]}  '
+                          f'首位: {top["name"]} {top["ratio"]}%')
         time.sleep(0.08)
 
         # ── 总份额 ────────────────────────────────────
