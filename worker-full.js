@@ -1127,11 +1127,9 @@ async function fetchAllData(env = {}) {
     //   0 = 当日已同步（Action 07:00 跑完，Worker 09:30 消费）
     //   1 = 前一交易日同步（正常情况，含周末跨越）
     //   ≥2 = Action 已连续缺席 ≥1 个交易日，锚点不可信，禁用链式
-    const estNavYesterdayVal = fundDaily?.est_nav_yesterday   || null;
-    const estNavDate         = fundDaily?.est_nav_date        || null;
-    const estNavIndexDate    = fundDaily?.est_nav_index_date  || null;  // 历史公证：本次 est 消费的 bench 指数交易日
-    const estNavEntity = (estNavYesterdayVal && estNavDate)
-      ? { value: estNavYesterdayVal, date: estNavDate, src: 'chain', index_date: estNavIndexDate }
+    const chainEst    = fundDaily?.chain_est ?? null;  // AssetEntity：{value, date, index_date, computed_at}
+    const estNavEntity = (chainEst?.value && chainEst?.date)
+      ? { value: chainEst.value, date: chainEst.date, src: 'chain', index_date: chainEst.index_date ?? null }
       : null;
     const syncLagDays  = (syncDateBj && benchDate)
       ? tradingDayLag(syncDateBj, benchDate)

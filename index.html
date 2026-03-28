@@ -1293,11 +1293,9 @@ async function doRefresh() {
 
         const navLag = (navDate && benchDate) ? tradingDayLag(navDate, benchDate) : 99;
         // 构建 estNavEntity (AssetEntity)，携带链式锚点日期
-        const estNavYesterdayVal = fundDaily?.est_nav_yesterday   || null;
-        const estNavDate         = fundDaily?.est_nav_date        || null;
-        const estNavIndexDate    = fundDaily?.est_nav_index_date  || null;  // 历史公证：本次 est 消费的 bench 指数交易日
-        const estNavEntity = (estNavYesterdayVal && estNavDate)
-          ? { value: estNavYesterdayVal, date: estNavDate, src: 'chain', index_date: estNavIndexDate }
+        const chainEst    = fundDaily?.chain_est ?? null;  // AssetEntity：{value, date, index_date, computed_at}
+        const estNavEntity = (chainEst?.value && chainEst?.date)
+          ? { value: chainEst.value, date: chainEst.date, src: 'chain', index_date: chainEst.index_date ?? null }
           : null;
         // syncLagDays：fund_daily.json 同步日距 benchDate 的交易日数，替代 fetchAgeH <= 36
         const syncLagDays = (syncDateBj && benchDate) ? tradingDayLag(syncDateBj, benchDate) : 99;

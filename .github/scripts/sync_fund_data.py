@@ -7,7 +7,7 @@ LOF套利雷达 — 每日数据同步 + 持仓审计脚本
   1. 拉取 47 只基金 T-1 净值（fundgz → lsjz 兜底，失败保留旧值）
   2. 拉取 47 只基金前十大持仓（东方财富 jjcc API）
   3. 写入 fund_daily.json（含 _meta.sync_time）
-  4. 偏差校准 Drift + 链式补偿锚点（est_nav_yesterday）
+  4. 偏差校准 Drift + 链式补偿锚点（chain_est AssetEntity）
   5. 持仓审计：对比新持仓 vs BENCH 权重，偏移 > 5% 触发双路报警
      - GitHub Issue（带 Holdings Drift 标签）
      - 企业微信 Webhook Markdown 推送
@@ -970,7 +970,7 @@ def update_drift(data: dict, chg_map: dict, date_map: dict, now_utc: str) -> Non
     偏差校准 — 零外部文件版（全量内嵌于 fund_daily.json）。
 
     职责：维护 history 序列 + drift_5d 修正因子。
-    不再写 est_nav_yesterday（由 update_chain_anchors 专职负责）。
+    不再写 chain_est（由 update_chain_anchors 专职负责）。
 
     时间驱动协议：drift 计算公式为
       est_nav(T) = nav(T-1) × (1 + bench_chg(T))
@@ -1027,12 +1027,28 @@ def update_drift(data: dict, chg_map: dict, date_map: dict, now_utc: str) -> Non
                       file=sys.stderr)
                 bench_chg = None   # 日期不符，等同于 bench 缺失
 
+            # ── 追溯路径（T-2基金补偿）────────────────────────
+            # update_drift 在 update_chain_anchors 之前运行，故上一次 Action
+            # 存下的 chain_est 此时仍有效。
+            # 若 bench 日期不匹配，但 chain_est.date == curr_date，
+            # 则直接用该估值追溯 drift，满足数据戳原则：
+            # est 的业务日期（chain_est.date）与 nav 业务日期（curr_date）完全一致。
+            retroactive_est = None
+            if bench_chg is None:
+                chain_est       = fund.get('chain_est') or {}
+                stored_est      = chain_est.get('value')
+                stored_est_date = chain_est.get('date', '')
+                if stored_est and stored_est_date == curr_date:
+                    retroactive_est = stored_est
+                    print(f'    drift {code}: 追溯模式（T-2基金）'
+                          f'  chain_est.date={stored_est_date}  est={stored_est:.4f}')
+
             if bench_chg is not None and hist['nav']:
                 prev_nav = hist['nav'][-1]
                 est_nav  = round(prev_nav * (1 + bench_chg / 100), 6)
                 drift    = round((curr_nav - est_nav) / est_nav, 6)
 
-                hist['date'].append(curr_date[5:])   # MM-DD
+                hist['date'].append(curr_date)   # YYYY-MM-DD 完整日期，支持正确去重比较
                 hist['nav'].append(curr_nav)
                 hist['est'].append(est_nav)
                 hist['drift'].append(drift)
@@ -1041,9 +1057,21 @@ def update_drift(data: dict, chg_map: dict, date_map: dict, now_utc: str) -> Non
                 print(f'    drift {code}: bench={bench_chg:+.2f}%'
                       f'  est={est_nav:.4f}  act={curr_nav:.4f}'
                       f'  drift={drift * 100:+.3f}%')
+            elif retroactive_est is not None:
+                est_nav = retroactive_est
+                drift   = round((curr_nav - est_nav) / est_nav, 6)
+
+                hist['date'].append(curr_date)
+                hist['nav'].append(curr_nav)
+                hist['est'].append(est_nav)
+                hist['drift'].append(drift)
+
+                new_entries += 1
+                print(f'    drift {code}: [追溯] est={est_nav:.4f}'
+                      f'  act={curr_nav:.4f}  drift={drift * 100:+.3f}%')
             else:
                 # bench 缺失、日期不符 or 首次记录（无 prev_nav）
-                hist['date'].append(curr_date[5:])
+                hist['date'].append(curr_date)
                 hist['nav'].append(curr_nav)
                 hist['est'].append(None)
                 hist['drift'].append(None)
@@ -1069,26 +1097,29 @@ def update_drift(data: dict, chg_map: dict, date_map: dict, now_utc: str) -> Non
     print(f'  [drift] {new_entries} 只新增记录（嵌入 fund_daily.json，无独立文件）')
 
 
-def update_chain_anchors(data: dict, chg_map: dict, date_map: dict, t1_date: str) -> None:
+def update_chain_anchors(data: dict, chg_map: dict, date_map: dict, t1_date: str, now_utc: str) -> None:
     """
-    链式补偿锚点 — 每次 Action 运行时强制写入 est_nav_yesterday。
+    链式补偿锚点 — 每次 Action 运行时强制写入 chain_est（AssetEntity）。
 
-    含义：est_nav_yesterday = official_nav × (1 + T-1_bench_chg%)
+    含义：chain_est.value = official_nav × (1 + T-1_bench_chg%)
+          chain_est.date  = T-1 bench 指数的实际交易日（绝对日期，非相对命名）
 
     Action 在北京 07:00（UTC 23:00）运行，chg_map 内的涨跌幅均为前一交易日
-    收盘数据（美股已收盘 3h+），因此此值代表「基于最新官方净值估算昨日净值」。
+    收盘数据（美股已收盘 3h+）。
 
     Worker 使用方式（navLag ≥ 2 时）：
-      nav = est_nav_yesterday × (1 + today_bench_chg%)
+      nav = chain_est.value × (1 + today_bench_chg%)
           = official_nav × (1 + T-1_bench%) × (1 + today_bench%)   ← 两步链式
 
     时间驱动协议：
-      est_nav_date 取自 date_map（bench 数据的实际交易日），而非 t1_date（nav 日期）。
+      chain_est.date 取自 date_map（bench 数据的实际交易日），而非 t1_date（nav 日期）。
       两者在正常情况下相同；QDII 净值发布延迟时可能不同，date_map 更准确。
+      chain_est.index_date 与 chain_est.date 通常相同，作为历史公证人字段独立保存，
+      供 Worker T-2 双重计数断路器（isUsDoubleCount）使用。
 
     写入规则：
-      - bench_chg 可用 → 写入 est_nav_yesterday + est_nav_date（无条件覆盖）
-      - bench_chg 不可用 → 清除旧锚点，防止 Worker 误用过期数据
+      - bench_chg 可用 → 写入 chain_est（无条件覆盖）
+      - bench_chg 不可用 → 清除旧 chain_est，防止 Worker 误用过期数据
     """
     updated = cleared = 0
     for code, fund in data.items():
@@ -1101,15 +1132,22 @@ def update_chain_anchors(data: dict, chg_map: dict, date_map: dict, t1_date: str
 
         bench_chg = _calc_bench_chg(bench_def, chg_map)
         if bench_chg is not None:
-            # 用 date_map 中的实际交易日，而非 t1_date（nav 日期）
+            # date 取自 date_map 实际交易日，而非 t1_date（nav 日期）
             bench_date = _get_bench_date(bench_def, date_map, t1_date)
-            fund['est_nav_yesterday']   = round(official_nav * (1 + bench_chg / 100), 6)
-            fund['est_nav_date']        = bench_date
-            # 历史公证人：记录本次估算消费的 bench 指数交易日（供 Worker 幂等计算锁使用）
-            fund['est_nav_index_date']  = bench_date
+            fund['chain_est'] = {
+                'value':      round(official_nav * (1 + bench_chg / 100), 6),
+                'date':       bench_date,       # 绝对日期：本次估算所代表的交易日
+                'index_date': bench_date,       # 历史公证：消费的 bench 指数交易日
+                'computed_at': now_utc,         # 本次 Action 写入时刻
+            }
+            # 清理旧字段（兼容旧数据迁移）
+            fund.pop('est_nav_yesterday',  None)
+            fund.pop('est_nav_date',       None)
+            fund.pop('est_nav_index_date', None)
             updated += 1
         else:
             # bench 数据不可用，清除旧锚点防止 Worker 使用过期数据推算
+            fund.pop('chain_est',          None)
             fund.pop('est_nav_yesterday',  None)
             fund.pop('est_nav_date',       None)
             fund.pop('est_nav_index_date', None)
@@ -1619,7 +1657,7 @@ def sync():
     now_utc_drift = datetime.now(timezone.utc).isoformat(timespec='seconds')
     bench_chg_map, bench_date_map = fetch_bench_chg_batch(data, t1_date)
     update_drift(data, bench_chg_map, bench_date_map, now_utc_drift)
-    update_chain_anchors(data, bench_chg_map, bench_date_map, t1_date)
+    update_chain_anchors(data, bench_chg_map, bench_date_map, t1_date, now_utc_drift)
 
     # ── 商品期货参考价（16:00 ET 快照，Worker 用于精准估值） ──
     print('\n--- 商品期货参考价 (16:00 ET) ---')
