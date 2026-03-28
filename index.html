@@ -1988,7 +1988,11 @@ function buildHoldingsHtml(code, fund) {
   const futuresContrib = benchResidualTotal != null && futuresFrac > 0 ? benchResidualTotal * futuresFrac : null;
   const indexContrib   = benchResidualTotal != null && futuresFrac < 1 ? benchResidualTotal * (1 - futuresFrac) : null;
 
-  const totalEst = (fund && fund.nav?.value && fund.officialNav?.value) ? (fund.nav.value / fund.officialNav.value - 1) * 100 : null;
+  // 估值涨跌 = 今日持仓贡献 + 期货/指数贡献之和（纯今日 bench 核算，不含 drift 修正）
+  // 自洽：各分量加总恰好等于合计行，无需对比净值，也不受 navLag/chain 影响
+  const totalEst = (coveredW > 0 || benchResidualTotal != null)
+    ? coveredContrib + (futuresContrib ?? 0) + (indexContrib ?? 0)
+    : null;
 
   const sfmt = v => `${v >= 0 ? '+' : ''}${v.toFixed(2)}%`;
   const scol = v => v > 0 ? 'text-green-400/90' : v < 0 ? 'text-red-400/90' : 'text-muted/70';
