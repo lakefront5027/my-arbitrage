@@ -1433,8 +1433,9 @@ async function handleRequest(request, env = {}) {
     const code = url.searchParams.get('code') || '';
     if (!code) return new Response('missing code', { status: 400, headers: corsHeaders(origin) });
     const column = (code.startsWith('5') || code.startsWith('6')) ? 'sse' : 'szse';
+    // 不传 category，查该基金所有公告类型（category_jjgg_szsh 仅覆盖深市基金）
     const body = new URLSearchParams({
-      stock: code, category: 'category_jjgg_szsh',
+      stock: code,
       pageNum: 1, pageSize: 30, column,
       tabName: 'latest', sortName: '', sortType: '',
     });
