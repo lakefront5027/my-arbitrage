@@ -49,8 +49,11 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
 
       - name: Sync WX_KEY secret to Worker
-        if: ${{ secrets.WX_KEY != '' }}
-        run: echo "${{ secrets.WX_KEY }}" | wrangler secret put WX_KEY
+        run: |
+          if [ -n "$WX_KEY" ]; then
+            echo "$WX_KEY" | wrangler secret put WX_KEY
+          fi
         env:
+          WX_KEY: ${{ secrets.WX_KEY }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
