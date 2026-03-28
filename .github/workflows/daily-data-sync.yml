@@ -25,14 +25,14 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: pip install chinesecalendar google-generativeai
+        run: pip install chinesecalendar pdfplumber openai
 
       - name: Run sync + audit script
         env:
           GITHUB_TOKEN:      ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           WX_KEY:            ${{ secrets.WX_KEY }}
-          GEMINI_API_KEY:    ${{ secrets.GEMINI_API_KEY }}
+          DEEPSEEK_API_KEY:  ${{ secrets.DEEPSEEK_API_KEY }}
         run: python .github/scripts/sync_fund_data.py
 
       - name: Commit updated fund data

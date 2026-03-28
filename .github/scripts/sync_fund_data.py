@@ -492,40 +492,31 @@ def _download_pdf_bytes(url: str) -> bytes | None:
         return None
 
 
-def _gemini_find_pdf_url(code: str, model) -> str | None:
-    """Gemini + Google Search grounding 搜索最新季报 PDF 下载链接。"""
-    import google.generativeai as genai
-
+def _deepseek_find_pdf_url(code: str, client) -> str | None:
+    """DeepSeek + 联网搜索，找最新季报 PDF 直接下载链接。"""
     prompt = (
-        f'请搜索中国公募基金代码 {code} 最近一期季度报告或年度报告的PDF下载地址。'
+        f'请搜索中国公募基金代码 {code} 最近一期季度报告或年度报告的PDF直接下载地址。'
         f'只返回一个完整的PDF直接下载URL（以 https://pdf.dfcfw.com 或 '
         f'https://static.cninfo.com.cn 开头），不要任何其他内容。'
         f'找不到则返回 NOT_FOUND。'
     )
+    try:
+        resp = client.chat.completions.create(
+            model='deepseek-chat',
+            messages=[{'role': 'user', 'content': prompt}],
+            max_tokens=300,
+            extra_body={'search': {'enable': True}},
+        )
+        text = (resp.choices[0].message.content or '').strip()
+    except Exception as e:
+        print(f'    [deepseek_search] {code}: {e}', file=sys.stderr)
+        return None
 
-    # 尝试带 Google Search grounding（gemini-2.5-flash 支持）
-    for model_name in ('gemini-2.5-flash', 'gemini-2.0-flash'):
-        try:
-            search_model = genai.GenerativeModel(
-                model_name,
-                tools='google_search_retrieval',
-            )
-            resp = search_model.generate_content(prompt)
-            text = (resp.text or '').strip()
-            break
-        except Exception:
-            try:
-                resp = model.generate_content(prompt)
-                text = (resp.text or '').strip()
-                break
-            except Exception as e:
-                print(f'    [gemini_search] {code}: {e}', file=sys.stderr)
-                return None
+    print(f'    [deepseek_search] {code}: 原始响应: {text[:200]}')
 
     if not text or 'NOT_FOUND' in text:
         return None
 
-    # 按优先级提取 URL
     for pattern in (
         r'https://pdf\.dfcfw\.com/\S+\.(?:PDF|pdf)',
         r'https://static\.cninfo\.com\.cn/\S+\.(?:pdf|PDF)',
@@ -537,32 +528,52 @@ def _gemini_find_pdf_url(code: str, model) -> str | None:
     return None
 
 
-def _extract_holdings_from_pdf_gemini(pdf_b64: str, code: str, model) -> tuple:
+def _extract_holdings_from_pdf_deepseek(pdf_bytes: bytes, code: str, client) -> tuple:
     """
-    Gemini inline PDF → 提取持仓列表和季末日期。
+    pdfplumber 提取 PDF 文本 → DeepSeek 解析持仓。
     返回 (holdings_list, holdings_date_str)，失败返回 ([], '')。
     """
+    import io
+    try:
+        import pdfplumber
+    except ImportError:
+        print('    [deepseek] pdfplumber 未安装', file=sys.stderr)
+        return [], ''
+
+    text_parts = []
+    with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
+        for page in pdf.pages[:25]:
+            t = page.extract_text()
+            if t:
+                text_parts.append(t)
+
+    full_text = '\n'.join(text_parts).strip()
+    if not full_text:
+        print(f'    [deepseek] {code}: PDF 文本提取为空', file=sys.stderr)
+        return [], ''
+
     prompt = (
-        '请阅读这份基金季度报告PDF，提取报告期末前十大持仓明细（股票、ETF 或基金）。\n'
-        '以JSON格式返回，严格格式如下：\n'
+        '以下是一份基金季度报告的文本内容。请提取报告期末前十大持仓明细（股票、ETF 或基金）。\n'
+        '以JSON格式返回，严格格式如下（不要 markdown 代码块）：\n'
         '{"holdings_date": "YYYY-MM-DD", '
         '"holdings": [{"name_en": "ETF英文名或空字符串", '
         '"name_zh": "ETF中文名或空字符串", "ratio": 占净值比例纯数字}]}\n'
         'ratio 为百分数纯数字（如 5.23，不带 % 符号）。\n'
         'holdings_date 为报告期末日期（如 2025-09-30）。\n'
-        '只返回 JSON，不要 markdown 代码块，不要其他内容。'
+        '只返回 JSON，不要其他内容。\n\n'
+        f'报告文本：\n{full_text[:10000]}'
     )
     try:
-        resp = model.generate_content([
-            {'mime_type': 'application/pdf', 'data': pdf_b64},
-            prompt,
-        ])
-        text = resp.text.strip()
+        resp = client.chat.completions.create(
+            model='deepseek-chat',
+            messages=[{'role': 'user', 'content': prompt}],
+            max_tokens=1500,
+        )
+        text = (resp.choices[0].message.content or '').strip()
     except Exception as e:
-        print(f'    [gemini] {code}: PDF 解析失败: {e}', file=sys.stderr)
+        print(f'    [deepseek] {code}: PDF 解析失败: {e}', file=sys.stderr)
         return [], ''
 
-    # 去掉可能的 markdown 包裹
     text = re.sub(r'^```(?:json)?\s*', '', text)
     text = re.sub(r'\s*```$', '', text.strip())
 
@@ -571,27 +582,26 @@ def _extract_holdings_from_pdf_gemini(pdf_b64: str, code: str, model) -> tuple:
     except Exception:
         m = re.search(r'\{.*\}', text, re.DOTALL)
         if not m:
-            print(f'    [gemini] {code}: 无法解析 JSON，响应: {text[:200]}', file=sys.stderr)
+            print(f'    [deepseek] {code}: 无法解析 JSON，响应: {text[:200]}', file=sys.stderr)
             return [], ''
         try:
             result = json.loads(m.group(0))
         except Exception:
-            print(f'    [gemini] {code}: JSON 解析失败', file=sys.stderr)
+            print(f'    [deepseek] {code}: JSON 解析失败', file=sys.stderr)
             return [], ''
 
     raw_items     = result.get('holdings') or []
     holdings_date = result.get('holdings_date', '')
 
     if not (1 <= len(raw_items) <= 15):
-        print(f'    [gemini] {code}: 持仓条数异常 ({len(raw_items)})', file=sys.stderr)
+        print(f'    [deepseek] {code}: 持仓条数异常 ({len(raw_items)})', file=sys.stderr)
         return [], ''
 
     total = sum(float(it.get('ratio', 0)) for it in raw_items if it.get('ratio') is not None)
     if not (5 <= total <= 120):
-        print(f'    [gemini] {code}: 权重之和异常 ({total:.1f}%)', file=sys.stderr)
+        print(f'    [deepseek] {code}: 权重之和异常 ({total:.1f}%)', file=sys.stderr)
         return [], ''
 
-    # 映射 tq 代码（英文名优先，中文名兜底）
     tq_agg: dict = {}
     for item in raw_items:
         ratio = item.get('ratio')
@@ -606,7 +616,7 @@ def _extract_holdings_from_pdf_gemini(pdf_b64: str, code: str, model) -> tuple:
             tq_agg[tq] = tq_agg.get(tq, 0) + ratio
 
     if not tq_agg:
-        print(f'    [gemini] {code}: 无法映射任何持仓到 tq 代码', file=sys.stderr)
+        print(f'    [deepseek] {code}: 无法映射任何持仓到 tq 代码', file=sys.stderr)
         return [], ''
 
     holdings = [
@@ -616,71 +626,64 @@ def _extract_holdings_from_pdf_gemini(pdf_b64: str, code: str, model) -> tuple:
     return holdings, holdings_date
 
 
-def _fetch_holdings_via_gemini(code: str, fund: dict, now_utc: str) -> dict | None:
+def _fetch_holdings_via_deepseek(code: str, fund: dict, now_utc: str) -> dict | None:
     """
-    全流程 Gemini 持仓抓取（jjcc 无数据时）：
+    全流程 DeepSeek 持仓抓取（jjcc 无数据时）：
       1. 时效检查：holdings_date >= 应有季末 → skipped
-      2. Gemini Google Search → 找最新季报 PDF URL
+      2. DeepSeek Search → 找最新季报 PDF URL
       3. 防重复：URL 与上次相同 → skipped（报告未更新）
       4. 下载 PDF bytes
-      5. Gemini inline PDF → 提取持仓 + 季末日期 JSON
+      5. pdfplumber 提取文本 + DeepSeek 解析持仓 JSON
     返回 {'holdings': [...], 'holdings_date': 'YYYY-MM-DD'} / {'skipped': True} / None
     """
-    import base64
     import os as _os
 
-    # ── 时效检查 ──────────────────────────────────────
     today       = now_utc[:10]
     expected_qe = _latest_expected_quarter_end(today)
     current_hd  = fund.get('holdings_date', '')
     if expected_qe and current_hd >= expected_qe:
-        print(f'    [gemini] {code}: 持仓已最新（{current_hd} >= {expected_qe}），跳过')
+        print(f'    [deepseek] {code}: 持仓已最新（{current_hd} >= {expected_qe}），跳过')
         return {'skipped': True}
 
-    print(f'    [gemini] {code}: 触发更新（当前:{current_hd or "无"} 期望:{expected_qe}）')
+    print(f'    [deepseek] {code}: 触发更新（当前:{current_hd or "无"} 期望:{expected_qe}）')
 
-    api_key = _os.environ.get('GEMINI_API_KEY')
+    api_key = _os.environ.get('DEEPSEEK_API_KEY')
     if not api_key:
-        print('    [gemini] GEMINI_API_KEY 未配置', file=sys.stderr)
+        print('    [deepseek] DEEPSEEK_API_KEY 未配置', file=sys.stderr)
         return None
     try:
-        import google.generativeai as genai
+        from openai import OpenAI
+        client = OpenAI(api_key=api_key, base_url='https://api.deepseek.com')
     except ImportError:
-        print('    [gemini] google-generativeai 未安装', file=sys.stderr)
+        print('    [deepseek] openai 包未安装', file=sys.stderr)
         return None
-
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-2.5-flash')
 
     # ── Step 1: 搜索 PDF URL ──────────────────────────
-    pdf_url = _gemini_find_pdf_url(code, model)
+    pdf_url = _deepseek_find_pdf_url(code, client)
     if not pdf_url:
-        print(f'    [gemini] {code}: 未找到 PDF URL', file=sys.stderr)
+        print(f'    [deepseek] {code}: 未找到 PDF URL', file=sys.stderr)
         return None
 
-    # 防重复：URL 未变说明季报尚未更新
     if pdf_url == fund.get('_last_pdf_url', ''):
-        print(f'    [gemini] {code}: PDF URL 未变化，季报尚未更新，跳过')
+        print(f'    [deepseek] {code}: PDF URL 未变化，季报尚未更新，跳过')
         return {'skipped': True}
 
-    print(f'    [gemini] {code}: PDF = {pdf_url}')
+    print(f'    [deepseek] {code}: PDF = {pdf_url}')
 
     # ── Step 2: 下载 PDF ──────────────────────────────
     pdf_bytes = _download_pdf_bytes(pdf_url)
     if not pdf_bytes:
         return None
 
-    # ── Step 3: Gemini 读 PDF 提取持仓 ────────────────
-    holdings, holdings_date = _extract_holdings_from_pdf_gemini(
-        base64.b64encode(pdf_bytes).decode(), code, model
-    )
+    # ── Step 3: 提取文本 + DeepSeek 解析持仓 ──────────
+    holdings, holdings_date = _extract_holdings_from_pdf_deepseek(pdf_bytes, code, client)
     if not holdings:
         return None
 
-    fund['_last_pdf_url'] = pdf_url  # 记录以备下次去重
+    fund['_last_pdf_url'] = pdf_url
     total = sum(h['ratio'] for h in holdings)
     print(
-        f'    [gemini] {code}: {len(holdings)} 条持仓，'
+        f'    [deepseek] {code}: {len(holdings)} 条持仓，'
         f'合计 {total:.1f}%，截止 {holdings_date}',
         flush=True,
     )
@@ -1514,19 +1517,19 @@ def sync():
                 print(f'    持仓 EM无数据，本轮已达 Gemini 上限（{_GEMINI_MAX_FUNDS_PER_RUN}只），跳过')
                 gem_result = {'skipped': True}
             else:
-                gem_result = _fetch_holdings_via_gemini(code, fund, now_utc)
+                gem_result = _fetch_holdings_via_deepseek(code, fund, now_utc)
             if gem_result is None:
                 hold_fail += 1
-                print(f'    持仓 FAILED (EM+Gemini) — 保留旧值', file=sys.stderr)
+                print(f'    持仓 FAILED (EM+DeepSeek) — 保留旧值', file=sys.stderr)
             elif gem_result.get('skipped'):
-                print(f'    持仓 EM无数据，Gemini季报无更新（季末日期未到或PDF未变）')
+                print(f'    持仓 EM无数据，DeepSeek季报无更新（季末日期未到或PDF未变）')
             else:
                 fund['holdings']            = gem_result['holdings']
                 fund['holdings_date']       = gem_result['holdings_date']
                 fund['holdings_fetch_time'] = now_utc
                 hold_ok += 1
                 top = gem_result['holdings'][0]
-                print(f'    持仓(Gemini) {len(gem_result["holdings"]):2d}只  '
+                print(f'    持仓(DeepSeek) {len(gem_result["holdings"]):2d}只  '
                       f'截止:{gem_result["holdings_date"]}  '
                       f'首位: {top["name"]} {top["ratio"]}%')
         time.sleep(0.08)
