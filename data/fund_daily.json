@@ -322,7 +322,58 @@
     "nav_date": "2026-03-26",
     "nav_src": "fundgz",
     "shares": 4.03,
-    "holdings": null,
+    "holdings": [
+      {
+        "code": "ARKK",
+        "name": "ARK Innovation ETF",
+        "ratio": 18.62
+      },
+      {
+        "code": "ARKG",
+        "name": "ARK Genomic Revolution ETF",
+        "ratio": 15.04
+      },
+      {
+        "code": "ARKQ",
+        "name": "ARK Autonomous Technology ETF",
+        "ratio": 11.01
+      },
+      {
+        "code": "SOXX",
+        "name": "iShares Semiconductor ETF",
+        "ratio": 8.74
+      },
+      {
+        "code": "AIQ",
+        "name": "Global X AI & Technology ETF",
+        "ratio": 7.88
+      },
+      {
+        "code": "BOTZ",
+        "name": "Global X Robotics & AI ETF",
+        "ratio": 7.5
+      },
+      {
+        "code": "QQQ",
+        "name": "Invesco QQQ Trust",
+        "ratio": 7.35
+      },
+      {
+        "code": "XLK",
+        "name": "Technology Select Sector SPDR",
+        "ratio": 6.69
+      },
+      {
+        "code": "SMH",
+        "name": "VanEck Semiconductor ETF",
+        "ratio": 3.4
+      },
+      {
+        "code": "ARKF",
+        "name": "ARK Fintech Innovation ETF",
+        "ratio": 1.46
+      }
+    ],
     "nav_fetch_time": "2026-03-28T02:52:56+00:00",
     "nav_consecutive_fails": 0,
     "history": {
@@ -404,7 +455,9 @@
     "est_nav_index_date": "2026-03-27",
     "drift_5d": 0.00688,
     "drift_n": 4,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00"
+    "drift_computed_at": "2026-03-28T03:01:48+00:00",
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-28T00:00:00Z"
   },
   "164824": {
     "code": "164824",
@@ -419,7 +472,58 @@
     "nav_date": "2026-03-26",
     "nav_src": "lsjz",
     "shares": 18.25,
-    "holdings": null,
+    "holdings": [
+      {
+        "code": "INDA.L",
+        "name": "iShares MSCI India UCITS ETF",
+        "ratio": 16.37
+      },
+      {
+        "code": "EPI",
+        "name": "WisdomTree India Earnings ETF",
+        "ratio": 16.35
+      },
+      {
+        "code": "INDA",
+        "name": "iShares MSCI India ETF",
+        "ratio": 16.28
+      },
+      {
+        "code": "AMUN.L",
+        "name": "Amundi MSCI India UCITS ETF",
+        "ratio": 15.2
+      },
+      {
+        "code": "SMIN",
+        "name": "iShares India Small-Cap ETF",
+        "ratio": 8.19
+      },
+      {
+        "code": "INDY",
+        "name": "iShares India 50 ETF",
+        "ratio": 6.49
+      },
+      {
+        "code": "NOMI.T",
+        "name": "Nomura Nifty 50 ETF",
+        "ratio": 4.33
+      },
+      {
+        "code": "INCO",
+        "name": "Columbia India Consumer ETF",
+        "ratio": 3.13
+      },
+      {
+        "code": "INDIA",
+        "name": "VanEck India Growth Leaders ETF",
+        "ratio": 1.5
+      },
+      {
+        "code": "ISNX.L",
+        "name": "iShares SENSEX India UCITS ETF",
+        "ratio": 0.88
+      }
+    ],
     "nav_fetch_time": "2026-03-28T02:52:56+00:00",
     "nav_consecutive_fails": 0,
     "history": {
@@ -498,7 +602,9 @@
     },
     "est_nav_yesterday": 1.238939,
     "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27"
+    "est_nav_index_date": "2026-03-27",
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-28T00:00:00Z"
   },
   "160644": {
     "code": "160644",
@@ -1260,7 +1366,13 @@
     "nav_date": "2026-03-26",
     "nav_src": "fundgz",
     "shares": 4.07,
-    "holdings": null,
+    "holdings": [
+      {
+        "code": "513100",
+        "name": "易方达纳斯达克100ETF",
+        "ratio": 90.6
+      }
+    ],
     "nav_fetch_time": "2026-03-28T02:52:56+00:00",
     "nav_consecutive_fails": 0,
     "history": {
@@ -1342,7 +1454,9 @@
     "est_nav_index_date": "2026-03-27",
     "drift_5d": 0.007216,
     "drift_n": 3,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00"
+    "drift_computed_at": "2026-03-28T03:01:48+00:00",
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-28T00:00:00Z"
   },
   "501300": {
     "code": "501300",
@@ -1436,7 +1550,9 @@
     },
     "est_nav_yesterday": 0.951003,
     "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27"
+    "est_nav_index_date": "2026-03-27",
+    "holdings_date": null,
+    "holdings_fetch_time": null
   },
   "160140": {
     "code": "160140",
@@ -1598,7 +1714,48 @@
     "nav_date": "2026-03-26",
     "nav_src": "lsjz",
     "shares": 2.27,
-    "holdings": null,
+    "holdings": [
+      {
+        "code": "SMH",
+        "name": "VanEck Semiconductor ETF",
+        "ratio": 17.98
+      },
+      {
+        "code": "SOXQ",
+        "name": "Invesco PHLX Semiconductor ETF",
+        "ratio": 17.81
+      },
+      {
+        "code": "SOXX",
+        "name": "iShares Semiconductor ETF",
+        "ratio": 17.8
+      },
+      {
+        "code": "PSI",
+        "name": "Invesco Dynamic Semiconductors ETF",
+        "ratio": 17.69
+      },
+      {
+        "code": "516260",
+        "name": "华夏国证半导体芯片ETF",
+        "ratio": 7.01
+      },
+      {
+        "code": "516670",
+        "name": "国泰中证芯片产业ETF",
+        "ratio": 7.0
+      },
+      {
+        "code": "159755",
+        "name": "景顺长城中证半导体芯片ETF",
+        "ratio": 6.81
+      },
+      {
+        "code": "JPXN",
+        "name": "Global X Japan Semiconductor ETF",
+        "ratio": 1.67
+      }
+    ],
     "nav_fetch_time": "2026-03-28T02:52:56+00:00",
     "nav_consecutive_fails": 0,
     "history": {
@@ -1677,7 +1834,9 @@
     },
     "est_nav_yesterday": 2.052459,
     "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27"
+    "est_nav_index_date": "2026-03-27",
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-28T00:00:00Z"
   },
   "160216": {
     "code": "160216",
@@ -1721,7 +1880,43 @@
     "nav_date": "2026-03-26",
     "nav_src": "lsjz",
     "shares": 15.4,
-    "holdings": null,
+    "holdings": [
+      {
+        "code": "CPER",
+        "name": "United States Copper Index Fund",
+        "ratio": 18.12
+      },
+      {
+        "code": "GLDM",
+        "name": "SPDR Gold MiniShares Trust",
+        "ratio": 12.84
+      },
+      {
+        "code": "SGOL",
+        "name": "Aberdeen Standard Physical Gold ETF",
+        "ratio": 12.84
+      },
+      {
+        "code": "UGL",
+        "name": "ProShares Ultra Gold (2x Leveraged)",
+        "ratio": 12.35
+      },
+      {
+        "code": "COPX",
+        "name": "Global X Copper Miners ETF",
+        "ratio": 5.35
+      },
+      {
+        "code": "DBBB.L",
+        "name": "Invesco DB Base Metals ETF",
+        "ratio": 4.13
+      },
+      {
+        "code": "GDXU",
+        "name": "MicroSectors Gold Miners 3x Leveraged",
+        "ratio": 1.97
+      }
+    ],
     "nav_fetch_time": "2026-03-28T02:52:56+00:00",
     "nav_consecutive_fails": 0,
     "history": {
@@ -1800,7 +1995,9 @@
     },
     "est_nav_yesterday": 0.769812,
     "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27"
+    "est_nav_index_date": "2026-03-27",
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-28T00:00:00Z"
   },
   "161116": {
     "code": "161116",
@@ -1815,7 +2012,38 @@
     "nav_date": "2026-03-26",
     "nav_src": "fundgz",
     "shares": 2.71,
-    "holdings": null,
+    "holdings": [
+      {
+        "code": "GLD",
+        "name": "SPDR Gold Shares",
+        "ratio": 18.46
+      },
+      {
+        "code": "SGOL",
+        "name": "Aberdeen Standard Physical Gold ETF",
+        "ratio": 17.84
+      },
+      {
+        "code": "GLDM",
+        "name": "SPDR Gold MiniShares Trust",
+        "ratio": 13.53
+      },
+      {
+        "code": "IAU",
+        "name": "iShares Gold Trust",
+        "ratio": 12.81
+      },
+      {
+        "code": "UBSG.L",
+        "name": "UBS ETF Gold (USD)",
+        "ratio": 11.71
+      },
+      {
+        "code": "UGL",
+        "name": "ProShares Ultra Gold (2x Leveraged)",
+        "ratio": 8.46
+      }
+    ],
     "nav_fetch_time": "2026-03-28T02:52:56+00:00",
     "nav_consecutive_fails": 0,
     "history": {
@@ -1894,7 +2122,9 @@
     },
     "est_nav_yesterday": 1.662176,
     "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27"
+    "est_nav_index_date": "2026-03-27",
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-28T00:00:00Z"
   },
   "164701": {
     "code": "164701",
@@ -1909,7 +2139,58 @@
     "nav_date": "2026-03-26",
     "nav_src": "lsjz",
     "shares": 6.81,
-    "holdings": null,
+    "holdings": [
+      {
+        "code": "UGL",
+        "name": "ProShares Ultra Gold (2x Leveraged)",
+        "ratio": 10.52
+      },
+      {
+        "code": "GLDM",
+        "name": "SPDR Gold MiniShares Trust",
+        "ratio": 8.62
+      },
+      {
+        "code": "IAUM",
+        "name": "iShares Gold Trust Micro",
+        "ratio": 8.2
+      },
+      {
+        "code": "GLD",
+        "name": "SPDR Gold Shares",
+        "ratio": 6.35
+      },
+      {
+        "code": "BAR",
+        "name": "GraniteShares Gold Trust",
+        "ratio": 6.31
+      },
+      {
+        "code": "AAAU",
+        "name": "Perth Mint Physical Gold ETF",
+        "ratio": 4.94
+      },
+      {
+        "code": "SGOL",
+        "name": "Aberdeen Standard Physical Gold ETF",
+        "ratio": 4.09
+      },
+      {
+        "code": "IAU",
+        "name": "iShares Gold Trust",
+        "ratio": 3.06
+      },
+      {
+        "code": "SLV",
+        "name": "iShares Silver Trust",
+        "ratio": 0.73
+      },
+      {
+        "code": "SIVR",
+        "name": "Aberdeen Standard Physical Silver ETF",
+        "ratio": 0.1
+      }
+    ],
     "nav_fetch_time": "2026-03-28T02:52:56+00:00",
     "nav_consecutive_fails": 0,
     "history": {
@@ -1988,7 +2269,9 @@
     },
     "est_nav_yesterday": 1.810379,
     "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27"
+    "est_nav_index_date": "2026-03-27",
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-28T00:00:00Z"
   },
   "165513": {
     "code": "165513",
@@ -2003,7 +2286,53 @@
     "nav_date": "2026-03-26",
     "nav_src": "fundgz",
     "shares": 4.52,
-    "holdings": null,
+    "holdings": [
+      {
+        "code": "GLDM",
+        "name": "SPDR Gold MiniShares Trust",
+        "ratio": 16.24
+      },
+      {
+        "code": "SGOL",
+        "name": "Aberdeen Standard Physical Gold ETF",
+        "ratio": 16.23
+      },
+      {
+        "code": "IAUM",
+        "name": "iShares Gold Trust Micro",
+        "ratio": 14.67
+      },
+      {
+        "code": "IAU",
+        "name": "iShares Gold Trust",
+        "ratio": 12.3
+      },
+      {
+        "code": "SGOL.L",
+        "name": "Invesco Physical Gold ETC",
+        "ratio": 9.34
+      },
+      {
+        "code": "GLD",
+        "name": "SPDR Gold Shares",
+        "ratio": 6.88
+      },
+      {
+        "code": "DGP",
+        "name": "DB Gold Double Long ETN",
+        "ratio": 4.25
+      },
+      {
+        "code": "PGLD.T",
+        "name": "Japan Physical Gold ETF",
+        "ratio": 2.62
+      },
+      {
+        "code": "USO",
+        "name": "United States Oil Fund (Simplex WTI)",
+        "ratio": 0.2
+      }
+    ],
     "nav_fetch_time": "2026-03-28T02:52:56+00:00",
     "nav_consecutive_fails": 0,
     "history": {
@@ -2085,7 +2414,9 @@
     "est_nav_index_date": "2026-03-27",
     "drift_5d": 0.020338,
     "drift_n": 4,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00"
+    "drift_computed_at": "2026-03-28T03:01:48+00:00",
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-28T00:00:00Z"
   },
   "160719": {
     "code": "160719",
@@ -2100,7 +2431,38 @@
     "nav_date": "2026-03-26",
     "nav_src": "lsjz",
     "shares": 2.24,
-    "holdings": null,
+    "holdings": [
+      {
+        "code": "GLD",
+        "name": "SPDR Gold Shares",
+        "ratio": 15.78
+      },
+      {
+        "code": "SGOL",
+        "name": "Aberdeen Standard Physical Gold ETF",
+        "ratio": 15.76
+      },
+      {
+        "code": "IAU",
+        "name": "iShares Gold Trust",
+        "ratio": 15.53
+      },
+      {
+        "code": "SWCG.SW",
+        "name": "Swisscanto Gold ETF",
+        "ratio": 13.85
+      },
+      {
+        "code": "UBSG.L",
+        "name": "UBS ETF Gold (USD)",
+        "ratio": 13.55
+      },
+      {
+        "code": "IGLN.L",
+        "name": "iShares Physical Gold ETC",
+        "ratio": 8.51
+      }
+    ],
     "nav_fetch_time": "2026-03-28T02:52:56+00:00",
     "nav_consecutive_fails": 0,
     "history": {
@@ -2179,7 +2541,9 @@
     },
     "est_nav_yesterday": 2.007391,
     "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27"
+    "est_nav_index_date": "2026-03-27",
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-28T00:00:00Z"
   },
   "161815": {
     "code": "161815",
@@ -2235,7 +2599,53 @@
     "nav_date": "2026-03-26",
     "nav_src": "fundgz",
     "shares": 2.85,
-    "holdings": null,
+    "holdings": [
+      {
+        "code": "GLD",
+        "name": "SPDR Gold Shares",
+        "ratio": 14.67
+      },
+      {
+        "code": "IAU",
+        "name": "iShares Gold Trust",
+        "ratio": 14.37
+      },
+      {
+        "code": "AAAU",
+        "name": "Perth Mint Physical Gold ETF",
+        "ratio": 12.33
+      },
+      {
+        "code": "SGOL",
+        "name": "Aberdeen Standard Physical Gold ETF",
+        "ratio": 11.9
+      },
+      {
+        "code": "BCI",
+        "name": "iPath Bloomberg Commodity ETN",
+        "ratio": 10.46
+      },
+      {
+        "code": "COMT",
+        "name": "iShares GSCI Commodity ETF",
+        "ratio": 8.09
+      },
+      {
+        "code": "CRUD.L",
+        "name": "WisdomTree WTI Crude Oil ETP",
+        "ratio": 4.33
+      },
+      {
+        "code": "BRNT.L",
+        "name": "WisdomTree Brent Crude Oil ETP",
+        "ratio": 3.8
+      },
+      {
+        "code": "SLV",
+        "name": "iShares Silver Trust",
+        "ratio": 2.07
+      }
+    ],
     "nav_fetch_time": "2026-03-28T02:52:56+00:00",
     "nav_consecutive_fails": 0,
     "history": {
@@ -2317,7 +2727,9 @@
     "est_nav_index_date": "2026-03-27",
     "drift_5d": 0.013664,
     "drift_n": 3,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00"
+    "drift_computed_at": "2026-03-28T03:01:48+00:00",
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-28T00:00:00Z"
   },
   "163208": {
     "code": "163208",
@@ -2488,7 +2900,43 @@
     "nav_date": "2026-03-26",
     "nav_src": "lsjz",
     "shares": 8.85,
-    "holdings": null,
+    "holdings": [
+      {
+        "code": "BRNT.L",
+        "name": "WisdomTree Brent Crude Oil ETP",
+        "ratio": 19.68
+      },
+      {
+        "code": "CRUD.L",
+        "name": "WisdomTree WTI Crude Oil ETP",
+        "ratio": 19.63
+      },
+      {
+        "code": "USO",
+        "name": "United States Oil Fund",
+        "ratio": 19.46
+      },
+      {
+        "code": "NOMI.T",
+        "name": "Nomura Crude Oil ETF",
+        "ratio": 11.73
+      },
+      {
+        "code": "SPWT.T",
+        "name": "Simplex WTI Crude Oil ETF",
+        "ratio": 10.58
+      },
+      {
+        "code": "BNO",
+        "name": "United States Brent Oil Fund",
+        "ratio": 7.76
+      },
+      {
+        "code": "OIL.L",
+        "name": "UBS CMCI Oil ETF",
+        "ratio": 5.06
+      }
+    ],
     "nav_fetch_time": "2026-03-28T02:52:56+00:00",
     "nav_consecutive_fails": 0,
     "history": {
@@ -2567,7 +3015,9 @@
     },
     "est_nav_yesterday": 1.842443,
     "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27"
+    "est_nav_index_date": "2026-03-27",
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-28T00:00:00Z"
   },
   "161129": {
     "code": "161129",
@@ -2582,7 +3032,38 @@
     "nav_date": "2026-03-26",
     "nav_src": "lsjz",
     "shares": 4.35,
-    "holdings": null,
+    "holdings": [
+      {
+        "code": "CRUD.L",
+        "name": "WisdomTree WTI Crude Oil ETP",
+        "ratio": 18.52
+      },
+      {
+        "code": "BRNT.L",
+        "name": "WisdomTree Brent Crude Oil ETP",
+        "ratio": 18.35
+      },
+      {
+        "code": "DBO",
+        "name": "Invesco DB Oil Fund",
+        "ratio": 17.57
+      },
+      {
+        "code": "SPWT.T",
+        "name": "Simplex WTI Crude Oil ETF",
+        "ratio": 16.51
+      },
+      {
+        "code": "NOMI.T",
+        "name": "Nomura Crude Oil ETF",
+        "ratio": 16.11
+      },
+      {
+        "code": "KORE.L",
+        "name": "Samsung GSCI Crude Oil ETF",
+        "ratio": 5.72
+      }
+    ],
     "nav_fetch_time": "2026-03-28T02:52:56+00:00",
     "nav_consecutive_fails": 0,
     "history": {
@@ -2664,7 +3145,9 @@
     "est_nav_index_date": "2026-03-27",
     "drift_5d": -0.025044,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T03:01:48+00:00"
+    "drift_computed_at": "2026-03-28T03:01:48+00:00",
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-28T00:00:00Z"
   },
   "160723": {
     "code": "160723",
@@ -2679,7 +3162,43 @@
     "nav_date": "2026-03-26",
     "nav_src": "lsjz",
     "shares": 3.5,
-    "holdings": null,
+    "holdings": [
+      {
+        "code": "USO",
+        "name": "United States Oil Fund",
+        "ratio": 17.22
+      },
+      {
+        "code": "CRUD.L",
+        "name": "WisdomTree WTI Crude Oil ETP",
+        "ratio": 16.92
+      },
+      {
+        "code": "SPWT.T",
+        "name": "Simplex WTI Crude Oil ETF",
+        "ratio": 15.03
+      },
+      {
+        "code": "BRNT.L",
+        "name": "WisdomTree Brent Crude Oil ETP",
+        "ratio": 14.89
+      },
+      {
+        "code": "BNO",
+        "name": "United States Brent Oil Fund",
+        "ratio": 14.74
+      },
+      {
+        "code": "NOMI.T",
+        "name": "Nomura Crude Oil ETF",
+        "ratio": 14.29
+      },
+      {
+        "code": "WBRN.L",
+        "name": "WisdomTree Bloomberg Brent Crude ETP",
+        "ratio": 0.25
+      }
+    ],
     "nav_fetch_time": "2026-03-28T02:52:56+00:00",
     "nav_consecutive_fails": 0,
     "history": {
@@ -2758,7 +3277,9 @@
     },
     "est_nav_yesterday": 2.147285,
     "est_nav_date": "2026-03-27",
-    "est_nav_index_date": "2026-03-27"
+    "est_nav_index_date": "2026-03-27",
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-28T00:00:00Z"
   },
   "162719": {
     "code": "162719",
@@ -3985,7 +4506,13 @@
     "nav_date": "2026-03-27",
     "nav_src": "lsjz",
     "shares": 2.07,
-    "holdings": null,
+    "holdings": [
+      {
+        "code": "159920",
+        "name": "南方恒生指数ETF",
+        "ratio": 96.82
+      }
+    ],
     "nav_fetch_time": "2026-03-28T02:52:56+00:00",
     "nav_consecutive_fails": 0,
     "history": {
@@ -4061,7 +4588,9 @@
         null,
         null
       ]
-    }
+    },
+    "holdings_date": "2025-12-31",
+    "holdings_fetch_time": "2026-03-28T00:00:00Z"
   },
   "501307": {
     "code": "501307",

@@ -135,7 +135,7 @@ const FUNDS = [
 const BENCH = {
   '161127': 'usXBI',
   '164906': 'hkHSTECH',                                              // 持仓主体为港股中概，usKWEB(T-1)→hkHSTECH(实时)
-  '501312': [{tq:'usQQQ',w:0.8},{tq:'hkHSTECH',w:0.1},{tq:'sh000985',w:0.1}],
+  '501312': [{tq:'usQQQ',w:0.60},{tq:'usXLK',w:0.20},{tq:'usSMH',w:0.20}],  // Q4 2025: ARK系+科技ETF全US，无HK/A股
   '164824': 'usINDA',
   '160644': [{tq:'usQQQ',w:0.5},{tq:'hkHSTECH',w:0.5}],            // 港美各半：GOOGL/NVDA/TSM + 腾讯/阿里HK
   '162415': 'usXLY',
@@ -146,16 +146,16 @@ const BENCH = {
   '501300': 'usAGG',
   '160140': 'usRWR',
   '501225': 'usSMH',
-  '160216': [{tq:'usSGOL',w:0.234},{tq:'usGLD',w:0.193},{tq:'usGLDM',w:0.154},{tq:'usUSO',w:0.153},{tq:'usSLV',w:0.151},{tq:'usCPER',w:0.143},{tq:'usXOP',w:0.038}],
-  '161116': 'sh518880',
+  '160216': [{tq:'usCPER',w:0.37},{tq:'usGLD',w:0.23},{tq:'usGLDM',w:0.20},{tq:'usSGOL',w:0.20}],  // Q4 2025: 铜18%+金系38%，原油已清仓
+  '161116': [{tq:'usGLD',w:0.29},{tq:'usSGOL',w:0.28},{tq:'usGLDM',w:0.22},{tq:'usIAU',w:0.21}],  // Q4 2025: 美国黄金ETF为主，改用GC=F链路
   '164701': 'usGLD',
   '165513': 'usGLD',
-  '160719': 'sh518880',
-  '161815': [{tq:'usGLD',w:0.171},{tq:'usIAU',w:0.168},{tq:'usAAAU',w:0.144},{tq:'usSGOL',w:0.139},{tq:'usBCI',w:0.122},{tq:'usCOMT',w:0.095},{tq:'usUSO',w:0.051},{tq:'usBNO',w:0.044},{tq:'usSLV',w:0.024},{tq:'usCPER',w:0.053}],
+  '160719': 'usGLD',  // Q4 2025: 美国黄金ETF为主(GLD/SGOL/IAU)，改用GC=F链路
+  '161815': [{tq:'usGLD',w:0.179},{tq:'usIAU',w:0.175},{tq:'usAAAU',w:0.150},{tq:'usSGOL',w:0.145},{tq:'usBCI',w:0.128},{tq:'usCOMT',w:0.099},{tq:'usUSO',w:0.053},{tq:'usBNO',w:0.046},{tq:'usSLV',w:0.025}],  // Q4 2025: 无铜，重新归一化
   '163208': [{tq:'usXLE',w:0.5},{tq:'hkHSCEI',w:0.5}],             // 全球油气：US油气ETF + HK能源/公用
-  '501018': [{tq:'usUSO',w:0.6},{tq:'usBNO',w:0.4}],
+  '501018': [{tq:'usUSO',w:0.69},{tq:'usBNO',w:0.31}],  // Q4 2025: WTI系61.4%/Brent27.4% → 69/31
   '161129': [{tq:'usUSO',w:0.7443},{tq:'usBNO',w:0.1835}],  // Q4 2025 持仓: WTI系74.4% + Brent18.4%
-  '160723': 'usUSO',
+  '160723': [{tq:'usUSO',w:0.68},{tq:'usBNO',w:0.32}],  // Q4 2025: WTI63%/Brent30%，原来只有USO需添BNO
   '162719': 'usXOP',
   '162411': 'usXOP',
   '160416': 'usIXC',
