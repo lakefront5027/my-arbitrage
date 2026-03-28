@@ -763,7 +763,7 @@ def _fetch_holdings_via_deepseek(code: str, fund: dict, now_utc: str,
 
     today       = now_utc[:10]
     expected_qe = _latest_expected_quarter_end(today)
-    current_hd  = fund.get('holdings_date', '')
+    current_hd  = fund.get('holdings_date') or ''
     if expected_qe and current_hd >= expected_qe:
         print(f'    [deepseek] {code}: 持仓已最新（{current_hd} >= {expected_qe}），跳过')
         return {'skipped': True}
