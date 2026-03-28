@@ -635,8 +635,24 @@ def _fetch_quarterly_pdf_url(code: str) -> tuple:
             f'https://fund.eastmoney.com/data/FundNoticeDatas.aspx'
             f'?fundcode={code}&type=0&per=30&page=1&rt={int(time.time())}'
         )
-        text = fetch_url(url, referer=f'https://fund.eastmoney.com/gonggao/{code}.html')
-        if not text:
+        # 该接口为 AJAX 接口，必须带 X-Requested-With 头，否则返回 403
+        headers = {
+            'User-Agent': (
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+                'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+            ),
+            'Accept': 'text/javascript, application/javascript, */*; q=0.01',
+            'Accept-Language': 'zh-CN,zh;q=0.9',
+            'Referer': f'https://fund.eastmoney.com/gonggao/{code}.html',
+            'X-Requested-With': 'XMLHttpRequest',
+        }
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=12) as r:
+                raw = r.read()
+            text = raw.decode('utf-8', errors='replace')
+        except Exception as e:
+            print(f'    [em_notice] {code} 请求失败: {e}', file=sys.stderr)
             return None, None, None
         print(f'    [em_notice] {code} 响应片段: {repr(text[:120])}')
         return _best_entry(_entries_from_text(text))
