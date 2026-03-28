@@ -378,77 +378,9 @@ def fetch_holdings(code: str) -> dict | None:
 
 
 # ══════════════════════════════════════════════════════
-#  移动端 API 持仓抓取（QDII / 外盘 ETF 基金）
+#  Gemini 全流程持仓抓取（QDII / 外盘 ETF 基金）
 # ══════════════════════════════════════════════════════
-
-def fetch_holdings_mobile(code: str) -> dict | None:
-    """
-    天天基金 App 移动端 API 持仓接口，用于 jjcc 无数据的 QDII 基金。
-    返回 {'holdings': [...], 'holdings_date': 'YYYY-MM-DD'}，失败返回 None。
-    """
-    url = (
-        f'https://fundmobapi.eastmoney.com/FundMApi/FundPortfolioPortfolio.ashx'
-        f'?fundCode={code}&type=0&page=1&pageSize=10'
-        f'&plat=Wap&deviceid=Wap&version=6.3.8&product=EFund'
-        f'&appType=ttjj&clienttype=1&format=json'
-    )
-    text = fetch_url(url, referer='https://fund.eastmoney.com/')
-    if not text:
-        return None
-    try:
-        data = json.loads(text)
-    except Exception:
-        return None
-
-    # 响应结构：{"Datas": [...], "ErrCode": 0, ...}
-    datas = (data.get('Datas') or [])
-    if not datas:
-        print(f'    [mobile] {code}: API 返回空持仓', file=sys.stderr)
-        return None
-
-    holdings = []
-    holdings_date = ''
-    for item in datas[:10]:
-        name  = item.get('GPJC') or item.get('JJJC') or item.get('SECURITYNAME') or ''
-        code_ = item.get('GPDM') or item.get('JJDM') or item.get('SECURITYCODE') or ''
-        ratio = item.get('JZBL') or item.get('FUNDNETPERCENT') or 0
-        date_ = item.get('PCDATE') or item.get('REPORTDATE') or ''
-        if not name:
-            continue
-        try:
-            ratio = round(float(str(ratio).rstrip('%')), 2)
-        except ValueError:
-            ratio = 0.0
-        if date_ and not holdings_date:
-            # 取季末日期：API 可能返回 "2025-12-31" 或 "20251231"
-            d = re.sub(r'[^\d-]', '', date_)
-            if len(d) == 8 and '-' not in d:
-                d = f'{d[:4]}-{d[4:6]}-{d[6:]}'
-            holdings_date = d[:10] if len(d) >= 10 else ''
-        holdings.append({'code': code_, 'name': name, 'ratio': ratio})
-
-    if not holdings:
-        return None
-
-    # holdings_date 回退：取最近季末
-    if not holdings_date:
-        for year, month in _recent_quarters():
-            holdings_date = f'{year}-{month:02d}-{_quarter_last_day[month]}'
-            break
-
-    return {'holdings': holdings, 'holdings_date': holdings_date}
-
-
-_quarter_last_day = {3: 31, 6: 30, 9: 30, 12: 31}
-
-
-# ══════════════════════════════════════════════════════
-#  PDF 持仓提取（巨潮资讯季报）
-# ══════════════════════════════════════════════════════
-# 对 EM jjcc 无法返回持仓的基金（主要为持有外盘 ETF 的美股/商品类 LOF），
-# 在 holdings 为空或距今超过 90 天时，通过巨潮资讯季报 PDF 提取前十大持仓。
-
-PDF_HOLDINGS_MAX_AGE_DAYS = 90   # PDF 持仓刷新阈值（日历天）
+# jjcc 无数据时触发：Gemini Search 找 PDF URL → 下载 → Gemini 读 PDF → holdings JSON
 
 # 外盘 ETF 名称关键词 → 内部 tq 代码（优先级从高到低，依序匹配，首中即返）
 _ETF_NAME_TO_TQ: list = [
@@ -529,303 +461,137 @@ def _match_etf_name(name: str) -> str | None:
     return None
 
 
-def _holdings_age_days(holdings_date: str, today: str) -> int:
-    """持仓日期距今的日历天数。"""
-    try:
-        return (date.fromisoformat(today) - date.fromisoformat(holdings_date)).days
-    except Exception:
-        return 9999
 
-
-def _fetch_quarterly_pdf_url(code: str) -> tuple:
-    """多源顺序探测最新季报/年报 PDF，返回 (url, title, notice_date)；失败返回 (None, None, None)。
-
-    探测顺序：
-      0a. EM api.fund.eastmoney.com/f10/jjgg JSON API（与 fundf10 归档独立，QDII 通常有数据）
-      0b. EM fund.eastmoney.com/data/FundNoticeDatas.aspx（主站公告列表，含 AN... 码）
-      1.  EM fundf10 jjzqbg（季度报告）—— 非 QDII 基金通常有数据
-      2.  EM fundf10 ndbg（年度报告）  —— QDII 基金通常有年报，Q4 持仓等价
-      3.  EM fundf10 bdbg（半年度报告）—— 年报也没有时的备选
-      4.  CNINFO hisAnnouncement      —— 境外 IP 通常被屏蔽，作为最后尝试
-    """
-
-    # 通用 art code 提取器：支持 AN.../AP.../H2_... 等 EM 公告码格式
-    _ART_CODE_RE = re.compile(r'["\']?([A-Z]{2}[0-9]{14,})["\']?')
-
-    def _entries_from_text(text: str) -> list:
-        """从任意 EM 响应文本中提取 (pdf_url, title, notice_date) 三元组列表。"""
-        entries, seen = [], set()
-        # 优先解析 openWinFunc('AN...', '标题') 形式
-        for m in re.finditer(
-            r"openWinFunc\s*\(\s*['\"]([A-Z]{2}[0-9]{14,})['\"]"
-            r"\s*,\s*['\"]([^'\"]{4,100})['\"]",
-            text, re.IGNORECASE
-        ):
-            art_code = m.group(1)
-            if art_code in seen:
-                continue
-            seen.add(art_code)
-            title = m.group(2).strip()
-            ctx = text[max(0, m.start() - 200): m.end() + 200]
-            dm  = re.search(r'(\d{4}-\d{2}-\d{2})', ctx)
-            entries.append((f'https://pdf.dfcfw.com/pdf/H2_{art_code}_1.PDF',
-                            title, dm.group(1) if dm else ''))
-        # 次级：任意引号包裹的 art code（JSON / JS 变量格式）
-        for m in _ART_CODE_RE.finditer(text):
-            art_code = m.group(1)
-            if art_code in seen:
-                continue
-            seen.add(art_code)
-            ctx     = text[max(0, m.start() - 300): m.end() + 300]
-            title_m = re.search(r'[\u4e00-\u9fa5A-Za-z0-9（）]{4,80}'
-                                 r'(?:季度?报告|季报|年度报告|半年度?报告)', ctx)
-            dm      = re.search(r'(\d{4}-\d{2}-\d{2})', ctx)
-            entries.append((f'https://pdf.dfcfw.com/pdf/H2_{art_code}_1.PDF',
-                            title_m.group(0).strip() if title_m else '',
-                            dm.group(1) if dm else ''))
-        return entries
-
-    def _best_entry(entries: list):
-        for e in entries:
-            if re.search(r'[一二三四]季度?报告|季报|年度报告', e[1]):
-                return e
-        return entries[0] if entries else (None, None, None)
-
-    # ── 0a  api.fund.eastmoney.com/f10/jjgg（JSON 公告列表，独立于 fundf10 归档）──
-    def _try_em_jjgg_json() -> tuple:
-        url = (
-            f'https://api.fund.eastmoney.com/f10/jjgg'
-            f'?fundCode={code}&type=3&page=1&per=20&_={int(time.time())}'
-        )
-        text = fetch_url(
-            url,
-            referer=f'https://fundf10.eastmoney.com/jjgg_{code}.html',
-        )
-        if not text:
-            return None, None, None
-        print(f'    [em_jjgg] {code} 响应片段: {repr(text[:80])}')
-        try:
-            data = json.loads(text)
-        except Exception:
-            return None, None, None
-        # 响应结构: {"Data":{"LSJGGList":[{"ID":"...","TITLE":"...","PUBLICDATE":"...","FILETYPE":".pdf","FILEURL":"https://pdf.dfcfw.com/..."}]}}
-        items = (((data.get('Data') or {}).get('LSJGGList')) or
-                 (data.get('data') or {}).get('list') or
-                 data.get('Datas') or [])
-        entries = []
-        for item in items:
-            title = item.get('TITLE') or item.get('title') or ''
-            pub   = item.get('PUBLICDATE') or item.get('publishDate') or ''
-            # 优先取直连 FILEURL，兜底用 ID 拼 dfcfw
-            furl  = item.get('FILEURL') or item.get('fileUrl') or ''
-            art   = item.get('ID') or item.get('id') or ''
-            if not furl and art:
-                furl = f'https://pdf.dfcfw.com/pdf/H2_{art}_1.PDF'
-            if furl:
-                entries.append((furl, title, str(pub)[:10]))
-        return _best_entry(entries)
-
-    result = _try_em_jjgg_json()
-    if result[0]:
-        return result
-
-    # ── 0b  fund.eastmoney.com/data/FundNoticeDatas.aspx（主站 AJAX 公告列表）──
-    def _try_em_notice_list() -> tuple:
-        url = (
-            f'https://fund.eastmoney.com/data/FundNoticeDatas.aspx'
-            f'?fundcode={code}&type=0&per=30&page=1&rt={int(time.time())}'
-        )
-        # 该接口为 AJAX 接口，必须带 X-Requested-With 头，否则返回 403
-        headers = {
-            'User-Agent': (
-                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
-                'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-            ),
-            'Accept': 'text/javascript, application/javascript, */*; q=0.01',
-            'Accept-Language': 'zh-CN,zh;q=0.9',
-            'Referer': f'https://fund.eastmoney.com/gonggao/{code}.html',
-            'X-Requested-With': 'XMLHttpRequest',
-        }
-        try:
-            req = urllib.request.Request(url, headers=headers)
-            with urllib.request.urlopen(req, timeout=12) as r:
-                raw = r.read()
-            text = raw.decode('utf-8', errors='replace')
-        except Exception as e:
-            print(f'    [em_notice] {code} 请求失败: {e}', file=sys.stderr)
-            return None, None, None
-        print(f'    [em_notice] {code} 响应片段: {repr(text[:120])}')
-        return _best_entry(_entries_from_text(text))
-
-    result = _try_em_notice_list()
-    if result[0]:
-        return result
-
-    # ── 1/2/3  EM fundf10 多类型探测 ─────────────────────────────────
-    def _try_em_type(report_type: str) -> tuple:
-        url  = (
-            f'https://fundf10.eastmoney.com/FundArchivesDatas.aspx'
-            f'?type={report_type}&code={code}&page=1&per=10&rt={int(time.time())}'
-        )
-        text = fetch_url(url, referer=f'https://fundf10.eastmoney.com/jjgg.html?fundcode={code}')
-        if not text:
-            return None, None, None
-        return _best_entry(_entries_from_text(text))
-
-    for rtype in ('jjzqbg', 'ndbg', 'bdbg'):
-        url, title, notice_date = _try_em_type(rtype)
-        if url:
-            return url, title, notice_date
-
-    # ── 4  CNINFO via Worker 代理 ──────────────────────────────────────
-    # GitHub Actions 境外 IP 被 CNINFO 直连屏蔽；通过 Cloudflare Worker 转发，
-    # Worker 的 IP 段不同，不在 CNINFO 屏蔽名单内。
-    WORKER_BASE = 'https://lof-arb-radar.3031315027ghb.workers.dev'
-    proxy_url   = f'{WORKER_BASE}/api/cninfo-pdf?code={code}'
-    anns: list  = []
-    try:
-        req = urllib.request.Request(proxy_url, headers={
-            'User-Agent': 'sync_fund_data/1.0',
-            'Accept':     'application/json',
-        })
-        with urllib.request.urlopen(req, timeout=15) as r:
-            data = json.loads(r.read().decode('utf-8'))
-        anns = data.get('announcements') or []
-        if anns:
-            print(f'    [cninfo] {code} Worker代理: 取到 {len(anns)} 条公告')
-        else:
-            print(f'    [cninfo] {code} Worker代理: 无公告记录（Worker响应: {str(data)[:120]}）', file=sys.stderr)
-    except Exception as e:
-        print(f'    [cninfo] {code} Worker代理失败: {e}', file=sys.stderr)
-
-    def _ann_date(ann: dict) -> str:
-        raw = ann.get('announcementTime', 0)
-        try:
-            return str(date.fromtimestamp(int(raw) / 1000))
-        except Exception:
-            return str(raw)[:10] if raw else ''
-
-    for ann in anns:
-        title    = ann.get('announcementTitle', '')
-        pdf_path = ann.get('adjunctUrl', '')
-        if re.search(r'[一二三四]季度?报告|季报', title) and pdf_path:
-            return f'https://static.cninfo.com.cn/{pdf_path}', title, _ann_date(ann)
-    for ann in anns:
-        pdf_path = ann.get('adjunctUrl', '')
-        if pdf_path and pdf_path.endswith('.pdf'):
-            return f'https://static.cninfo.com.cn/{pdf_path}', ann.get('announcementTitle', ''), _ann_date(ann)
-
-    print(f'    [pdf_url] {code} 所有数据源均未找到季报 PDF', file=sys.stderr)
-    return None, None, None
-
-
-def _parse_quarter_end_date(title: str) -> str:
-    """从季报标题解析季末日期，如 '2025年第四季度报告' → '2025-12-31'。"""
-    _quarter_month = {'一': 3, '二': 6, '三': 9, '四': 12}
-    _month_day     = {3: 31, 6: 30, 9: 30, 12: 31}
-    m = re.search(r'(\d{4})年第?([一二三四])季度', title)
-    if m:
-        year  = int(m.group(1))
-        month = _quarter_month[m.group(2)]
-        return f'{year}-{month:02d}-{_month_day[month]}'
+def _latest_expected_quarter_end(today: str) -> str:
+    """返回当前应已发布季报的最近季末日期（季末后 15 天才视为"应有"）。"""
+    d = date.fromisoformat(today)
+    candidates = []
+    for y in (d.year - 1, d.year):
+        for m, last in ((3, 31), (6, 30), (9, 30), (12, 31)):
+            candidates.append(date(y, m, last))
+    for q in sorted(candidates, reverse=True):
+        if (d - q).days >= 15:
+            return q.isoformat()
     return ''
 
 
-def _download_pdf_binary(url: str, dest_path: str) -> bool:
-    """下载 PDF 二进制到本地路径。"""
+def _download_pdf_bytes(url: str) -> bytes | None:
+    """下载 PDF 返回二进制内容。"""
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-        'Referer':    'https://fund.eastmoney.com/',
+        'Referer': 'https://fund.eastmoney.com/',
     }
-    req = urllib.request.Request(url, headers=headers)
     try:
-        with urllib.request.urlopen(req, timeout=30) as r, open(dest_path, 'wb') as f:
-            while True:
-                chunk = r.read(65536)
-                if not chunk:
-                    break
-                f.write(chunk)
-        return True
+        req = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(req, timeout=60) as r:
+            data = r.read()
+        print(f'    [pdf_dl] {url[:60]}... {len(data)//1024} KB')
+        return data
     except Exception as e:
-        print(f'    [pdf] 下载失败: {e}', file=sys.stderr)
-        return False
+        print(f'    [pdf_dl] 下载失败: {e}', file=sys.stderr)
+        return None
 
 
-def _extract_holdings_via_gemini(pdf_path: str, code: str) -> list:
-    """
-    用 Gemini 1.5 Flash 从季报 PDF 提取前十大持仓，返回可映射到 tq 代码的行。
-    返回 [{'code': tq, 'name': tq, 'ratio': float}, ...]，空列表表示未找到或校验失败。
-
-    数据熔断校验（警告但不中断主流程）：
-      - 提取条数 1–15 之间
-      - 权重之和 5%–120%
-      - 至少 1 条成功映射到 tq 代码
-    """
-    import base64
-    import os as _os
-
-    api_key = _os.environ.get('GEMINI_API_KEY')
-    if not api_key:
-        print('    [gemini] GEMINI_API_KEY 未设置，跳过', file=sys.stderr)
-        return []
-
-    try:
-        import google.generativeai as genai
-    except ImportError:
-        print('    [gemini] google-generativeai 未安装，跳过', file=sys.stderr)
-        return []
-
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-1.5-flash')
-
-    with open(pdf_path, 'rb') as f:
-        pdf_b64 = base64.b64encode(f.read()).decode()
+def _gemini_find_pdf_url(code: str, model) -> str | None:
+    """Gemini + Google Search grounding 搜索最新季报 PDF 下载链接。"""
+    import google.generativeai as genai
 
     prompt = (
-        '请从这份基金季度报告PDF中，找到"前十大重仓基金"、"前十大持仓基金"或"基金投资明细"表格。'
-        '如果存在多张表，优先选择"指数投资组合"或"主要投资标的"部分。\n'
-        '提取每个持仓的：\n'
-        '  - name_en: ETF/基金英文名称（如无英文名则留空字符串）\n'
-        '  - name_zh: ETF/基金中文名称（如无中文名则留空字符串）\n'
-        '  - ratio: 占基金净值比例，纯数字，去掉%符号\n'
-        '只返回JSON数组，不要包含任何其他文字或代码块标记。\n'
-        '示例格式：[{"name_en": "United States Oil Fund", "name_zh": "美国石油基金", "ratio": 18.5}]\n'
-        '如果找不到相关持仓表格，返回空数组 []。'
+        f'请搜索中国公募基金代码 {code} 最近一期季度报告或年度报告的PDF下载地址。'
+        f'只返回一个完整的PDF直接下载URL（以 https://pdf.dfcfw.com 或 '
+        f'https://static.cninfo.com.cn 开头），不要任何其他内容。'
+        f'找不到则返回 NOT_FOUND。'
     )
 
+    # 尝试带 Google Search grounding（gemini-2.0-flash 支持）
+    for model_name in ('gemini-2.0-flash', 'gemini-1.5-flash'):
+        try:
+            search_model = genai.GenerativeModel(
+                model_name,
+                tools='google_search_retrieval',
+            )
+            resp = search_model.generate_content(prompt)
+            text = (resp.text or '').strip()
+            break
+        except Exception:
+            try:
+                resp = model.generate_content(prompt)
+                text = (resp.text or '').strip()
+                break
+            except Exception as e:
+                print(f'    [gemini_search] {code}: {e}', file=sys.stderr)
+                return None
+
+    if not text or 'NOT_FOUND' in text:
+        return None
+
+    # 按优先级提取 URL
+    for pattern in (
+        r'https://pdf\.dfcfw\.com/\S+\.(?:PDF|pdf)',
+        r'https://static\.cninfo\.com\.cn/\S+\.(?:pdf|PDF)',
+        r'https://\S+\.(?:PDF|pdf)',
+    ):
+        m = re.search(pattern, text, re.IGNORECASE)
+        if m:
+            return m.group(0).rstrip('.,;)')
+    return None
+
+
+def _extract_holdings_from_pdf_gemini(pdf_b64: str, code: str, model) -> tuple:
+    """
+    Gemini inline PDF → 提取持仓列表和季末日期。
+    返回 (holdings_list, holdings_date_str)，失败返回 ([], '')。
+    """
+    prompt = (
+        '请阅读这份基金季度报告PDF，提取报告期末前十大持仓明细（股票、ETF 或基金）。\n'
+        '以JSON格式返回，严格格式如下：\n'
+        '{"holdings_date": "YYYY-MM-DD", '
+        '"holdings": [{"name_en": "ETF英文名或空字符串", '
+        '"name_zh": "ETF中文名或空字符串", "ratio": 占净值比例纯数字}]}\n'
+        'ratio 为百分数纯数字（如 5.23，不带 % 符号）。\n'
+        'holdings_date 为报告期末日期（如 2025-09-30）。\n'
+        '只返回 JSON，不要 markdown 代码块，不要其他内容。'
+    )
     try:
-        response = model.generate_content([
+        resp = model.generate_content([
             {'mime_type': 'application/pdf', 'data': pdf_b64},
             prompt,
         ])
-        text = response.text.strip()
-        # 提取 JSON 数组（去掉 markdown 代码块包裹）
-        m = re.search(r'\[.*\]', text, re.DOTALL)
-        if not m:
-            print(f'    [gemini] {code}: 未返回有效 JSON', file=sys.stderr)
-            return []
-        raw_items = json.loads(m.group())
+        text = resp.text.strip()
     except Exception as e:
-        print(f'    [gemini] {code}: API 调用失败: {e}', file=sys.stderr)
-        return []
+        print(f'    [gemini] {code}: PDF 解析失败: {e}', file=sys.stderr)
+        return [], ''
 
-    # ── 数据熔断校验 ──────────────────────────────────
+    # 去掉可能的 markdown 包裹
+    text = re.sub(r'^```(?:json)?\s*', '', text)
+    text = re.sub(r'\s*```$', '', text.strip())
+
+    try:
+        result = json.loads(text)
+    except Exception:
+        m = re.search(r'\{.*\}', text, re.DOTALL)
+        if not m:
+            print(f'    [gemini] {code}: 无法解析 JSON，响应: {text[:200]}', file=sys.stderr)
+            return [], ''
+        try:
+            result = json.loads(m.group(0))
+        except Exception:
+            print(f'    [gemini] {code}: JSON 解析失败', file=sys.stderr)
+            return [], ''
+
+    raw_items     = result.get('holdings') or []
+    holdings_date = result.get('holdings_date', '')
+
     if not (1 <= len(raw_items) <= 15):
-        print(
-            f'    [gemini] {code}: 持仓条数异常 ({len(raw_items)})，跳过写入',
-            file=sys.stderr,
-        )
-        return []
+        print(f'    [gemini] {code}: 持仓条数异常 ({len(raw_items)})', file=sys.stderr)
+        return [], ''
 
-    total_ratio_raw = sum(float(it.get('ratio', 0)) for it in raw_items if it.get('ratio') is not None)
-    if not (5 <= total_ratio_raw <= 120):
-        print(
-            f'    [gemini] {code}: 权重之和异常 ({total_ratio_raw:.1f}%)，跳过写入',
-            file=sys.stderr,
-        )
-        return []
+    total = sum(float(it.get('ratio', 0)) for it in raw_items if it.get('ratio') is not None)
+    if not (5 <= total <= 120):
+        print(f'    [gemini] {code}: 权重之和异常 ({total:.1f}%)', file=sys.stderr)
+        return [], ''
 
-    # ── 映射 tq 代码（英文名优先，中文名兜底）────────
+    # 映射 tq 代码（英文名优先，中文名兜底）
     tq_agg: dict = {}
     for item in raw_items:
         ratio = item.get('ratio')
@@ -834,83 +600,91 @@ def _extract_holdings_via_gemini(pdf_path: str, code: str) -> list:
         ratio = float(ratio)
         if not (0 < ratio < 100):
             continue
-        tq = _match_etf_name(item.get('name_en', '')) or _match_etf_name(item.get('name_zh', ''))
+        tq = (_match_etf_name(item.get('name_en', ''))
+              or _match_etf_name(item.get('name_zh', '')))
         if tq:
             tq_agg[tq] = tq_agg.get(tq, 0) + ratio
 
     if not tq_agg:
-        print(f'    [gemini] {code}: 无法映射任何持仓到 tq 代码，跳过写入', file=sys.stderr)
-        return []
+        print(f'    [gemini] {code}: 无法映射任何持仓到 tq 代码', file=sys.stderr)
+        return [], ''
 
-    return [
-        {'code': tq, 'name': tq, 'ratio': round(ratio, 2)}
-        for tq, ratio in sorted(tq_agg.items(), key=lambda x: -x[1])
+    holdings = [
+        {'code': tq, 'name': tq, 'ratio': round(r, 2)}
+        for tq, r in sorted(tq_agg.items(), key=lambda x: -x[1])
     ]
+    return holdings, holdings_date
 
 
-def _fetch_holdings_via_pdf(code: str, local_holdings_date: str = '') -> dict | None:
+def _fetch_holdings_via_gemini(code: str, fund: dict, now_utc: str) -> dict | None:
     """
-    PDF+Gemini 持仓抓取主入口（公告驱动，增量更新）。
-
-    流程：
-      1. 查询东方财富公告 API，获取最新季报 (url, title, notice_date)
-      2. 解析季报截止日（_parse_quarter_end_date），与 local_holdings_date 比较
-      3. 无更新 → 返回 {'skipped': True, 'holdings_date': ann_quarter_date}
-      4. 有更新 → 下载 PDF → Gemini 提取 → 返回 {'holdings': [...], 'holdings_date': ...}
-      5. 失败     → 返回 None
-
-    不再使用固定 90 天日历阈值；改由公告日期驱动，只在季报推进时触发下载。
+    全流程 Gemini 持仓抓取（jjcc 无数据时）：
+      1. 时效检查：holdings_date >= 应有季末 → skipped
+      2. Gemini Google Search → 找最新季报 PDF URL
+      3. 防重复：URL 与上次相同 → skipped（报告未更新）
+      4. 下载 PDF bytes
+      5. Gemini inline PDF → 提取持仓 + 季末日期 JSON
+    返回 {'holdings': [...], 'holdings_date': 'YYYY-MM-DD'} / {'skipped': True} / None
     """
-    import tempfile, os as _os
+    import base64
+    import os as _os
 
-    print(f'    [pdf] {code}: 查询东方财富公告...', flush=True)
+    # ── 时效检查 ──────────────────────────────────────
+    today       = now_utc[:10]
+    expected_qe = _latest_expected_quarter_end(today)
+    current_hd  = fund.get('holdings_date', '')
+    if expected_qe and current_hd >= expected_qe:
+        print(f'    [gemini] {code}: 持仓已最新（{current_hd} >= {expected_qe}），跳过')
+        return {'skipped': True}
 
-    pdf_url, title, notice_date = _fetch_quarterly_pdf_url(code)
-    if not pdf_url:
-        print(f'    [pdf] {code}: 未找到季报 PDF', file=sys.stderr)
+    print(f'    [gemini] {code}: 触发更新（当前:{current_hd or "无"} 期望:{expected_qe}）')
+
+    api_key = _os.environ.get('GEMINI_API_KEY')
+    if not api_key:
+        print('    [gemini] GEMINI_API_KEY 未配置', file=sys.stderr)
+        return None
+    try:
+        import google.generativeai as genai
+    except ImportError:
+        print('    [gemini] google-generativeai 未安装', file=sys.stderr)
         return None
 
-    # ── 增量检查：季报截止日对比本地已有持仓日期 ──────────
-    ann_quarter_date = _parse_quarter_end_date(title)
-    if ann_quarter_date and local_holdings_date and ann_quarter_date <= local_holdings_date:
-        print(
-            f'    [pdf] {code}: 季报无更新'
-            f'（公告截止 {ann_quarter_date} ≤ 本地 {local_holdings_date}'
-            f'，发布日 {notice_date or "?"}）'
-        )
-        return {'skipped': True, 'holdings_date': ann_quarter_date}
+    genai.configure(api_key=api_key)
+    model = genai.GenerativeModel('gemini-2.0-flash')
 
+    # ── Step 1: 搜索 PDF URL ──────────────────────────
+    pdf_url = _gemini_find_pdf_url(code, model)
+    if not pdf_url:
+        print(f'    [gemini] {code}: 未找到 PDF URL', file=sys.stderr)
+        return None
+
+    # 防重复：URL 未变说明季报尚未更新
+    if pdf_url == fund.get('_last_pdf_url', ''):
+        print(f'    [gemini] {code}: PDF URL 未变化，季报尚未更新，跳过')
+        return {'skipped': True}
+
+    print(f'    [gemini] {code}: PDF = {pdf_url}')
+
+    # ── Step 2: 下载 PDF ──────────────────────────────
+    pdf_bytes = _download_pdf_bytes(pdf_url)
+    if not pdf_bytes:
+        return None
+
+    # ── Step 3: Gemini 读 PDF 提取持仓 ────────────────
+    holdings, holdings_date = _extract_holdings_from_pdf_gemini(
+        base64.b64encode(pdf_bytes).decode(), code, model
+    )
+    if not holdings:
+        return None
+
+    fund['_last_pdf_url'] = pdf_url  # 记录以备下次去重
+    total = sum(h['ratio'] for h in holdings)
     print(
-        f'    [pdf] {code}: 发现新季报 {ann_quarter_date or "?"}（发布: {notice_date or "?"}），下载中...',
+        f'    [gemini] {code}: {len(holdings)} 条持仓，'
+        f'合计 {total:.1f}%，截止 {holdings_date}',
         flush=True,
     )
-
-    tmp = tempfile.NamedTemporaryFile(suffix='.pdf', delete=False)
-    pdf_path = tmp.name
-    tmp.close()
-
-    try:
-        if not _download_pdf_binary(pdf_url, pdf_path):
-            return None
-
-        holdings = _extract_holdings_via_gemini(pdf_path, code)
-        if not holdings:
-            return None
-
-        holdings_date = ann_quarter_date or datetime.now(timezone.utc).strftime('%Y-%m-%d')
-
-        total_ratio = sum(h['ratio'] for h in holdings)
-        print(
-            f'    [pdf+gemini] {code}: 找到 {len(holdings)} 个 tq 代码，'
-            f'合计 {total_ratio:.1f}%  截止: {holdings_date}',
-            flush=True,
-        )
-        return {'holdings': holdings[:10], 'holdings_date': holdings_date}
-    finally:
-        try:
-            _os.unlink(pdf_path)
-        except Exception:
-            pass
+    return {'holdings': holdings, 'holdings_date': holdings_date}
 
 
 # ══════════════════════════════════════════════════════
@@ -1719,35 +1493,22 @@ def sync():
             top = hold_result['holdings'][0]
             print(f'    持仓 {len(hold_result["holdings"]):2d}只  截止:{hold_result["holdings_date"]}  首位: {top["name"]} {top["ratio"]}%')
         else:
-            # EM jjcc 无数据 → 先尝试移动端 API → 再走公告驱动 PDF
-            mob_result = fetch_holdings_mobile(code)
-            if mob_result:
-                fund['holdings']            = mob_result['holdings']
-                fund['holdings_date']       = mob_result['holdings_date']
+            # EM jjcc 无数据 → Gemini 全流程：Search 找 PDF → 下载 → Gemini 读取
+            gem_result = _fetch_holdings_via_gemini(code, fund, now_utc)
+            if gem_result is None:
+                hold_fail += 1
+                print(f'    持仓 FAILED (EM+Gemini) — 保留旧值', file=sys.stderr)
+            elif gem_result.get('skipped'):
+                print(f'    持仓 EM无数据，Gemini季报无更新（季末日期未到或PDF未变）')
+            else:
+                fund['holdings']            = gem_result['holdings']
+                fund['holdings_date']       = gem_result['holdings_date']
                 fund['holdings_fetch_time'] = now_utc
                 hold_ok += 1
-                top = mob_result['holdings'][0]
-                print(f'    持仓(mob) {len(mob_result["holdings"]):2d}只  '
-                      f'截止:{mob_result["holdings_date"]}  '
+                top = gem_result['holdings'][0]
+                print(f'    持仓(Gemini) {len(gem_result["holdings"]):2d}只  '
+                      f'截止:{gem_result["holdings_date"]}  '
                       f'首位: {top["name"]} {top["ratio"]}%')
-            else:
-                # 移动端 API 也无数据 → 公告驱动增量更新（传入本地日期，只在季报推进时下载）
-                existing_date = fund.get('holdings_date') or ''
-                pdf_result = _fetch_holdings_via_pdf(code, existing_date)
-                if pdf_result is None:
-                    hold_fail += 1
-                    print(f'    持仓 FAILED (EM+mob+PDF) — 保留旧值', file=sys.stderr)
-                elif pdf_result.get('skipped'):
-                    print(f'    持仓 EM/mob无数据，季报无更新（截止: {pdf_result.get("holdings_date", "")}）')
-                else:
-                    fund['holdings']            = pdf_result['holdings']
-                    fund['holdings_date']       = pdf_result['holdings_date']
-                    fund['holdings_fetch_time'] = now_utc
-                    hold_ok += 1
-                    top = pdf_result['holdings'][0]
-                    print(f'    持仓(PDF) {len(pdf_result["holdings"]):2d}只  '
-                          f'截止:{pdf_result["holdings_date"]}  '
-                          f'首位: {top["name"]} {top["ratio"]}%')
         time.sleep(0.08)
 
         # ── 总份额 ────────────────────────────────────
