@@ -541,11 +541,109 @@ def _fetch_quarterly_pdf_url(code: str) -> tuple:
     """多源顺序探测最新季报/年报 PDF，返回 (url, title, notice_date)；失败返回 (None, None, None)。
 
     探测顺序：
-      1. EM fundf10 jjzqbg（季度报告）—— 非 QDII 基金通常有数据
-      2. EM fundf10 ndbg（年度报告）  —— QDII 基金通常有年报，Q4 持仓等价
-      3. EM fundf10 bdbg（半年度报告）—— 年报也没有时的备选
-      4. CNINFO hisAnnouncement      —— 境外 IP 通常被屏蔽，作为最后尝试
+      0a. EM api.fund.eastmoney.com/f10/jjgg JSON API（与 fundf10 归档独立，QDII 通常有数据）
+      0b. EM fund.eastmoney.com/data/FundNoticeDatas.aspx（主站公告列表，含 AN... 码）
+      1.  EM fundf10 jjzqbg（季度报告）—— 非 QDII 基金通常有数据
+      2.  EM fundf10 ndbg（年度报告）  —— QDII 基金通常有年报，Q4 持仓等价
+      3.  EM fundf10 bdbg（半年度报告）—— 年报也没有时的备选
+      4.  CNINFO hisAnnouncement      —— 境外 IP 通常被屏蔽，作为最后尝试
     """
+
+    # 通用 art code 提取器：支持 AN.../AP.../H2_... 等 EM 公告码格式
+    _ART_CODE_RE = re.compile(r'["\']?([A-Z]{2}[0-9]{14,})["\']?')
+
+    def _entries_from_text(text: str) -> list:
+        """从任意 EM 响应文本中提取 (pdf_url, title, notice_date) 三元组列表。"""
+        entries, seen = [], set()
+        # 优先解析 openWinFunc('AN...', '标题') 形式
+        for m in re.finditer(
+            r"openWinFunc\s*\(\s*['\"]([A-Z]{2}[0-9]{14,})['\"]"
+            r"\s*,\s*['\"]([^'\"]{4,100})['\"]",
+            text, re.IGNORECASE
+        ):
+            art_code = m.group(1)
+            if art_code in seen:
+                continue
+            seen.add(art_code)
+            title = m.group(2).strip()
+            ctx = text[max(0, m.start() - 200): m.end() + 200]
+            dm  = re.search(r'(\d{4}-\d{2}-\d{2})', ctx)
+            entries.append((f'https://pdf.dfcfw.com/pdf/H2_{art_code}_1.PDF',
+                            title, dm.group(1) if dm else ''))
+        # 次级：任意引号包裹的 art code（JSON / JS 变量格式）
+        for m in _ART_CODE_RE.finditer(text):
+            art_code = m.group(1)
+            if art_code in seen:
+                continue
+            seen.add(art_code)
+            ctx     = text[max(0, m.start() - 300): m.end() + 300]
+            title_m = re.search(r'[\u4e00-\u9fa5A-Za-z0-9（）]{4,80}'
+                                 r'(?:季度?报告|季报|年度报告|半年度?报告)', ctx)
+            dm      = re.search(r'(\d{4}-\d{2}-\d{2})', ctx)
+            entries.append((f'https://pdf.dfcfw.com/pdf/H2_{art_code}_1.PDF',
+                            title_m.group(0).strip() if title_m else '',
+                            dm.group(1) if dm else ''))
+        return entries
+
+    def _best_entry(entries: list):
+        for e in entries:
+            if re.search(r'[一二三四]季度?报告|季报|年度报告', e[1]):
+                return e
+        return entries[0] if entries else (None, None, None)
+
+    # ── 0a  api.fund.eastmoney.com/f10/jjgg（JSON 公告列表，独立于 fundf10 归档）──
+    def _try_em_jjgg_json() -> tuple:
+        url = (
+            f'https://api.fund.eastmoney.com/f10/jjgg'
+            f'?fundCode={code}&type=3&page=1&per=20&_={int(time.time())}'
+        )
+        text = fetch_url(
+            url,
+            referer=f'https://fundf10.eastmoney.com/jjgg_{code}.html',
+        )
+        if not text:
+            return None, None, None
+        print(f'    [em_jjgg] {code} 响应片段: {repr(text[:80])}')
+        try:
+            data = json.loads(text)
+        except Exception:
+            return None, None, None
+        # 响应结构: {"Data":{"LSJGGList":[{"ID":"...","TITLE":"...","PUBLICDATE":"...","FILETYPE":".pdf","FILEURL":"https://pdf.dfcfw.com/..."}]}}
+        items = (((data.get('Data') or {}).get('LSJGGList')) or
+                 (data.get('data') or {}).get('list') or
+                 data.get('Datas') or [])
+        entries = []
+        for item in items:
+            title = item.get('TITLE') or item.get('title') or ''
+            pub   = item.get('PUBLICDATE') or item.get('publishDate') or ''
+            # 优先取直连 FILEURL，兜底用 ID 拼 dfcfw
+            furl  = item.get('FILEURL') or item.get('fileUrl') or ''
+            art   = item.get('ID') or item.get('id') or ''
+            if not furl and art:
+                furl = f'https://pdf.dfcfw.com/pdf/H2_{art}_1.PDF'
+            if furl:
+                entries.append((furl, title, str(pub)[:10]))
+        return _best_entry(entries)
+
+    result = _try_em_jjgg_json()
+    if result[0]:
+        return result
+
+    # ── 0b  fund.eastmoney.com/data/FundNoticeDatas.aspx（主站 AJAX 公告列表）──
+    def _try_em_notice_list() -> tuple:
+        url = (
+            f'https://fund.eastmoney.com/data/FundNoticeDatas.aspx'
+            f'?fundcode={code}&type=0&per=30&page=1&rt={int(time.time())}'
+        )
+        text = fetch_url(url, referer=f'https://fund.eastmoney.com/gonggao/{code}.html')
+        if not text:
+            return None, None, None
+        print(f'    [em_notice] {code} 响应片段: {repr(text[:120])}')
+        return _best_entry(_entries_from_text(text))
+
+    result = _try_em_notice_list()
+    if result[0]:
+        return result
 
     # ── 1/2/3  EM fundf10 多类型探测 ─────────────────────────────────
     def _try_em_type(report_type: str) -> tuple:
@@ -556,48 +654,7 @@ def _fetch_quarterly_pdf_url(code: str) -> tuple:
         text = fetch_url(url, referer=f'https://fundf10.eastmoney.com/jjgg.html?fundcode={code}')
         if not text:
             return None, None, None
-        entries = []
-        seen    = set()
-        # openWinFunc('AP202503...', '标题', ...) 形式
-        for m in re.finditer(
-            r"openWinFunc\s*\(\s*['\"]([A-Z]{2}[0-9]{14,})['\"]"
-            r"\s*,\s*['\"]([^'\"]{4,80})['\"]",
-            text, re.IGNORECASE
-        ):
-            art_code = m.group(1)
-            if art_code in seen:
-                continue
-            seen.add(art_code)
-            title = m.group(2).strip()
-            start = max(0, m.start() - 200)
-            ctx   = text[start: m.end() + 200]
-            date_m = re.search(r'(\d{4}-\d{2}-\d{2})', ctx)
-            entries.append((
-                f'https://pdf.dfcfw.com/pdf/H2_{art_code}_1.PDF',
-                title,
-                date_m.group(1) if date_m else '',
-            ))
-        # 备用：引号内任意 art code
-        if not entries:
-            for m in re.finditer(r"['\"]([A-Z]{2}[0-9]{14,})['\"]", text):
-                art_code = m.group(1)
-                if art_code in seen:
-                    continue
-                seen.add(art_code)
-                start = max(0, m.start() - 300)
-                ctx   = text[start: m.end() + 300]
-                title_m = re.search(r'[\u4e00-\u9fa5]{4,40}(?:季度?报告|季报|年度报告|半年)', ctx)
-                date_m  = re.search(r'(\d{4}-\d{2}-\d{2})', ctx)
-                entries.append((
-                    f'https://pdf.dfcfw.com/pdf/H2_{art_code}_1.PDF',
-                    title_m.group(0).strip() if title_m else '',
-                    date_m.group(1) if date_m else '',
-                ))
-        # 优先季度/年度报告
-        for entry in entries:
-            if re.search(r'[一二三四]季度?报告|季报|年度报告', entry[1]):
-                return entry
-        return entries[0] if entries else (None, None, None)
+        return _best_entry(_entries_from_text(text))
 
     for rtype in ('jjzqbg', 'ndbg', 'bdbg'):
         url, title, notice_date = _try_em_type(rtype)
