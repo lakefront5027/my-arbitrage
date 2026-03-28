@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       fund_codes:
-        description: '基金代码（空格分隔，默认 161129 501018）'
+        description: '基金代码（空格分隔，默认全部16只QDII）'
         required: false
-        default: '161129 501018'
+        default: '161129 501018 160723 501312 160216 161116 160719 161815 501300 164906 163208 164824 162411 161226 501021 159980'
 
 jobs:
   test:
@@ -23,8 +23,8 @@ jobs:
       - name: Install dependencies
         run: pip install pdfplumber
 
-      - name: Multi-source test (cninfo / eastmoney / szse / sse / sina)
+      - name: Multi-source test (JJGG API + PDF download for all QDII funds)
         run: python .github/scripts/test_pdf_sources.py ${{ github.event.inputs.fund_codes }}
 
-      - name: cninfo original test (single fund, reference)
+      - name: cninfo original test (reference, expected to fail from Actions)
         run: python .github/scripts/test_pdf_holdings.py 161129 || true
