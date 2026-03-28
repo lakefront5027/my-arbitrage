@@ -1,0 +1,47 @@
+name: Test DeepSeek Holdings
+
+on:
+  workflow_dispatch:
+    inputs:
+      fund_code:
+        description: '基金代码（多个用逗号分隔，如 161129,501018,160644）'
+        required: false
+        default: '161129,501018,160644'
+      mode:
+        description: '测试模式'
+        required: false
+        default: 'jjgg'
+        type: choice
+        options:
+          - jjgg        # JJGG 找 URL + DeepSeek 解析
+          - deepseek    # DeepSeek 搜索 URL + 解析（全 AI 路径）
+
+jobs:
+  test:
+    name: Test PDF Holdings Extraction
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pdfplumber openai chinese_calendar requests
+
+      - name: Run DeepSeek holdings test
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          IFS=',' read -ra CODES <<< "${{ inputs.fund_code }}"
+          MODE="${{ inputs.mode }}"
+          FLAG=""
+          [ "$MODE" = "deepseek" ] && FLAG="--no-jjgg"
+          for code in "${CODES[@]}"; do
+            code=$(echo "$code" | tr -d ' ')
+            echo ""
+            echo "════════════════════════════════════"
+            python3 .github/scripts/test_deepseek_holdings.py "$code" $FLAG
+            echo "════════════════════════════════════"
+          done
