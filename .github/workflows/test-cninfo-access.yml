@@ -1,0 +1,27 @@
+name: Test cninfo PDF Access
+
+on:
+  workflow_dispatch:
+    inputs:
+      fund_code:
+        description: '基金代码（默认 161129）'
+        required: false
+        default: '161129'
+
+jobs:
+  test:
+    name: Test cninfo API + PDF Download
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install pdfplumber
+
+      - name: Test cninfo search + PDF download
+        run: python .github/scripts/test_pdf_holdings.py ${{ github.event.inputs.fund_code }}
