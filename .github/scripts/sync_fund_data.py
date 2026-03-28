@@ -454,10 +454,59 @@ _ETF_NAME_TO_TQ: list = [
 
 
 def _match_etf_name(name: str) -> str | None:
-    """从 ETF 名称关键词匹配内部 tq 代码；无匹配返回 None。"""
+    """从 ETF 名称关键词匹配内部 tq 代码；无匹配返回 None。大小写不敏感。"""
+    name_lower = name.lower()
     for keyword, tq in _ETF_NAME_TO_TQ:
-        if keyword in name:
+        if keyword.lower() in name_lower:
             return tq
+    return None
+
+
+# 国际交易所挂牌 ETF → 等价美国 tq 代码（Tencent 不支持 .L/.T/.SW 等）
+_INTL_CODE_MAP: dict = {
+    'CRUD.L':  'usUSO',   # WisdomTree WTI Crude Oil（伦敦）
+    'BRNT.L':  'usBNO',   # WisdomTree Brent Crude Oil（伦敦）
+    'SPWT.T':  'usUSO',   # Simplex WTI ETF（东京）
+    'NOMI.T':  'usUSO',   # Nomura Crude Oil Long（东京）
+    'SWCG.SW': 'usGLD',   # Swiss Gold ETC（瑞士）
+    'INDA.L':  'usINDA',  # iShares MSCI India（伦敦）
+    'AMUN.L':  'usINDA',  # Amundi India（伦敦）
+    'RIGD.L':  'usXOP',   # Rigel Oil & Gas（伦敦）
+}
+
+
+def normalize_tq(code: str) -> str | None:
+    """
+    将原始 ticker 代码归一化为系统 tq 格式。
+    规则：
+      纯字母 1-5位          → us 前缀（美股/美国ETF）
+      5位数字               → hk 前缀（港股）
+      6位数字 首位5/6/9     → sh 前缀（上交所）
+      6位数字 首位0/1/2/3/4 → sz 前缀（深交所）
+      国际交易所后缀(.L/.T) → 查 _INTL_CODE_MAP，无则丢弃
+      已有 tq 前缀          → 原样返回
+    """
+    if not code:
+        return None
+    code = code.strip()
+    # 已有合法 tq 前缀
+    if re.match(r'^(us|hk|sh|sz|csi|sina)', code):
+        return code
+    # 国际交易所显式映射
+    if code in _INTL_CODE_MAP:
+        return _INTL_CODE_MAP[code]
+    # 带交易所后缀但不在映射表 → 丢弃
+    if re.search(r'\.[A-Z]{1,2}$', code):
+        return None
+    # 纯字母（1-5位）→ 美股
+    if re.match(r'^[A-Z]{1,5}$', code):
+        return f'us{code}'
+    # 5位数字 → 港股
+    if re.match(r'^\d{5}$', code):
+        return f'hk{code}'
+    # 6位数字 → 沪深
+    if re.match(r'^\d{6}$', code):
+        return f'sh{code}' if code[0] in ('5', '6', '9') else f'sz{code}'
     return None
 
 
@@ -617,8 +666,9 @@ def _extract_holdings_from_pdf_deepseek(pdf_bytes: bytes, code: str, client) -> 
         '以下是一份基金季度报告的文本内容。请提取报告期末前十大持仓明细（股票、ETF 或基金）。\n'
         '以JSON格式返回，严格格式如下（不要 markdown 代码块）：\n'
         '{"holdings_date": "YYYY-MM-DD", '
-        '"holdings": [{"name_en": "ETF英文名或空字符串", '
-        '"name_zh": "ETF中文名或空字符串", "ratio": 占净值比例纯数字}]}\n'
+        '"holdings": [{"name_en": "证券英文名或空字符串", '
+        '"ticker": "原始交易所代码，如NVDA/00700/601088/CRUD.L，无则空字符串", '
+        '"ratio": 占净值比例纯数字}]}\n'
         'ratio 为百分数纯数字（如 5.23，不带 % 符号）。\n'
         'holdings_date 为报告期末日期（如 2025-09-30）。\n'
         '只返回 JSON，不要其他内容。\n\n'
@@ -664,6 +714,7 @@ def _extract_holdings_from_pdf_deepseek(pdf_bytes: bytes, code: str, client) -> 
         return [], ''
 
     tq_agg: dict = {}
+    unmapped = []
     for item in raw_items:
         ratio = item.get('ratio')
         if ratio is None:
@@ -671,10 +722,18 @@ def _extract_holdings_from_pdf_deepseek(pdf_bytes: bytes, code: str, client) -> 
         ratio = float(ratio)
         if not (0 < ratio < 100):
             continue
-        tq = (_match_etf_name(item.get('name_en', ''))
-              or _match_etf_name(item.get('name_zh', '')))
+        # ticker 优先，ETF 名称关键词兜底
+        tq = (normalize_tq(item.get('ticker', ''))
+              or _match_etf_name(item.get('name_en', '')))
         if tq:
             tq_agg[tq] = tq_agg.get(tq, 0) + ratio
+        else:
+            unmapped.append((item.get('name_en', ''), item.get('ticker', ''), ratio))
+
+    if unmapped:
+        for n, t, r in unmapped:
+            print(f'    [deepseek] {code}: 未映射 [{r:.1f}%] "{n}" ticker="{t}"',
+                  file=sys.stderr)
 
     if not tq_agg:
         print(f'    [deepseek] {code}: 无法映射任何持仓到 tq 代码', file=sys.stderr)
@@ -1703,6 +1762,35 @@ def sync():
         'total':         total,
         'trading_dates': trading_dates,      # 全年交易日历（当年 + Q4 时附加次年）
     }
+
+    # ── holdings tq 归一化（一次性修复历史数据 + 保证新数据格式正确）──
+    migrated = 0
+    for fcode, fund in data.items():
+        if not isinstance(fund, dict):
+            continue
+        holdings = fund.get('holdings')
+        if not holdings:
+            continue
+        tq_agg: dict[str, float] = {}
+        changed = False
+        for h in holdings:
+            raw = h.get('code', '')
+            tq = normalize_tq(raw)
+            if tq is None:
+                print(f'    [migrate] {fcode}: 丢弃无法映射代码 {raw}')
+                changed = True
+                continue
+            if tq != raw:
+                changed = True
+            tq_agg[tq] = tq_agg.get(tq, 0) + float(h.get('ratio', 0))
+        if changed:
+            fund['holdings'] = [
+                {'code': tq, 'name': tq, 'ratio': round(r, 2)}
+                for tq, r in sorted(tq_agg.items(), key=lambda x: -x[1])
+            ]
+            migrated += 1
+    if migrated:
+        print(f'    [migrate] holdings tq 归一化：{migrated} 只基金已更新')
 
     # ── 写文件（必须在报警之前完成） ─────────────────
     with open(JSON_PATH, 'w', encoding='utf-8') as f:
