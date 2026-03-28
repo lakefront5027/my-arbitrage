@@ -575,6 +575,7 @@ def _deepseek_find_pdf_url(code: str, api_key: str) -> str | None:
             messages=[{'role': 'user', 'content': prompt}],
             max_tokens=200,
             temperature=0,
+            tools=[{'type': 'web_search'}],
         )
         text = (resp.choices[0].message.content or '').strip()
         m = re.search(r'https?://\S+\.pdf', text, re.IGNORECASE)
