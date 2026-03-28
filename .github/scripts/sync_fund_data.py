@@ -728,15 +728,15 @@ def _extract_holdings_from_pdf_deepseek(pdf_bytes: bytes, code: str, client) -> 
         if tq:
             tq_agg[tq] = tq_agg.get(tq, 0) + ratio
         else:
-            unmapped.append((item.get('name_en', ''), item.get('ticker', ''), ratio))
-
-    if unmapped:
-        for n, t, r in unmapped:
-            print(f'    [deepseek] {code}: 未映射 [{r:.1f}%] "{n}" ticker="{t}"',
-                  file=sys.stderr)
+            # 保留原始 ticker，日志提示补充映射
+            raw_ticker = item.get('ticker', '') or item.get('name_en', '')
+            if raw_ticker:
+                print(f'    [deepseek] {code}: ⚠️ 未映射 [{ratio:.1f}%] "{raw_ticker}"，'
+                      f'保留原值，请补充 _INTL_CODE_MAP 或 _ETF_NAME_TO_TQ', file=sys.stderr)
+                tq_agg[raw_ticker] = tq_agg.get(raw_ticker, 0) + ratio
 
     if not tq_agg:
-        print(f'    [deepseek] {code}: 无法映射任何持仓到 tq 代码', file=sys.stderr)
+        print(f'    [deepseek] {code}: 无法提取任何持仓', file=sys.stderr)
         return [], ''
 
     holdings = [
@@ -1777,9 +1777,10 @@ def sync():
             raw = h.get('code', '')
             tq = normalize_tq(raw)
             if tq is None:
-                print(f'    [migrate] {fcode}: 丢弃无法映射代码 {raw}')
-                changed = True
-                continue
+                # 无法自动推断：保留原始代码，日志提示手动补充 _INTL_CODE_MAP
+                print(f'    [migrate] {fcode}: ⚠️ 未映射代码 {raw!r}，保留原值，'
+                      f'请手动补充 _INTL_CODE_MAP', file=sys.stderr)
+                tq = raw  # 保留原始代码不丢弃
             if tq != raw:
                 changed = True
             tq_agg[tq] = tq_agg.get(tq, 0) + float(h.get('ratio', 0))
