@@ -492,40 +492,64 @@ def _download_pdf_bytes(url: str) -> bytes | None:
         return None
 
 
-def _deepseek_find_pdf_url(code: str, client) -> str | None:
-    """DeepSeek + 联网搜索，找最新季报 PDF 直接下载链接。"""
-    prompt = (
-        f'请搜索中国公募基金代码 {code} 最近一期季度报告或年度报告的PDF直接下载地址。'
-        f'只返回一个完整的PDF直接下载URL（以 https://pdf.dfcfw.com 或 '
-        f'https://static.cninfo.com.cn 开头），不要任何其他内容。'
-        f'找不到则返回 NOT_FOUND。'
+def _em_find_pdf_url(code: str) -> tuple[str | None, str | None]:
+    """
+    通过 api.fund.eastmoney.com/f10/JJGG 查找最新季报/定期报告 PDF。
+    返回 (pdf_url, ann_id)，找不到返回 (None, None)。
+
+    使用已验证可从 GitHub Actions 访问的 api.fund.eastmoney.com 域名
+    （与 lsjz/jjcc 同域），type=3 对应定期报告（季报+年报）。
+    PDF URL 规则：http://pdf.dfcfw.com/pdf/H2_{AN_ID}_1.pdf
+    """
+    url = (
+        f'https://api.fund.eastmoney.com/f10/JJGG'
+        f'?callback=jQuery&fundcode={code}&pageIndex=1&pageSize=10&type=3&_=1'
     )
     try:
-        resp = client.chat.completions.create(
-            model='deepseek-chat',
-            messages=[{'role': 'user', 'content': prompt}],
-            max_tokens=300,
-            extra_body={'search': {'enable': True}},
-        )
-        text = (resp.choices[0].message.content or '').strip()
+        req = urllib.request.Request(url, headers={
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+            'Referer': 'https://fundf10.eastmoney.com/',
+        })
+        with urllib.request.urlopen(req, timeout=15) as r:
+            text = r.read().decode('utf-8', errors='replace')
     except Exception as e:
-        print(f'    [deepseek_search] {code}: {e}', file=sys.stderr)
-        return None
+        print(f'    [em_jjgg] {code}: 请求失败 {e}', file=sys.stderr)
+        return None, None
 
-    print(f'    [deepseek_search] {code}: 原始响应: {text[:200]}')
+    m = re.search(r'\{.*\}', text, re.DOTALL)
+    if not m:
+        return None, None
+    try:
+        d = json.loads(m.group(0))
+    except Exception:
+        return None, None
 
-    if not text or 'NOT_FOUND' in text:
-        return None
+    if d.get('ErrCode') != 0:
+        print(f'    [em_jjgg] {code}: ErrCode={d.get("ErrCode")}', file=sys.stderr)
+        return None, None
 
-    for pattern in (
-        r'https://pdf\.dfcfw\.com/\S+\.(?:PDF|pdf)',
-        r'https://static\.cninfo\.com\.cn/\S+\.(?:pdf|PDF)',
-        r'https://\S+\.(?:PDF|pdf)',
-    ):
-        m = re.search(pattern, text, re.IGNORECASE)
-        if m:
-            return m.group(0).rstrip('.,;)')
-    return None
+    items = d.get('Data') or []
+    # 优先找季报，其次接受年报
+    for item in items:
+        title = item.get('TITLE', '')
+        ann_id = item.get('ID', '')
+        if not ann_id:
+            continue
+        if re.search(r'[一二三四1-4]季度报告|季报', title):
+            pdf_url = f'http://pdf.dfcfw.com/pdf/H2_{ann_id}_1.pdf'
+            print(f'    [em_jjgg] {code}: 找到季报 {title[:40]}  {pdf_url}')
+            return pdf_url, ann_id
+    # 无季报时取第一条定期报告
+    if items:
+        item = items[0]
+        ann_id = item.get('ID', '')
+        title = item.get('TITLE', '')
+        pdf_url = f'http://pdf.dfcfw.com/pdf/H2_{ann_id}_1.pdf'
+        print(f'    [em_jjgg] {code}: 无季报，使用首条: {title[:40]}  {pdf_url}')
+        return pdf_url, ann_id
+
+    print(f'    [em_jjgg] {code}: 定期报告列表为空', file=sys.stderr)
+    return None, None
 
 
 def _extract_holdings_from_pdf_deepseek(pdf_bytes: bytes, code: str, client) -> tuple:
@@ -628,10 +652,10 @@ def _extract_holdings_from_pdf_deepseek(pdf_bytes: bytes, code: str, client) -> 
 
 def _fetch_holdings_via_deepseek(code: str, fund: dict, now_utc: str) -> dict | None:
     """
-    全流程 DeepSeek 持仓抓取（jjcc 无数据时）：
+    全流程 QDII 持仓抓取（jjcc 无数据时）：
       1. 时效检查：holdings_date >= 应有季末 → skipped
-      2. DeepSeek Search → 找最新季报 PDF URL
-      3. 防重复：URL 与上次相同 → skipped（报告未更新）
+      2. api.fund.eastmoney.com/f10/JJGG → 找最新季报 PDF URL（无需 AI 搜索）
+      3. 防重复：AN ID 与上次相同 → skipped（报告未更新）
       4. 下载 PDF bytes
       5. pdfplumber 提取文本 + DeepSeek 解析持仓 JSON
     返回 {'holdings': [...], 'holdings_date': 'YYYY-MM-DD'} / {'skipped': True} / None
@@ -647,6 +671,18 @@ def _fetch_holdings_via_deepseek(code: str, fund: dict, now_utc: str) -> dict | 
 
     print(f'    [deepseek] {code}: 触发更新（当前:{current_hd or "无"} 期望:{expected_qe}）')
 
+    # ── Step 1: 用 EM JJGG API 查找最新季报 PDF URL ───────────────────────
+    pdf_url, ann_id = _em_find_pdf_url(code)
+    if not pdf_url:
+        print(f'    [deepseek] {code}: JJGG API 未找到 PDF URL', file=sys.stderr)
+        return None
+
+    if ann_id and ann_id == fund.get('_last_pdf_url', ''):
+        print(f'    [deepseek] {code}: 季报未更新（AN={ann_id}），跳过')
+        return {'skipped': True}
+
+    print(f'    [deepseek] {code}: PDF = {pdf_url}')
+
     api_key = _os.environ.get('DEEPSEEK_API_KEY')
     if not api_key:
         print('    [deepseek] DEEPSEEK_API_KEY 未配置', file=sys.stderr)
@@ -658,18 +694,6 @@ def _fetch_holdings_via_deepseek(code: str, fund: dict, now_utc: str) -> dict | 
         print('    [deepseek] openai 包未安装', file=sys.stderr)
         return None
 
-    # ── Step 1: 搜索 PDF URL ──────────────────────────
-    pdf_url = _deepseek_find_pdf_url(code, client)
-    if not pdf_url:
-        print(f'    [deepseek] {code}: 未找到 PDF URL', file=sys.stderr)
-        return None
-
-    if pdf_url == fund.get('_last_pdf_url', ''):
-        print(f'    [deepseek] {code}: PDF URL 未变化，季报尚未更新，跳过')
-        return {'skipped': True}
-
-    print(f'    [deepseek] {code}: PDF = {pdf_url}')
-
     # ── Step 2: 下载 PDF ──────────────────────────────
     pdf_bytes = _download_pdf_bytes(pdf_url)
     if not pdf_bytes:
@@ -680,7 +704,8 @@ def _fetch_holdings_via_deepseek(code: str, fund: dict, now_utc: str) -> dict | 
     if not holdings:
         return None
 
-    fund['_last_pdf_url'] = pdf_url
+    # 用 ann_id 作为防重复标记（比 URL 更稳定）
+    fund['_last_pdf_url'] = ann_id or pdf_url
     total = sum(h['ratio'] for h in holdings)
     print(
         f'    [deepseek] {code}: {len(holdings)} 条持仓，'

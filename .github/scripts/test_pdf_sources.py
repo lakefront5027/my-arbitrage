@@ -121,91 +121,87 @@ def test_cninfo(code: str):
     record(src, code, False, f'有{len(anns)}条公告但无季报')
 
 
-# ── 2. 东方财富 jjbg API（修正参数：JSONP 格式，无 token，同 lsjz） ──────────
+# ── 2. 东方财富 JJGG API（定期报告，与 lsjz 同域，已验证可从境外访问） ─────────
 
-def test_eastmoney_jjbg(code: str):
-    src = 'eastmoney/jjbg'
-    # type: 1=年报 2=半年报 3=季报 4=季报(另一写法)；先试 type=3
-    for type_val in ('3', '0', ''):
-        suffix = f'&type={type_val}' if type_val else ''
-        url = (f'https://api.fund.eastmoney.com/f10/jjbg'
-               f'?callback=jQuery&fundCode={code}&pageIndex=1&pageSize=20{suffix}&_=1')
-        raw = _fetch(url, headers={'Referer': 'https://fund.eastmoney.com/'})
-        if raw is None:
-            continue
-        text = raw.decode('utf-8', errors='replace')
-        m = re.search(r'\{.*\}', text, re.DOTALL)
-        if not m:
-            continue
-        d = json.loads(m.group(0))
-        if d.get('ErrCode') != 0 or d.get('Data') is None:
-            continue
-        items = d['Data'].get('LSJJBGList') or []
-        if not items:
-            continue
-        for item in items:
-            title   = item.get('BGNAME', '')
-            pdf_url = item.get('PDFURL', '')
-            if re.search(r'季度?报告|季报', title):
-                record(src, code, True, f'type={type_val} {title[:40]}  {pdf_url[:60]}')
-                if pdf_url:
-                    ok, msg = _head_ok(pdf_url)
-                    record('dfcfw/PDF', code, ok, msg)
-                return
-        # 找到列表但无季报
-        first = items[0].get('BGNAME', '')[:40]
-        record(src, code, None, f'type={type_val} 有{len(items)}条但无季报，首条:{first}')
+def test_eastmoney_jjgg(code: str):
+    """
+    api.fund.eastmoney.com/f10/JJGG — 基金定期报告列表（type=3）
+    与 lsjz/jjcc 同域，JSONP 格式，境外 IP 可访问。
+    PDF URL 规则：http://pdf.dfcfw.com/pdf/H2_{AN_ID}_1.pdf
+    """
+    src = 'eastmoney/JJGG'
+    url = (f'https://api.fund.eastmoney.com/f10/JJGG'
+           f'?callback=jQuery&fundcode={code}&pageIndex=1&pageSize=10&type=3&_=1')
+    raw = _fetch(url, headers={'Referer': 'https://fundf10.eastmoney.com/'})
+    if raw is None:
+        record(src, code, False, '连接失败')
         return
-    record(src, code, False, '所有 type 值均返回空/错误')
+    text = raw.decode('utf-8', errors='replace')
+    m = re.search(r'\{.*\}', text, re.DOTALL)
+    if not m:
+        record(src, code, False, f'非 JSON: {text[:80]}')
+        return
+    d = json.loads(m.group(0))
+    if d.get('ErrCode') != 0:
+        record(src, code, False, f'ErrCode={d.get("ErrCode")}: {d.get("ErrMsg")}')
+        return
+    items = d.get('Data') or []
+    for item in items:
+        title  = item.get('TITLE', '')
+        ann_id = item.get('ID', '')
+        date_s = item.get('PUBLISHDATEDesc', '')[:10]
+        if re.search(r'[一二三四1-4]季度报告|季报', title) and ann_id:
+            pdf_url = f'http://pdf.dfcfw.com/pdf/H2_{ann_id}_1.pdf'
+            record(src, code, True, f'{date_s} {title[:40]}')
+            ok, msg = _head_ok(pdf_url)
+            record('dfcfw/PDF', code, ok, f'{pdf_url[-50:]}  {msg}')
+            return
+    if items:
+        first = items[0]
+        record(src, code, None,
+               f'共{len(items)}条，首条:{first.get("TITLE","")[:40]}，无季报')
+    else:
+        record(src, code, False, '定期报告列表为空')
 
 
-# ── 3. fundf10.eastmoney.com HTML 页面（季报列表） ────────────────────────────
+# ── 3. fundf10 旧接口（保留为对照组，实际返回 2022 年前旧数据） ───────────────
 
 def test_fundf10_html(code: str):
-    src = 'fundf10/HTML'
-    # fundf10 基金公告页，page=1 季报，ann_type=JJGG
-    url = f'https://fundf10.eastmoney.com/jjgg_{code}_1.html'
+    src = 'fundf10/HTML(对照组)'
+    # jjgg_{code}_3.html = 定期报告标签页，但数据由 Angular AJAX 加载，静态 HTML 无实际 ID
+    url = f'https://fundf10.eastmoney.com/jjgg_{code}_3.html'
     raw = _fetch(url, headers={'Referer': 'https://fund.eastmoney.com/'})
     if raw is None:
         record(src, code, False, '连接失败')
         return
     html = raw.decode('utf-8', errors='replace')
-    # 提取 PDF 链接
-    pdfs = re.findall(r'href="(https://pdf\.dfcfw\.com/[^"]+\.PDF)"', html, re.IGNORECASE)
-    # 提取标题
-    titles = re.findall(r'<a[^>]*title="([^"]*季[^"]*报[^"]*)"', html)
-    if pdfs:
-        record(src, code, True, f'找到 {len(pdfs)} 个 PDF，首个: {pdfs[0][-50:]}')
-        ok, msg = _head_ok(pdfs[0])
-        record('dfcfw/PDF', code, ok, msg)
-    elif 'class="gdwt"' in html or 'pdf.dfcfw' in html:
-        record(src, code, None, f'页面可达但未匹配 PDF 链接，titles={titles[:2]}')
+    if 'pdf.dfcfw' in html:
+        record(src, code, None, '页面可达，但为 Angular 模板，无真实 ID（AJAX 加载）')
     elif '<html' in html.lower():
-        record(src, code, False, f'页面可达但无季报内容（{len(html)} bytes）')
+        record(src, code, False, f'页面可达，无内容（{len(html)} bytes）')
     else:
         record(src, code, False, f'响应非 HTML: {html[:80]}')
 
 
-# ── 4. fundf10 F10DataApi（JSON 接口） ───────────────────────────────────────
+# ── 4. fundf10 F10DataApi（旧接口，仅返回 2022 年前数据，保留为对照组） ────────
 
 def test_fundf10_api(code: str):
-    src = 'fundf10/F10DataApi'
+    src = 'fundf10/F10DataApi(对照组)'
     url = (f'https://fundf10.eastmoney.com/F10DataApi.aspx'
-           f'?type=jjgg&code={code}&page=1&per=10&sort=date%20desc')
+           f'?type=jjgg&code={code}&page=1&per=5&sort=date%20desc')
     raw = _fetch(url, headers={'Referer': f'https://fundf10.eastmoney.com/jjgg_{code}.html'})
     if raw is None:
         record(src, code, False, '连接失败')
         return
     text = raw.decode('utf-8', errors='replace')
-    # 响应可能是 HTML 或 JSON
-    pdfs = re.findall(r'href="(https://pdf\.dfcfw\.com/[^"]+\.PDF)"', text, re.IGNORECASE)
-    if pdfs:
-        record(src, code, True, f'找到 PDF: {pdfs[0][-50:]}')
-        ok, msg = _head_ok(pdfs[0])
-        record('dfcfw/PDF', code, ok, msg)
-        return
-    record(src, code, None if '<' in text else False,
-           f'可达但无 PDF 链接，{len(text)} bytes: {text[:80]}')
+    dates = re.findall(r'<td>(\d{4}-\d{2}-\d{2})</td>', text)
+    meta = re.search(r'records:(\d+)', text)
+    total = meta.group(1) if meta else '?'
+    if dates:
+        record(src, code, None, f'可达，共{total}条，最新日期={dates[0]}（数据截至2022，非正式接口）')
+    else:
+        record(src, code, None if len(text) > 50 else False,
+               f'可达但无日期，{len(text)} bytes')
 
 
 # ── 5. 深交所 SZSE（深市基金） ────────────────────────────────────────────────
@@ -310,9 +306,9 @@ def main():
         print(f'── {code} ─────────────────────────────────────')
         reachable = test_baseline_lsjz(code)  # 确认 api.fund.eastmoney.com 可达
         test_cninfo(code)
-        test_eastmoney_jjbg(code)
-        test_fundf10_html(code)
-        test_fundf10_api(code)
+        test_eastmoney_jjgg(code)    # ★ 主力接口：同域已验证，返回最新数据
+        test_fundf10_html(code)      # 对照组：Angular 模板，无实际数据
+        test_fundf10_api(code)       # 对照组：旧接口，数据截至 2022
         test_szse(code)
         test_sse(code)
         test_sina(code)
