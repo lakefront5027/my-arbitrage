@@ -1427,6 +1427,37 @@ async function handleRequest(request, env = {}) {
   // GET /api/sina?callback=xxx — 新浪 + EM 代理（JSONP模式，返回解析后的涨跌幅）
   // GET /api/sina        — 普通JSON模式
   // 直连模式浏览器无法添加 Referer，EM 国内指数（csi930917 等）需 Worker 代理转发
+  // GET /api/cninfo-pdf?code=501312 — 代理 CNINFO 基金公告查询
+  // GitHub Actions 境外 IP 被 CNINFO 屏蔽；Worker 的 Cloudflare IP 不受限
+  if (path === '/api/cninfo-pdf') {
+    const code = url.searchParams.get('code') || '';
+    if (!code) return new Response('missing code', { status: 400, headers: corsHeaders(origin) });
+    const column = (code.startsWith('5') || code.startsWith('6')) ? 'sse' : 'szse';
+    const body = new URLSearchParams({
+      stock: code, category: 'category_jjgg_szsh',
+      pageNum: 1, pageSize: 30, column,
+      tabName: 'latest', sortName: '', sortType: '',
+    });
+    try {
+      const r = await fetch('https://www.cninfo.com.cn/new/hisAnnouncement/query', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Referer': 'https://www.cninfo.com.cn/',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+          'Accept': 'application/json, text/plain, */*',
+        },
+        body: body.toString(),
+      });
+      const data = await r.json();
+      return jsonResp(data, 200, origin);
+    } catch (e) {
+      return new Response(JSON.stringify({ error: String(e) }), {
+        status: 502, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) },
+      });
+    }
+  }
+
   if (path === '/api/sina') {
     const callback = url.searchParams.get('callback');
     try {

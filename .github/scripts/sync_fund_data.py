@@ -491,9 +491,6 @@ def _fetch_quarterly_pdf_url(code: str) -> tuple:
         text = fetch_url(url, referer=f'https://fundf10.eastmoney.com/jjgg.html?fundcode={code}')
         if not text:
             return None, None, None
-        # 诊断：仅 ndbg 类型打印实际响应片段，帮助确认 EM 返回内容
-        if report_type == 'ndbg':
-            print(f'    [em_ndbg] {code} 响应片段: {text[:500]!r}', file=sys.stderr)
         entries = []
         seen    = set()
         # openWinFunc('AP202503...', '标题', ...) 形式
@@ -542,30 +539,26 @@ def _fetch_quarterly_pdf_url(code: str) -> tuple:
         if url:
             return url, title, notice_date
 
-    # ── 4  CNINFO（境外 IP 通常屏蔽，作最后尝试）────────────────────────
-    column  = 'sse' if code.startswith(('5', '6')) else 'szse'
-    cn_url  = 'https://www.cninfo.com.cn/new/hisAnnouncement/query'
-
-    def _cninfo_query(col: str) -> list:
-        payload = urllib.parse.urlencode({
-            'stock': code, 'category': 'category_jjgg_szsh',
-            'pageNum': 1, 'pageSize': 30, 'column': col,
-            'tabName': 'latest', 'sortName': '', 'sortType': '',
-        }).encode()
-        hdrs = {
-            'User-Agent':   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-            'Referer':      'https://www.cninfo.com.cn/',
-            'Accept':       'application/json, text/plain, */*',
-        }
-        try:
-            req = urllib.request.Request(cn_url, data=payload, headers=hdrs, method='POST')
-            with urllib.request.urlopen(req, timeout=12) as r:
-                return json.loads(r.read().decode('utf-8')).get('announcements') or []
-        except Exception:
-            return []
-
-    anns = _cninfo_query(column) or _cninfo_query('szse' if column == 'sse' else 'sse')
+    # ── 4  CNINFO via Worker 代理 ──────────────────────────────────────
+    # GitHub Actions 境外 IP 被 CNINFO 直连屏蔽；通过 Cloudflare Worker 转发，
+    # Worker 的 IP 段不同，不在 CNINFO 屏蔽名单内。
+    WORKER_BASE = 'https://lof-arb-radar.3031315027ghb.workers.dev'
+    proxy_url   = f'{WORKER_BASE}/api/cninfo-pdf?code={code}'
+    anns: list  = []
+    try:
+        req = urllib.request.Request(proxy_url, headers={
+            'User-Agent': 'sync_fund_data/1.0',
+            'Accept':     'application/json',
+        })
+        with urllib.request.urlopen(req, timeout=15) as r:
+            data = json.loads(r.read().decode('utf-8'))
+        anns = data.get('announcements') or []
+        if anns:
+            print(f'    [cninfo] {code} Worker代理: 取到 {len(anns)} 条公告')
+        else:
+            print(f'    [cninfo] {code} Worker代理: 无公告记录（Worker响应: {str(data)[:120]}）', file=sys.stderr)
+    except Exception as e:
+        print(f'    [cninfo] {code} Worker代理失败: {e}', file=sys.stderr)
 
     def _ann_date(ann: dict) -> str:
         raw = ann.get('announcementTime', 0)
