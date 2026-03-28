@@ -64,10 +64,10 @@
         "ratio": 1.21
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-19",
@@ -148,13 +148,13 @@
     },
     "drift_5d": 0.006288,
     "drift_n": 3,
-    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "drift_computed_at": "2026-03-28T23:12:24+00:00",
     "chain_est": [
       {
         "value": 1.63903,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -223,10 +223,10 @@
         "ratio": 3.61
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-19",
@@ -310,7 +310,7 @@
         "value": 1.016538,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -392,7 +392,7 @@
         "ratio": 1.46
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -474,7 +474,7 @@
     },
     "drift_5d": 0.00688,
     "drift_n": 4,
-    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "drift_computed_at": "2026-03-28T23:12:24+00:00",
     "holdings_date": "2025-12-31",
     "holdings_fetch_time": "2026-03-28T00:00:00Z",
     "chain_est": [
@@ -482,7 +482,7 @@
         "value": 1.828666,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -541,7 +541,7 @@
         "ratio": 0.88
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -628,7 +628,7 @@
         "value": 1.238939,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -697,10 +697,10 @@
         "ratio": 3.36
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-19",
@@ -784,7 +784,7 @@
         "value": 1.491206,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -853,10 +853,10 @@
         "ratio": 1.68
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-19",
@@ -937,13 +937,13 @@
     },
     "drift_5d": 0.009625,
     "drift_n": 4,
-    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "drift_computed_at": "2026-03-28T23:12:24+00:00",
     "chain_est": [
       {
         "value": 2.656809,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -1012,10 +1012,10 @@
         "ratio": 1.64
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-19",
@@ -1096,13 +1096,13 @@
     },
     "drift_5d": 0.003775,
     "drift_n": 3,
-    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "drift_computed_at": "2026-03-28T23:12:24+00:00",
     "chain_est": [
       {
         "value": 1.764961,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -1171,10 +1171,10 @@
         "ratio": 1.2
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-19",
@@ -1255,13 +1255,13 @@
     },
     "drift_5d": 0.016023,
     "drift_n": 4,
-    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "drift_computed_at": "2026-03-28T23:12:24+00:00",
     "chain_est": [
       {
         "value": 5.08149,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -1330,10 +1330,10 @@
         "ratio": 1.33
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-19",
@@ -1414,13 +1414,13 @@
     },
     "drift_5d": 0.008929,
     "drift_n": 4,
-    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "drift_computed_at": "2026-03-28T23:12:24+00:00",
     "chain_est": [
       {
         "value": 2.683268,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -1444,7 +1444,7 @@
         "ratio": 90.6
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -1526,7 +1526,7 @@
     },
     "drift_5d": 0.007216,
     "drift_n": 3,
-    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "drift_computed_at": "2026-03-28T23:12:24+00:00",
     "holdings_date": "2025-12-31",
     "holdings_fetch_time": "2026-03-28T00:00:00Z",
     "chain_est": [
@@ -1534,7 +1534,7 @@
         "value": 3.576338,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -1578,7 +1578,7 @@
         "ratio": 3.97
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -1666,7 +1666,7 @@
         "value": 0.951003,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -1681,7 +1681,7 @@
     "bench": "usRWR",
     "nav": 1.3037,
     "nav_date": "2026-03-26",
-    "nav_src": "lsjz",
+    "nav_src": "fundgz",
     "shares": 2.4,
     "holdings": [
       {
@@ -1735,10 +1735,10 @@
         "ratio": 2.18
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-19",
@@ -1822,7 +1822,7 @@
         "value": 1.293017,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -1881,7 +1881,7 @@
         "ratio": 1.67
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -1968,7 +1968,7 @@
         "value": 2.052459,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -2051,7 +2051,7 @@
         "ratio": 1.97
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -2138,7 +2138,7 @@
         "value": 0.769812,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -2187,7 +2187,7 @@
         "ratio": 8.46
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -2274,7 +2274,7 @@
         "value": 1.662176,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -2343,7 +2343,7 @@
         "ratio": 0.1
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -2430,7 +2430,7 @@
         "value": 1.810379,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -2494,7 +2494,7 @@
         "ratio": 0.2
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -2576,7 +2576,7 @@
     },
     "drift_5d": 0.020338,
     "drift_n": 4,
-    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "drift_computed_at": "2026-03-28T23:12:24+00:00",
     "holdings_date": "2025-12-31",
     "holdings_fetch_time": "2026-03-28T00:00:00Z",
     "chain_est": [
@@ -2584,7 +2584,7 @@
         "value": 1.096061,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -2628,7 +2628,7 @@
         "ratio": 8.51
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -2715,7 +2715,7 @@
         "value": 2.007391,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -2820,7 +2820,7 @@
         "ratio": 2.07
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -2902,7 +2902,7 @@
     },
     "drift_5d": 0.013664,
     "drift_n": 3,
-    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "drift_computed_at": "2026-03-28T23:12:24+00:00",
     "holdings_date": "2025-12-31",
     "holdings_fetch_time": "2026-03-28T00:00:00Z",
     "chain_est": [
@@ -2910,7 +2910,7 @@
         "value": 1.180707,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -2979,10 +2979,10 @@
         "ratio": 0.72
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-19",
@@ -3066,7 +3066,7 @@
         "value": 1.419599,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -3109,7 +3109,7 @@
         "ratio": 5.06
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -3196,7 +3196,7 @@
         "value": 1.842443,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -3235,7 +3235,7 @@
         "ratio": 5.72
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -3317,7 +3317,7 @@
     },
     "drift_5d": -0.025044,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "drift_computed_at": "2026-03-28T23:12:24+00:00",
     "holdings_date": "2025-12-31",
     "holdings_fetch_time": "2026-03-28T00:00:00Z",
     "chain_est": [
@@ -3325,7 +3325,7 @@
         "value": 1.770851,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -3359,7 +3359,7 @@
         "ratio": 0.25
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -3446,7 +3446,7 @@
         "value": 2.147285,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -3515,10 +3515,10 @@
         "ratio": 3.74
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-19",
@@ -3602,7 +3602,7 @@
         "value": 3.019592,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -3671,10 +3671,10 @@
         "ratio": 2.47
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-19",
@@ -3755,13 +3755,13 @@
     },
     "drift_5d": -0.008341,
     "drift_n": 4,
-    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "drift_computed_at": "2026-03-28T23:12:24+00:00",
     "chain_est": [
       {
         "value": 1.007614,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -3830,10 +3830,10 @@
         "ratio": 1.78
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-19",
@@ -3917,7 +3917,7 @@
         "value": 2.264325,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -3986,10 +3986,10 @@
         "ratio": 1.31
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-20",
@@ -4070,13 +4070,13 @@
     },
     "drift_5d": -0.008625,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "drift_computed_at": "2026-03-28T23:12:24+00:00",
     "chain_est": [
       {
         "value": 1.040071,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -4145,10 +4145,10 @@
         "ratio": 1.14
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-20",
@@ -4229,13 +4229,13 @@
     },
     "drift_5d": -0.011467,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "drift_computed_at": "2026-03-28T23:12:24+00:00",
     "chain_est": [
       {
         "value": 1.124191,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -4304,10 +4304,10 @@
         "ratio": 2.94
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-20",
@@ -4388,13 +4388,13 @@
     },
     "drift_5d": -0.004281,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "drift_computed_at": "2026-03-28T23:12:24+00:00",
     "chain_est": [
       {
         "value": 1.138876,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -4472,10 +4472,10 @@
         "ratio": 1.76
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-20",
@@ -4556,13 +4556,13 @@
     },
     "drift_5d": -0.010048,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "drift_computed_at": "2026-03-28T23:12:24+00:00",
     "chain_est": [
       {
         "value": 1.416129,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -4640,10 +4640,10 @@
         "ratio": 2.34
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-20",
@@ -4724,13 +4724,13 @@
     },
     "drift_5d": -0.005569,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "drift_computed_at": "2026-03-28T23:12:24+00:00",
     "chain_est": [
       {
         "value": 1.355549,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -4754,7 +4754,7 @@
         "ratio": 96.82
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -4902,10 +4902,10 @@
         "ratio": 1.14
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-20",
@@ -4986,13 +4986,13 @@
     },
     "drift_5d": -0.002792,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "drift_computed_at": "2026-03-28T23:12:24+00:00",
     "chain_est": [
       {
         "value": 1.29662,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -5061,10 +5061,10 @@
         "ratio": 2.31
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2024-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-20",
@@ -5145,13 +5145,13 @@
     },
     "drift_5d": -0.005865,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "drift_computed_at": "2026-03-28T23:12:24+00:00",
     "chain_est": [
       {
         "value": 1.281818,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -5220,10 +5220,10 @@
         "ratio": 2.82
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-20",
@@ -5368,10 +5368,10 @@
         "ratio": 2.18
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-20",
@@ -5452,13 +5452,13 @@
     },
     "drift_5d": -0.003488,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "drift_computed_at": "2026-03-28T23:12:24+00:00",
     "chain_est": [
       {
         "value": 0.99487,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -5527,10 +5527,10 @@
         "ratio": 2.95
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-20",
@@ -5675,10 +5675,10 @@
         "ratio": 2.88
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-20",
@@ -5823,10 +5823,10 @@
         "ratio": 2.8
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-20",
@@ -5971,10 +5971,10 @@
         "ratio": 2.31
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2024-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-20",
@@ -6055,13 +6055,13 @@
     },
     "drift_5d": -0.005865,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "drift_computed_at": "2026-03-28T23:12:24+00:00",
     "chain_est": [
       {
         "value": 1.326279,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -6130,10 +6130,10 @@
         "ratio": 2.52
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-20",
@@ -6278,10 +6278,10 @@
         "ratio": 4.06
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-20",
@@ -6362,13 +6362,13 @@
     },
     "drift_5d": -0.001597,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "drift_computed_at": "2026-03-28T23:12:24+00:00",
     "chain_est": [
       {
         "value": 1.645428,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -6386,7 +6386,7 @@
     "nav_src": "lsjz",
     "shares": 51.41,
     "holdings": null,
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "history": {
       "date": [
@@ -6468,13 +6468,13 @@
     },
     "drift_5d": 0.020815,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "drift_computed_at": "2026-03-28T23:12:24+00:00",
     "chain_est": [
       {
         "value": 1.910337,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -6543,10 +6543,10 @@
         "ratio": 2.27
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-20",
@@ -6691,10 +6691,10 @@
         "ratio": 1.04
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-20",
@@ -6839,10 +6839,10 @@
         "ratio": 2.06
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-20",
@@ -6923,13 +6923,13 @@
     },
     "drift_5d": -0.012833,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "drift_computed_at": "2026-03-28T23:12:24+00:00",
     "chain_est": [
       {
         "value": 0.647712,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
@@ -6998,10 +6998,10 @@
         "ratio": 3.8
       }
     ],
-    "nav_fetch_time": "2026-03-28T16:13:58+00:00",
+    "nav_fetch_time": "2026-03-28T22:58:06+00:00",
     "nav_consecutive_fails": 0,
     "holdings_date": "2025-12-31",
-    "holdings_fetch_time": "2026-03-28T16:13:58+00:00",
+    "holdings_fetch_time": "2026-03-28T22:58:06+00:00",
     "history": {
       "date": [
         "03-20",
@@ -7082,22 +7082,22 @@
     },
     "drift_5d": 0.004318,
     "drift_n": 5,
-    "drift_computed_at": "2026-03-28T16:32:52+00:00",
+    "drift_computed_at": "2026-03-28T23:12:24+00:00",
     "chain_est": [
       {
         "value": 2.314007,
         "date": "2026-03-27",
         "index_date": "2026-03-27",
-        "computed_at": "2026-03-28T16:32:52+00:00"
+        "computed_at": "2026-03-28T23:12:24+00:00"
       }
     ]
   },
   "_meta": {
-    "sync_time": "2026-03-28T16:33:39+00:00",
+    "sync_time": "2026-03-28T23:12:55+00:00",
     "data_date": "2026-03-27",
     "nav_ok": 47,
     "nav_kept": 0,
-    "hold_ok": 32,
+    "hold_ok": 31,
     "total": 47,
     "trading_dates": [
       "2026-01-04",
